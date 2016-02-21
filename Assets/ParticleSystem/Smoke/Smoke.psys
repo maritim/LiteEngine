@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ParticleSystem name="Smoke" >
+	<CountRange min="0" max="1000"/>
+	<EmissionRate rate="260" />
+
+	<Emiter type="CIRCLE" radius="1.0" width="2.0" depth="2.0" >
+		<Particle type="BILLBOARD">
+			<Mesh type="Primitive" index="0" description="Quad" >
+				<Material>
+					<MaterialLibrary>SmokeParticle.mtl</MaterialLibrary>
+					<MaterialName>SmokeParticle</MaterialName>
+				</Material>
+			</Mesh>
+		</Particle>
+
+		<Transform>
+			<Position x="0" y="0" z="0" />
+			<Rotation x="50" />
+		</Transform>
+
+		<EmissionShape type="CONE" height="5" radius="0.4" />
+
+		<ScaleCurve type="EASE" easeindex="1" description="Constant" ></ScaleCurve>
+		<TweenCurve type="EASE" easeindex="2" description="Linear" ></TweenCurve>
+
+		<LifetimeRange min="0" max="5000" description="In milliseconds" />
+		<SpeedRange min="1.2" max="1.4" description="In seconds" />
+		<ScaleRange min="1" max="1" description="In units" />
+	</Emiter>
+</ParticleSystem>

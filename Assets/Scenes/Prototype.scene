@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Scene>
+	<Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
+	<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Street Environment/Street environment_V01.obj" >
+		<Transform>
+			<Position y="-0.1" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject>
+	<GameObject InstanceID="1" name="CowGirl" meshpath="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" >
+		<Transform>
+			<Position />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject>
+	<GameObject InstanceID="2" name="FantasyGirl" meshpath="Assets/Models/Lightning/lightning_obj.obj" >
+		<Transform>
+			<Position x="-5" y="2" />
+			<Rotation />
+			<Scale x="0.03" y="0.03" z="0.03" />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject>	
+	<GameObject InstanceID="3" name="Cat" meshpath="Assets/Models/Cat/cat.obj" >
+		<Transform>
+			<Position x="-10" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject>
+	<GameObject InstanceID="4" name="SpirderMan" meshpath="Assets/Models/Spider-Man/Spider-Man.obj" >
+		<Transform>
+			<Position x="-15" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject>
+ 	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" >
+		<Transform>
+			<Position x="-2" y="2" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem>
+	<ParticleSystem InstanceID="6" name="Smoke" path="Assets/ParticleSystem/Smoke/Smoke.psys" >
+		<Transform>
+			<Position x="10" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem>
+
+	<ParticleSystem InstanceID="7" name="Fireworks" path="Assets/ParticleSystem/Fireworks/Fireworks.psys" >
+		<Transform>
+			<Position x="0" y="5" z="-5" />
+			<Rotation x="0" y="0" z="0" />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem>
+<!-- 	<ParticleSystem InstanceID="8" name="Snow" path="Assets/ParticleSystem/Snow/Snow.psys" >
+		<Transform>
+			<Position y="20" z="-5" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem> -->
+<!-- 	<ParticleSystem InstanceID="8" name="Rain" path="Assets/ParticleSystem/Rain/Rain.psys" >
+		<Transform>
+			<Position y="20" z="-5" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem> -->
+<!-- 	<ParticleSystem InstanceID="9" name="PigSnow" path="Assets/ParticleSystem/MeshPigs/Pigs.psys" >
+		<Transform>
+			<Position y="20" z="5" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem> -->
+<!-- 	<ParticleSystem InstanceID="10" name="Tail" path="Assets/ParticleSystem/Tail/Tail.psys" >
+		<Transform parent="CowGirl" >
+			<Position />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem> -->
+4</Scene>

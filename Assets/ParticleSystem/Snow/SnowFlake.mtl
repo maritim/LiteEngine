@@ -1,0 +1,7 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl SnowFlake
+blending 768 1
+shaders Shaders/fireVertex.glsl Shaders/fireFragment.glsl
+attribute TEXTURE2D_ATLAS TextureAtlas Textures/Snow.png

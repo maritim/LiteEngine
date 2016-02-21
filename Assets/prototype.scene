@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Scene>
+	<Skybox path="Assets/skyboxes/snowlake_" />
+	<GameObject meshpath="Assets/Examples/town/Street\ environment_V01.obj" >
+		<Transform>
+			<Position />
+			<Rotation />
+			<Scale />
+		</Transform>
+	</GameObject>
+	<GameObject meshpath="Assets/Examples/Hot_Girl_01/Hot_Girl_01.obj" >
+		<Transform>
+			<Position />
+			<Rotation />
+			<Scale />
+		</Transform>
+	</GameObject>
+	<ParticleSystem path="Assets/ParticleSystem/CartoonFire/Fire.psys" >
+		<Transform>
+			<Position x="-2" y="2" />
+			<Rotation />
+			<Scale />
+		</Transform>
+	<ParticleSystem>
+	<ParticleSystem path="Assets/ParticleSystem/Smoke/Smoke.psys" >
+		<Transform>
+			<Position x="10" />
+			<Rotation />
+			<Scale />
+		</Transform>
+	<ParticleSystem>
+	<ParticleSystem path="Assets/ParticleSystem/Fireworks/Fireworks.psys" >
+		<Transform>
+			<Position x="0" y="5" z="-5" />
+			<Rotation x="90" y="0" z="0" />
+			<Scale />
+		</Transform>
+	<ParticleSystem>
+	<ParticleSystem path="Assets/ParticleSystem/Snow/Snow.psys" >
+		<Transform>
+			<Position y="20" z="-5" />
+			<Rotation />
+			<Scale />
+		</Transform>
+	<ParticleSystem>
+</Scene>

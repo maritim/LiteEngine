@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ParticleSystem name="Fireworks" >
+	<CountRange min="0" max="300"/>
+	<EmissionRate rate="100" />
+
+	<Emiter type="MESH" path="Meshes/Hot_Girl_01/Hot_Girl_01.obj" >
+		<Particle type="BILLBOARD">
+			<Mesh type="Primitive" index="0" description="Quad" >
+				<Material>
+					<MaterialLibrary>Tail.mtl</MaterialLibrary>
+					<MaterialName>Tail</MaterialName>
+				</Material>
+			</Mesh>
+		</Particle>
+		
+		<Transform>
+			<Position />
+			<Rotation x="0" y="0" z="0" />
+			<Scale />
+		</Transform>
+	
+		<EmissionShape type="CONE" height="-3" radius="1" />
+
+		<ScaleCurve type="EASE" easeindex="1" description="Constant" ></ScaleCurve>
+		<TweenCurve type="EASE" easeindex="2" description="Linear" ></TweenCurve>
+
+		<LifetimeRange min="2900" max="3000" description="In milliseconds" />
+		<SpeedRange min="0.0" max="0.0" description="In units per second" />
+		<ScaleRange min="0.2" max="0.2" description="In units" />
+	</Emiter>
+</ParticleSystem>

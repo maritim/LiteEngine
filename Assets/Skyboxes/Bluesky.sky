@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Skybox>
+	<Faces>
+		<Up path="blueskyup.jpg" />
+		<Down path="blueskydn.jpg" />
+		<Right path="blueskyrt.jpg" />
+		<Left path="blueskylf.jpg" />
+		<Front path="blueskyft.jpg" />
+		<Back path="blueskybk.jpg" />
+	</Faces>
+
+	<TintColor red="255" green="255" blue="255" />
+	<Brightenss val="1.0" />
+	<Rotation speed="0" description="Units/Second around the positive y axis." />
+</Skybox>

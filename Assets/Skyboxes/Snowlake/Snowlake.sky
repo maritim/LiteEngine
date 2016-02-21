@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Skybox>
+	<Faces>
+		<Front path="Textures/snowlake_ft.tga" />
+		<Back path="Textures/snowlake_bk.tga" />
+		<Right path="Textures/snowlake_rt.tga" />
+		<Left path="Textures/snowlake_lf.tga" />
+		<Up path="Textures/snowlake_up.tga" />
+		<Down path="Textures/snowlake_dn.tga" />
+	</Faces>
+
+	<TintColor red="255" green="255" blue="255" description="The tint color" />
+	<Exposure brightness="0.0" description="Adjusts the brightness of the skybox." />
+	<Rotation angularVelocity="0.0" description="Changes the rotation of the skybox around the positive y axis." />
+</Skybox>

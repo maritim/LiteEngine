@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ParticleSystem>
+	<CountRange min="0" max="40"/>
+	<EmissionRate rate="40" />
+
+	<Emiter type="QUAD" width="1.0" depth="1.0" >
+		<Particle type="BILLBOARD">
+			<Mesh type="Primitive" index="0" description="Quad" >
+				<Material>
+					<MaterialLibrary>FireParticle.mtl</MaterialLibrary>
+					<MaterialName>FireParticle</MaterialName>
+				</Material>
+			</Mesh>
+		</Particle>
+	
+		<Transform>
+			<Position x="0" y="0" z="0" />
+		</Transform>
+
+		<EmissionShape type="CONE" height="3" radius="0.1" />
+
+		<ScaleCurve type="EASE" easeindex="1" description="Constant" ></ScaleCurve>
+		<TweenCurve type="EASE" easeindex="2" description="Linear" ></TweenCurve>
+
+		<LifetimeRange min="2000" max="3000" description="In milliseconds" />
+		<SpeedRange min="2" max="2.1" description="In seconds" />
+		<ScaleRange min="1.0" max="1.0" description="In units" />
+	</Emiter>
+</ParticleSystem>

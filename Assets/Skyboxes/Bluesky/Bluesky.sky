@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Skybox>
+	<Faces>
+		<Front path="Textures/blueskyft.jpg" />
+		<Back path="Textures/blueskybk.jpg" />
+		<Right path="Textures/blueskyrt.jpg" />
+		<Left path="Textures/blueskylf.jpg" />
+		<Up path="Textures/blueskyup.jpg" />
+		<Down path="Textures/blueskydn.jpg" />
+	</Faces>
+
+	<TintColor red="255" green="255" blue="255" alpha="255" description="The tint color" />
+	<Exposure brightness="1.0" description="Adjusts the brightness of the skybox." />
+	<Rotation angularVelocity="0.0" description="Changes the rotation of the skybox around the positive y axis." />
+</Skybox>

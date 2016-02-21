@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ParticleSystem name="Cubes" >
+	<CountRange min="0" max="1000"/>
+	<EmissionRate rate="100" />
+
+	<Emiter type="QUAD" width="49.0" depth="49.0" >
+		<Particle type="MESH">
+			<Mesh type="Path" path="cube.obj" />
+		</Particle>
+	
+		<Transform>
+			<Position x="0" y="0" z="0" />
+			<Rotation x="0" />
+		</Transform>
+
+		<EmissionShape type="CONE" height="-1000" radius="100" />
+
+		<ScaleCurve type="EASE" easeindex="1" description="Constant" ></ScaleCurve>
+		<TweenCurve type="EASE" easeindex="2" description="Linear" ></TweenCurve>
+
+		<LifetimeRange min="9900" max="10000" description="In milliseconds" />
+		<SpeedRange min="2.0" max="2.2" description="In units per second" />
+		<ScaleRange min="0.3" max="0.3" description="In units" />
+	</Emiter>
+</ParticleSystem>
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ParticleSystem name="Fireworks" >
+	<CountRange min="0" max="200"/>
+	<EmissionRate rate="100" />
+
+	<Emiter type="POINT" radius="2" width="2.0" depth="2.0" >
+		<Particle type="MESH">
+			<Mesh type="Path" path="cube.obj" />
+		</Particle>
+		
+		<Transform>
+			<Position />
+			<Rotation x="90" y="0" z="0" />
+			<Scale />
+		</Transform>
+	
+		<EmissionShape type="CONE" height="-3" radius="5" />
+
+		<ScaleCurve type="EASE" easeindex="1" description="Constant" ></ScaleCurve>
+		<TweenCurve type="EASE" easeindex="2" description="Linear" ></TweenCurve>
+
+		<LifetimeRange min="2900" max="3000" description="In milliseconds" />
+		<SpeedRange min="1.0" max="1.2" description="In units per second" />
+		<ScaleRange min="0.2" max="0.2" description="In units" />
+	</Emiter>
+</ParticleSystem>

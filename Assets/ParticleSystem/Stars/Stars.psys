@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ParticleSystem name="Stars" >
+	<CountRange min="0" max="20"/>
+	<EmissionRate rate="20" />
+
+	<Emiter type="POINT" width="1.0" depth="1.0" >
+		<Particle type="BILLBOARD">
+			<Mesh type="Primitive" index="0" description="Quad" >
+				<Material>
+					<MaterialLibrary>StarParticle.mtl</MaterialLibrary>
+					<MaterialName>StarParticle</MaterialName>
+				</Material>
+			</Mesh>
+		</Particle>
+	
+		<Transform>
+			<Position x="0" y="5" z="-5" />
+			<Rotation y="90" />
+		</Transform>
+
+		<EmissionShape type="CONE" height="-10" radius="10" />
+
+		<ScaleCurve type="EASE" easeindex="1" description="Constant" ></ScaleCurve>
+		<TweenCurve type="EASE" easeindex="2" description="Linear" ></TweenCurve>
+
+		<LifetimeRange min="2900" max="3000" description="In milliseconds" />
+		<SpeedRange min="1.0" max="1.2" description="In units per second" />
+		<ScaleRange min="0.2" max="0.2" description="In units" />
+	</Emiter>
+</ParticleSystem>

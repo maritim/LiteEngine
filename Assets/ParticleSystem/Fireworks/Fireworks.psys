@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ParticleSystem name="Fireworks" >
+	<CountRange min="0" max="120"/>
+	<EmissionRate rate="100" />
+
+	<Emiter type="POINT" radius="2" width="2.0" depth="2.0" >
+		<Particle type="BILLBOARD">
+			<Mesh type="Primitive" index="0" description="Quad" >
+				<Material>
+					<MaterialLibrary>SprankleParticle.mtl</MaterialLibrary>
+					<MaterialName>SprankleParticle</MaterialName>
+				</Material>
+			</Mesh>
+		</Particle>
+		
+		<Transform>
+			<Position />
+			<Rotation x="90" y="0" z="0" />
+			<Scale />
+		</Transform>
+	
+		<EmissionShape type="CONE" height="-3" radius="200" />
+
+		<ScaleCurve type="EASE" easeindex="1" description="Constant" ></ScaleCurve>
+		<TweenCurve type="EASE" easeindex="2" description="Linear" ></TweenCurve>
+
+		<LifetimeRange min="2900" max="3000" description="In milliseconds" />
+		<SpeedRange min="1.0" max="1.2" description="In units per second" />
+		<ScaleRange min="0.2" max="0.2" description="In units" />
+	</Emiter>
+</ParticleSystem>
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ParticleSystem name="Fireworks" >
+	<CountRange min="0" max="300"/>
+	<EmissionRate rate="100" />
+
+	<Emiter type="POINT" radius="2" width="2.0" depth="2.0" >
+		<Particle type="BILLBOARD">
+			<Mesh type="Primitive" index="0" description="Quad" >
+				<Material>
+					<MaterialLibrary>SprankleParticle.mtl</MaterialLibrary>
+					<MaterialName>SprankleParticle</MaterialName>
+				</Material>
+			</Mesh>
+		</Particle>
+		
+		<Transform>
+			<Position />
+			<Rotation x="90" y="0" z="0" />
+			<Scale />
+		</Transform>
+	
+		<EmissionShape type="CONE" height="-3" radius="1" />
+
+		<ScaleCurve type="EASE" easeindex="1" description="Constant" ></ScaleCurve>
+		<TweenCurve type="EASE" easeindex="2" description="Linear" ></TweenCurve>
+
+		<LifetimeRange min="2900" max="3000" description="In milliseconds" />
+		<SpeedRange min="1.0" max="1.2" description="In units per second" />
+		<ScaleRange min="0.2" max="0.2" description="In units" />
+	</Emiter>
+</ParticleSystem>
