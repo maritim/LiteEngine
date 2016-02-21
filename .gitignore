@@ -1,28 +1,42 @@
+# System files
+*.swp
+
 # Compiled Object files
 *.slo
 *.lo
 *.o
-*.obj
 
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-
-# Compiled Static libraries
+# Compiled Static Libraries
 *.lai
 *.la
 *.a
 *.lib
 
+# Compiled Dynamic Libraries
+*.so
+*.dylib
+*.dll
+
+# Dependency files
+*.d
+
 # Executables
 *.exe
 *.out
 *.app
+
+# Build
+Assets/Examples/
+Build/
+Utils/
+
+# python bytecode
+*.pyc
+*.pyo
+__pycache__
+
+# Workflow
+TODOS
+
+# Debugging
+*.log
