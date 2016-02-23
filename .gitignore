@@ -33,7 +33,7 @@
 # Build
 Assets/Examples/
 Build/
-Utils/
+.Utils/
 
 # python bytecode
 *.pyc
