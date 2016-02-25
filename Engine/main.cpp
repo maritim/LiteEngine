@@ -9,7 +9,6 @@ g++ -g -std=c++11 *.cpp -lGL -lGLU -lGLEW -lglut `sdl-config --libs` -lSDL_image
 #include <GL/glew.h>
 
 #include <string.h>
-#include <GL/glut.h>
 #include <string>
 #include <cmath>
 #include <sys/time.h>
