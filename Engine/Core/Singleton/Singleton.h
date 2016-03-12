@@ -28,12 +28,12 @@
  * Thomas Badie version take advantage of std::forward to forward
  * arguments to the singleton. In this way the Singleton class
  * is as generic as possible. 
- * -- As of gcc version 4.8.4 (Ubuntu 4.8.4-2ubuntu1~14.04), 
- * std::forward is not implemented in the standard.
  */
 
 #ifndef SINGLETON_H
 #define SINGLETON_H
+
+#include <utility>
 
 template <typename T>
 class Singleton
@@ -43,49 +43,27 @@ private:
 	static bool _isDestroyed;
 
 public:
-	#ifdef STD_FORWARD_IN_STANDARD
-		template <typename... Args> 
-		static T* Instance (Args... args)
-		{
-			if (_instance == nullptr) {
-				if (_isDestroyed) {
-					OnDeadReference ();
-				} else {
-					CreateSingleton (std::forward<Args>(args)...);
-				}
+	template <typename... Args> 
+	static T* Instance (Args... args)
+	{
+		if (_instance == nullptr) {
+			if (_isDestroyed) {
+				OnDeadReference ();
+			} else {
+				CreateSingleton (std::forward<Args>(args)...);
 			}
-
-			return _instance;
 		}
 
-		template <typename... Args>
-		static void CreateSingleton (Args... args)
-		{
-			_instance = new T (std::forward<Args>(args)...);
+		return _instance;
+	}
 
-			atexit (KillPhoenixSingleton);
-		}
-	#else
-		static T* Instance ()
-		{
-			if (_instance == nullptr) {
-				if (_isDestroyed) {
-					OnDeadReference ();
-				} else {
-					CreateSingleton ();
-				}
-			}
+	template <typename... Args>
+	static void CreateSingleton (Args... args)
+	{
+		_instance = new T (std::forward<Args>(args)...);
 
-			return _instance;
-		}
-
-		static void CreateSingleton ()
-		{
-			_instance = new T ();
-
-			atexit (KillPhoenixSingleton);
-		}
-	#endif
+		atexit (KillPhoenixSingleton);
+	}
 
 	static void KillPhoenixSingleton ()
 	{
