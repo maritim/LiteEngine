@@ -55,8 +55,8 @@ typedef struct {
  * Program code
  ***************************************************************************/
  
-#define FRAMES_PER_SECOND 60
-#define TIME_PER_FRAME (1000 / FRAMES_PER_SECOND)
+#define FRAMES_PER_SECOND 1000
+#define TICKS_PER_FRAME (1000 / FRAMES_PER_SECOND)
 #define MILLISECONDS_PER_FRAME (1.0 / FRAMES_PER_SECOND)
 
 // the variable that keep information about mouse state
@@ -81,14 +81,11 @@ void update()
 	// http://cboard.cprogramming.com/game-programming/135390-how-properly-move-strafe-yaw-pitch-camera-opengl-glut-using-glulookat.html
 
 	float cameraVelocity = 10.0f;
-	Vector3 velocity;
+	Vector3 velocity = Vector3::Zero;
 
 	Vector3 Forward = Camera::Main ()->ToVector3();
-	Forward.Normalize ();
-	Vector3 ForwardYZero = Forward;
-	ForwardYZero.Normalize ();
-	Vector3 Right = ForwardYZero.Cross (Vector3::Up);
-	Right.Normalize ();
+	Vector3 Right = Forward.Cross (Vector3::Up);
+	Forward.Normalize (); Right.Normalize ();
 
 	if (Input::GetKey ('w')) {
 		velocity += Forward * cameraVelocity * Time::GetDeltaTime();
@@ -287,6 +284,7 @@ int main(int argc, char **argv)
 	
 	while(running)
 	{
+		Time::UpdateFrame();
 		Input::UpdateState ();
 
         if (Input::GetQuit () || Input::GetKeyDown (27)) {
@@ -304,12 +302,10 @@ int main(int argc, char **argv)
 		DisplayScene ();
         
         SDL_GL_SwapBuffers();
-        
-		Time::UpdateFrame();
 
-        if(MILLISECONDS_PER_FRAME > Time::GetDeltaTime()) {
-            SDL_Delay((MILLISECONDS_PER_FRAME - Time::GetDeltaTime()) * 1000);
-        }
+		if(TICKS_PER_FRAME > Time::GetElapsedTimeMS () - Time::GetTimeMS ()) {
+			SDL_Delay(TICKS_PER_FRAME - (Time::GetElapsedTimeMS () - Time::GetTimeMS ()));
+		}
 	}
 
 	ShaderManager::Clear ();

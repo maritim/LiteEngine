@@ -32,3 +32,25 @@ unsigned int Time::GetDeltaTimeMS ()
 {
 	return _deltaTimeMS;
 }
+
+/*
+ * Get total milliseconds passed since the start of game until the start of
+ * current frame. 
+ *
+ * It is possible that more milliseconds already pass since the starting of
+ * frame.
+*/
+
+unsigned int Time::GetTimeMS ()
+{
+	return _currentTimeMS;
+}
+
+/* 
+ * Get all miliseconds passed since the start of game.
+*/
+
+unsigned int Time::GetElapsedTimeMS ()
+{
+	return SDL_GetTicks ();
+}

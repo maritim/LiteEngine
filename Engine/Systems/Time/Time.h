@@ -19,6 +19,8 @@ public:
 	static float GetTime();
 
 	static unsigned int GetDeltaTimeMS ();
+	static unsigned int GetTimeMS ();
+	static unsigned int GetElapsedTimeMS ();
 };
 
 #endif
