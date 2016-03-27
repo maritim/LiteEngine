@@ -53,3 +53,13 @@ void SceneObject::SetInstanceID (std::size_t instanceID)
 {
 	_instanceID = instanceID;
 }
+
+void SceneObject::OnAttachedToScene ()
+{
+
+}
+
+void SceneObject::OnDetachedFromScene ()
+{
+
+}

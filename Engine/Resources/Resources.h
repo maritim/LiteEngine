@@ -12,6 +12,7 @@
 #include "VisualEffects/ParticleSystem/ParticleSystem.h"
 #include "Skybox/Skybox.h"
 #include "Fonts/BitmapFont.h"
+#include "Lighting/Light.h"
 
 class Resources
 {
@@ -29,6 +30,7 @@ public:
 	static MaterialLibrary* LoadMaterialLibrary (const std::string& filename);
 	static ParticleSystem* LoadParticleSystem (const std::string& filename);
 	static Skybox* LoadSkybox (const std::string& filename); 
+	static Light* LoadLight (const std::string& filename);
 
 private:
 	static Model* LoadWavefrontModel (const std::string& filename);

@@ -46,7 +46,10 @@ Scene* SceneLoader::Load (const std::string& filename)
 	while (content) {
 		std::string name = content->Value ();
 
-		if (name == "Skybox") {
+		if (name == "Light") {
+			ProcessLight (content, scene);
+		}
+		else if (name == "Skybox") {
 			ProcessSkybox (content, scene);
 		}
 		else if (name == "GameObject") {
@@ -134,6 +137,32 @@ void SceneLoader::ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene)
 	}
 
 	scene->AttachObject (partSystem);
+}
+
+void SceneLoader::ProcessLight (TiXmlElement* xmlElem, Scene* scene)
+{
+	std::string name = xmlElem->Attribute ("name");
+	std::string instanceID = xmlElem->Attribute ("InstanceID");
+	std::string path = xmlElem->Attribute ("path");
+
+	Light* light = Resources::LoadLight (path);
+	light->SetName (name);
+	light->SetInstanceID (std::stoi (instanceID));
+
+	TiXmlElement* content = xmlElem->FirstChildElement ();
+
+	while (content)
+	{
+		std::string name = content->Value ();
+
+		if (name == "Transform") {
+			ProcessTransform (content, scene, light);
+		}
+
+		content = content->NextSiblingElement ();
+	}
+
+	scene->AttachObject (light);
 }
 
 void SceneLoader::ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneObject* sceneObject)

@@ -33,6 +33,9 @@ public:
 
 	virtual void Update () = 0;
 
+	virtual void OnAttachedToScene ();
+	virtual void OnDetachedFromScene ();
+
 	virtual ~SceneObject ();
 };
 

@@ -3,7 +3,8 @@
 #include <GL/glew.h>
 #include <cmath>
 
-#include "Lighting/Lights.h"
+#include "Lighting/LightsManager.h"
+#include "Lighting/Light.h"
 #include "Texture/Texture.h"
 #include "SceneGraph/Transform.h"
 #include "Material/Material.h"
@@ -154,7 +155,8 @@ void Pipeline::UpdateMatrices (unsigned int program)
 
 void Pipeline::SendLights (unsigned int program)
 {
-	Vector3 vec = Lights::Instance ().GetAmbientColorLight ();
+	Vector3 vec = LightsManager::Instance ()->GetAmbientColorLight ();
+	Color color;
 
 	glUniform3f(glGetUniformLocation(program,"sceneAmbient"), vec.x, vec.y, vec.z);
 
@@ -164,25 +166,25 @@ void Pipeline::SendLights (unsigned int program)
 	int pointLightCount = 0;
 	int directionalLightCount = 0;
 
-	for (std::size_t i=0;i<Lights::Instance ().Size ();i++) {
-		Light* light = Lights::Instance ().GetLight (i);
+	for (std::size_t i=0;i<LightsManager::Instance ()->Size ();i++) {
+		Light* light = LightsManager::Instance ()->GetLight (i);
 		std::string address;
 
-		switch (light->type) {
+		switch (light->GetType ()) {
 			case Light::Type::DIRECTIONAL_LIGHT :
 				if (directionalLightCount >= lightsLimit) {
 					break;
 				}
 
-				vec = light->position;
+				vec = light->GetTransform ()->GetPosition ();
 				address = "directionalLights[" + std::to_string (directionalLightCount) + "].position";
 				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 0.0);
 
-				vec = light->color;
+				vec = light->GetColor ().ToVector3 ();
 				address = "directionalLights[" + std::to_string (directionalLightCount) + "].diffuse";
 				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				vec = light->specularColor;
+				vec = light->GetSpecularColor ().ToVector3 ();
 				address = "directionalLights[" + std::to_string (directionalLightCount) + "].specular";
 				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
@@ -194,26 +196,26 @@ void Pipeline::SendLights (unsigned int program)
 					break;
 				}
 
-				vec = light->position;
+				vec = light->GetTransform ()->GetPosition ();
 				address = "pointLights[" + std::to_string (pointLightCount) + "].position";
 				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				vec = light->color;
+				vec = light->GetColor ().ToVector3 ();
 				address = "pointLights[" + std::to_string (pointLightCount) + "].diffuse";
 				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				vec = light->specularColor;
+				vec = light->GetColor ().ToVector3 ();
 				address = "pointLights[" + std::to_string (pointLightCount) + "].specular";
 				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
 				address = "pointLights[" + std::to_string (pointLightCount) + "].constantAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->constantAttenuation);
+				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetConstantAttenuation ());
 
 				address = "pointLights[" + std::to_string (pointLightCount) + "].linearAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->linearAttenuation);
+				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetLinearAttenuation ());
 
 				address = "pointLights[" + std::to_string (pointLightCount) + "].quadraticAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->quadraticAttenuation);
+				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetQuadraticAttenuation ());
 
 				++ pointLightCount;
 
@@ -223,34 +225,34 @@ void Pipeline::SendLights (unsigned int program)
 					break;
 				}
 
-				vec = light->position;
+				vec = light->GetTransform ()->GetPosition ();
 				address = "spotLights[" + std::to_string (spotLightCount) + "].position";
 				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				vec = light->color;
+				vec = light->GetColor ().ToVector3 ();
 				address = "spotLights[" + std::to_string (spotLightCount) + "].diffuse";
 				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				vec = light->specularColor;
+				vec = light->GetColor ().ToVector3 ();
 				address = "spotLights[" + std::to_string (spotLightCount) + "].specular";
 				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
 				address = "spotLights[" + std::to_string (spotLightCount) + "].constantAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->constantAttenuation);
+				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetConstantAttenuation ());
 
 				address = "spotLights[" + std::to_string (spotLightCount) + "].linearAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->linearAttenuation);
+				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetLinearAttenuation ());
 
 				address = "spotLights[" + std::to_string (spotLightCount) + "].quadraticAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->quadraticAttenuation);
+				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetQuadraticAttenuation ());
 
 				address = "spotLights[" + std::to_string (spotLightCount) + "].spotCutoff";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->spotCutoff);
+				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetSpotCutoff ());
 
 				address = "spotLights[" + std::to_string (spotLightCount) + "].spotExponent";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->spotExponent);
+				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetSpotExponent ());
 
-				vec = light->spotDirection;
+				vec = light->GetSpotDirection ();
 				address = "spotLights[" + std::to_string (spotLightCount) + "].spotDirection";
 				glUniform3f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z);
 

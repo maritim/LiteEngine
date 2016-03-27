@@ -29,6 +29,7 @@ public:
 	Skybox* GetSkybox () const;
 
 	void AttachObject (SceneObject*);
+	void DetachObject (SceneObject*);
 
 	SceneObject* GetObjectAt (std::size_t index) const;
 	SceneObject* GetObject (const std::string& name) const;

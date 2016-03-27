@@ -42,6 +42,26 @@ Skybox* Scene::GetSkybox () const
 void Scene::AttachObject (SceneObject* object)
 {
 	_sceneObjects.push_back (object);
+
+	object->OnAttachedToScene ();
+}
+
+void Scene::DetachObject (SceneObject* object)
+{
+	for (std::size_t i=0;i<_sceneObjects.size ();i++) {
+		if (_sceneObjects [i] != object) {
+			continue;
+		}
+
+		SceneObject* purged = _sceneObjects [i];
+
+		_sceneObjects [i] = _sceneObjects.back ();
+		_sceneObjects.pop_back ();
+
+		purged->OnDetachedFromScene ();
+
+		return ;
+	}
 }
 
 SceneObject* Scene::GetObjectAt (std::size_t index) const

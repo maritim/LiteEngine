@@ -9,7 +9,8 @@
 #include "Skybox/Skybox.h"
 #include "SceneGraph/Scene.h"
 #include "SceneNodes/FrameRate.h"
-#include "Lighting/Lights.h"
+#include "Lighting/LightsManager.h"
+#include "Lighting/Light.h"
 
 #include "Systems/Input/Input.h"
 #include "Systems/Time/Time.h"
@@ -216,15 +217,6 @@ void InitializeScene (int argc, char **argv)
 
 		FrameRate* frameRate = new FrameRate (scene);
 		scene->AttachObject (frameRate);
-
-		Light* light = new Light ();
-		light->position = Vector3::Right + Vector3::Up + Vector3::Forward;
-		light->specularColor = Vector3::One * 0.1f;
-		light->type = Light::Type::DIRECTIONAL_LIGHT;
-
-		light = new Light ();
-		light->position = Vector3::Left + Vector3::Down + Vector3::Back;
-		light->type = Light::Type::POINT_LIGHT;
 	} else {
 		Console::LogError ("There is no scene to load!");
 		exit (0);

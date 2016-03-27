@@ -6,6 +6,7 @@
 #include "Core/Parsers/XML/TinyXml/tinyxml.h"
 
 #include "Core/Math/Vector3.h"
+#include "Utils/Color/Color.h"
 
 #include "SceneGraph/Scene.h"
 #include "SceneGraph/Transform.h"
@@ -19,6 +20,7 @@ public:
 private:
 	SceneLoader ();
 
+	void ProcessLight (TiXmlElement* xmlElem, Scene* scene);
 	void ProcessSkybox (TiXmlElement* xmlElem, Scene* scene);
 	void ProcessGameObject (TiXmlElement* xmlElem, Scene* scene);
 	void ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene);

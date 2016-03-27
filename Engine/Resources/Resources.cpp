@@ -13,6 +13,7 @@
 #include "ParticleSystemLoader.h"
 #include "SkyboxLoader.h"
 #include "BitmapFontLoader.h"
+#include "LightLoader.h"
 
 Model* Resources::LoadModel (const std::string& filename)
 {
@@ -146,6 +147,17 @@ Skybox* Resources::LoadSkybox (const std::string& filename)
 	delete skyboxLoader;
 
 	return skybox;
+}
+
+Light* Resources::LoadLight (const std::string& filename)
+{
+	LightLoader* lightLoader = new LightLoader ();
+
+	Light* light = (Light*) lightLoader->Load (filename);
+
+	delete lightLoader;
+
+	return light;
 }
 
 // bool SortingMethod (Polygon* a, Polygon* b) { return (a->matName < b->matName); }

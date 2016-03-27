@@ -35,5 +35,5 @@ Color::Color (const Color& other) :
 
 Vector3 Color::ToVector3 ()
 {
-	return Vector3 (1.0 * r / 255, 1.0 * g / 255, 1.0 * b / 255);	
+	return Vector3 (r / 255.0f, g / 255.0f, b / 255.0f);	
 }
