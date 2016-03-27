@@ -7,13 +7,15 @@
 
 #include "Texture/Texture.h"
 
+#include "Wrappers/OpenGL/GL.h"
+
 #include "Core/Console/Console.h"
 
 Object* TextureLoader::Load(const std::string& filename)
 {
 	unsigned int num;
 
-	glGenTextures(1,&num);
+	GL::GenTextures(1,&num);
 	SDL_Surface* img=IMG_Load(filename.c_str());
 	
 	if(img==NULL) {
@@ -44,22 +46,21 @@ Object* TextureLoader::Load(const std::string& filename)
 		exit (1);             
 	}
 
-	glBindTexture(GL_TEXTURE_2D,num);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);        
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);      //we repeat the pixels in the edge of the texture, it will hide that 1px wide line at the edge of the cube, which you have seen in the video
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);      //we do it for vertically and horizontally (previous line)
-	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+	GL::BindTexture(GL_TEXTURE_2D,num);
+	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);        
+	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);      //we repeat the pixels in the edge of the texture, it will hide that 1px wide line at the edge of the cube, which you have seen in the video
+    GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);      //we do it for vertically and horizontally (previous line)
+	GL::TexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
-	glTexImage2D(GL_TEXTURE_2D,	0,GL_RGBA,img2->w,img2->h,0,GL_RGBA,GL_UNSIGNED_BYTE,img2->pixels);          
+	GL::TexImage2D(GL_TEXTURE_2D,	0,GL_RGBA,img2->w,img2->h,0,GL_RGBA,GL_UNSIGNED_BYTE,img2->pixels);          
 //	glTexImage2D(GL_TEXTURE_2D,	0,GL_RGBA,img2->w,img2->h,0,GL_RGBA,GL_UNSIGNED_INT_8_8_8_8,img2->pixels);   
 
-	glTexEnvi(GL_TEXTURE_2D,GL_TEXTURE_ENV_MODE,GL_MODULATE);	//maybe just this
+	// GL::TexEnvi(GL_TEXTURE_2D,GL_TEXTURE_ENV_MODE,GL_MODULATE);	//maybe just this
 
 	SDL_FreeSurface(img);
-	SDL_FreeSurface(img2);
 
-	Texture* texture = new Texture(filename, num);
+	Texture* texture = new Texture(filename, num, img2);
 
 	return texture;
 }

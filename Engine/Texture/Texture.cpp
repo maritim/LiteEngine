@@ -2,15 +2,26 @@
 
 #include <string>
 
-Texture::Texture(std::string name, unsigned int gpuIndex)
+Texture::Texture(const std::string& name, unsigned int gpuIndex,
+	SDL_Surface* surface) :
+	_name (name),
+	_gpuIndex (gpuIndex),
+	_surface (surface)
 {
-	_name = name;
-	_gpuIndex = gpuIndex;
+
+}
+
+Texture::Texture (const std::string& name, unsigned int gpuIndex) :
+	_name (name),
+	_gpuIndex (gpuIndex),
+	_surface (nullptr)
+{
+
 }
 
 Texture::~Texture()
 {
-	// TOOD: Free GPU memory
+	SDL_FreeSurface (_surface);
 }
 
 unsigned int Texture::GetGPUIndex() const
@@ -28,7 +39,17 @@ void Texture::SetGPUIndex(unsigned int gpuIndex)
 	_gpuIndex = gpuIndex;
 }
 
-void Texture::SetName(std::string name)
+void Texture::SetName(const std::string& name)
 {
 	_name = name;
+}
+
+glm::uvec2 Texture::GetSize ()
+{
+	return glm::uvec2 (_surface->w, _surface->h);
+}
+
+void Texture::SetSurface (SDL_Surface* surface)
+{
+	_surface = surface;
 }

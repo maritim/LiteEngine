@@ -45,3 +45,8 @@ TODOS
 
 # Debugging
 *.log
+*.txt
+
+# NVidia Debugger
+*.csv
+

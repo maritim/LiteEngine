@@ -227,7 +227,7 @@ void ParticleSystemLoader::ProcessParticleMesh (TiXmlElement* xmlElem, Particle*
 		Primitive::Type ptype = (Primitive::Type) 
 			std::stoi (xmlElem->Attribute ("index"));
 
-		mesh = Primitive::Instance ().Create (ptype);
+		mesh = Primitive::Instance ()->Create (ptype);
 	}
 	else if (type == "Path") {
 		std::string path = xmlElem->Attribute ("path");

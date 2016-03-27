@@ -23,9 +23,13 @@ public:
 	std::size_t GetChunkByteSize ();
 	std::size_t GetChunksCount ();
 
+	T& operator[] (std::size_t pos);
+
 	const T* GetPointer () const;
 	std::size_t GetSize () const;
 	std::size_t GetBytesCount () const;
+
+	void Clear ();
 };
 
 template <class T>
@@ -38,8 +42,7 @@ Buffer<T>::Buffer () :
 template <class T>
 Buffer<T>::~Buffer ()
 {
-	_buffer.clear ();
-	_buffer.shrink_to_fit ();
+	Clear ();
 }
 
 template <class T>
@@ -81,6 +84,12 @@ std::size_t Buffer<T>::GetChunksCount ()
 }
 
 template <class T>
+T& Buffer<T>::operator[] (std::size_t pos)
+{
+	return _buffer [pos];
+}
+
+template <class T>
 const T* Buffer<T>::GetPointer () const
 {
 	return &_buffer [0];
@@ -96,6 +105,13 @@ template <class T>
 std::size_t Buffer<T>::GetBytesCount () const
 {
 	return sizeof (T) * _buffer.size ();
+}
+
+template<class T>
+void Buffer<T>::Clear ()
+{
+	_buffer.clear ();
+	_buffer.shrink_to_fit ();
 }
 
 #endif

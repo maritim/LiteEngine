@@ -12,6 +12,7 @@
 #include "CubeMapLoader.h"
 #include "ParticleSystemLoader.h"
 #include "SkyboxLoader.h"
+#include "BitmapFontLoader.h"
 
 Model* Resources::LoadModel (const std::string& filename)
 {
@@ -83,6 +84,17 @@ TextureAtlas* Resources::LoadTextureAtlas (const std::string& filename)
 	delete texAtlasLoader;
 
 	return texAtlas;
+}
+
+BitmapFont* Resources::LoadBitmapFont (const std::string& filename)
+{
+	BitmapFontLoader* bitmapFontLoader = new BitmapFontLoader ();
+
+	BitmapFont* bitmapFont = (BitmapFont*) bitmapFontLoader->Load (filename);
+
+	delete bitmapFontLoader;
+
+	return bitmapFont;
 }
 
 // //load the filename textures (only BMP, R5G6B5 format)

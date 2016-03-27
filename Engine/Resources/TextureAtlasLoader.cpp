@@ -15,7 +15,7 @@
 
 Object* TextureAtlasLoader::Load (const std::string& filename)
 {
-	TextureAtlas* texAtlas = new TextureAtlas ("", 0);
+	TextureAtlas* texAtlas = new TextureAtlas ("", 0, nullptr);
 
 	LoadTexture (filename, texAtlas);
 

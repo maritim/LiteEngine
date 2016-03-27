@@ -10,6 +10,8 @@
 #include "Renderer/PipelineAttribute.h"
 #include "Mesh/Model.h"
 
+#include "Wrappers/OpenGL/GL.h"
+
 #include "Managers/ShaderManager.h"
 
 SkyboxRenderer::SkyboxRenderer (CubeMap*& map, Color* tint, float *bt, std::string shn) :
@@ -19,20 +21,21 @@ SkyboxRenderer::SkyboxRenderer (CubeMap*& map, Color* tint, float *bt, std::stri
 	_brightness (bt),
 	_shaderName (shn)
 {
-	Model* cube = Primitive::Instance ().Create (Primitive::Type::CUBE);
+	Model* cube = Primitive::Instance ()->Create (Primitive::Type::CUBE);
 	Attach (cube);
 	delete cube;
 }
 
 void SkyboxRenderer::Draw ()
 {
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D);
+	GL::Disable(GL_DEPTH_TEST);
+	GL::Enable(GL_TEXTURE_2D);
 
-	bool cull = glIsEnabled (GL_CULL_FACE);
-	glDisable(GL_CULL_FACE);
+	bool cull;
+	GL::IsEnabled (GL_CULL_FACE, &cull);
+	GL::Disable(GL_CULL_FACE);
 
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	GL::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	unsigned int program = ShaderManager::GetShader (_shaderName);
 	Pipeline::SetShader (program);
@@ -45,16 +48,16 @@ void SkyboxRenderer::Draw ()
 		ManageCustomAttributes ();
 
 		//bind pe containerul de stare de geometrie (vertex array object)
-		glBindVertexArray(_drawableObjects [i].VAO_INDEX);
+		GL::BindVertexArray(_drawableObjects [i].VAO_INDEX);
 		//comanda desenare
-		glDrawElements(GL_TRIANGLES, _drawableObjects [i].INDEX_COUNT, GL_UNSIGNED_INT, 0);
+		GL::DrawElements(GL_TRIANGLES, _drawableObjects [i].INDEX_COUNT, GL_UNSIGNED_INT, 0);
 	}
 
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_TEXTURE_2D);
+	GL::Enable(GL_DEPTH_TEST);
+	GL::Disable(GL_TEXTURE_2D);
 
 	if (cull) {
-		glEnable (GL_CULL_FACE);
+		GL::Enable (GL_CULL_FACE);
 	}
 }
 

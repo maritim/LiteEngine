@@ -2,8 +2,8 @@
 
 #include "StringExtend.h"
 
-#include <string>
 #include <locale>
+#include <algorithm>
 
 #include "Core/Console/Console.h"
 
@@ -44,11 +44,11 @@ std::size_t StringExtend::Trim (std::string& source)
     std::size_t start = 0, end = source.length () - 1;
 
     // Is whitespace
-    while (std::isspace (source [start])) {
+    while (start <= end && std::isspace (source [start])) {
         ++ start;
     }
 
-    while (std::isspace (source [end])) {
+    while (start <= end && std::isspace (source [end])) {
         -- end;
     }
 
@@ -56,6 +56,52 @@ std::size_t StringExtend::Trim (std::string& source)
     source = source.substr (start, source.length () - whitespaceCnt);
 
     return whitespaceCnt;
+}
+
+std::size_t StringExtend::Trim (std::string& source, char ch)
+{
+    std::size_t start = 0, end = source.length () - 1;
+
+    // Is whitespace
+    while (start <= end && source [start] == ch) {
+        ++ start;
+    }
+
+    while (start <= end && source [end] == ch) {
+        -- end;
+    }
+
+    std::size_t whitespaceCnt = start + source.length () - 1 - end;
+    source = source.substr (start, source.length () - whitespaceCnt);
+
+    return whitespaceCnt;    
+}
+
+std::vector<std::string> StringExtend::Split (
+    const std::string& source, const std::string& charset)
+{
+    std::vector<std::string> result;
+    std::vector<bool> check (256, false);
+    std::string aux;
+
+    for (char ch : charset) {
+        check [(std::size_t) ch] = true;
+    }
+
+    for (std::size_t i=0;i<source.size ();i++) {
+        if (check [(std::size_t) source [i]]) {
+            result.push_back (aux);
+            aux.clear ();
+        } else {
+            aux += source [i];
+        }
+    }
+
+    if (aux.size () > 0) {
+        result.push_back (aux);
+    }
+
+    return result;
 }
 
 bool StringExtend::ToBool (const std::string& boolStr)
@@ -71,4 +117,45 @@ bool StringExtend::ToBool (const std::string& boolStr)
     Console::LogWarning ("String " + boolStr + " cannot be converted to bool!");
 
     return false;
+}
+
+bool StringExtend::ToBoolExt (const std::string& boolStr)
+{
+    std::string str = Upper (boolStr);
+
+    if (boolStr == "FALSE" || boolStr == "0") {
+        return false;
+    }
+
+    if (boolStr == "TRUE") {
+        return true;
+    }
+
+    return true;
+}
+
+void StringExtend::ToUpper (std::string& source)
+{
+    std::transform (source.begin (), source.end (), source.begin (), ::toupper);
+}
+
+void StringExtend::ToLower (std::string& source)
+{
+    std::transform (source.begin (), source.end (), source.begin (), ::toupper);
+}
+
+std::string StringExtend::Upper (const std::string& source)
+{
+    std::string result = source;
+    ToUpper (result);
+
+    return result;
+}
+
+std::string StringExtend::Lower (const std::string& source)
+{
+    std::string result = source;
+    ToLower (result);
+
+    return result;
 }

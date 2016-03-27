@@ -29,6 +29,7 @@ DEPENDENCY_OPTIONS = -MM -std=c++11 -I$(HEADERS)
 SUBDIRS := $(shell ls -F | grep "\/" )
 DIRS := ./Engine/Core/Interfaces/ \
 		./Engine/Core/Math/ \
+		./Engine/Core/Math/glm/ \
 		./Engine/Core/Random/ \
 		./Engine/Core/Singleton/ \
 		./Engine/Core/Console/ \

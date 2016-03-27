@@ -1,32 +1,26 @@
-/*
-
-g++ -std=c++11 Licenta.cpp Polygon.cpp Material.cpp Vector3.cpp Graph.cpp Model.cpp Hashmap.cpp CatmullClark.cpp Camera.cpp Resources.cpp Triangulation.cpp Heap.cpp Simplification.cpp Matrix.cpp Array.cpp CostPair.cpp -lGL -lGLU -lglut `sdl-config --libs` -o Licenta && clear && ./Licenta Examples/pig.obj
-
-g++ -g -std=c++11 *.cpp -lGL -lGLU -lGLEW -lglut `sdl-config --libs` -lSDL_image -o Licenta && clear && ./Licenta Examples/cube.obj
-*/
-
 #include <SDL/SDL.h>
 #include <GL/glew.h>
 
-#include <string.h>
 #include <string>
 #include <cmath>
-#include <sys/time.h>
 #include <unistd.h>
 
 #include "Camera/Camera.h"
 #include "Skybox/Skybox.h"
 #include "SceneGraph/Scene.h"
+#include "SceneNodes/FrameRate.h"
 #include "Lighting/Lights.h"
 
 #include "Systems/Input/Input.h"
 #include "Systems/Time/Time.h"
 #include "Systems/Physics/PhysicsSystem.h"
+#include "Systems/Screen/Screen.h"
 
 #include "Renderer/Pipeline.h"
 #include "Renderer/RenderManager.h"
 
 #include "Resources/SceneLoader.h"
+#include "Resources/Resources.h"
 
 #include "Managers/ShaderManager.h"
 
@@ -34,6 +28,10 @@ g++ -g -std=c++11 *.cpp -lGL -lGLU -lGLEW -lglut `sdl-config --libs` -lSDL_image
 #include "Core/Console/Console.h"
 
 #include "Core/Math/Vector3.h"
+
+#include "Fonts/BitmapFont.h"
+
+#include "Wrappers/OpenGL/GL.h"
 
 #define KEY_ESCAPE 27
  
@@ -57,7 +55,7 @@ typedef struct {
  * Program code
  ***************************************************************************/
  
-#define FRAMES_PER_SECOND 1000
+#define FRAMES_PER_SECOND 60
 #define TIME_PER_FRAME (1000 / FRAMES_PER_SECOND)
 #define MILLISECONDS_PER_FRAME (1.0 / FRAMES_PER_SECOND)
 
@@ -75,18 +73,6 @@ int mainWindow;
 Scene* scene;
 
 glutWindow win;
-
-void ceata()
-{
-	GLfloat fogColor[4]={0.7f, 0.7f, 0.7f, 0.7f};
-	glFogf(GL_FOG_MODE, GL_LINEAR);
-	glFogf(GL_FOG_START, 0);
-	glFogf(GL_FOG_END, 130);
-	glFogfv(GL_FOG_COLOR, fogColor);
-	glEnable(GL_FOG);
-}
-
-void clean ();
 
 void update()
 {
@@ -160,7 +146,7 @@ void update()
 
 void DisplayScene() 
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Pipeline::SetCameraRotation (Camera::Main ()->ToVector3 ());
 
@@ -178,26 +164,24 @@ void UpdateScene()
  
 void InitEngine () 
 {	
-    glMatrixMode(GL_PROJECTION);
-	glViewport(0, 0, win.width, win.height);
+	GL::Viewport(0, 0, win.width, win.height);
 	GLfloat aspect = (GLfloat) win.width / win.height;
     
 	Pipeline::CreatePerspective (win.field_of_view_angle, aspect, win.z_near, win.z_far);
 
-    glShadeModel( GL_SMOOTH );
-    glClearColor( 0.5f, 0.5f, 1.0f, 1.0f );
-    glClearDepth( 1.0f );
-    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+    GL::ClearColor( 0.5f, 0.5f, 1.0f, 1.0f );
+    GL::ClearDepth( 1.0f );
+    GL::Hint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
  
-    glDepthFunc( GL_LEQUAL );
-    glEnable( GL_DEPTH_TEST );
- 	glEnable(GL_CULL_FACE);
-	glEnable(GL_BLEND);
+    GL::DepthFunc( GL_LEQUAL );
+    GL::Enable( GL_DEPTH_TEST );
+ 	GL::Enable(GL_CULL_FACE);
+	GL::Enable(GL_BLEND);
 
- 	glCullFace (GL_BACK);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+ 	GL::CullFace (GL_BACK);
+	GL::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-//	glewExperimental = GL_TRUE;
+	glewExperimental = GL_TRUE;
 
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
@@ -209,10 +193,10 @@ void InitEngine ()
 	std::string glewvers = (char*) glewGetString(GLEW_VERSION);
 	Console::Log ("Status: Using GLEW " + glewvers);
 
-	if (glewIsSupported ("GL_VERSION_3_3")) {
-		Console::Log ("Ready for OpenGL 3.3");
+	if (glewIsSupported ("GL_VERSION_4_0")) {
+		Console::Log ("Ready for OpenGL 4.0");
 	} else {
-		Console::LogError ("OpenGL 3.3 not supported");
+		Console::LogError ("OpenGL 4.0 not supported");
 	}
 }
 
@@ -232,6 +216,9 @@ void InitializeScene (int argc, char **argv)
 
 		// TODO: Load this from .scene file
 		// Lights
+
+		FrameRate* frameRate = new FrameRate (scene);
+		scene->AttachObject (frameRate);
 
 		Light* light = new Light ();
 		light->position = Vector3::Right + Vector3::Up + Vector3::Forward;
@@ -256,6 +243,9 @@ void InitializeScene (int argc, char **argv)
 
 void OnWindowResize (Vector3 dimensions) 
 {
+	Screen::Instance ()->SetWidth (dimensions.x);
+	Screen::Instance ()->SetHeight (dimensions.y);
+
 	SDL_Surface* surface = SDL_GetVideoSurface ();
 	SDL_FreeSurface(surface);
 	SDL_SetVideoMode((int)dimensions.x,(int)dimensions.y,32,SDL_OPENGL | SDL_HWSURFACE | SDL_RESIZABLE | SDL_DOUBLEBUF);
@@ -268,6 +258,9 @@ void OnWindowResize (Vector3 dimensions)
 
 int main(int argc, char **argv) 
 {
+	Screen::Instance ()->SetWidth (640);
+	Screen::Instance ()->SetHeight (480);
+
 	// set window values
 	win.width = 640;
 	win.height = 480;
@@ -291,7 +284,7 @@ int main(int argc, char **argv)
 	InitializeScene (argc, argv);
 	
 	Time::Init();
-
+	
 	while(running)
 	{
 		Input::UpdateState ();

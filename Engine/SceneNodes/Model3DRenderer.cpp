@@ -39,24 +39,24 @@ void Model3DRenderer::Draw ()
 			mat = MaterialManager::Instance ().Default ();
 		}
 
-		glBlendFunc (mat->blending.first, mat->blending.second);
+		GL::BlendFunc (mat->blending.first, mat->blending.second);
 
 		Pipeline::SendMaterial (mat);
 
 		//bind pe containerul de stare de geometrie (vertex array object)
-		glBindVertexArray(_drawableObjects [i].VAO_INDEX);
+		GL::BindVertexArray(_drawableObjects [i].VAO_INDEX);
 		//comanda desenare
-		glDrawElementsInstanced(GL_TRIANGLES, _drawableObjects [i].INDEX_COUNT, GL_UNSIGNED_INT, 0, 1);
+		GL::DrawElements (GL_TRIANGLES, _drawableObjects [i].INDEX_COUNT, GL_UNSIGNED_INT, 0);
 	}
 }
 
 void Model3DRenderer::Clear ()
 {
 	for (std::size_t i=0;i<_drawableObjects.size ();i++) {		
-		glDeleteVertexArrays(1, &_drawableObjects [i].VAO_INDEX);
-		glDeleteBuffers(1, &_drawableObjects [i].VBO_INDEX);
-		glDeleteBuffers(1, &_drawableObjects [i].VBO_INSTANCE_INDEX);
-		glDeleteBuffers(1, &_drawableObjects [i].IBO_INDEX);
+		GL::DeleteVertexArrays(1, &_drawableObjects [i].VAO_INDEX);
+		GL::DeleteBuffers(1, &_drawableObjects [i].VBO_INDEX);
+		GL::DeleteBuffers(1, &_drawableObjects [i].VBO_INSTANCE_INDEX);
+		GL::DeleteBuffers(1, &_drawableObjects [i].IBO_INDEX);
 	}
 
 	_drawableObjects.clear ();
@@ -122,27 +122,27 @@ BufferObject Model3DRenderer::BindVertexData (const std::vector<VertexData>& vBu
 	unsigned int VAO, VBO, IBO;
 
 	//creaza vao
-	glGenVertexArrays(1 , &VAO);
-	glBindVertexArray(VAO);
+	GL::GenVertexArrays(1 , &VAO);
+	GL::BindVertexArray(VAO);
 
 	//creeaza vbo
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(VertexData)*vBuf.size(), &vBuf[0], GL_STATIC_DRAW);
+	GL::GenBuffers(1, &VBO);
+	GL::BindBuffer(GL_ARRAY_BUFFER, VBO);
+	GL::BufferData(GL_ARRAY_BUFFER, sizeof(VertexData)*vBuf.size(), &vBuf[0], GL_STATIC_DRAW);
 	
 	//creeaza ibo
-	glGenBuffers(1, &IBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*iBuf.size(), &iBuf[0], GL_STATIC_DRAW);
+	GL::GenBuffers(1, &IBO);
+	GL::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+	GL::BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*iBuf.size(), &iBuf[0], GL_STATIC_DRAW);
 	
 	// metoda 1: seteaza atribute folosind pipe-urile interne ce fac legatura OpenGL - GLSL, in shader folosim layout(location = pipe_index)
 	// metoda cea mai buna, specificare explicita prin qualificator layout)
-	glEnableVertexAttribArray(0);																	//activare pipe 0
-	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(VertexData),(void*)0);						//trimite pozitii pe pipe 0
-	glEnableVertexAttribArray(1);																	//activare pipe 1
-	glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,sizeof(VertexData),(void*)(sizeof(float) * 3));		//trimite normale pe pipe 1
-	glEnableVertexAttribArray(2);																	//activare pipe 2
-	glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,sizeof(VertexData),(void*)(sizeof(float) * 6));		//trimite texcoorduri pe pipe 2
+	GL::EnableVertexAttribArray(0);																	//activare pipe 0
+	GL::VertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(VertexData),(void*)0);						//trimite pozitii pe pipe 0
+	GL::EnableVertexAttribArray(1);																	//activare pipe 1
+	GL::VertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,sizeof(VertexData),(void*)(sizeof(float) * 3));		//trimite normale pe pipe 1
+	GL::EnableVertexAttribArray(2);																	//activare pipe 2
+	GL::VertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,sizeof(VertexData),(void*)(sizeof(float) * 6));		//trimite texcoorduri pe pipe 2
 
 	//numar de indecsi
 	std::size_t indexCount = iBuf.size();

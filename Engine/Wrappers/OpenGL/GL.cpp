@@ -2,6 +2,58 @@
 
 #include "Core/Console/Console.h"
 
+// Viewport
+
+void GL::Viewport(GLint x,  GLint y,  GLsizei width,  GLsizei height)
+{
+	glViewport(x, y, width, height); 
+
+	ErrorCheck ("glViewport");
+}
+
+// Frame Buffer
+
+void GL::Clear(GLbitfield  mask)
+{
+	glClear (mask);
+
+	ErrorCheck ("glClear");
+}
+
+void GL::ClearColor(GLclampf red,  GLclampf green,  GLclampf blue,  GLclampf alpha)
+{
+	glClearColor(red, green, blue, alpha);
+
+	ErrorCheck ("glClearColor");
+} 
+
+// Behaviour
+
+void GL::Hint(GLenum target,  GLenum mode)
+{
+	glHint (target, mode);
+
+	ErrorCheck ("glHint");
+}
+
+// Culling
+
+void GL::CullFace(GLenum mode)
+{
+	glCullFace (mode);
+
+	ErrorCheck ("glCullFace");
+}
+
+// Draw Calls
+
+void GL::DrawElements (GLenum mode, GLsizei count, GLenum type, const void* indices)
+{
+	glDrawElements (mode, count, type, indices);
+
+	ErrorCheck ("glDrawElements");
+}
+
 void GL::DrawElementsInstanced (GLenum mode, GLsizei count, GLenum type, const void* indices, GLsizei primcount)
 {
 	glDrawElementsInstanced (mode, count, type, indices, primcount);
@@ -73,6 +125,20 @@ void GL::DepthMask (GLboolean flag)
 	ErrorCheck ("glDepthMask");
 }
 
+void GL::ClearDepth(GLclampd  depth)
+{
+	glClearDepth (depth);
+
+	ErrorCheck ("glClearDepth");
+}
+
+void GL::DepthFunc(GLenum func)
+{
+	glDepthFunc(func);
+
+	ErrorCheck ("glDepthFunc");
+}
+
 // Blending
 
 void GL::BlendFunc (GLenum sfactor, GLenum dfactor)
@@ -91,11 +157,95 @@ void GL::BlendFunci (GLuint buf, GLenum sfactor, GLenum dfactor)
 
 // Generators
 
+void GL::GenVertexArrays (GLsizei n, GLuint * arrays)
+{
+	glGenVertexArrays (n, arrays);
+
+	ErrorCheck ("glGenVertexArrays");
+}
+
 void GL::GenBuffers(GLsizei n,  GLuint * buffers)
 {
 	glGenBuffers (n, buffers);
 
 	ErrorCheck ("glGenBuffers");
+}
+
+void GL::GenTextures(GLsizei n,  GLuint * textures)
+{
+	glGenTextures (n, textures);
+
+	ErrorCheck ("glGenTextures");
+}
+
+// Capabilities
+
+void GL::Enable (GLenum cap)
+{
+	glEnable (cap);
+
+	ErrorCheck ("glEnable");
+}
+
+void GL::Disable (GLenum cap)
+{
+	glDisable (cap);
+
+	ErrorCheck ("glDisable");
+}
+
+void GL::IsEnabled(GLenum cap, bool *val)
+{
+	*val = glIsEnabled (cap);
+
+	ErrorCheck ("glIsEnabled");
+}
+
+// Textures
+
+void GL::BindTexture(GLenum target, GLuint texture)
+{
+	glBindTexture (target, texture);
+
+	ErrorCheck ("glBindTexture");
+}
+
+void GL::TexImage2D(GLenum target,  GLint level,  GLint internalformat,  
+	GLsizei width,  GLsizei height,  GLint border,  GLenum format,  
+	GLenum type,  const GLvoid * data)
+{
+	glTexImage2D (target, level, internalformat, width, height, border,
+		format, type, data);
+
+	ErrorCheck ("glTexImage2D");
+}
+
+void GL::TexEnvi(GLenum target,  GLenum pname,  GLint param)
+{
+	glTexEnvi (target, pname, param);
+
+	ErrorCheck ("glTexEnvi");
+}
+
+void GL::TexEnvf(GLenum target,  GLenum pname,  GLfloat param)
+{
+	glTexEnvf (target, pname, param);
+
+	ErrorCheck ("glTexEnvf");
+}
+
+void GL::TexParameteri(GLenum target,  GLenum pname,  GLint param)
+{
+	glTexParameteri(target, pname, param); 
+
+	ErrorCheck ("glTexParameteri");
+}
+
+void GL::TexParameterf(GLenum target,  GLenum pname,  GLfloat param)
+{
+	glTexParameterf (target, pname, param);
+
+	ErrorCheck ("glTexParameterf");
 }
 
 // Getters
@@ -125,6 +275,27 @@ void GL::GetIntegerv(GLenum pname, GLint * params)
 	glGetIntegerv(pname, params);
 
 	ErrorCheck ("glGetIntegerv");
+}
+
+// Cleaning
+
+void GL::DeleteVertexArrays(GLsizei n, const GLuint *arrays)
+{
+	glDeleteVertexArrays(n, arrays);
+
+	ErrorCheck ("glDeleteVertexArrays");
+}
+
+void GL::DeleteBuffers (GLsizei n, const GLuint* arrays)
+{
+	glDeleteBuffers (n, arrays);
+
+	ErrorCheck ("glDeleteBuffers");
+}
+
+void GL::Check ()
+{
+	ErrorCheck ("Custom Query");
 }
 
 void GL::ErrorCheck (const std::string& methodName)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Scene>
-	<Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
+ 	<Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
 	<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Street Environment/Street environment_V01.obj" >
 		<Transform>
 			<Position y="-0.1" />
@@ -52,9 +52,9 @@
 			<Gravity use="false" />
 		</Rigidbody>
 	</GameObject>
- 	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" >
+<!--  	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" >
 		<Transform>
-			<Position x="-2" y="2" />
+			<Position x=-10 />
 			<Rotation />
 			<Scale />
 		</Transform>
@@ -82,7 +82,7 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
-	</ParticleSystem>
+	</ParticleSystem> -->
 <!-- 	<ParticleSystem InstanceID="8" name="Snow" path="Assets/ParticleSystem/Snow/Snow.psys" >
 		<Transform>
 			<Position y="20" z="-5" />
@@ -123,4 +123,4 @@
 			<Gravity use="false" />
 		</Rigidbody>
 	</ParticleSystem> -->
-4</Scene>
+</Scene>

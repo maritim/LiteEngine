@@ -11,6 +11,7 @@
 #include "Texture/CubeMap.h"
 #include "VisualEffects/ParticleSystem/ParticleSystem.h"
 #include "Skybox/Skybox.h"
+#include "Fonts/BitmapFont.h"
 
 class Resources
 {
@@ -22,6 +23,8 @@ public:
 	static TextureAtlas* LoadTextureAtlas (const std::string& filename);
 	static CubeMap* LoadCubemap (const std::vector<std::string>& filenames);
 //	static unsigned int Load_R5G6B5_BMP (const std::string filename);
+
+	static BitmapFont* LoadBitmapFont (const std::string& filename); 
 
 	static MaterialLibrary* LoadMaterialLibrary (const std::string& filename);
 	static ParticleSystem* LoadParticleSystem (const std::string& filename);

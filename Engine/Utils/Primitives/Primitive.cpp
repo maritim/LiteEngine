@@ -28,13 +28,6 @@ Primitive::~Primitive ()
 
 }
 
-Primitive& Primitive::Instance ()
-{
-	static Primitive primitive;
-
-	return primitive;
-}
-
 Model* Primitive::Create (Type type)
 {
 	Model* primitive = new Model (*_primitives [type]);
