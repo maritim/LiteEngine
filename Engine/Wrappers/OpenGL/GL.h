@@ -59,6 +59,7 @@ public:
 	static void TexEnvf(GLenum target,  GLenum pname,  GLfloat param);
 	static void TexParameteri(GLenum target,  GLenum pname,  GLint param);
 	static void TexParameterf(GLenum target,  GLenum pname,  GLfloat param);
+	static void GenerateMipmap(GLenum target);
 
 	// Capabilities
 	static void Enable (GLenum cap);

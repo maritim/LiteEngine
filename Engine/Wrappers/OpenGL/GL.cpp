@@ -248,6 +248,13 @@ void GL::TexParameterf(GLenum target,  GLenum pname,  GLfloat param)
 	ErrorCheck ("glTexParameterf");
 }
 
+void GL::GenerateMipmap (GLenum target)
+{
+	glGenerateMipmap(target);
+
+	ErrorCheck ("glGenerateMipmap");
+}
+
 // Getters
 void GL::GetBooleanv(GLenum pname, GLboolean * params)
 {
