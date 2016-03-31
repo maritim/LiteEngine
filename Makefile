@@ -2,6 +2,8 @@
 # Thank you so much to Fiz for his answer on topic 
 # "Makefile template for c++ large projects". Source:
 # http://stackoverflow.com/questions/14844268/makefile-template-for-large-c-project
+#
+# Thanks to Alexandru Naiman for optimisation ideas
 ###################################################
 
 # Project Name (executable)
@@ -13,7 +15,7 @@ CC = g++
 COMMANDLINE_OPTIONS = /dev/ttyS0
 
 # Compiler options during compilation
-COMPILE_OPTIONS = -g -std=c++11 -I$(HEADERS)
+COMPILE_OPTIONS = -g0 -march=native -mtune=native -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -foptimize-strlen -ftree-loop-distribution -ftree-loop-distribute-patterns -ffast-math -flto -std=c++11 -I$(HEADERS)
 
 #Header include directories
 HEADERS = Engine
