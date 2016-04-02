@@ -3,6 +3,8 @@
 
 #include <algorithm>
 
+#include "Core/Math/glm/glm.hpp"
+
 namespace Extensions
 {
 
@@ -14,6 +16,10 @@ namespace Extensions
 
 		template <class T>
 		static T Clamp (T n, T lower, T upper);
+
+		static float Ctan (float x);
+
+		static glm::mat4 Rotate (const glm::vec3& quat);
 	};
 
 	template <class T>

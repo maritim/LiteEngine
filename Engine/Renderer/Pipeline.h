@@ -6,31 +6,35 @@
 #include "SceneGraph/Transform.h"
 #include "Material/Material.h"
 
+#include "Core/Math/glm/glm.hpp"
+
 #include "PipelineAttribute.h"
+
+#include "Shader/Shader.h"
 
 // TODO: Refactor this
 
 class Pipeline
 {
 private:
-	static Matrix _modelMatrix;
-	static Matrix _viewMatrix;
-	static Matrix _projectionMatrix;
+	static glm::mat4 _modelMatrix;
+	static glm::mat4 _viewMatrix;
+	static glm::mat4 _projectionMatrix;
 
-	static Vector3 _cameraPosition;
+	static glm::vec3 _cameraPosition;
 
 	static std::size_t _textureCount;
 
 public:
-	static void SetShader (unsigned int shader);
+	static void SetShader (Shader* shader);
 
 	static void SetCameraPosition (Vector3 position);
 	static void SetCameraRotation (Vector3 eulerAngle);
 	static void SetObjectTransform (Transform *transform);
 	static void CreatePerspective (float FOV, float aspect, float zNear, float zFar);
 
-	static void UpdateMatrices (unsigned int program);
-	static void SendLights (unsigned int program);
+	static void UpdateMatrices (Shader* shader);
+	static void SendLights (Shader* shader);
 	static void SendMaterial (Material* material);
 	// TODO: Reimplement this
 	static void SendCustomAttributes (const std::string& shadername, 

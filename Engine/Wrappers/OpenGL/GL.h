@@ -7,17 +7,30 @@
 class GL
 {
 public:
-	// Viewport
+	
+	/*
+	 * Viewport
+	*/
+
 	static void Viewport(GLint x,  GLint y,  GLsizei width,  GLsizei height); 
 
-	// Frame Buffer
+	/*
+	 * Frame Buffer
+	*/
+
 	static void Clear(GLbitfield  mask);
 	static void ClearColor(GLclampf red,  GLclampf green,  GLclampf blue,  GLclampf alpha); 
 
-	// Culling
+	/*
+	 * Culling
+	*/
+
 	static void CullFace(GLenum mode);
 
-	// Behaviour
+	/*
+	 * Behaviour 
+	*/
+
 	static void Hint(GLenum target,  GLenum mode);
 
 	// Draw Calls
@@ -61,18 +74,46 @@ public:
 	static void TexParameterf(GLenum target,  GLenum pname,  GLfloat param);
 	static void GenerateMipmap(GLenum target);
 
-	// Capabilities
+	/*
+	 * Shaders
+	*/
+
+	static GLuint CreateShader(GLenum shaderType);
+	static void DeleteShader(GLuint shader);
+	static void ShaderSource(GLuint shader, GLsizei count, const GLchar **string, const GLint *length);	
+	static void CompileShader(GLuint shader);
+	static void GetShaderInfoLog(GLuint  shader,  GLsizei  maxLength,  GLsizei * length,  GLchar * infoLog);
+
+	static GLuint CreateProgram(void);
+	static void DeleteProgram(GLuint program);
+	static void UseProgram (GLuint program);
+	static void LinkProgram(GLuint program);
+
+	static void AttachShader(GLuint program, GLuint shader);
+	static void DetachShader(GLuint program, GLuint shader);
+	static GLint GetUniformLocation(GLuint program, const GLchar *name);
+
+	/*
+	 * Capabilities
+	*/
+
 	static void Enable (GLenum cap);
 	static void Disable (GLenum cap);
 	static void IsEnabled(GLenum cap, bool *val);
 
-	// Getters
+	/*
+	 * Getters
+	*/
+
 	static void GetBooleanv(GLenum pname, GLboolean * params); 
 	static void GetFixedv(GLenum pname, GLfixed * params); 
 	static void GetFloatv(GLenum pname, GLfloat * params); 
 	static void GetIntegerv(GLenum pname, GLint * params);
 
-	// Cleaning
+	/*
+	 * Cleaning 
+	*/
+
 	static void DeleteVertexArrays (GLsizei n, const GLuint *arrays);
 	static void DeleteBuffers(GLsizei n, const GLuint * buffers);
 

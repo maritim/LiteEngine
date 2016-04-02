@@ -2,7 +2,9 @@
 
 #include "Core/Console/Console.h"
 
-// Viewport
+/*
+ * Viewport
+*/
 
 void GL::Viewport(GLint x,  GLint y,  GLsizei width,  GLsizei height)
 {
@@ -11,7 +13,9 @@ void GL::Viewport(GLint x,  GLint y,  GLsizei width,  GLsizei height)
 	ErrorCheck ("glViewport");
 }
 
-// Frame Buffer
+/*
+ * Frame Buffer
+*/
 
 void GL::Clear(GLbitfield  mask)
 {
@@ -27,7 +31,9 @@ void GL::ClearColor(GLclampf red,  GLclampf green,  GLclampf blue,  GLclampf alp
 	ErrorCheck ("glClearColor");
 } 
 
-// Behaviour
+/*
+ * Behaviour
+*/
 
 void GL::Hint(GLenum target,  GLenum mode)
 {
@@ -36,7 +42,9 @@ void GL::Hint(GLenum target,  GLenum mode)
 	ErrorCheck ("glHint");
 }
 
-// Culling
+/* 
+ * Culling
+*/
 
 void GL::CullFace(GLenum mode)
 {
@@ -45,7 +53,9 @@ void GL::CullFace(GLenum mode)
 	ErrorCheck ("glCullFace");
 }
 
-// Draw Calls
+/*
+ * Draw Calls
+*/
 
 void GL::DrawElements (GLenum mode, GLsizei count, GLenum type, const void* indices)
 {
@@ -61,7 +71,9 @@ void GL::DrawElementsInstanced (GLenum mode, GLsizei count, GLenum type, const v
 	ErrorCheck ("glDrawElementsInstanced");
 }
 
-// Buffers
+/*
+ * Buffers
+*/
 
 void GL::BufferData (GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage)
 {
@@ -77,7 +89,9 @@ void GL::BufferSubData (GLenum target, GLintptr offset, GLsizeiptr size, const G
 	ErrorCheck ("glBufferSubData");
 }
 
-// Attributes
+/*
+ * Attributes
+*/
 
 void GL::EnableVertexAttribArray (GLuint index)
 {
@@ -100,7 +114,9 @@ void GL::VertexAttribDivisor(GLuint index, GLuint divisor)
 	ErrorCheck ("glVertexAttribDivisor");
 }
 
-// Bindings
+/*
+ * Bindings
+*/
 
 void GL::BindVertexArray (GLuint array)
 {
@@ -116,7 +132,9 @@ void GL::BindBuffer(GLenum target, GLuint buffer)
 	ErrorCheck ("glBindBuffer");
 }
 
-// Depth Test
+/*
+ * Depth Test
+*/
 
 void GL::DepthMask (GLboolean flag)
 {
@@ -139,7 +157,9 @@ void GL::DepthFunc(GLenum func)
 	ErrorCheck ("glDepthFunc");
 }
 
-// Blending
+/*
+ * Blending
+*/
 
 void GL::BlendFunc (GLenum sfactor, GLenum dfactor)
 {
@@ -155,7 +175,9 @@ void GL::BlendFunci (GLuint buf, GLenum sfactor, GLenum dfactor)
 	ErrorCheck ("glBlendFunci");
 }
 
-// Generators
+/*
+ * Generators
+*/
 
 void GL::GenVertexArrays (GLsizei n, GLuint * arrays)
 {
@@ -178,7 +200,9 @@ void GL::GenTextures(GLsizei n,  GLuint * textures)
 	ErrorCheck ("glGenTextures");
 }
 
-// Capabilities
+/*
+ * Capabilities
+*/
 
 void GL::Enable (GLenum cap)
 {
@@ -201,7 +225,9 @@ void GL::IsEnabled(GLenum cap, bool *val)
 	ErrorCheck ("glIsEnabled");
 }
 
-// Textures
+/*
+ * Textures
+*/
 
 void GL::BindTexture(GLenum target, GLuint texture)
 {
@@ -255,7 +281,105 @@ void GL::GenerateMipmap (GLenum target)
 	ErrorCheck ("glGenerateMipmap");
 }
 
-// Getters
+/*
+ * Shaders
+*/
+
+GLuint GL::CreateShader (GLenum shaderType)
+{
+	GLuint shader = glCreateShader(shaderType);
+
+	ErrorCheck ("glCreateShader");
+
+	return shader;
+}
+
+void GL::DeleteShader(GLuint shader)
+{
+	glDeleteShader (shader);
+
+	ErrorCheck ("glDeleteShader");
+}
+
+void GL::ShaderSource (GLuint shader, GLsizei count, const GLchar **string, const GLint *length)
+{
+	glShaderSource(shader, count, string, length);	
+
+	ErrorCheck ("glShaderSource");
+}
+
+void GL::CompileShader(GLuint shader)
+{
+	glCompileShader (shader);
+
+	ErrorCheck ("glCompileShader");
+}
+
+void GL::GetShaderInfoLog(GLuint  shader,  GLsizei  maxLength,  GLsizei * length,  GLchar * infoLog)
+{
+	glGetShaderInfoLog(shader, maxLength, length, infoLog);
+
+	ErrorCheck ("glGetShaderInfoLog");
+}
+
+GLuint GL::CreateProgram(void)
+{
+	GLuint program = glCreateProgram ();
+
+	ErrorCheck ("glCreateProgram");
+
+	return program;
+}
+
+void GL::DeleteProgram(GLuint program)
+{
+	glDeleteProgram (program);
+
+	ErrorCheck ("glDeleteProgram");
+}
+
+void GL::UseProgram (GLuint program)
+{
+	glUseProgram (program);
+
+	ErrorCheck ("glUseProgram");
+}
+
+void GL::LinkProgram(GLuint program)
+{
+	glLinkProgram (program);
+
+	ErrorCheck ("glLinkProgram");
+}
+
+void GL::AttachShader(GLuint program, GLuint shader)
+{
+	glAttachShader(program, shader);
+
+	ErrorCheck ("glAttachShader");
+}
+
+void GL::DetachShader(GLuint program, GLuint shader)
+{
+	glDetachShader (program, shader);
+
+	ErrorCheck ("glDetachShader");
+}
+
+
+GLint GL::GetUniformLocation(GLuint program, const GLchar *name)
+{
+	GLint uniformLocation = glGetUniformLocation(program, name);
+
+	ErrorCheck ("glGetUniformLocation");
+
+	return uniformLocation;
+}
+
+/*
+ * Getters
+*/
+
 void GL::GetBooleanv(GLenum pname, GLboolean * params)
 {
 	glGetBooleanv (pname, params);
@@ -284,7 +408,9 @@ void GL::GetIntegerv(GLenum pname, GLint * params)
 	ErrorCheck ("glGetIntegerv");
 }
 
-// Cleaning
+/*
+ * Cleaning
+*/
 
 void GL::DeleteVertexArrays(GLsizei n, const GLuint *arrays)
 {

@@ -3,7 +3,7 @@
 <Light>
 	<Type type="DIRECTIONAL_LIGHT" />
 
-	<Color r="255" g="255" b="255" />
+	<Color r=" 255" g="244 " b="215" />
 	<SpecularColor r="25" g="25" b="25" />
 
 	<Attenuation constant="1.0" linear="0.1" quadratic="0.01" />

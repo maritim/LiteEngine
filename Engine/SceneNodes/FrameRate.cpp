@@ -6,7 +6,9 @@
 #include "Resources/Resources.h"
 #include "SceneNodes/TextGUI.h"
 
-FrameRate::FrameRate (Scene* currentScene)
+FrameRate::FrameRate (Scene* currentScene) :
+	_timeElapsed (0),
+	_computeRange (0.3f)
 {
 	Font* font = Resources::LoadBitmapFont ("Assets/Fonts/Fonts/sans.fnt");
 
@@ -17,6 +19,8 @@ FrameRate::FrameRate (Scene* currentScene)
 
 void FrameRate::Update() 
 {
+	_timeElapsed += Time::GetDeltaTime ();
+
 	static float lastFrameRate = -1;
 
 	float dt = Time::GetDeltaTime();
@@ -28,7 +32,12 @@ void FrameRate::Update()
 		lastFrameRate = 0.9 * lastFrameRate + 0.1 * roughFrameRate;
 	}
 
+	if (_timeElapsed < _computeRange) {
+		return ;
+	}
+
 	_textGUI->SetText (std::to_string (lastFrameRate));
+	_timeElapsed = 0;
 }
 
 void FrameRate::Draw()

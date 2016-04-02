@@ -4,27 +4,28 @@
 #include <string>
 #include <map>
 #include <fstream>
-#include <vector>
 
 #include "Core/Console/Console.h"
 
-std::map<std::string, unsigned int> ShaderManager::_shaderCollection;
-std::map<unsigned int, std::pair<unsigned int, unsigned int>> ShaderManager::_programShadersLink;
+#include "Wrappers/OpenGL/GL.h"
+
+std::map<std::string, Shader*> ShaderManager::_shaderCollection;
 
 // medium priority TODO: Improve this
 void ShaderManager::LoadShaderFile (const std::string& filename, std::string& content)
 {
-	std::ifstream f(filename);
+	std::ifstream f (filename);
 
 	if (!f.is_open ()) {
-		Console::LogError ("File " + filename + " could not be opened!");
+		Console::LogError ("Shader " + filename + " could not be opened!");
+
 		return ;
 	}
 
-	char line[300];
+	std::string line;
 
 	while (!f.eof ()) {
-		f.getline (line, 300);
+		std::getline (f, line);
 		content += line;
 		content += "\n";
 	}
@@ -35,17 +36,14 @@ void ShaderManager::LoadShaderFile (const std::string& filename, std::string& co
 unsigned int ShaderManager::LoadShader (const std::string& source, unsigned int mode)
 {
 	unsigned int id;
-	id = glCreateShader (mode);
+	id = GL::CreateShader (mode);
 
 	const char* csource = source.c_str ();
 
- 	glShaderSource (id, 1, &csource, NULL);
-	glCompileShader (id);
+ 	GL::ShaderSource (id, 1, &csource, NULL);
+	GL::CompileShader (id);
 
-	char error[1000];
-	glGetShaderInfoLog (id, 1000, NULL, error);
-	std::string stderror = error;
-	Console::Log ("Compile status (empty means compile successfully) : " + stderror);
+	ErrorCheck (id);
 
 	return id;
 }
@@ -58,8 +56,9 @@ int ShaderManager::AddShader (const std::string& shaderName,
 	}
 
 	unsigned int vertex, fragment, program;
+	std::string source;
 
-	std::string source = "";
+	source = "";
 	LoadShaderFile (vertexFile, source);
 	vertex = LoadShader (source, GL_VERTEX_SHADER);
 
@@ -67,14 +66,17 @@ int ShaderManager::AddShader (const std::string& shaderName,
 	LoadShaderFile (fragmentFile, source);
 	fragment = LoadShader (source, GL_FRAGMENT_SHADER);
 
-	program = glCreateProgram ();
-	glAttachShader (program, vertex);
-	glAttachShader (program, fragment);
+	program = GL::CreateProgram ();
+	GL::AttachShader (program, vertex);
+	GL::AttachShader (program, fragment);
 
-	glLinkProgram (program);
+	GL::LinkProgram (program);
 
-	_shaderCollection [shaderName] = program;
-	_programShadersLink [program] = std::make_pair (vertex, fragment);
+	Shader* shader = new Shader (shaderName, program, vertex, fragment);
+	shader->SetVertexFilename (vertexFile);
+	shader->SetFragmentFilename (fragmentFile);
+
+	_shaderCollection [shaderName] = shader;
 
 	return 0; 
 }
@@ -85,35 +87,27 @@ int ShaderManager::DeleteShader (const std::string& shaderName)
 		return 1;
 	}
 
-	unsigned int program = _shaderCollection [shaderName];
+	Shader* shader = _shaderCollection [shaderName];
 
-	if (_programShadersLink.find (program) != _programShadersLink.end ()) {
-		return -1;
-	}
+	GL::DetachShader (shader->GetProgram (), shader->GetVertexShader ());
+	GL::DetachShader (shader->GetProgram (), shader->GetFragmentShader ());
 
-	std::pair<unsigned int, unsigned int> shaders = _programShadersLink [program];
+	GL::DeleteShader (shader->GetVertexShader ());
+	GL::DeleteShader (shader->GetFragmentShader ());
 
-	glDetachShader (program, shaders.first);
-	glDetachShader (program, shaders.second);
-
-	glDeleteShader (shaders.first);
-	glDeleteShader (shaders.second);
-
-	_programShadersLink.erase (program);
-
-	glDeleteProgram (program);
+	GL::DeleteProgram (shader->GetProgram ());
 
 	_shaderCollection.erase (shaderName);
 
 	return 0;
 }
 
-unsigned int ShaderManager::GetShader (const std::string& shaderName)
+Shader* ShaderManager::GetShader (const std::string& shaderName)
 {
-	std::map<std::string, unsigned int>::iterator it = _shaderCollection.find (shaderName);
+	std::map<std::string, Shader*>::iterator it = _shaderCollection.find (shaderName);
 
 	if (it == _shaderCollection.end ()) {
-		return 0;
+		return nullptr;
 	}
 
 	return it->second;
@@ -121,16 +115,21 @@ unsigned int ShaderManager::GetShader (const std::string& shaderName)
 
 void ShaderManager::Clear ()
 {
-	std::vector<std::string> collection;
-	std::map<std::string, unsigned int>::iterator it = _shaderCollection.begin ();
+	std::map<std::string, Shader*>::iterator it = _shaderCollection.begin ();
 	for (;it != _shaderCollection.end ();it++) {
-		collection.push_back (it->first);
-	}
-
-	for (std::vector<std::string>::iterator itv = collection.begin ();itv < collection.end ();itv++) {
-		DeleteShader (*itv);
+		DeleteShader (it->first);
 	}
 
 	_shaderCollection.clear ();
-	_programShadersLink.clear ();
+}
+
+void ShaderManager::ErrorCheck (unsigned int shader)
+{
+	char *error = (char*) malloc (10000);
+
+	GL::GetShaderInfoLog (shader, 10000, NULL, error);
+
+	Console::Log ("Compile status (empty means compiles successfully) : " + (std::string) error);
+
+	delete error;
 }

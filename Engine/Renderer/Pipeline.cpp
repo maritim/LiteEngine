@@ -14,71 +14,62 @@
 
 #include "PipelineAttribute.h"
 
-Matrix Pipeline::_modelMatrix (4, 4);
-Matrix Pipeline::_viewMatrix (4, 4);
-Matrix Pipeline::_projectionMatrix (4, 4);
-Vector3 Pipeline::_cameraPosition;
+#include "Utils/Extensions/MathExtend.h"
+
+#include "Wrappers/OpenGL/GL.h"
+
+#include "Core/Math/glm/gtc/matrix_transform.hpp"
+#include "Core/Math/glm/gtc/type_ptr.hpp"
+
+glm::mat4 Pipeline::_modelMatrix (0);
+glm::mat4 Pipeline::_viewMatrix (0);
+glm::mat4 Pipeline::_projectionMatrix (0);
+glm::vec3 Pipeline::_cameraPosition;
 std::size_t Pipeline::_textureCount (0);
 
-inline float ctan (float x)
+void Pipeline::SetShader (Shader* shader)
 {
-	return 1.0f / tan (x);
-}
-
-void Pipeline::SetShader (unsigned int shader)
-{
-	glUseProgram (shader);
+	GL::UseProgram (shader->GetProgram ());
 
 	_textureCount = 0;
 }
 
+#include "Core/Debug/Debug.h"
+
 void Pipeline::CreatePerspective (float FOV, float aspect, float zNear, float zFar)
 {
-	_projectionMatrix = Matrix::Zero (4, 4);
-
-	float f = ctan (FOV / 2);
-
-	_projectionMatrix [0][0] = f / aspect;
-	_projectionMatrix [1][1] = f;
-	_projectionMatrix [2][2] = (zNear + zFar) / (zNear - zFar);
-	_projectionMatrix [3][2] = -1;
-	_projectionMatrix [2][3] = (2 * zNear * zFar) / (zNear - zFar);
-
-	// _projectionMatrix [0][0] = f / aspect;
-	// _projectionMatrix [1][1] = f;
-	// _projectionMatrix [2][2] = (zNear + zFar) / (zNear - zFar);
-	// _projectionMatrix [3][2] = -1;
-	// _projectionMatrix [2][3] = (2 * zNear * zFar) / (zNear - zFar);	
+	_projectionMatrix = glm::perspective (FOV, aspect, zNear, zFar);
 }
 
 void Pipeline::SetCameraPosition (Vector3 position)
 {
-	_cameraPosition = position;
+	_cameraPosition = glm::vec3 (position.x, position.y, position.z);
 
-	_viewMatrix = _viewMatrix * Matrix::Translate (-position.x, -position.y, -position.z);
+	_viewMatrix =  glm::translate (_viewMatrix, glm::vec3 (-position.x, -position.y, -position.z));
 }
 
 void Pipeline::SetCameraRotation (Vector3 eulerAngle)
 {
-	_viewMatrix = Matrix::Identity (4);
+	_viewMatrix = glm::mat4 (1.f);
 
-	eulerAngle.Normalize ();
+	glm::vec3 euler (eulerAngle.x, eulerAngle.y, eulerAngle.z);
+	euler = glm::normalize (euler);
 
-    Vector3 zaxis = (eulerAngle * -1).Normalized ();    
-    Vector3 xaxis = (Vector3::Up.Cross (zaxis)).Normalized ();
-    Vector3 yaxis = zaxis.Cross (xaxis);     
+	glm::vec3 zaxis = glm::normalize (euler * glm::vec3 (-1, -1, -1));
+	glm::vec3 xaxis = glm::normalize (glm::cross (glm::vec3 (0, 1, 0), zaxis));
+	glm::vec3 yaxis = glm::cross (zaxis, xaxis);
 
-    _viewMatrix [0][0] = xaxis.x;
-    _viewMatrix [1][0] = yaxis.x;
-    _viewMatrix [2][0] = zaxis.x;
+	_viewMatrix [0][0] = xaxis.x;
+	_viewMatrix [0][1] = yaxis.x;
+	_viewMatrix [0][2] = zaxis.x;
 
-    _viewMatrix [0][1] = xaxis.y;
-    _viewMatrix [1][1] = yaxis.y;
-    _viewMatrix [2][1] = zaxis.y;
+	_viewMatrix [1][0] = xaxis.y;
+	_viewMatrix [1][1] = yaxis.y;
+	_viewMatrix [1][2] = zaxis.y;
 
-    _viewMatrix [0][2] = xaxis.z;
-    _viewMatrix [1][2] = yaxis.z;
-    _viewMatrix [2][2] = zaxis.z;
+	_viewMatrix [2][0] = xaxis.z;
+	_viewMatrix [2][1] = yaxis.z;
+	_viewMatrix [2][2] = zaxis.z;
 }
 
 void Pipeline::SetObjectTransform (Transform* transform)
@@ -87,78 +78,44 @@ void Pipeline::SetObjectTransform (Transform* transform)
 	Vector3 scalev = transform->GetScale ();
 	Vector3 rotationv = transform->GetRotation ();
 
-	Matrix translate = Matrix::Translate (position.x, position.y, position.z);
-	Matrix scale = Matrix::Scale (scalev.x, scalev.y, scalev.z);
-	Matrix rotation = Matrix::Rotate (rotationv.x, rotationv.y, rotationv.z);
+	glm::mat4 translate = glm::translate (glm::mat4 (1.f), glm::vec3 (position.x, position.y, position.z));
+	glm::mat4 scale = glm::scale (glm::mat4 (1.f), glm::vec3 (scalev.x, scalev.y, scalev.z));
+	glm::mat4 rotation = 
+		glm::rotate (glm::mat4 (1.0f), rotationv.y, glm::vec3 (0.0f, 1.0f, 0.0f)) * 
+		glm::rotate (glm::mat4 (1.0f), rotationv.z, glm::vec3 (0.0f, 0.0f, 1.0f)) *
+		glm::rotate (glm::mat4 (1.0f), rotationv.x, glm::vec3 (1.0f, 0.0f, 0.0f));
 
 	_modelMatrix = translate * scale * rotation;
 }
 
-void Pipeline::UpdateMatrices (unsigned int program)
+void Pipeline::UpdateMatrices (Shader* shader)
 {
-	Matrix modelViewMatrix = _viewMatrix * _modelMatrix;
-	Matrix modelViewProjectionMatrix = _projectionMatrix * _viewMatrix * _modelMatrix;
+	glm::mat4 modelViewMatrix = _viewMatrix * _modelMatrix;
+	glm::mat4 modelViewProjectionMatrix = _projectionMatrix * _viewMatrix * _modelMatrix;
 
-	Matrix normalMatrix (3, 3);
+	glm::mat3 normalWorldMatrix = glm::transpose (glm::inverse (glm::mat3 (modelViewMatrix)));
+	glm::mat3 normalMatrix = glm::transpose (glm::inverse (glm::mat3 (_modelMatrix)));
 
-	for (int i=0;i<3;i++) {
-		for (int j=0;j<3;j++) {
-			normalMatrix [i][j] = modelViewMatrix [i][j];
-		}
-	}
+	glUniformMatrix4fv (shader->GetUniformLocation ("modelMatrix"), 1, GL_FALSE, glm::value_ptr (_modelMatrix));
+	glUniformMatrix4fv (shader->GetUniformLocation ("viewMatrix"), 1, GL_FALSE, glm::value_ptr (_viewMatrix));
+	glUniformMatrix4fv (shader->GetUniformLocation ("modelViewMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewMatrix));
+	glUniformMatrix4fv (shader->GetUniformLocation ("projectionMatrix"), 1, GL_FALSE, glm::value_ptr (_projectionMatrix));
+	glUniformMatrix4fv (shader->GetUniformLocation ("modelViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewProjectionMatrix));
+	glUniformMatrix3fv (shader->GetUniformLocation ("normalMatrix"), 1, GL_FALSE, glm::value_ptr (normalMatrix));
+	glUniformMatrix3fv (shader->GetUniformLocation ("normalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (normalWorldMatrix));
+	glUniform3fv (shader->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_cameraPosition));
 
-	normalMatrix = normalMatrix.Inverse ().Transpose ();
+	GL::Check ();
 
-	Matrix normalWorldMatrix (3, 3);
-
-	for (int i=0;i<3;i++) {
-		for (int j=0;j<3;j++) {
-			normalWorldMatrix [i][j] = _modelMatrix [i][j];
-		}
-	}
-
-	normalWorldMatrix = normalWorldMatrix.Inverse ().Transpose ();
-
-	float* matrix = _modelMatrix.C_Matrix ();
-	glUniformMatrix4fv (glGetUniformLocation (program, "modelMatrix"), 1, GL_TRUE, matrix);
-	delete matrix;
-
-	matrix = _viewMatrix.C_Matrix ();
-	glUniformMatrix4fv (glGetUniformLocation (program, "viewMatrix"), 1, GL_TRUE, matrix);
-	delete matrix;
-
-	matrix = modelViewMatrix.C_Matrix ();
-	glUniformMatrix4fv (glGetUniformLocation (program, "modelViewMatrix"), 1, GL_TRUE, matrix);
-	delete matrix;
-
-	matrix = _projectionMatrix.C_Matrix ();
-	glUniformMatrix4fv (glGetUniformLocation (program, "projectionMatrix"), 1, GL_TRUE, matrix);
-	delete matrix;
-
-	matrix = modelViewProjectionMatrix.C_Matrix ();
-	glUniformMatrix4fv (glGetUniformLocation (program, "modelViewProjectionMatrix"), 1, GL_TRUE, matrix);
-	delete matrix;
-
-	matrix = normalMatrix.C_Matrix ();
-	glUniformMatrix3fv (glGetUniformLocation (program, "normalMatrix"), 1, GL_TRUE, matrix);
-	delete matrix;
-
-	matrix = normalWorldMatrix.C_Matrix ();
-	glUniformMatrix3fv (glGetUniformLocation (program, "normalWorldMatrix"), 1, GL_TRUE, matrix);
-	delete matrix;
-
-	glUniform3f(glGetUniformLocation(program,"cameraPosition"),_cameraPosition.x,
-		_cameraPosition.y, _cameraPosition.z);
-
-	SendLights (program);
+	SendLights (shader);
 }
 
-void Pipeline::SendLights (unsigned int program)
+void Pipeline::SendLights (Shader* shader)
 {
 	Vector3 vec = LightsManager::Instance ()->GetAmbientColorLight ();
 	Color color;
 
-	glUniform3f(glGetUniformLocation(program,"sceneAmbient"), vec.x, vec.y, vec.z);
+	glUniform3f(shader->GetUniformLocation ("sceneAmbient"), vec.x, vec.y, vec.z);
 
 	const int lightsLimit = 3;
 
@@ -166,9 +123,13 @@ void Pipeline::SendLights (unsigned int program)
 	int pointLightCount = 0;
 	int directionalLightCount = 0;
 
+	// DEBUG_LOG ("DSSDSDS");
 	for (std::size_t i=0;i<LightsManager::Instance ()->Size ();i++) {
+		// DEBUG_LOG ("LUMINA");
 		Light* light = LightsManager::Instance ()->GetLight (i);
 		std::string address;
+
+		glm::vec4 vec4 (vec.x, vec.y, vec.z, 1.0);
 
 		switch (light->GetType ()) {
 			case Light::Type::DIRECTIONAL_LIGHT :
@@ -177,16 +138,19 @@ void Pipeline::SendLights (unsigned int program)
 				}
 
 				vec = light->GetTransform ()->GetPosition ();
+				// DEBUG_LOG (vec.ToString ());
+				//vec4 = glm::vec4 (vec.x, vec.y, vec.z, 0.0);
 				address = "directionalLights[" + std::to_string (directionalLightCount) + "].position";
-				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 0.0);
+				glUniform4f (glGetUniformLocation (shader->GetProgram (), address.c_str ()), vec.x, vec.y, vec.z, 0.0);
 
 				vec = light->GetColor ().ToVector3 ();
+				// DEBUG_LOG (vec.ToString ());
 				address = "directionalLights[" + std::to_string (directionalLightCount) + "].diffuse";
-				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
 				vec = light->GetSpecularColor ().ToVector3 ();
 				address = "directionalLights[" + std::to_string (directionalLightCount) + "].specular";
-				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
 				++ directionalLightCount;
 
@@ -197,25 +161,26 @@ void Pipeline::SendLights (unsigned int program)
 				}
 
 				vec = light->GetTransform ()->GetPosition ();
+				vec4 = glm::vec4 (vec.x, vec.y, vec.z, 1.0);
 				address = "pointLights[" + std::to_string (pointLightCount) + "].position";
-				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+				glUniform4fv (shader->GetUniformLocation (address.c_str ()), 1, glm::value_ptr (vec4));
 
 				vec = light->GetColor ().ToVector3 ();
 				address = "pointLights[" + std::to_string (pointLightCount) + "].diffuse";
-				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
 				vec = light->GetColor ().ToVector3 ();
 				address = "pointLights[" + std::to_string (pointLightCount) + "].specular";
-				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
 				address = "pointLights[" + std::to_string (pointLightCount) + "].constantAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetConstantAttenuation ());
+				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetConstantAttenuation ());
 
 				address = "pointLights[" + std::to_string (pointLightCount) + "].linearAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetLinearAttenuation ());
+				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetLinearAttenuation ());
 
 				address = "pointLights[" + std::to_string (pointLightCount) + "].quadraticAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetQuadraticAttenuation ());
+				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetQuadraticAttenuation ());
 
 				++ pointLightCount;
 
@@ -227,34 +192,34 @@ void Pipeline::SendLights (unsigned int program)
 
 				vec = light->GetTransform ()->GetPosition ();
 				address = "spotLights[" + std::to_string (spotLightCount) + "].position";
-				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
 				vec = light->GetColor ().ToVector3 ();
 				address = "spotLights[" + std::to_string (spotLightCount) + "].diffuse";
-				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
 				vec = light->GetColor ().ToVector3 ();
 				address = "spotLights[" + std::to_string (spotLightCount) + "].specular";
-				glUniform4f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
 				address = "spotLights[" + std::to_string (spotLightCount) + "].constantAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetConstantAttenuation ());
+				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetConstantAttenuation ());
 
 				address = "spotLights[" + std::to_string (spotLightCount) + "].linearAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetLinearAttenuation ());
+				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetLinearAttenuation ());
 
 				address = "spotLights[" + std::to_string (spotLightCount) + "].quadraticAttenuation";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetQuadraticAttenuation ());
+				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetQuadraticAttenuation ());
 
 				address = "spotLights[" + std::to_string (spotLightCount) + "].spotCutoff";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetSpotCutoff ());
+				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetSpotCutoff ());
 
 				address = "spotLights[" + std::to_string (spotLightCount) + "].spotExponent";
-				glUniform1f (glGetUniformLocation (program, address.c_str ()), light->GetSpotExponent ());
+				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetSpotExponent ());
 
 				vec = light->GetSpotDirection ();
 				address = "spotLights[" + std::to_string (spotLightCount) + "].spotDirection";
-				glUniform3f (glGetUniformLocation (program, address.c_str ()), vec.x, vec.y, vec.z);
+				glUniform3f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z);
 
 				++ spotLightCount;
 
@@ -262,18 +227,18 @@ void Pipeline::SendLights (unsigned int program)
 		}
 	}
 
-	glUniform1i (glGetUniformLocation(program, "spotLightCount"), spotLightCount);
-	glUniform1i (glGetUniformLocation(program, "pointLightCount"), pointLightCount);
-	glUniform1i (glGetUniformLocation(program, "directionalLightCount"), directionalLightCount);
+	glUniform1i (shader->GetUniformLocation ("spotLightCount"), spotLightCount);
+	glUniform1i (shader->GetUniformLocation ("pointLightCount"), pointLightCount);
+	glUniform1i (shader->GetUniformLocation ("directionalLightCount"), directionalLightCount);
 }
 
 void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::vector<PipelineAttribute>& attr)
 {
-	unsigned int program = ShaderManager::GetShader (shaderName);
+	Shader* shader = ShaderManager::GetShader (shaderName);
 
 	for (std::size_t i=0;i<attr.size ();i++) {
 
-		int unifLoc = glGetUniformLocation (program, attr [i].name.c_str ());
+		int unifLoc = shader->GetUniformLocation (attr [i].name.c_str ());
 
 		switch (attr [i].type) {
 			case PipelineAttribute::ATTR_1I :
@@ -318,67 +283,65 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 
 void Pipeline::SendMaterial(Material* mat)
 {
-//			std::cout << mat->shaderName << "\n";
+	Shader* shader = ShaderManager::GetShader (mat->shaderName);
 
-	unsigned int program = ShaderManager::GetShader (mat->shaderName);
-
-	if (program == 0) {
-		program = ShaderManager::GetShader ("DEFAULT");
+	if (shader == nullptr) {
+		shader = ShaderManager::GetShader ("DEFAULT");
 	}
 
-	SetShader (program);
+	SetShader (shader);
 
-	Pipeline::UpdateMatrices (program);
+	Pipeline::UpdateMatrices (shader);
 
 	// Send basic material attributes to shader
-	glUniform4f (glGetUniformLocation (program, "MaterialDiffuse"), mat->diffuseColor.x, 
+	glUniform4f (shader->GetUniformLocation ("MaterialDiffuse"), mat->diffuseColor.x, 
 		mat->diffuseColor.y, mat->diffuseColor.z, 1.0);
-	glUniform4f (glGetUniformLocation (program, "MaterialAmbient"), mat->ambientColor.x,
+	glUniform4f (shader->GetUniformLocation ("MaterialAmbient"), mat->ambientColor.x,
 		mat->ambientColor.y, mat->ambientColor.z, 1.0);
-	glUniform4f (glGetUniformLocation (program, "MaterialSpecular"), mat->specularColor.x,
+	glUniform4f (shader->GetUniformLocation ("MaterialSpecular"), mat->specularColor.x,
 		mat->specularColor.y, mat->specularColor.z, 1.0);
-	glUniform1f (glGetUniformLocation (program, "MaterialShininess"), mat->shininess);
-	glUniform1f (glGetUniformLocation (program, "MaterialTransparency"), mat->transparency);
+	glUniform1f (shader->GetUniformLocation ("MaterialShininess"), mat->shininess);
+	glUniform1f (shader->GetUniformLocation ("MaterialTransparency"), mat->transparency);
 
 	// Send maps to shader
 	glActiveTexture (GL_TEXTURE0);
-	glBindTexture (GL_TEXTURE_2D, TextureManager::Instance ().Default ()->GetGPUIndex ());
+	GL::BindTexture (GL_TEXTURE_2D, TextureManager::Instance ().Default ()->GetGPUIndex ());
 	++ _textureCount;
 
 	if (mat->ambientTexture) {
 		glActiveTexture (GL_TEXTURE0+_textureCount);
-		glBindTexture (GL_TEXTURE_2D, mat->ambientTexture);
-		glUniform1i (glGetUniformLocation (program, "AmbientMap"), _textureCount);
+		GL::BindTexture (GL_TEXTURE_2D, mat->ambientTexture);
+		glUniform1i (shader->GetUniformLocation ("AmbientMap"), _textureCount);
 		_textureCount ++;
 	} else {
-		glUniform1i (glGetUniformLocation (program, "AmbientMap"), 0);
+		glUniform1i (shader->GetUniformLocation ("AmbientMap"), 0);
 	}
 
 	if (mat->diffuseTexture) {
 		glActiveTexture (GL_TEXTURE0+_textureCount);
-		glBindTexture (GL_TEXTURE_2D, mat->diffuseTexture);
-		glUniform1i (glGetUniformLocation (program, "DiffuseMap"), _textureCount);
+		GL::BindTexture (GL_TEXTURE_2D, mat->diffuseTexture);
+		glUniform1i (shader->GetUniformLocation ("DiffuseMap"), _textureCount);
 		++ _textureCount;
 	} else {
-		glUniform1i (glGetUniformLocation (program, "DiffuseMap"), 0);
+		glUniform1i (shader->GetUniformLocation ("DiffuseMap"), 0);
 	}
 
 	if (mat->specularTexture) {
 		glActiveTexture (GL_TEXTURE0 + _textureCount);
-		glBindTexture (GL_TEXTURE_2D, mat->specularTexture);
-		glUniform1i (glGetUniformLocation (program, "SpecularMap"), _textureCount);
+		GL::BindTexture (GL_TEXTURE_2D, mat->specularTexture);
+		glUniform1i (shader->GetUniformLocation ("SpecularMap"), _textureCount);
 		++ _textureCount;
 	} else {
-		glUniform1i (glGetUniformLocation (program, "SpecularMap"), 0);
+		glUniform1i (shader->GetUniformLocation ("SpecularMap"), 0);
 	}
 
 	if (mat->alphaTexture) {
 		glActiveTexture (GL_TEXTURE0 + _textureCount);
-		glBindTexture (GL_TEXTURE_2D, mat->alphaTexture);
-		glUniform1i (glGetUniformLocation (program, "AlphaMap"), _textureCount);
+		GL::BindTexture (GL_TEXTURE_2D, mat->alphaTexture);
+		glUniform1i (shader->GetUniformLocation ("AlphaMap"), _textureCount);
 		++ _textureCount;
 	} else {
-		glUniform1i (glGetUniformLocation (program, "AlphaMap"), 0);
+		glUniform1i (shader->GetUniformLocation ("AlphaMap"), 0);
 	}
 
 	// Send custom attributes
@@ -391,7 +354,7 @@ void Pipeline::SendMaterial(Material* mat)
 			Texture* tex = TextureManager::Instance ().GetTexture (mat->attributes [k].valueName);
 			unsigned int textureID = tex->GetGPUIndex ();
 			glBindTexture (GL_TEXTURE_2D, textureID);
-			glUniform1i (glGetUniformLocation (program, mat->attributes [k].name.c_str ()), _textureCount);
+			glUniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
 
 			++ _textureCount;
 		}
@@ -407,17 +370,17 @@ void Pipeline::SendMaterial(Material* mat)
 			}
 
 			glBindTexture (GL_TEXTURE_CUBE_MAP, textureID);
-			glUniform1i (glGetUniformLocation (program, mat->attributes [k].name.c_str ()), _textureCount);
+			glUniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
 
 			++ _textureCount;
 		}
 		else if (mat->attributes [k].type == Attribute::AttrType::ATTR_FLOAT) {
 			float value = mat->attributes [k].values.x;
-			glUniform1f (glGetUniformLocation (program, mat->attributes [k].name.c_str ()), value);
+			glUniform1f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), value);
 		}
 		else if (mat->attributes [k].type == Attribute::AttrType::ATTR_VEC3) {
 			Vector3 values = mat->attributes [k].values;
-			glUniform3f (glGetUniformLocation (program, mat->attributes [k].name.c_str ()), 
+			glUniform3f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), 
 				values.x, values.y, values.z);
 		}
 	}

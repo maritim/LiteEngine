@@ -8,8 +8,12 @@
 
 class FrameRate : public SceneObject
 {
+private:
+	float _timeElapsed;
+	float _computeRange;
 protected:
 	TextGUI* _textGUI;
+
 public:
 	FrameRate (Scene* currentScene);
 

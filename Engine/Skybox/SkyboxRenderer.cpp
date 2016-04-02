@@ -13,6 +13,7 @@
 #include "Wrappers/OpenGL/GL.h"
 
 #include "Managers/ShaderManager.h"
+#include "Shader/Shader.h"
 
 SkyboxRenderer::SkyboxRenderer (CubeMap*& map, Color* tint, float *bt, std::string shn) :
 	Model3DRenderer (NULL),
@@ -37,13 +38,13 @@ void SkyboxRenderer::Draw ()
 
 	GL::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	unsigned int program = ShaderManager::GetShader (_shaderName);
-	Pipeline::SetShader (program);
+	Shader* shader = ShaderManager::GetShader (_shaderName);
+	Pipeline::SetShader (shader);
 
 	Pipeline::SetObjectTransform (Transform::Default ());
 
 	for (std::size_t i=0;i<_drawableObjects.size ();i++) {
-		Pipeline::UpdateMatrices (program);
+		Pipeline::UpdateMatrices (shader);
 
 		ManageCustomAttributes ();
 

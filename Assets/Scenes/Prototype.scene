@@ -63,9 +63,9 @@
 		</Transform>
 	</Light>
 
-<!--  	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" >
+ 	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" >
 		<Transform>
-			<Position x=-10 />
+			<Position x=-10 z=-0.5 />
 			<Rotation />
 			<Scale />
 		</Transform>
@@ -93,7 +93,7 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
-	</ParticleSystem> -->
+	</ParticleSystem>
 <!-- 	<ParticleSystem InstanceID="8" name="Snow" path="Assets/ParticleSystem/Snow/Snow.psys" >
 		<Transform>
 			<Position y="20" z="-5" />
