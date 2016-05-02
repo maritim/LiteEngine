@@ -1,9 +1,7 @@
-#include <SDL/SDL.h>
-
 #include "Time.h"
 
-Uint32 Time::_currentTimeMS (0);
-Uint32 Time::_deltaTimeMS (0);
+uint32_t Time::_currentTimeMS (0);
+uint32_t Time::_deltaTimeMS (0);
 
 float Time::GetDeltaTime()
 {
@@ -22,7 +20,7 @@ void Time::Init()
 
 void Time::UpdateFrame()
 {
-	Uint32 lastTimeMS = _currentTimeMS;
+	uint32_t lastTimeMS = _currentTimeMS;
 	_currentTimeMS = SDL_GetTicks();
 
 	_deltaTimeMS = _currentTimeMS - lastTimeMS;
