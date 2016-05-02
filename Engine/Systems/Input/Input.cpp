@@ -1,7 +1,5 @@
 #include "Input.h"
 
-#include <SDL/SDL.h>
-
 bool Input::_keyState[256];
 bool Input::_lastKeyState[256];
 bool Input::_lastMouseState[4];
@@ -11,7 +9,11 @@ Vector3 Input::_resizeEvent (Vector3::Zero);
 
 void Input::UpdateState ()
 {
-	for (int i=0;i<255;i++) {
+	/*
+	 * TODO: Change this with a map
+	*/
+
+	for (int i=0;i<KEYS_COUNT;i++) {
 		_lastKeyState [i] = _keyState [i];
 	}
 
@@ -30,15 +32,23 @@ void Input::UpdateState ()
 			case SDL_QUIT:
 				_sdlQuit = true;
 				break;
-			case SDL_VIDEORESIZE :
-				_resizeEvent.x = event.resize.w;
-				_resizeEvent.y = event.resize.h;
+	        case SDL_WINDOWEVENT:
+				if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+					_resizeEvent.x = event.window.data1;
+					_resizeEvent.y = event.window.data2;
+				}
 				break;
             case SDL_KEYDOWN:
-            	_keyState [(int)event.key.keysym.sym] = true;
+				if ((int)event.key.keysym.sym >= KEYS_COUNT) {
+					break;
+				}
+				_keyState[(int)event.key.keysym.sym] = true;
             	break;
             case SDL_KEYUP:
-            	_keyState [(int)event.key.keysym.sym] = false;
+				if ((int)event.key.keysym.sym >= KEYS_COUNT) {
+					break;
+				}
+				_keyState[(int)event.key.keysym.sym] = false;
                 break;
             case SDL_MOUSEBUTTONDOWN:
 				_mouseState [(int)event.button.button] = true;
