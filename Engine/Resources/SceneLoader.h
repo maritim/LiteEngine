@@ -30,6 +30,9 @@ private:
 	Vector3 GetRotation (TiXmlElement* xmlElem);
 	Vector3 GetScale (TiXmlElement* xmlElem);
 
+	void ProcessComponents (TiXmlElement* xmlElem, GameObject* gameObject);
+	void ProcessComponent (TiXmlElement* xmlElem, GameObject* gameObject);
+
 	void ProcessRigidbody (TiXmlElement* xmlElem, SceneObject* object);
 
 	void ProcessGravity (TiXmlElement* xmlElem, Rigidbody* rigidbody);

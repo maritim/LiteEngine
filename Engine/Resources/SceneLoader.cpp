@@ -7,6 +7,9 @@
 #include "Mesh/Model.h"
 #include "Skybox/Skybox.h"
 
+#include "Systems/Components/ComponentsFactory.h"
+#include "Systems/Components/Component.h"
+
 #include "Resources/Resources.h"
 
 #include "Utils/Extensions/StringExtend.h"
@@ -101,6 +104,9 @@ void SceneLoader::ProcessGameObject (TiXmlElement* xmlElem, Scene* scene)
 		}
 		else if (name == "Rigidbody") {
 			ProcessRigidbody (content, gameObject);
+		}
+		else if (name == "Components") {
+			ProcessComponents (content, gameObject);
 		}
 
 		content = content->NextSiblingElement ();
@@ -249,6 +255,35 @@ Vector3 SceneLoader::GetScale (TiXmlElement* xmlElem)
 	}
 
 	return vector3;
+}
+
+void SceneLoader::ProcessComponents (TiXmlElement* xmlElem, GameObject* gameObject)
+{
+	TiXmlElement* content = xmlElem->FirstChildElement ();
+
+	while (content)
+	{
+		std::string name = content->Value ();
+
+		if (name == "Component") {
+			ProcessComponent (content, gameObject);
+		}
+
+		content = content->NextSiblingElement ();
+	}
+}
+
+void SceneLoader::ProcessComponent (TiXmlElement* xmlElem, GameObject* gameObject)
+{
+	const char* name = xmlElem->Attribute ("name");
+
+	if (name == NULL) {
+		return;
+	}
+
+	Component* component = ComponentsFactory::Instance ()->Create ((std::string) name);
+
+	gameObject->AttachComponent (component);	
 }
 
 void SceneLoader::ProcessRigidbody (TiXmlElement* xmlElem, SceneObject* object)

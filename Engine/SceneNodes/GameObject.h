@@ -2,9 +2,11 @@
 #define GAMEOBJECT_H
 
 #include "SceneGraph/SceneObject.h"
+#include "Systems/Components/ComponentObjectI.h"
+
 #include "Mesh/Model.h"
 
-class GameObject : public SceneObject
+class GameObject : public SceneObject, public ComponentObjectI
 {
 private:
 	Model* _mesh;

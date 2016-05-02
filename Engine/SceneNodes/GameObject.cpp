@@ -35,30 +35,7 @@ Model* GameObject::GetMesh () const
 
 void GameObject::Update() 
 {
-	if (_name != "CowGirl") {
-		return;
-	}
 
-	Vector3 velocity;
-	float speed = 4.0f;
-
-	if (Input::GetKey ('i')) {
-		velocity += Vector3::Forward * speed * Time::GetDeltaTime();
-	}
-
-	if (Input::GetKey('k')) {
-		velocity += Vector3::Back * speed * Time::GetDeltaTime();
-	}
-
-	if (Input::GetKey('j')) {
-		velocity += Vector3::Left * speed * Time::GetDeltaTime();
-	}
-
-	if (Input::GetKey('l')) {
-		velocity += Vector3::Right * speed * Time::GetDeltaTime();
-	}
-
-	_transform->SetPosition (_transform->GetPosition () + velocity);
 }
 
 void GameObject::DestroyCurrentMesh ()
