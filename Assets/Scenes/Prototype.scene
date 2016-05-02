@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Scene>
- 	<Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
+	<Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
+<!-- 	<Camera path="Assets/Cameras/Main.cam" >
+		<Transform>
+			<Position y="-0.1" />
+			<Rotation />
+		</Transform>
+	</Camera> -->
 	<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Street Environment/Street environment_V01.obj" >
 		<Transform>
 			<Position y="-0.1" />
@@ -11,6 +17,10 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
+		<Components>
+			<Component name="CameraController" />
+			<Component name="FrameRate" />
+		</Components>
 	</GameObject>
 	<GameObject InstanceID="1" name="CowGirl" meshpath="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" >
 		<Transform>
@@ -63,7 +73,7 @@
 		</Transform>
 	</Light>
 
- 	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" >
+<!--  	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" >
 		<Transform>
 			<Position x=-10 z=-0.5 />
 			<Rotation />
@@ -82,9 +92,9 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
-	</ParticleSystem>
+	</ParticleSystem> -->
 
-	<ParticleSystem InstanceID="7" name="Fireworks" path="Assets/ParticleSystem/Fireworks/Fireworks.psys" >
+<!-- 	<ParticleSystem InstanceID="7" name="Fireworks" path="Assets/ParticleSystem/Fireworks/Fireworks.psys" >
 		<Transform>
 			<Position x="0" y="5" z="-5" />
 			<Rotation x="0" y="0" z="0" />
@@ -94,7 +104,7 @@
 			<Gravity use="false" />
 		</Rigidbody>
 	</ParticleSystem>
-<!-- 	<ParticleSystem InstanceID="8" name="Snow" path="Assets/ParticleSystem/Snow/Snow.psys" >
+  	<ParticleSystem InstanceID="8" name="Snow" path="Assets/ParticleSystem/Snow/Snow.psys" >
 		<Transform>
 			<Position y="20" z="-5" />
 			<Rotation />
