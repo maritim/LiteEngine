@@ -1,8 +1,8 @@
 #include "Screen.h"
 
-Screen::Screen () :
-	_screenWidth (0),
-	_screenHeight (0)
+#include "Systems/Window/Window.h"
+
+Screen::Screen ()
 {
 
 }
@@ -14,25 +14,29 @@ Screen::~Screen ()
 
 std::size_t Screen::GetWidth ()
 {
-	return _screenWidth;
+	return Window::GetWidth ();
 }
 
 std::size_t Screen::GetHeight ()
 {
-	return _screenHeight;
+	return Window::GetHeight ();
 }
 
 glm::uvec2 Screen::GetSize ()
 {
-	return glm::uvec2 (_screenWidth, _screenHeight);
+	return glm::uvec2 (Window::GetWidth (), Window::GetHeight ());
 }
 
 void Screen::SetWidth (std::size_t width)
 {
-	_screenWidth = width;
+	/* 
+	 * TODO: Update this. Send signal to Window.
+	*/
+
+//	_screenWidth = width;
 }
 
 void Screen::SetHeight (std::size_t height)
 {
-	_screenHeight = height;
+//	_screenHeight = height;
 }

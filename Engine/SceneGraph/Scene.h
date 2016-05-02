@@ -18,8 +18,6 @@ public:
 	Scene ();
 	virtual ~Scene ();
 
-	static Scene* Current ();
-
 	void Init ();
 
 	void SetName (const std::string& name);

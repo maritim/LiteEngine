@@ -3,7 +3,7 @@
 
 #include "Core/Interfaces/Object.h"
 
-#include <SDL/SDL_image.h>
+#include <SDL2/SDL_image.h>
 
 #include "Core/Math/glm/glm.hpp"
 

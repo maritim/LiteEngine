@@ -1,6 +1,10 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
+/*
+ * Did I really need this?
+*/
+
 #include "Core/Singleton/Singleton.h"
 
 #include <cstddef>
@@ -10,10 +14,6 @@
 class Screen : public Singleton<Screen>
 {
 	friend class Singleton<Screen>;
-
-private:
-	std::size_t _screenWidth;
-	std::size_t _screenHeight;
 
 public:
 	std::size_t GetWidth ();

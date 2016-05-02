@@ -3,7 +3,7 @@
 # "Makefile template for c++ large projects". Source:
 # http://stackoverflow.com/questions/14844268/makefile-template-for-large-c-project
 #
-# Thanks to Alexandru Naiman for optimisation ideas
+# Thanks to Alexandru Naiman for optimization ideas
 ###################################################
 
 # Project Name (executable)
@@ -20,7 +20,7 @@ COMPILE_OPTIONS = -g0 -march=native -mtune=native -funroll-loops -Ofast -fno-mat
 #Header include directories
 HEADERS = Engine
 #Libraries for linking
-LIBS = -lGL -lGLU -lGLEW `sdl-config --libs` -lSDL_image
+LIBS = -lGL -lGLU -lGLEW -lSDL2 -lSDL2_image
 
 # Dependency options
 DEPENDENCY_OPTIONS = -MM -std=c++11 -I$(HEADERS)

@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include <algorithm>
 
 #include "Scene.h"
 
@@ -10,6 +11,7 @@
 #include "Core/Console/Console.h"
 
 Scene::Scene () :
+	_name (""),
 	_sceneObjects ()
 {
 
@@ -20,13 +22,6 @@ void Scene::Init ()
 	Skybox::Set (_skybox);
 
 	PhysicsSystem::Instance ().Init (this);
-}
-
-Scene* Scene::Current ()
-{
-	static Scene* scene = new Scene ();
-
-	return scene;
 }
 
 void Scene::SetSkybox (Skybox *sky)
@@ -48,26 +43,23 @@ void Scene::AttachObject (SceneObject* object)
 
 void Scene::DetachObject (SceneObject* object)
 {
-	for (std::size_t i=0;i<_sceneObjects.size ();i++) {
-		if (_sceneObjects [i] != object) {
-			continue;
-		}
+	auto it = std::find (_sceneObjects.begin (), _sceneObjects.end (), object);
 
-		SceneObject* purged = _sceneObjects [i];
-
-		_sceneObjects [i] = _sceneObjects.back ();
-		_sceneObjects.pop_back ();
-
-		purged->OnDetachedFromScene ();
+	if (it == _sceneObjects.end ()) {
+		Console::LogWarning ("Try to remove an invalid object. Something must be wrong here...");
 
 		return ;
 	}
+
+	_sceneObjects.erase (it);
+
+	(*it)->OnDetachedFromScene ();
 }
 
 SceneObject* Scene::GetObjectAt (std::size_t index) const
 {
 	if (index > _sceneObjects.size ()) {
-		return NULL;
+		return nullptr;
 	}
 
 	return _sceneObjects [index];
@@ -83,7 +75,7 @@ SceneObject* Scene::GetObject (const std::string& name) const
 
 	Console::LogError ("There is no object with name " + name + " in scene.");
 
-	return NULL;
+	return nullptr;
 }
 
 std::size_t Scene::GetObjectsCount () const
@@ -98,6 +90,16 @@ void Scene::Update()
 	}
 }
 
+void Scene::SetName (const std::string& name)
+{
+	_name = name;
+}
+
+std::string Scene::GetName () const
+{
+	return _name;
+}
+
 Scene::~Scene ()
 {
 	for (std::size_t i=0;i<_sceneObjects.size ();i++) {
@@ -105,5 +107,5 @@ Scene::~Scene ()
 	}
 
 	_sceneObjects.clear ();
-	std::vector<SceneObject*> ().swap (_sceneObjects);
+	_sceneObjects.shrink_to_fit ();
 }

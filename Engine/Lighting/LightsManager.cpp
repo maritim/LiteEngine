@@ -11,12 +11,7 @@ LightsManager::LightsManager () :
 
 LightsManager::~LightsManager ()
 {
-	for (std::size_t i=0;i<_lights.size();i++) {
-		delete _lights [i];
-	}
 
-	_lights.clear ();
-	std::vector<Light*> ().swap (_lights);
 }
 
 void LightsManager::AddLight (Light* light)

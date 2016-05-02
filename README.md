@@ -3,7 +3,7 @@ LiteEngine
 
 Lite 3D Game Engine
 
-Unix Install Guide
+Debian Install Guide
 =================
 
 Get the project from GitHub
@@ -38,4 +38,4 @@ Build
         
 * Run the application using a prototype scene
 
-        ./GameEngine.out Assets/Scenes/Prototype.scene 
+        ./GameEngine.out --startscene Assets/Scenes/Prototype.scene 

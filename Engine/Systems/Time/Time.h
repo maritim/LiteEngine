@@ -4,13 +4,15 @@
 #ifndef TIME_H
 #define TIME_H
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
+
+#include <stdint.h>
 
 class Time
 {
 private:
-	static Uint32 _currentTimeMS;
-	static Uint32 _deltaTimeMS;
+	static uint32_t _currentTimeMS;
+	static uint32_t _deltaTimeMS;
 public:
 	static void Init();
 	static void UpdateFrame();
