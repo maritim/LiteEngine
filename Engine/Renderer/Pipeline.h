@@ -2,9 +2,9 @@
 #define PIPELINE_H
 
 #include "Core/Math/Vector3.h"
-#include "Core/Math/Matrix.h"
 #include "SceneGraph/Transform.h"
 #include "Material/Material.h"
+#include "Systems/Camera/Camera.h"
 
 #include "Core/Math/glm/glm.hpp"
 
@@ -28,9 +28,8 @@ private:
 public:
 	static void SetShader (Shader* shader);
 
-	static void SetCameraPosition (Vector3 position);
-	static void SetCameraRotation (Vector3 eulerAngle);
 	static void SetObjectTransform (Transform *transform);
+	static void SendCamera (Camera* camera);
 	static void CreatePerspective (float FOV, float aspect, float zNear, float zFar);
 
 	static void UpdateMatrices (Shader* shader);

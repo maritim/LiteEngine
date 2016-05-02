@@ -23,6 +23,7 @@
 #include <vector>
 
 #include "SceneGraph/Scene.h"
+#include "Systems/Camera/Camera.h"
 
 #include "Renderer.h"
 
@@ -30,7 +31,7 @@ class RenderManager : public Singleton<RenderManager>
 {
 	friend class Singleton<RenderManager>;
 public:
-	void RenderScene (Scene* scene);
+	void RenderScene (Scene* scene, Camera* camera);
 private:
 	RenderManager ();
 	RenderManager (const RenderManager& other);

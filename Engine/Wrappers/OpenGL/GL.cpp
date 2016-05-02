@@ -31,6 +31,27 @@ void GL::ClearColor(GLclampf red,  GLclampf green,  GLclampf blue,  GLclampf alp
 	ErrorCheck ("glClearColor");
 } 
 
+void GL::FramebufferTexture2D(GLenum target,  GLenum attachment,  GLenum textarget,  GLuint texture,  GLint level)
+{
+	glFramebufferTexture2D (target, attachment, textarget, texture, level);
+
+	ErrorCheck ("glFramebufferTexture2D");
+}
+
+void GL::DrawBuffers(GLsizei n, const GLenum *bufs)
+{
+	glDrawBuffers (n, bufs);
+
+	ErrorCheck ("glDrawBuffers");
+}
+
+void GL::BindFramebuffer(GLenum target,  GLuint framebuffer)
+{
+	glBindFramebuffer (target, framebuffer);
+
+	ErrorCheck ("glBindFramebuffer");
+}
+
 /*
  * Behaviour
 */
@@ -198,6 +219,13 @@ void GL::GenTextures(GLsizei n,  GLuint * textures)
 	glGenTextures (n, textures);
 
 	ErrorCheck ("glGenTextures");
+}
+
+void GL::GenFramebuffers(GLsizei n,  GLuint * framebuffers)
+{
+	glGenFramebuffers (n, framebuffers);
+
+	ErrorCheck ("glGenFramebuffers");
 }
 
 /*

@@ -20,6 +20,9 @@ public:
 
 	static void Clear(GLbitfield  mask);
 	static void ClearColor(GLclampf red,  GLclampf green,  GLclampf blue,  GLclampf alpha); 
+	static void FramebufferTexture2D(GLenum target,  GLenum attachment,  GLenum textarget,  GLuint texture,  GLint level);
+	static void DrawBuffers(GLsizei n, const GLenum *bufs);
+	static void BindFramebuffer(GLenum target,  GLuint framebuffer);
 
 	/*
 	 * Culling
@@ -33,7 +36,10 @@ public:
 
 	static void Hint(GLenum target,  GLenum mode);
 
-	// Draw Calls
+	/*
+	 * Draw Calls
+	*/
+
 	static void DrawElements (GLenum mode, GLsizei count, GLenum type, const void* indices);
 	static void DrawElementsInstanced (GLenum mode, GLsizei count, GLenum type, const void* indices, GLsizei primcount);
 
@@ -63,6 +69,7 @@ public:
 	static void GenVertexArrays (GLsizei n, GLuint * arrays);
 	static void GenBuffers(GLsizei n,  GLuint * buffers);
 	static void GenTextures(GLsizei n,  GLuint * textures);
+	static void GenFramebuffers(GLsizei n,  GLuint * framebuffers);
 
 	// Textures
 	static void BindTexture(GLenum target, GLuint texture);

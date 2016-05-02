@@ -1,7 +1,6 @@
 #include "Pipeline.h"
 
 #include <GL/glew.h>
-#include <cmath>
 
 #include "Lighting/LightsManager.h"
 #include "Lighting/Light.h"
@@ -14,10 +13,9 @@
 
 #include "PipelineAttribute.h"
 
-#include "Utils/Extensions/MathExtend.h"
-
 #include "Wrappers/OpenGL/GL.h"
 
+#include "Core/Math/glm/glm.hpp"
 #include "Core/Math/glm/gtc/matrix_transform.hpp"
 #include "Core/Math/glm/gtc/type_ptr.hpp"
 
@@ -34,24 +32,19 @@ void Pipeline::SetShader (Shader* shader)
 	_textureCount = 0;
 }
 
-#include "Core/Debug/Debug.h"
-
 void Pipeline::CreatePerspective (float FOV, float aspect, float zNear, float zFar)
 {
 	_projectionMatrix = glm::perspective (FOV, aspect, zNear, zFar);
 }
 
-void Pipeline::SetCameraPosition (Vector3 position)
+void Pipeline::SendCamera (Camera* camera)
 {
+	Vector3 position = camera->GetPosition ();
 	_cameraPosition = glm::vec3 (position.x, position.y, position.z);
 
-	_viewMatrix =  glm::translate (_viewMatrix, glm::vec3 (-position.x, -position.y, -position.z));
-}
-
-void Pipeline::SetCameraRotation (Vector3 eulerAngle)
-{
 	_viewMatrix = glm::mat4 (1.f);
 
+	Vector3 eulerAngle = camera->ToVector3 ();
 	glm::vec3 euler (eulerAngle.x, eulerAngle.y, eulerAngle.z);
 	euler = glm::normalize (euler);
 
@@ -70,6 +63,8 @@ void Pipeline::SetCameraRotation (Vector3 eulerAngle)
 	_viewMatrix [2][0] = xaxis.z;
 	_viewMatrix [2][1] = yaxis.z;
 	_viewMatrix [2][2] = zaxis.z;
+
+	_viewMatrix =  glm::translate (_viewMatrix, glm::vec3 (-position.x, -position.y, -position.z));		
 }
 
 void Pipeline::SetObjectTransform (Transform* transform)
@@ -80,8 +75,7 @@ void Pipeline::SetObjectTransform (Transform* transform)
 
 	glm::mat4 translate = glm::translate (glm::mat4 (1.f), glm::vec3 (position.x, position.y, position.z));
 	glm::mat4 scale = glm::scale (glm::mat4 (1.f), glm::vec3 (scalev.x, scalev.y, scalev.z));
-	glm::mat4 rotation = 
-		glm::rotate (glm::mat4 (1.0f), rotationv.y, glm::vec3 (0.0f, 1.0f, 0.0f)) * 
+	glm::mat4 rotation =  glm::rotate (glm::mat4 (1.0f), rotationv.y, glm::vec3 (0.0f, 1.0f, 0.0f)) * 
 		glm::rotate (glm::mat4 (1.0f), rotationv.z, glm::vec3 (0.0f, 0.0f, 1.0f)) *
 		glm::rotate (glm::mat4 (1.0f), rotationv.x, glm::vec3 (1.0f, 0.0f, 0.0f));
 
@@ -105,8 +99,6 @@ void Pipeline::UpdateMatrices (Shader* shader)
 	glUniformMatrix3fv (shader->GetUniformLocation ("normalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (normalWorldMatrix));
 	glUniform3fv (shader->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_cameraPosition));
 
-	GL::Check ();
-
 	SendLights (shader);
 }
 
@@ -123,9 +115,7 @@ void Pipeline::SendLights (Shader* shader)
 	int pointLightCount = 0;
 	int directionalLightCount = 0;
 
-	// DEBUG_LOG ("DSSDSDS");
 	for (std::size_t i=0;i<LightsManager::Instance ()->Size ();i++) {
-		// DEBUG_LOG ("LUMINA");
 		Light* light = LightsManager::Instance ()->GetLight (i);
 		std::string address;
 
@@ -138,13 +128,11 @@ void Pipeline::SendLights (Shader* shader)
 				}
 
 				vec = light->GetTransform ()->GetPosition ();
-				// DEBUG_LOG (vec.ToString ());
 				//vec4 = glm::vec4 (vec.x, vec.y, vec.z, 0.0);
 				address = "directionalLights[" + std::to_string (directionalLightCount) + "].position";
 				glUniform4f (glGetUniformLocation (shader->GetProgram (), address.c_str ()), vec.x, vec.y, vec.z, 0.0);
 
 				vec = light->GetColor ().ToVector3 ();
-				// DEBUG_LOG (vec.ToString ());
 				address = "directionalLights[" + std::to_string (directionalLightCount) + "].diffuse";
 				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 

@@ -4,7 +4,7 @@
 
 #include "Core/Math/Vector3.h"
 
-#include "Camera/Camera.h"
+#include "Systems/Camera/Camera.h"
 
 #include "Renderer/Pipeline.h"
 #include "Texture/Texture.h"
