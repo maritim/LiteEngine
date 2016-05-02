@@ -42,7 +42,7 @@ void Skybox::Init ()
         "Assets/Shaders/skyboxFragment.glsl"
     } ;
 
-    ShaderManager::AddShader (defaultShader [0], defaultShader [1], defaultShader [2]);
+    ShaderManager::Instance ()->AddShader (defaultShader [0], defaultShader [1], defaultShader [2]);
 }
 
 void Skybox::Set (Skybox* skybox)

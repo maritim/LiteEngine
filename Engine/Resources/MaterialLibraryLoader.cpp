@@ -88,7 +88,7 @@ void MaterialLibraryLoader::ProcessShaders(std::ifstream &file, Material* curren
 
 	Console::Log ("Shader name: " + shaderName);
 
-	ShaderManager::AddShader (shaderName, vertexFile, fragmentFile);
+	ShaderManager::Instance ()->AddShader (shaderName, vertexFile, fragmentFile);
 
 	currentMaterial->shaderName = shaderName;
 }

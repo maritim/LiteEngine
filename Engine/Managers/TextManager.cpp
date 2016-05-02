@@ -5,7 +5,7 @@
 TextManager::TextManager () :
 	_charLimits (2000)
 {
-	ShaderManager::AddShader ("DEFAULT_FONT", "Assets/Shaders/fontVertex.glsl", "Assets/Shaders/fontFragment.glsl");
+	ShaderManager::Instance ()->AddShader ("DEFAULT_FONT", "Assets/Shaders/fontVertex.glsl", "Assets/Shaders/fontFragment.glsl");
 
 	_shaderName = "DEFAULT_FONT";
 }

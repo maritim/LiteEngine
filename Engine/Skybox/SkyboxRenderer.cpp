@@ -38,7 +38,7 @@ void SkyboxRenderer::Draw ()
 
 	GL::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Shader* shader = ShaderManager::GetShader (_shaderName);
+	Shader* shader = ShaderManager::Instance ()->GetShader (_shaderName);
 	Pipeline::SetShader (shader);
 
 	Pipeline::SetObjectTransform (Transform::Default ());

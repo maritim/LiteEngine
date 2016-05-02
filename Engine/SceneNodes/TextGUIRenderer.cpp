@@ -10,7 +10,6 @@
 #include "Managers/TextManager.h"
 #include "Managers/ShaderManager.h"
 
-#include "Core/Debug/Debug.h"
 #include "Core/Console/Console.h"
 
 TextGUIRenderer::TextGUIRenderer () :
@@ -49,7 +48,7 @@ void TextGUIRenderer::Draw ()
 
 	std::string shaderName = TextManager::Instance ()->GetShaderName ();
 
-	Pipeline::SetShader (ShaderManager::GetShader (shaderName));
+	Pipeline::SetShader (ShaderManager::Instance ()->GetShader (shaderName));
 	Pipeline::SendCustomAttributes (shaderName, uniformAttributes);
 	
 	GL::BindVertexArray (_bufferObject.VAO_INDEX);
@@ -147,8 +146,6 @@ void TextGUIRenderer::UpdateText ()
 	_buffer = CharBufferData (_text, _font, glm::vec2 (_transform->GetScale ().x, _transform->GetScale ().y));
 	_iBuf = CharIndexData (_text.size ());
 }
-
-#include "Core/Debug/Debug.h"
 
 Buffer<float> TextGUIRenderer::CharBufferData (const std::string& text, Font* font, const glm::vec2& scale)
 {

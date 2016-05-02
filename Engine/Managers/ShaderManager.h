@@ -1,27 +1,35 @@
 #ifndef SHADERMANAGER_H
 #define SHADERMANAGER_H
 
+#include "Core/Singleton/Singleton.h"
+
 #include <string>
 #include <map>
 
 #include "Shader/Shader.h"
 
-class ShaderManager
+class ShaderManager : public Singleton<ShaderManager>
 {
+	friend Singleton<ShaderManager>;
+
 private:
-	static std::map<std::string, Shader*> _shaderCollection;
+	std::map<std::string, Shader*> _shaderCollection;
 
 public:
-	static int AddShader (const std::string& shaderName,
+	int AddShader (const std::string& shaderName,
 		const std::string& vertexFile, const std::string& fragmentFile);
-	static int DeleteShader (const std::string& shaderName);
-	static Shader* GetShader (const std::string& shaderName);
-	static void Clear ();
+	int DeleteShader (const std::string& shaderName);
+	Shader* GetShader (const std::string& shaderName);
 
 private:
-	static void LoadShaderFile (const std::string& fileName, std::string& content);
-	static unsigned int LoadShader (const std::string& content, unsigned int mode);
-	static void ErrorCheck (unsigned int shader);
+	ShaderManager ();
+	~ShaderManager ();
+	ShaderManager (const ShaderManager&);
+	ShaderManager& operator=(const ShaderManager&);
+
+	void LoadShaderFile (const std::string& fileName, std::string& content);
+	unsigned int LoadShader (const std::string& content, unsigned int mode);
+	void ErrorCheck (unsigned int shader);
 };
 
 #endif

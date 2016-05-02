@@ -222,7 +222,7 @@ void Pipeline::SendLights (Shader* shader)
 
 void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::vector<PipelineAttribute>& attr)
 {
-	Shader* shader = ShaderManager::GetShader (shaderName);
+	Shader* shader = ShaderManager::Instance ()->GetShader (shaderName);
 
 	for (std::size_t i=0;i<attr.size ();i++) {
 
@@ -271,10 +271,10 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 
 void Pipeline::SendMaterial(Material* mat)
 {
-	Shader* shader = ShaderManager::GetShader (mat->shaderName);
+	Shader* shader = ShaderManager::Instance ()->GetShader (mat->shaderName);
 
 	if (shader == nullptr) {
-		shader = ShaderManager::GetShader ("DEFAULT");
+		shader = ShaderManager::Instance ()->GetShader ("DEFAULT");
 	}
 
 	SetShader (shader);

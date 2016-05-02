@@ -9,7 +9,20 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
-std::map<std::string, Shader*> ShaderManager::_shaderCollection;
+ShaderManager::ShaderManager ()
+{
+	AddShader ("DEFAULT", "Assets/Shaders/defaultVertex.glsl", "Assets/Shaders/defaultFragment.glsl");	
+}
+
+ShaderManager::~ShaderManager ()
+{
+	std::map<std::string, Shader*>::iterator it = _shaderCollection.begin ();
+	for (;it != _shaderCollection.end ();it++) {
+		DeleteShader (it->first);
+	}
+
+	_shaderCollection.clear ();
+}
 
 // medium priority TODO: Improve this
 void ShaderManager::LoadShaderFile (const std::string& filename, std::string& content)
@@ -111,16 +124,6 @@ Shader* ShaderManager::GetShader (const std::string& shaderName)
 	}
 
 	return it->second;
-}
-
-void ShaderManager::Clear ()
-{
-	std::map<std::string, Shader*>::iterator it = _shaderCollection.begin ();
-	for (;it != _shaderCollection.end ();it++) {
-		DeleteShader (it->first);
-	}
-
-	_shaderCollection.clear ();
 }
 
 void ShaderManager::ErrorCheck (unsigned int shader)
