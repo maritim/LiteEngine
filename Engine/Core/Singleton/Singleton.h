@@ -34,6 +34,7 @@
 #define SINGLETON_H
 
 #include <utility>
+#include <cstdlib>
 
 template <typename T>
 class Singleton
