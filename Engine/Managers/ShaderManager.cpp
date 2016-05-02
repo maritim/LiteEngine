@@ -11,7 +11,8 @@
 
 ShaderManager::ShaderManager ()
 {
-	AddShader ("DEFAULT", "Assets/Shaders/defaultVertex.glsl", "Assets/Shaders/defaultFragment.glsl");	
+	// AddShader ("DEFAULT", "Assets/Shaders/defaultVertex.glsl", "Assets/Shaders/defaultFragment.glsl");	
+	AddShader ("DEFAULT", "Assets/Shaders/deferredVertex.glsl", "Assets/Shaders/deferredFragment.glsl");
 }
 
 ShaderManager::~ShaderManager ()
@@ -71,9 +72,13 @@ int ShaderManager::AddShader (const std::string& shaderName,
 	unsigned int vertex, fragment, program;
 	std::string source;
 
+	Console::Log ("Loading and compiling \"" + vertexFile + "\" !");
+
 	source = "";
 	LoadShaderFile (vertexFile, source);
 	vertex = LoadShader (source, GL_VERTEX_SHADER);
+
+	Console::Log ("Loading and compiling \"" + fragmentFile + "\" !");
 
 	source = "";
 	LoadShaderFile (fragmentFile, source);

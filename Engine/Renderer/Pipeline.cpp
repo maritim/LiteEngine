@@ -99,7 +99,7 @@ void Pipeline::UpdateMatrices (Shader* shader)
 	glUniformMatrix3fv (shader->GetUniformLocation ("normalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (normalWorldMatrix));
 	glUniform3fv (shader->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_cameraPosition));
 
-	SendLights (shader);
+	// SendLights (shader);
 }
 
 void Pipeline::SendLights (Shader* shader)

@@ -4,6 +4,7 @@ Renderer::Renderer() :
 	_priority (0),
 	_transform (new Transform ())
 {
+
 }
 
 Renderer::Renderer (Transform* transform) :

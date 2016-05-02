@@ -23,6 +23,8 @@ public:
 	static void FramebufferTexture2D(GLenum target,  GLenum attachment,  GLenum textarget,  GLuint texture,  GLint level);
 	static void DrawBuffers(GLsizei n, const GLenum *bufs);
 	static void BindFramebuffer(GLenum target,  GLuint framebuffer);
+	static void BlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, 
+		GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
 
 	/*
 	 * Culling

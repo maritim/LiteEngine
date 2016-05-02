@@ -32,7 +32,7 @@ void Game::Start ()
 
 	Time::Init ();
 
-	SDL_GL_SetSwapInterval (1);
+	// SDL_GL_SetSwapInterval (1);
 
 	while(running)
 	{
@@ -67,11 +67,7 @@ void Game::UpdateScene()
 	PhysicsSystem::Instance ().UpdateScene ();
 }
 
-#include "Wrappers/OpenGL/GL.h"
-
 void Game::DisplayScene() 
 {
-	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-
 	RenderManager::Instance ()->RenderScene (SceneManager::Instance ()->Current (), Camera::Main ());
 }
