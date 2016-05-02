@@ -177,7 +177,7 @@ std::istream &operator>>(std::istream &in, Vector3 &v) {
     return in;
 }
 
-std::string Vector3::ToString ()
+std::string Vector3::ToString () const
 {
 	std::string result = std::to_string (x) + ",";
 	result += std::to_string (y) + ",";
