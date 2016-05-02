@@ -23,6 +23,8 @@ TextGUI::TextGUI (const std::string& text, Font* font,
 	delete _renderer;
 	_renderer = new TextGUIRenderer (_transform);
 	_renderer->SetPriority (5);
+
+	UpdateText ();
 }
 
 TextGUI::~TextGUI ()
