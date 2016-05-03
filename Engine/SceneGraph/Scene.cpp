@@ -103,6 +103,8 @@ std::string Scene::GetName () const
 Scene::~Scene ()
 {
 	for (std::size_t i=0;i<_sceneObjects.size ();i++) {
+		_sceneObjects [i]->OnDetachedFromScene ();
+
 		delete _sceneObjects [i];
 	}
 
