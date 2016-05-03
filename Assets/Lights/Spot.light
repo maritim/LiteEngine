@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Light type="SPOT_LIGHT">
+	<Color r="255" g="255" b="255" />
+	<SpecularColor r="255" g="255" b="255" />
+
+	<Spot>
+		<Cutoff value="360" />
+		<Exponent value="1.0" />
+		<Direction x="1.0" y="1.0" z="1.0" />
+	</Spot>
+</Light>

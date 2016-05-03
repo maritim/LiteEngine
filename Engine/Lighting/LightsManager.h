@@ -6,27 +6,42 @@
 #include <vector>
 
 #include "Core/Math/Vector3.h"
+
 #include "Light.h"
+#include "DirectionalLight.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 
 class LightsManager : public Singleton<LightsManager>
 {
 	friend class Singleton<LightsManager>;
 
 private:
-	std::vector<Light*> _lights;
+	std::vector<DirectionalLight*> _directionalLights;
+	std::vector<PointLight*> _pointLights;
+	std::vector<SpotLight*> _spotLights;
+
 	Vector3 _ambientLight;
 	
 public:
-	void AddLight (Light* light);
-	void RemoveLight (Light* light);
-
 	void SetAmbientColorLight (Vector3 ambientLight);
 	Vector3 GetAmbientColorLight ();
 
-	Light* GetLight (std::size_t index);
-	std::size_t Size ();
+	void AddDirectionalLight (DirectionalLight* light);
+	void AddPointLight (PointLight* light);
+	void AddSpotLight (SpotLight* light);
 
-	void Clear ();
+	DirectionalLight* GetDirectionalLight (std::size_t index);
+	PointLight* GetPointLight (std::size_t index);
+	SpotLight* GetSpotLight (std::size_t index);
+
+	void RemoveDirectionalLight (DirectionalLight* light);
+	void RemovePointLight (PointLight* light);
+	void RemoveSpotLight (SpotLight* light);
+
+	std::size_t GetDirectionalLightsCount ();
+	std::size_t GetPointLightsCount ();
+	std::size_t GetSpotLightsCount ();
 
 private:
 	LightsManager ();

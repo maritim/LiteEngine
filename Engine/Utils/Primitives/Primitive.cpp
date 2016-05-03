@@ -14,6 +14,8 @@ Primitive::Primitive ()
 		"Assets/Primitives/Sphere.obj",
 		"Assets/Primitives/Triangular_Pyramid.obj",
 		"Assets/Primitives/Square_Pyramid.obj",
+		"Assets/Primitives/Cone.obj",
+		"Assets/Primitives/Cylinder.obj",
 	};
 
 	for (std::size_t i=0;i<primitivesCount;i++) {

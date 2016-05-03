@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<Light>
-	<Type type="POINT_LIGHT" />
-
+<Light type="POINT_LIGHT">
 	<Color r="255" g="255" b="255" />
 	<SpecularColor r="255" g="255" b="255" />
 
-	<Attenuation constant="1.0" linear="0.1" quadratic="0.01" />
-
-	<Spot>
-		<Cutoff value="360" />
-		<Exponent value="1.0" />
-		<Direction x="1.0" y="1.0" z="1.0" />
-	</Spot>
+	<Point>
+		<Attenuation constant="1.0" linear="0.1" quadratic="0.01" />
+	</Point>
 </Light>

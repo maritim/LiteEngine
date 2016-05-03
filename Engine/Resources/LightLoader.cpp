@@ -13,24 +13,21 @@ Object* LightLoader::Load (const std::string& filename)
 		return NULL;
 	}
 
-	Light* light = new Light ();
+	Light* light = GetLight (root);
 
 	TiXmlElement* content = root->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
 
-		if (name == "Type") {
-			ProcessType (content, light);
-		}
-		else if (name == "Color") {
+		if (name == "Color") {
 			ProcessColor (content, light);
 		}
 		else if (name == "SpecularColor") {
 			ProcessSpecularColor (content, light);
 		}
-		else if (name == "Attenuation") {
-			ProcessAttenuation (content, light);
+		else if (name == "Point") {
+			ProcessPointLight (content, light);
 		}
 		else if (name == "Spot") {
 			ProcessSpotLight (content, light);
@@ -44,18 +41,18 @@ Object* LightLoader::Load (const std::string& filename)
 	return light;
 }
 
-void LightLoader::ProcessType (TiXmlElement* xmlElem, Light* light)
+Light* LightLoader::GetLight (TiXmlElement* xmlElem)
 {
 	std::string type = xmlElem->Attribute ("type");
 
 	if (type == "DIRECTIONAL_LIGHT") {
-		light->SetType (Light::Type::DIRECTIONAL_LIGHT);
+		return new DirectionalLight ();
 	}
 	else if (type == "POINT_LIGHT") {
-		light->SetType (Light::Type::POINT_LIGHT);
+		return new PointLight ();
 	}
 	else if (type == "SPOT_LIGHT") {
-		light->SetType (Light::Type::SPOT_LIGHT);
+		return new SpotLight ();
 	}
 }
 
@@ -73,7 +70,49 @@ void LightLoader::ProcessSpecularColor (TiXmlElement* xmlElem, Light* light)
 	light->SetSpecularColor (specularColor);
 }
 
-void LightLoader::ProcessAttenuation (TiXmlElement* xmlElem, Light* light)
+void LightLoader::ProcessPointLight (TiXmlElement* xmlElem, Light* light)
+{
+	PointLight* pointLight = dynamic_cast<PointLight*> (light);
+
+	TiXmlElement* content = xmlElem->FirstChildElement ();
+
+	while (content)
+	{
+		std::string name = content->Value ();
+
+		if (name == "Attenuation") {
+			ProcessAttenuation (content, pointLight);
+		}
+
+		content = content->NextSiblingElement ();
+	}
+}
+
+void LightLoader::ProcessSpotLight (TiXmlElement* xmlElem, Light* light)
+{
+	SpotLight* spotLight = dynamic_cast<SpotLight*> (light);
+
+	TiXmlElement* content = xmlElem->FirstChildElement ();
+
+	while (content)
+	{
+		std::string name = content->Value ();
+
+		if (name == "Cutoff") {
+			ProcessSpotCutoff (content, spotLight);
+		}
+		else if (name == "Exponent") {
+			ProcessSpotExponent (content, spotLight);
+		}
+		else if (name == "Direction") {
+			ProcessSpotDirection (content, spotLight);
+		}
+
+		content = content->NextSiblingElement ();
+	}
+}
+
+void LightLoader::ProcessAttenuation (TiXmlElement* xmlElem, PointLight* light)
 {
 	const char* constant = xmlElem->Attribute ("constant");
 	const char* linear = xmlElem->Attribute ("linear");
@@ -92,43 +131,21 @@ void LightLoader::ProcessAttenuation (TiXmlElement* xmlElem, Light* light)
 	}
 }
 
-void LightLoader::ProcessSpotLight (TiXmlElement* xmlElem, Light* light)
-{
-	TiXmlElement* content = xmlElem->FirstChildElement ();
-
-	while (content)
-	{
-		std::string name = content->Value ();
-
-		if (name == "Cutoff") {
-			ProcessSpotCutoff (content, light);
-		}
-		else if (name == "Exponent") {
-			ProcessSpotExponent (content, light);
-		}
-		else if (name == "Direction") {
-			ProcessSpotDirection (content, light);
-		}
-
-		content = content->NextSiblingElement ();
-	}
-}
-
-void LightLoader::ProcessSpotCutoff (TiXmlElement* xmlElem, Light* light)
+void LightLoader::ProcessSpotCutoff (TiXmlElement* xmlElem, SpotLight* light)
 {
 	std::string value = xmlElem->Attribute ("value");
 
 	light->SetSpotCutoff (std::stof (value));
 }
 
-void LightLoader::ProcessSpotExponent (TiXmlElement* xmlElem, Light* light)
+void LightLoader::ProcessSpotExponent (TiXmlElement* xmlElem, SpotLight* light)
 {
 	std::string value = xmlElem->Attribute ("value");
 
 	light->SetSpotExponent (std::stof (value));
 }
 
-void LightLoader::ProcessSpotDirection (TiXmlElement* xmlElem, Light* light)
+void LightLoader::ProcessSpotDirection (TiXmlElement* xmlElem, SpotLight* light)
 {
 	Vector3 direction = Vector3::Zero;
 
