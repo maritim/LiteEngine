@@ -7,12 +7,16 @@
 
 #include "SceneGraph/SceneObject.h"
 #include "Skybox/Skybox.h"
+#include "Lighting/LightsManager.h"
+#include "Lighting/VolumetricLight.h"
 
 #include "Pipeline.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
 #include "Systems/Window/Window.h"
+
+#include "Managers/ShaderManager.h"
 
 /*
  * Singleton Part
@@ -26,7 +30,7 @@ RenderManager::RenderManager () :
 
 RenderManager::~RenderManager ()
 {
-	
+
 }
 
 bool cmp (Renderer* a, Renderer* b) {
@@ -52,23 +56,40 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	Skybox::Render ();
 
 	/*
-	 * Deffered Rendering: Geometry Pass
+	 * Deferred Rendering: Prepare for rendering
+	*/
+
+	PrepareDrawing ();
+
+	/*
+	 * Deferred Rendering: Geometry Pass
 	*/
 
 	GeometryPass (scene);
 
 	/*
-	 * Deffered Rendering: Light Pass (atm)
+	 * Deferred Rendering: Light Pass (atm)
 	*/
 
 	LightPass ();
+
+	/*
+	 * Deferred Rendering: End Drawing
+	*/
+
+	EndDrawing ();
+}
+
+void RenderManager::PrepareDrawing ()
+{
+	_frameBuffer->StartFrame ();
 }
 
 void RenderManager::GeometryPass (Scene* scene)
 {
-	_frameBuffer->BindForWriting ();
-	
-	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
+	_frameBuffer->BindForGeomPass ();
+
+	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	/*
 	 * Render scene elements to framebuffer
@@ -85,37 +106,68 @@ void RenderManager::GeometryPass (Scene* scene)
 	for (Renderer* renderer : renderers) {
 		renderer->Draw ();
 	}
-} 
+}
 
 void RenderManager::LightPass ()
 {
-	GL::BindFramebuffer(GL_FRAMEBUFFER, 0);
+	_frameBuffer->BindForLightPass();
 
-	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	DirectionalLightPass ();
+	PointLightPass ();
 
-	_frameBuffer->BindForReading();
+
+}
+
+void RenderManager::DirectionalLightPass ()
+{
+	GL::Disable(GL_DEPTH_TEST);
+	GL::BlendFunc (GL_ONE, GL_ZERO);
+
+	for (std::size_t i=0;i<LightsManager::Instance ()->GetDirectionalLightsCount ();i++) {
+		Light* light = LightsManager::Instance ()->GetDirectionalLight (i);
+		VolumetricLight* volumetricLight = dynamic_cast<VolumetricLight*> (light);
+
+		volumetricLight->GetLightRenderer ()->Draw ();
+	}
+
+	GL::Disable(GL_BLEND);
+}
+
+void RenderManager::PointLightPass ()
+{
+	// glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+
+	glDisable(GL_DEPTH_TEST);
+	// glEnable(GL_BLEND);
+	// glBlendEquation(GL_FUNC_ADD);
+	// glBlendFunc(GL_ONE, GL_ONE);
+
+	glBlendFunc (GL_ONE, GL_ZERO);
+
+	// glEnable(GL_CULL_FACE);
+	// glCullFace(GL_FRONT);
+
+	for (std::size_t i=0;i<LightsManager::Instance ()->GetDirectionalLightsCount ();i++) {
+		Light* light = LightsManager::Instance ()->GetDirectionalLight (i);
+		VolumetricLight* volumetricLight = dynamic_cast<VolumetricLight*> (light);
+
+		volumetricLight->GetLightRenderer ()->Draw ();
+	}
+
+	// glCullFace(GL_BACK);
+
+	// glDisable(GL_BLEND);	
+}
+
+void RenderManager::EndDrawing ()
+{
+	_frameBuffer->BindForFinalPass();
 
 	std::size_t windowWidth = Window::GetWidth ();
 	std::size_t windowHeight = Window::GetHeight ();
 
-	GLsizei HalfWidth = (GLsizei)(windowWidth / 2.0f);
-	GLsizei HalfHeight = (GLsizei)(windowHeight / 2.0f);
-
-	_frameBuffer->SetReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_POSITION);
 	GL::BlitFramebuffer(0, 0, windowWidth, windowHeight,
-		0, 0, HalfWidth, HalfHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-	_frameBuffer->SetReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_DIFFUSE);
-	GL::BlitFramebuffer(0, 0, windowWidth, windowHeight,
-		0, HalfHeight, HalfWidth, windowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-	_frameBuffer->SetReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_NORMAL);
-	GL::BlitFramebuffer(0, 0, windowWidth, windowHeight,
-		HalfWidth, HalfHeight, windowWidth, windowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-	_frameBuffer->SetReadBuffer(GBuffer::GBUFFER_TEXTURE_TYPE_TEXCOORD);
-	GL::BlitFramebuffer(0, 0, windowWidth, windowHeight,
-		HalfWidth, 0, windowWidth, HalfHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+		0, 0, windowWidth, windowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }
 
 /*

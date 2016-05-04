@@ -21,7 +21,9 @@ public:
 	static void Clear(GLbitfield  mask);
 	static void ClearColor(GLclampf red,  GLclampf green,  GLclampf blue,  GLclampf alpha); 
 	static void FramebufferTexture2D(GLenum target,  GLenum attachment,  GLenum textarget,  GLuint texture,  GLint level);
+	static void DrawBuffer(GLenum buf);
 	static void DrawBuffers(GLsizei n, const GLenum *bufs);
+	static void ReadBuffer(GLenum mode);
 	static void BindFramebuffer(GLenum target,  GLuint framebuffer);
 	static void BlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, 
 		GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);

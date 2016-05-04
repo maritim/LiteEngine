@@ -109,115 +109,115 @@ void Pipeline::SendLights (Shader* shader)
 
 	glUniform3f(shader->GetUniformLocation ("sceneAmbient"), vec.x, vec.y, vec.z);
 
-	const int lightsLimit = 3;
+	// const int lightsLimit = 3;
 
-	int spotLightCount = 0;
-	int pointLightCount = 0;
-	int directionalLightCount = 0;
+	// int spotLightCount = 0;
+	// int pointLightCount = 0;
+	// int directionalLightCount = 0;
 
-	for (std::size_t i=0;i<LightsManager::Instance ()->Size ();i++) {
-		Light* light = LightsManager::Instance ()->GetLight (i);
-		std::string address;
+	// for (std::size_t i=0;i<LightsManager::Instance ()->Size ();i++) {
+	// 	Light* light = LightsManager::Instance ()->GetLight (i);
+	// 	std::string address;
 
-		glm::vec4 vec4 (vec.x, vec.y, vec.z, 1.0);
+	// 	glm::vec4 vec4 (vec.x, vec.y, vec.z, 1.0);
 
-		switch (light->GetType ()) {
-			case Light::Type::DIRECTIONAL_LIGHT :
-				if (directionalLightCount >= lightsLimit) {
-					break;
-				}
+	// 	switch (light->GetType ()) {
+	// 		case Light::Type::DIRECTIONAL_LIGHT :
+	// 			if (directionalLightCount >= lightsLimit) {
+	// 				break;
+	// 			}
 
-				vec = light->GetTransform ()->GetPosition ();
-				//vec4 = glm::vec4 (vec.x, vec.y, vec.z, 0.0);
-				address = "directionalLights[" + std::to_string (directionalLightCount) + "].position";
-				glUniform4f (glGetUniformLocation (shader->GetProgram (), address.c_str ()), vec.x, vec.y, vec.z, 0.0);
+	// 			vec = light->GetTransform ()->GetPosition ();
+	// 			//vec4 = glm::vec4 (vec.x, vec.y, vec.z, 0.0);
+	// 			address = "directionalLights[" + std::to_string (directionalLightCount) + "].position";
+	// 			glUniform4f (glGetUniformLocation (shader->GetProgram (), address.c_str ()), vec.x, vec.y, vec.z, 0.0);
 
-				vec = light->GetColor ().ToVector3 ();
-				address = "directionalLights[" + std::to_string (directionalLightCount) + "].diffuse";
-				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+	// 			vec = light->GetColor ().ToVector3 ();
+	// 			address = "directionalLights[" + std::to_string (directionalLightCount) + "].diffuse";
+	// 			glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				vec = light->GetSpecularColor ().ToVector3 ();
-				address = "directionalLights[" + std::to_string (directionalLightCount) + "].specular";
-				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+	// 			vec = light->GetSpecularColor ().ToVector3 ();
+	// 			address = "directionalLights[" + std::to_string (directionalLightCount) + "].specular";
+	// 			glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				++ directionalLightCount;
+	// 			++ directionalLightCount;
 
-				break;
-			case Light::Type::POINT_LIGHT :
-				if (pointLightCount >= lightsLimit) {
-					break;
-				}
+	// 			break;
+	// 		case Light::Type::POINT_LIGHT :
+	// 			if (pointLightCount >= lightsLimit) {
+	// 				break;
+	// 			}
 
-				vec = light->GetTransform ()->GetPosition ();
-				vec4 = glm::vec4 (vec.x, vec.y, vec.z, 1.0);
-				address = "pointLights[" + std::to_string (pointLightCount) + "].position";
-				glUniform4fv (shader->GetUniformLocation (address.c_str ()), 1, glm::value_ptr (vec4));
+	// 			vec = light->GetTransform ()->GetPosition ();
+	// 			vec4 = glm::vec4 (vec.x, vec.y, vec.z, 1.0);
+	// 			address = "pointLights[" + std::to_string (pointLightCount) + "].position";
+	// 			glUniform4fv (shader->GetUniformLocation (address.c_str ()), 1, glm::value_ptr (vec4));
 
-				vec = light->GetColor ().ToVector3 ();
-				address = "pointLights[" + std::to_string (pointLightCount) + "].diffuse";
-				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+	// 			vec = light->GetColor ().ToVector3 ();
+	// 			address = "pointLights[" + std::to_string (pointLightCount) + "].diffuse";
+	// 			glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				vec = light->GetColor ().ToVector3 ();
-				address = "pointLights[" + std::to_string (pointLightCount) + "].specular";
-				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+	// 			vec = light->GetColor ().ToVector3 ();
+	// 			address = "pointLights[" + std::to_string (pointLightCount) + "].specular";
+	// 			glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				address = "pointLights[" + std::to_string (pointLightCount) + "].constantAttenuation";
-				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetConstantAttenuation ());
+	// 			address = "pointLights[" + std::to_string (pointLightCount) + "].constantAttenuation";
+	// 			glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetConstantAttenuation ());
 
-				address = "pointLights[" + std::to_string (pointLightCount) + "].linearAttenuation";
-				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetLinearAttenuation ());
+	// 			address = "pointLights[" + std::to_string (pointLightCount) + "].linearAttenuation";
+	// 			glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetLinearAttenuation ());
 
-				address = "pointLights[" + std::to_string (pointLightCount) + "].quadraticAttenuation";
-				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetQuadraticAttenuation ());
+	// 			address = "pointLights[" + std::to_string (pointLightCount) + "].quadraticAttenuation";
+	// 			glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetQuadraticAttenuation ());
 
-				++ pointLightCount;
+	// 			++ pointLightCount;
 
-				break;
-			case Light::Type::SPOT_LIGHT :
-				if (spotLightCount >= lightsLimit) {
-					break;
-				}
+	// 			break;
+	// 		case Light::Type::SPOT_LIGHT :
+	// 			if (spotLightCount >= lightsLimit) {
+	// 				break;
+	// 			}
 
-				vec = light->GetTransform ()->GetPosition ();
-				address = "spotLights[" + std::to_string (spotLightCount) + "].position";
-				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+	// 			vec = light->GetTransform ()->GetPosition ();
+	// 			address = "spotLights[" + std::to_string (spotLightCount) + "].position";
+	// 			glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				vec = light->GetColor ().ToVector3 ();
-				address = "spotLights[" + std::to_string (spotLightCount) + "].diffuse";
-				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+	// 			vec = light->GetColor ().ToVector3 ();
+	// 			address = "spotLights[" + std::to_string (spotLightCount) + "].diffuse";
+	// 			glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				vec = light->GetColor ().ToVector3 ();
-				address = "spotLights[" + std::to_string (spotLightCount) + "].specular";
-				glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
+	// 			vec = light->GetColor ().ToVector3 ();
+	// 			address = "spotLights[" + std::to_string (spotLightCount) + "].specular";
+	// 			glUniform4f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z, 1.0);
 
-				address = "spotLights[" + std::to_string (spotLightCount) + "].constantAttenuation";
-				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetConstantAttenuation ());
+	// 			address = "spotLights[" + std::to_string (spotLightCount) + "].constantAttenuation";
+	// 			glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetConstantAttenuation ());
 
-				address = "spotLights[" + std::to_string (spotLightCount) + "].linearAttenuation";
-				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetLinearAttenuation ());
+	// 			address = "spotLights[" + std::to_string (spotLightCount) + "].linearAttenuation";
+	// 			glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetLinearAttenuation ());
 
-				address = "spotLights[" + std::to_string (spotLightCount) + "].quadraticAttenuation";
-				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetQuadraticAttenuation ());
+	// 			address = "spotLights[" + std::to_string (spotLightCount) + "].quadraticAttenuation";
+	// 			glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetQuadraticAttenuation ());
 
-				address = "spotLights[" + std::to_string (spotLightCount) + "].spotCutoff";
-				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetSpotCutoff ());
+	// 			address = "spotLights[" + std::to_string (spotLightCount) + "].spotCutoff";
+	// 			glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetSpotCutoff ());
 
-				address = "spotLights[" + std::to_string (spotLightCount) + "].spotExponent";
-				glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetSpotExponent ());
+	// 			address = "spotLights[" + std::to_string (spotLightCount) + "].spotExponent";
+	// 			glUniform1f (shader->GetUniformLocation (address.c_str ()), light->GetSpotExponent ());
 
-				vec = light->GetSpotDirection ();
-				address = "spotLights[" + std::to_string (spotLightCount) + "].spotDirection";
-				glUniform3f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z);
+	// 			vec = light->GetSpotDirection ();
+	// 			address = "spotLights[" + std::to_string (spotLightCount) + "].spotDirection";
+	// 			glUniform3f (shader->GetUniformLocation (address.c_str ()), vec.x, vec.y, vec.z);
 
-				++ spotLightCount;
+	// 			++ spotLightCount;
 
-				break;
-		}
-	}
+	// 			break;
+	// 	}
+	// }
 
-	glUniform1i (shader->GetUniformLocation ("spotLightCount"), spotLightCount);
-	glUniform1i (shader->GetUniformLocation ("pointLightCount"), pointLightCount);
-	glUniform1i (shader->GetUniformLocation ("directionalLightCount"), directionalLightCount);
+	// glUniform1i (shader->GetUniformLocation ("spotLightCount"), spotLightCount);
+	// glUniform1i (shader->GetUniformLocation ("pointLightCount"), pointLightCount);
+	// glUniform1i (shader->GetUniformLocation ("directionalLightCount"), directionalLightCount);
 }
 
 void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::vector<PipelineAttribute>& attr)

@@ -38,11 +38,25 @@ void GL::FramebufferTexture2D(GLenum target,  GLenum attachment,  GLenum textarg
 	ErrorCheck ("glFramebufferTexture2D");
 }
 
+void GL::DrawBuffer(GLenum buf)
+{
+	glDrawBuffer (buf);
+
+	ErrorCheck ("glDrawBuffer");
+}
+
 void GL::DrawBuffers(GLsizei n, const GLenum *bufs)
 {
 	glDrawBuffers (n, bufs);
 
 	ErrorCheck ("glDrawBuffers");
+}
+
+void GL::ReadBuffer(GLenum mode)
+{
+	glReadBuffer (mode);
+
+	ErrorCheck ("glReadBuffer");
 }
 
 void GL::BindFramebuffer(GLenum target,  GLuint framebuffer)

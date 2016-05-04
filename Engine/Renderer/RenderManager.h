@@ -46,8 +46,14 @@ private:
 
 	void UpdateCamera (Camera* camera);
 
+	void PrepareDrawing ();
 	void GeometryPass (Scene* scene);
 	void LightPass ();
+	void EndDrawing ();
+
+	void DirectionalLightPass ();
+	void PointStencilLightPass ();
+	void PointLightPass ();
 };
 
 #endif
