@@ -17,6 +17,7 @@
 #include "Systems/Window/Window.h"
 
 #include "Managers/ShaderManager.h"
+#include "Managers/TextManager.h"
 
 /*
  * Singleton Part
@@ -74,6 +75,12 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	LightPass ();
 
 	/*
+	 * Deferred Rendering: Decorations Pass
+	*/
+
+	GUIPass ();
+
+	/*
 	 * Deferred Rendering: End Drawing
 	*/
 
@@ -122,7 +129,7 @@ void RenderManager::DirectionalLightPass ()
 	GL::BlendFunc (GL_ONE, GL_ZERO);
 
 	for (std::size_t i=0;i<LightsManager::Instance ()->GetDirectionalLightsCount ();i++) {
-		VolumetricLight* volumetricLight = LightsManager::Instance ()->GetDirectionalLight (i);\
+		VolumetricLight* volumetricLight = LightsManager::Instance ()->GetDirectionalLight (i);
 
 		volumetricLight->GetLightRenderer ()->Draw ();
 	}
@@ -162,6 +169,13 @@ void RenderManager::PointLightDrawPass ()
 	// glCullFace(GL_BACK);
 
 	// GL::Disable(GL_BLEND);	
+}
+
+void RenderManager::GUIPass ()
+{
+	for (std::size_t i=0;i<TextManager::Instance ()->GetTextElementsCount ();i++) {
+		TextManager::Instance ()->GetTextElement (i)->GetTextRenderer ()->Draw ();
+	}
 }
 
 void RenderManager::EndDrawing ()

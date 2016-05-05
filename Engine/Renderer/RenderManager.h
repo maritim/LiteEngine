@@ -49,6 +49,7 @@ private:
 	void PrepareDrawing ();
 	void GeometryPass (Scene* scene);
 	void LightPass ();
+	void GUIPass ();
 	void EndDrawing ();
 
 	void DirectionalLightPass ();

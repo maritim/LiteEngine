@@ -9,6 +9,8 @@
 
 #include "Fonts/Font.h"
 
+#include "TextGUIRenderer.h"
+
 class TextGUI : public SceneObject
 {
 private:
@@ -17,6 +19,7 @@ private:
 	Vector3 _screenPos;
 	float _lineLength;
 	bool _isDirty;
+	TextGUIRenderer* _textRenderer;
 
 public:
 	TextGUI ();
@@ -29,7 +32,12 @@ public:
 	void SetScreenPosition (Vector3 screenPos);
 	void SetLineLength (float lineLength);
 
-	virtual void Update ();
+	TextGUIRenderer* GetTextRenderer ();
+
+	void OnAttachedToScene ();
+	void OnDetachedFromScene ();
+
+	void Update ();
 private:
 	void UpdateText ();
 };

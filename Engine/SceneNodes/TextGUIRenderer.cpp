@@ -31,11 +31,15 @@ TextGUIRenderer::~TextGUIRenderer ()
 
 void TextGUIRenderer::Draw ()
 {
-	bool cull, depth;
+	bool cull, depth, blend;
 	GL::IsEnabled (GL_CULL_FACE, &cull);
 	GL::IsEnabled (GL_DEPTH_TEST, &depth);
+	GL::IsEnabled (GL_BLEND, &blend);
 	GL::Disable (GL_CULL_FACE);
 	GL::Disable (GL_DEPTH_TEST);
+
+	GL::Enable (GL_BLEND);
+	GL::BlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	std::vector<PipelineAttribute> uniformAttributes = GetUniformAttributes (_font);
 
