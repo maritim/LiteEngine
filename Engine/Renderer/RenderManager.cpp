@@ -19,6 +19,7 @@
 
 #include "Managers/ShaderManager.h"
 #include "Managers/TextManager.h"
+#include "Managers/ParticleSystemManager.h"
 
 /*
  * Singleton Part
@@ -86,6 +87,7 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	*/
 
 	SkyboxPass ();
+	ParticleSystemPass ();
 	GUIPass ();
 
 	/*
@@ -212,6 +214,13 @@ void RenderManager::SkyboxPass ()
 	Skybox::Render ();
 
 	GL::Disable (GL_STENCIL_TEST);
+}
+
+void RenderManager::ParticleSystemPass ()
+{
+	for (std::size_t i=0;i<ParticleSystemManager::Instance ()->GetParticleSystemsCount ();i++) {
+		ParticleSystemManager::Instance ()->GetParticleSystem (i)->GetParticleSystemRenderer ()->Draw ();
+	}
 }
 
 void RenderManager::GUIPass ()

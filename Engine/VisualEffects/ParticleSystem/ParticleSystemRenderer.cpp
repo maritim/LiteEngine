@@ -77,6 +77,7 @@ void ParticleSystemRenderer::Draw ()
 			mat = MaterialManager::Instance ().Default ();
 		}
 
+		GL::Enable (GL_BLEND);
 		GL::BlendFunc (mat->blending.first, mat->blending.second);
 
 		Pipeline::SendMaterial (mat);

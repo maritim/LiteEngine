@@ -5,7 +5,11 @@
 
 class Renderer
 {
+public:
+	enum StageType {DEFERRED_STAGE, FORWARD_STAGE};
+
 protected:
+	StageType _stage;
 	std::size_t _priority;
 	Transform* _transform;
 public:
@@ -14,6 +18,9 @@ public:
 	virtual ~Renderer ();
 
 	virtual void Draw ();
+
+	StageType GetStageType () const;
+	void SetStageType (std::size_t stageType);
 
 	std::size_t GetPriority () const;
 	void SetPriority (std::size_t priority);

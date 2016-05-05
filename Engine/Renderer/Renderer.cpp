@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
 Renderer::Renderer() :
+	_stage (DEFERRED_STAGE),
 	_priority (0),
 	_transform (new Transform ())
 {
@@ -8,6 +9,7 @@ Renderer::Renderer() :
 }
 
 Renderer::Renderer (Transform* transform) :
+	_stage (DEFERRED_STAGE),
 	_priority (0),
 	_transform (transform)
 {

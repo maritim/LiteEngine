@@ -9,9 +9,11 @@
 #include "Emiter.h"
 #include "Particle.h"
 
+#include "ParticleSystemRenderer.h"
+
 class ParticleSystem : public SceneObject
 {
-private:
+protected:
 	Emiter* _emiter;
 	std::vector<Particle*> _particles;
 
@@ -22,6 +24,9 @@ private:
 	std::pair<std::size_t, std::size_t> _partCount;
 
 	float _timeFromLastEmission;
+
+	ParticleSystemRenderer* _particleSystemRenderer;
+
 public:
 	ParticleSystem ();
 	~ParticleSystem ();
@@ -33,7 +38,12 @@ public:
 	void SetDepthMaskCheck (bool check);
 	void SetGravityUse (bool use);
 
+	ParticleSystemRenderer* GetParticleSystemRenderer ();
+
 	void Update ();
+
+	void OnAttachedToScene ();
+	void OnDetachedFromScene ();
 private:
 	void AddParticle (Particle* particle);
 	void RemoveParticle (Particle* particle);

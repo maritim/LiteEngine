@@ -51,6 +51,7 @@ private:
 	void GeometryPass (Scene* scene);
 	void LightPass ();
 	void SkyboxPass ();
+	void ParticleSystemPass ();
 	void GUIPass ();
 	void EndDrawing ();
 

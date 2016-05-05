@@ -11,17 +11,19 @@
 
 #include "ParticleSystemRenderer.h"
 
+#include "Managers/ParticleSystemManager.h"
+
 ParticleSystem::ParticleSystem () :
-	_emiter (NULL),
+	_emiter (nullptr),
 	_emissionRate (40),
 	_partCount (500, 1000),
 	_timeFromLastEmission (0),
 	_useDepthMask (false),
-	_useGravity (true)
+	_useGravity (true),
+	_particleSystemRenderer (nullptr)
 {
-	delete _renderer;
-	_renderer = new ParticleSystemRenderer (_transform);
-	_renderer->SetPriority (2);
+	_particleSystemRenderer = new ParticleSystemRenderer (_transform);
+	_particleSystemRenderer->SetPriority (2);
 }
 
 ParticleSystem::~ParticleSystem ()
@@ -44,9 +46,8 @@ void ParticleSystem::SetEmiter (Emiter* emiter)
 	emiter->GetTransform ()->SetParent (_transform);
 	_emiter = emiter;
 
-	ParticleSystemRenderer* renderer = dynamic_cast<ParticleSystemRenderer*> (_renderer);
-	renderer->SetInstance (emiter->GetParticlePrototype ());
-	renderer->SetDepthMaskCheck (_useDepthMask);
+	_particleSystemRenderer->SetInstance (emiter->GetParticlePrototype ());
+	_particleSystemRenderer->SetDepthMaskCheck (_useDepthMask);
 }
 
 void ParticleSystem::SetEmissionRate (std::size_t rate)
@@ -63,8 +64,7 @@ void ParticleSystem::SetDepthMaskCheck (bool check)
 {
 	_useDepthMask = check;
 
-	ParticleSystemRenderer* renderer = dynamic_cast<ParticleSystemRenderer*> (_renderer);
-	renderer->SetDepthMaskCheck (_useDepthMask);
+	_particleSystemRenderer->SetDepthMaskCheck (_useDepthMask);
 }
 
 void ParticleSystem::SetGravityUse (bool use)
@@ -76,8 +76,7 @@ void ParticleSystem::SetMaximPartCount (std::size_t count)
 {
 	_partCount.second = count;
 
-	ParticleSystemRenderer* renderer = dynamic_cast<ParticleSystemRenderer*> (_renderer);
-	renderer->SetParticlesCount (count);
+	_particleSystemRenderer->SetParticlesCount (count);
 }
 
 void ParticleSystem::Update ()
@@ -120,18 +119,31 @@ void ParticleSystem::Update ()
 	}
 }
 
+ParticleSystemRenderer* ParticleSystem::GetParticleSystemRenderer ()
+{
+	return _particleSystemRenderer;
+}
+
+void ParticleSystem::OnAttachedToScene ()
+{
+	ParticleSystemManager::Instance ()->AddParticleSystem (this);
+}
+
+void ParticleSystem::OnDetachedFromScene ()
+{
+	ParticleSystemManager::Instance ()->RemoveParticleSystem (this);
+}
+
 void ParticleSystem::AddParticle (Particle* particle)
 {
 	_particles.push_back (particle);
 
-	ParticleSystemRenderer* renderer = dynamic_cast <ParticleSystemRenderer*> (_renderer);
-	renderer->AddRenderer (dynamic_cast<ParticleRenderer*> (particle->GetRenderer ()));
+	_particleSystemRenderer->AddRenderer (dynamic_cast<ParticleRenderer*> (particle->GetRenderer ()));
 }
 
 void ParticleSystem::RemoveParticle (Particle* particle)
 {
-	ParticleSystemRenderer* renderer = dynamic_cast <ParticleSystemRenderer*> (_renderer);
-	renderer->RemoveRenderer (dynamic_cast<ParticleRenderer*> (particle->GetRenderer ()));
+	_particleSystemRenderer->RemoveRenderer (dynamic_cast<ParticleRenderer*> (particle->GetRenderer ()));
 
 	delete particle;
 }
