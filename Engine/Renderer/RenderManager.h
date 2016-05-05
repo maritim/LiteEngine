@@ -45,6 +45,7 @@ private:
 	~RenderManager ();
 
 	void UpdateCamera (Camera* camera);
+	void UpdateGBuffer ();
 
 	void PrepareDrawing ();
 	void GeometryPass (Scene* scene);

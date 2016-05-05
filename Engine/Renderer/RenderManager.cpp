@@ -15,6 +15,7 @@
 #include "Wrappers/OpenGL/GL.h"
 
 #include "Systems/Window/Window.h"
+#include "Systems/Input/Input.h"
 
 #include "Managers/ShaderManager.h"
 #include "Managers/TextManager.h"
@@ -44,6 +45,12 @@ bool cmp (Renderer* a, Renderer* b) {
 
 void RenderManager::RenderScene (Scene* scene, Camera* camera)
 {
+	/*
+	 * Update GBuffer if needed
+	*/
+
+	UpdateGBuffer ();
+
 	/*
 	 * Send Camera to Pipeline
 	*/
@@ -88,6 +95,18 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	EndDrawing ();
 }
 
+void RenderManager::UpdateGBuffer ()
+{
+	Vector3 resizeEvent = Input::GetResizeEvent ();
+
+	if (resizeEvent == Vector3::Zero) {
+		return ;
+	}
+
+	_frameBuffer->Clear ();
+	_frameBuffer->Init ((int)resizeEvent.x, (int)resizeEvent.y);
+}
+
 void RenderManager::PrepareDrawing ()
 {
 	_frameBuffer->StartFrame ();
@@ -97,7 +116,7 @@ void RenderManager::GeometryPass (Scene* scene)
 {
 	_frameBuffer->BindForGeomPass ();
 
-	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER);
+	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	/*
 	 * Set Stencil Buffer to know where something is drawn in GBuffer

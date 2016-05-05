@@ -508,6 +508,20 @@ void GL::DeleteBuffers (GLsizei n, const GLuint* arrays)
 	ErrorCheck ("glDeleteBuffers");
 }
 
+void GL::DeleteFramebuffers(GLsizei n, const GLuint * framebuffers)
+{
+	glDeleteFramebuffers (n, framebuffers);
+
+	ErrorCheck ("glDeleteFramebuffers");
+}
+
+void GL::DeleteTextures(GLsizei n, const GLuint * textures)
+{
+	glDeleteTextures (n, textures);
+
+	ErrorCheck ("glDeleteTextures");
+}
+
 void GL::Check ()
 {
 	ErrorCheck ("Custom Query");

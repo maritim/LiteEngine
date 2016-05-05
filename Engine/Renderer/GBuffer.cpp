@@ -58,7 +58,16 @@ bool GBuffer::Init(unsigned int bufferWidth, unsigned int bufferHeight)
 	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 	return true;
-} 
+}
+
+bool GBuffer::Clear ()
+{
+	GL::DeleteTextures (ARRAY_SIZE_IN_ELEMENTS (m_textures), m_textures);
+	GL::DeleteTextures (1, &m_depthTexture);
+	GL::DeleteTextures (1, &m_finalTexture);
+
+	GL::DeleteFramebuffers (1, &m_fbo);
+}
 
 void GBuffer::StartFrame()
 {

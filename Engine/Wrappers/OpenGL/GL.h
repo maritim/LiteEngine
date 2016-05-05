@@ -139,6 +139,8 @@ public:
 
 	static void DeleteVertexArrays (GLsizei n, const GLuint *arrays);
 	static void DeleteBuffers(GLsizei n, const GLuint * buffers);
+	static void DeleteFramebuffers(GLsizei n, const GLuint * framebuffers);
+	static void DeleteTextures(GLsizei n, const GLuint * textures);
 
 	static void Check ();
 

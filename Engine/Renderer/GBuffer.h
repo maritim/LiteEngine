@@ -25,6 +25,7 @@ public:
     ~GBuffer();
 
     bool Init(unsigned int screenWidth, unsigned int screenHeight);
+    bool Clear ();
 
     void StartFrame();
     void BindForGeomPass();
