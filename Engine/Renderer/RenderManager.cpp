@@ -54,7 +54,7 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	 * Render the Skybox first
 	*/
 
-	Skybox::Render ();
+	SkyboxPass ();
 
 	/*
 	 * Deferred Rendering: Prepare for rendering
@@ -78,6 +78,7 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	 * Deferred Rendering: Decorations Pass
 	*/
 
+	SkyboxPass ();
 	GUIPass ();
 
 	/*
@@ -96,7 +97,16 @@ void RenderManager::GeometryPass (Scene* scene)
 {
 	_frameBuffer->BindForGeomPass ();
 
-	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER);
+
+	/*
+	 * Set Stencil Buffer to know where something is drawn in GBuffer
+	 * Reference: http://www.gamedev.net/topic/570610-deferred-lighting---skybox-objects-without-light-/
+	*/
+
+	GL::Enable (GL_STENCIL_TEST);
+	GL::StencilFunc (GL_ALWAYS, 1, 0xFF);
+	GL::StencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	/*
 	 * Render scene elements to framebuffer
@@ -113,6 +123,8 @@ void RenderManager::GeometryPass (Scene* scene)
 	for (Renderer* renderer : renderers) {
 		renderer->Draw ();
 	}
+
+	GL::Disable (GL_STENCIL_TEST);
 }
 
 void RenderManager::LightPass ()
@@ -135,6 +147,7 @@ void RenderManager::DirectionalLightPass ()
 	}
 
 	GL::Disable(GL_BLEND);
+	GL::Enable (GL_DEPTH_TEST);
 }
 
 void RenderManager::PointLightPass ()
@@ -155,9 +168,9 @@ void RenderManager::PointLightDrawPass ()
 	// GL::Disable(GL_DEPTH_TEST);
 	// GL::Enable(GL_BLEND);
 	// glBlendEquation(GL_FUNC_ADD);
-	// glBlendFunc(GL_ONE, GL_ONE);
+	// GL::BlendFunc(GL_ONE, GL_ONE);
 
-	// glEnable(GL_CULL_FACE);
+	// GL::Enable(GL_CULL_FACE);
 	// glCullFace(GL_FRONT);
 
 	// for (std::size_t i=0;i<LightsManager::Instance ()->GetPointLightsCount ();i++) {
@@ -169,6 +182,17 @@ void RenderManager::PointLightDrawPass ()
 	// glCullFace(GL_BACK);
 
 	// GL::Disable(GL_BLEND);	
+}
+
+void RenderManager::SkyboxPass ()
+{
+	GL::Enable (GL_STENCIL_TEST);
+	GL::StencilFunc (GL_EQUAL, 0, 0xFF);
+	GL::StencilOp (GL_KEEP, GL_KEEP, GL_KEEP);
+
+	Skybox::Render ();
+
+	GL::Disable (GL_STENCIL_TEST);
 }
 
 void RenderManager::GUIPass ()

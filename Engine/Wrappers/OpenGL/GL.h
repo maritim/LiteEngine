@@ -60,11 +60,22 @@ public:
 	static void BindVertexArray (GLuint array);
 	static void BindBuffer (GLenum target, GLuint buffer);
 
-	// Depth Buffer
+	/*
+	 * Depth Buffer
+	*/
+
 	static void DepthMask (GLboolean flag);
 	static void DepthRange(GLclampd nearVal, GLclampd farVal);
 	static void ClearDepth(GLclampd  depth);
 	static void DepthFunc(GLenum func);
+
+	/*
+	 * Stencil Buffer
+	*/
+
+	static void StencilFunc(GLenum func, GLint ref, GLuint mask);
+	static void StencilOp(GLenum sfail, GLenum dpfail, GLenum dppass);
+	static void StencilMask(GLuint mask);
 
 	// Blend
 	static void BlendFunc (GLenum sfactor, GLenum dfactor);

@@ -45,7 +45,6 @@ public:
 
 	void SetAngularVelocity (float velocity);
 	float GetAngularVelocity () const;
-
 private:
 	static void Clear ();
 };

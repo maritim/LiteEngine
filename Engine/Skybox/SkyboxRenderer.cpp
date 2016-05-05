@@ -29,8 +29,9 @@ SkyboxRenderer::SkyboxRenderer (CubeMap*& map, Color* tint, float *bt, std::stri
 
 void SkyboxRenderer::Draw ()
 {
-	GL::Disable(GL_DEPTH_TEST);
-	GL::Enable(GL_TEXTURE_2D);
+	GLboolean depthMask = false;
+	GL::GetBooleanv(GL_DEPTH_WRITEMASK, &depthMask); 
+	GL::DepthMask (false);
 
 	bool cull;
 	GL::IsEnabled (GL_CULL_FACE, &cull);
@@ -54,12 +55,11 @@ void SkyboxRenderer::Draw ()
 		GL::DrawElements(GL_TRIANGLES, _drawableObjects [i].INDEX_COUNT, GL_UNSIGNED_INT, 0);
 	}
 
-	GL::Enable(GL_DEPTH_TEST);
-	GL::Disable(GL_TEXTURE_2D);
-
 	if (cull) {
 		GL::Enable (GL_CULL_FACE);
 	}
+
+	GL::DepthMask (depthMask);
 }
 
 void SkyboxRenderer::ManageCustomAttributes ()

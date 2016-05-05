@@ -176,7 +176,7 @@ void GL::BindBuffer(GLenum target, GLuint buffer)
 }
 
 /*
- * Depth Test
+ * Depth Buffer
 */
 
 void GL::DepthMask (GLboolean flag)
@@ -205,6 +205,31 @@ void GL::DepthFunc(GLenum func)
 	glDepthFunc(func);
 
 	ErrorCheck ("glDepthFunc");
+}
+
+/*
+ * Stencil Buffer
+*/
+
+void GL::StencilFunc(GLenum func, GLint ref, GLuint mask)
+{
+	glStencilFunc (func, ref, mask);
+
+	ErrorCheck ("glStencilFunc");
+}
+
+void GL::StencilOp(GLenum sfail, GLenum dpfail, GLenum dppass)
+{
+	glStencilOp (sfail, dpfail, dppass);
+
+	ErrorCheck ("glStencilOp");
+}
+
+void GL::StencilMask(GLuint mask)
+{
+	glStencilMask (mask);
+
+	ErrorCheck ("glStencilMask");
 }
 
 /*
