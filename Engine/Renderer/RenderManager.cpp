@@ -114,8 +114,6 @@ void RenderManager::LightPass ()
 
 	DirectionalLightPass ();
 	PointLightPass ();
-
-
 }
 
 void RenderManager::DirectionalLightPass ()
@@ -124,8 +122,7 @@ void RenderManager::DirectionalLightPass ()
 	GL::BlendFunc (GL_ONE, GL_ZERO);
 
 	for (std::size_t i=0;i<LightsManager::Instance ()->GetDirectionalLightsCount ();i++) {
-		Light* light = LightsManager::Instance ()->GetDirectionalLight (i);
-		VolumetricLight* volumetricLight = dynamic_cast<VolumetricLight*> (light);
+		VolumetricLight* volumetricLight = LightsManager::Instance ()->GetDirectionalLight (i);\
 
 		volumetricLight->GetLightRenderer ()->Draw ();
 	}
@@ -135,28 +132,36 @@ void RenderManager::DirectionalLightPass ()
 
 void RenderManager::PointLightPass ()
 {
+	PointLightStencilPass ();
+	PointLightDrawPass ();
+}
+
+void RenderManager::PointLightStencilPass ()
+{
+
+}
+
+void RenderManager::PointLightDrawPass ()
+{
 	// glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
 
-	glDisable(GL_DEPTH_TEST);
-	// glEnable(GL_BLEND);
+	// GL::Disable(GL_DEPTH_TEST);
+	// GL::Enable(GL_BLEND);
 	// glBlendEquation(GL_FUNC_ADD);
 	// glBlendFunc(GL_ONE, GL_ONE);
-
-	glBlendFunc (GL_ONE, GL_ZERO);
 
 	// glEnable(GL_CULL_FACE);
 	// glCullFace(GL_FRONT);
 
-	for (std::size_t i=0;i<LightsManager::Instance ()->GetDirectionalLightsCount ();i++) {
-		Light* light = LightsManager::Instance ()->GetDirectionalLight (i);
-		VolumetricLight* volumetricLight = dynamic_cast<VolumetricLight*> (light);
+	// for (std::size_t i=0;i<LightsManager::Instance ()->GetPointLightsCount ();i++) {
+	// 	VolumetricLight* volumetricLight = LightsManager::Instance ()->GetPointLight (i);
 
-		volumetricLight->GetLightRenderer ()->Draw ();
-	}
+	// 	volumetricLight->GetLightRenderer ()->Draw ();
+	// }
 
 	// glCullFace(GL_BACK);
 
-	// glDisable(GL_BLEND);	
+	// GL::Disable(GL_BLEND);	
 }
 
 void RenderManager::EndDrawing ()

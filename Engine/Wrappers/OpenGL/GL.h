@@ -60,8 +60,9 @@ public:
 	static void BindVertexArray (GLuint array);
 	static void BindBuffer (GLenum target, GLuint buffer);
 
-	// Depth Test
+	// Depth Buffer
 	static void DepthMask (GLboolean flag);
+	static void DepthRange(GLclampd nearVal, GLclampd farVal);
 	static void ClearDepth(GLclampd  depth);
 	static void DepthFunc(GLenum func);
 

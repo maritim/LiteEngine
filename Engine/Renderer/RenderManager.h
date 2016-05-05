@@ -52,8 +52,10 @@ private:
 	void EndDrawing ();
 
 	void DirectionalLightPass ();
-	void PointStencilLightPass ();
 	void PointLightPass ();
+
+	void PointLightStencilPass ();
+	void PointLightDrawPass ();
 };
 
 #endif

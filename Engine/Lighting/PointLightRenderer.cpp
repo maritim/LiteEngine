@@ -10,8 +10,8 @@ PointLightRenderer::PointLightRenderer (Light* light) :
 	_shaderName = "POINT_LIGHT";
 
 	ShaderManager::Instance ()->AddShader (_shaderName,
-		"Assets/Shaders/deferredDirVolLightVertex.glsl",
-		"Assets/Shaders/deferredDirVolLightFragment.glsl");
+		"Assets/Shaders/deferredPointVolLightVertex.glsl",
+		"Assets/Shaders/deferredPointVolLightFragment.glsl");
 }
 
 std::vector<PipelineAttribute> PointLightRenderer::GetCustomAttributes ()

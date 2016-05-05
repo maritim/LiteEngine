@@ -186,6 +186,13 @@ void GL::DepthMask (GLboolean flag)
 	ErrorCheck ("glDepthMask");
 }
 
+void GL::DepthRange(GLclampd nearVal, GLclampd farVal)
+{
+	glDepthRange (nearVal, farVal);
+
+	ErrorCheck ("glDepthRange");
+}
+
 void GL::ClearDepth(GLclampd  depth)
 {
 	glClearDepth (depth);

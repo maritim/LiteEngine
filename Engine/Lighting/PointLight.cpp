@@ -1,14 +1,23 @@
 #include "PointLight.h"
 
+#include <cmath>
+
 #include "LightsManager.h"
 
 #include "Utils/Primitives/Primitive.h"
+
+#include "PointLightRenderer.h"
+
+#include "Core/Math/Vector3.h"
 
 PointLight::PointLight () :
 	_constantAttenuation (1.0),
 	_linearAttenuation (0.1),
 	_quadraticAttenuation (0.01)
 {
+	delete _lightRenderer;
+	_lightRenderer = new PointLightRenderer (this);
+
 	SetVolume (Primitive::Instance ()->Create (Primitive::Type::SPHERE));
 }
 
@@ -35,16 +44,22 @@ float PointLight::GetQuadraticAttenuation () const
 void PointLight::SetConstantAttenuation (float constantAttenuation)
 {
 	_constantAttenuation = constantAttenuation;
+
+	UpdateScale ();
 }
 
 void PointLight::SetLinearAttenuation (float linearAttenuation)
 {
 	_linearAttenuation = linearAttenuation;
+
+	UpdateScale ();
 }
 
 void PointLight::SetQuadraticAttenuation (float quadraticAttenuation)
 {
 	_quadraticAttenuation = quadraticAttenuation;
+
+	UpdateScale ();
 }
 
 void PointLight::OnAttachedToScene ()
@@ -55,4 +70,18 @@ void PointLight::OnAttachedToScene ()
 void PointLight::OnDetachedFromScene ()
 {
 	LightsManager::Instance ()->RemovePointLight (this);
+}
+
+void PointLight::UpdateScale ()
+{
+	Vector3 color = _color.ToVector3 ();
+	float MaxChannel = fmax(fmax(color.x, color.y), color.z);
+
+	float intensity = 0.0f;
+
+	float ret = (-_linearAttenuation + sqrtf(_linearAttenuation * _linearAttenuation -
+		4 * _quadraticAttenuation * (_constantAttenuation - 256 * MaxChannel * intensity))) / 
+		(2 * _quadraticAttenuation);
+
+	_transform->SetScale (Vector3 (ret / 2, ret / 2, ret / 2));
 }

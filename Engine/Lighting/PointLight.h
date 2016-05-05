@@ -24,6 +24,7 @@ public:
 	void OnAttachedToScene ();
 	void OnDetachedFromScene ();
 
+	void UpdateScale ();
 };
 
 #endif
