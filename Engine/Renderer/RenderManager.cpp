@@ -17,10 +17,6 @@
 #include "Systems/Window/Window.h"
 #include "Systems/Input/Input.h"
 
-#include "Managers/ShaderManager.h"
-#include "Managers/TextManager.h"
-#include "Managers/ParticleSystemManager.h"
-
 /*
  * Singleton Part
 */
@@ -47,22 +43,31 @@ bool cmp (Renderer* a, Renderer* b) {
 void RenderManager::RenderScene (Scene* scene, Camera* camera)
 {
 	/*
-	 * Update GBuffer if needed
-	*/
-
-	UpdateGBuffer ();
-
-	/*
 	 * Send Camera to Pipeline
 	*/
 
 	UpdateCamera (camera);
 
 	/*
-	 * Render the Skybox first
+	 * Deferred Rendering Pass
 	*/
 
-	SkyboxPass ();
+	DeferredPass (scene);
+
+	/*
+	 * Forward Rendering Pass
+	*/
+
+	ForwardPass (scene);
+}	
+
+void RenderManager::DeferredPass (Scene* scene)
+{
+	/*
+	 * Update GBuffer if needed
+	*/
+
+	UpdateGBuffer ();
 
 	/*
 	 * Deferred Rendering: Prepare for rendering
@@ -87,14 +92,37 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	*/
 
 	SkyboxPass ();
-	ParticleSystemPass ();
-	GUIPass ();
+	// ParticleSystemPass ();
+	// GUIPass ();
 
 	/*
 	 * Deferred Rendering: End Drawing
 	*/
 
 	EndDrawing ();
+}
+
+void RenderManager::ForwardPass (Scene* scene)
+{
+	/*
+	 * Render scene entities to framebuffer at Forward Rendering Stage
+	*/
+
+	std::vector<Renderer*> renderers;
+
+	for (std::size_t i=0;i<scene->GetObjectsCount ();i++) {
+		if (scene->GetObjectAt (i)->GetRenderer ()->GetStageType () != Renderer::StageType::FORWARD_STAGE) {
+			continue;
+		}
+
+		renderers.push_back (scene->GetObjectAt (i)->GetRenderer ());
+	}
+
+	std::sort (renderers.begin (), renderers.end (), cmp);
+
+	for (Renderer* renderer : renderers) {
+		renderer->Draw ();
+	}
 }
 
 void RenderManager::UpdateGBuffer ()
@@ -130,12 +158,16 @@ void RenderManager::GeometryPass (Scene* scene)
 	GL::StencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	/*
-	 * Render scene elements to framebuffer
+	 * Render scene entities to framebuffer at Deferred Rendering Stage
 	*/
 
 	std::vector<Renderer*> renderers;
 
 	for (std::size_t i=0;i<scene->GetObjectsCount ();i++) {
+		if (scene->GetObjectAt (i)->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
+			continue;
+		}
+
 		renderers.push_back (scene->GetObjectAt (i)->GetRenderer ());
 	}
 
@@ -144,6 +176,10 @@ void RenderManager::GeometryPass (Scene* scene)
 	for (Renderer* renderer : renderers) {
 		renderer->Draw ();
 	}
+
+	/*
+	 * Disable Stecil Test for further rendering
+	*/
 
 	GL::Disable (GL_STENCIL_TEST);
 }
@@ -216,20 +252,6 @@ void RenderManager::SkyboxPass ()
 	GL::Disable (GL_STENCIL_TEST);
 }
 
-void RenderManager::ParticleSystemPass ()
-{
-	for (std::size_t i=0;i<ParticleSystemManager::Instance ()->GetParticleSystemsCount ();i++) {
-		ParticleSystemManager::Instance ()->GetParticleSystem (i)->GetParticleSystemRenderer ()->Draw ();
-	}
-}
-
-void RenderManager::GUIPass ()
-{
-	for (std::size_t i=0;i<TextManager::Instance ()->GetTextElementsCount ();i++) {
-		TextManager::Instance ()->GetTextElement (i)->GetTextRenderer ()->Draw ();
-	}
-}
-
 void RenderManager::EndDrawing ()
 {
 	_frameBuffer->BindForFinalPass();
@@ -237,8 +259,8 @@ void RenderManager::EndDrawing ()
 	std::size_t windowWidth = Window::GetWidth ();
 	std::size_t windowHeight = Window::GetHeight ();
 
-	GL::BlitFramebuffer(0, 0, windowWidth, windowHeight,
-		0, 0, windowWidth, windowHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	GL::BlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight, 
+		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 }
 
 /*

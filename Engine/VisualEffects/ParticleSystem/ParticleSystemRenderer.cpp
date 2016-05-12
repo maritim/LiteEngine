@@ -73,7 +73,7 @@ void ParticleSystemRenderer::Draw ()
 	for (std::size_t i=0;i<_drawableObjects.size ();i++) {
 		Material* mat = MaterialManager::Instance ().GetMaterial (_drawableObjects [i].MAT_NAME);
 
-		if (mat == NULL) {
+		if (mat == nullptr) {
 			mat = MaterialManager::Instance ().Default ();
 		}
 

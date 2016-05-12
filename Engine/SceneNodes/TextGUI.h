@@ -19,7 +19,6 @@ private:
 	Vector3 _screenPos;
 	float _lineLength;
 	bool _isDirty;
-	TextGUIRenderer* _textRenderer;
 
 public:
 	TextGUI ();
@@ -31,11 +30,6 @@ public:
 	void SetText (const std::string& text);
 	void SetScreenPosition (Vector3 screenPos);
 	void SetLineLength (float lineLength);
-
-	TextGUIRenderer* GetTextRenderer ();
-
-	void OnAttachedToScene ();
-	void OnDetachedFromScene ();
 
 	void Update ();
 private:

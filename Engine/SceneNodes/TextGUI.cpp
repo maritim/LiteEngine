@@ -1,16 +1,16 @@
 #include "TextGUI.h"
 
-#include "Managers/TextManager.h"
-
 TextGUI::TextGUI () :
 	_text ("\0"),
 	_font (nullptr),
 	_screenPos (Vector3::Zero),
 	_lineLength (1.0f),
-	_isDirty (true),
-	_textRenderer (nullptr)
+	_isDirty (true)
 {
-	_textRenderer = new TextGUIRenderer (_transform);
+	delete _renderer;
+	_renderer = new TextGUIRenderer (_transform);
+	_renderer->SetStageType (Renderer::StageType::FORWARD_STAGE);
+	_renderer->SetPriority (5);
 
 	UpdateText ();
 }
@@ -21,10 +21,12 @@ TextGUI::TextGUI (const std::string& text, Font* font,
 	_font (font),
 	_screenPos (screenPos),
 	_lineLength (lineLength),
-	_isDirty (true),
-	_textRenderer (nullptr)
+	_isDirty (true)
 {
-	_textRenderer = new TextGUIRenderer (_transform);
+	delete _renderer;
+	_renderer = new TextGUIRenderer (_transform);
+	_renderer->SetStageType (Renderer::StageType::FORWARD_STAGE);
+	_renderer->SetPriority (5);
 
 	UpdateText ();
 }
@@ -58,21 +60,6 @@ void TextGUI::SetLineLength (float lineLength)
 	_isDirty = true;
 }
 
-TextGUIRenderer* TextGUI::GetTextRenderer ()
-{
-	return _textRenderer;
-}
-
-void TextGUI::OnAttachedToScene ()
-{
-	TextManager::Instance ()->AddTextElement (this);
-}
-
-void TextGUI::OnDetachedFromScene ()
-{
-	TextManager::Instance ()->RemoveTextElement (this);
-}
-
 void TextGUI::Update ()
 {
 	if (!_isDirty) {
@@ -85,5 +72,6 @@ void TextGUI::Update ()
 
 void TextGUI::UpdateText ()
 {
-	_textRenderer->UpdateText (_text, _font, _screenPos, _lineLength);
+	TextGUIRenderer* renderer = dynamic_cast<TextGUIRenderer*> (_renderer);
+	renderer->UpdateText (_text, _font, _screenPos, _lineLength);
 }

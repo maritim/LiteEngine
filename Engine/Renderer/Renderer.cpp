@@ -21,6 +21,16 @@ Renderer::~Renderer()
 
 }
 
+void Renderer::SetStageType (Renderer::StageType stage)
+{
+	_stage = stage;
+}
+
+Renderer::StageType Renderer::GetStageType () const
+{
+	return _stage;
+}
+
 void Renderer::SetPriority (std::size_t priority)
 {
 	_priority = priority;

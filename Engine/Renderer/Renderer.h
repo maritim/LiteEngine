@@ -20,7 +20,7 @@ public:
 	virtual void Draw ();
 
 	StageType GetStageType () const;
-	void SetStageType (std::size_t stageType);
+	void SetStageType (StageType stageType);
 
 	std::size_t GetPriority () const;
 	void SetPriority (std::size_t priority);

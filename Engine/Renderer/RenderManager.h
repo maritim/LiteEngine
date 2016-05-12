@@ -47,12 +47,13 @@ private:
 	void UpdateCamera (Camera* camera);
 	void UpdateGBuffer ();
 
+	void DeferredPass (Scene*);
+	void ForwardPass (Scene*);
+
 	void PrepareDrawing ();
 	void GeometryPass (Scene* scene);
 	void LightPass ();
 	void SkyboxPass ();
-	void ParticleSystemPass ();
-	void GUIPass ();
 	void EndDrawing ();
 
 	void DirectionalLightPass ();
