@@ -1,4 +1,4 @@
-#version 330
+#version 330 core
 
 layout (location = 0) out vec4 out_position;
 layout (location = 1) out vec4 out_normal;
@@ -52,5 +52,5 @@ void main()
 	out_position = vec4 (position, 1.0);
 	out_diffuse = vec4 (diffuseMap, alphaMap);
 	out_normal = vec4 (norm, 1.0);
-	out_specular = vec4 (specularMap, MaterialShininess);
+	out_specular = vec4 (diffuseMap, MaterialShininess);
 }

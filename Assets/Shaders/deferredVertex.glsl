@@ -1,4 +1,4 @@
-#version 330
+#version 330 core
 
 layout(location = 0) in vec3 in_position;
 layout(location = 1) in vec3 in_normal;
@@ -20,7 +20,7 @@ void main()
 	gl_Position = modelViewProjectionMatrix * vec4 (in_position, 1);
 
 	position = vec3 (modelMatrix * vec4 (in_position, 1));
-	normal = normalWorldMatrix * in_normal;
+	normal = in_normal;
 
 	texcoord = in_texcoord;
 }
