@@ -10,6 +10,8 @@
 
 #include "Resources.h"
 
+#include "Managers/TextureManager.h"
+
 Object* BitmapFontLoader::Load (const std::string& filename)
 {
 	std::ifstream f(filename);
@@ -386,6 +388,7 @@ void BitmapFontLoader::ProcessPageTexture (const std::string& data, BitmapFontPa
 	textureName = directory + textureName;
 
 	Texture* texture = Resources::LoadTexture (textureName);
+	TextureManager::Instance ()->AddTexture (texture);
 
 	page->SetTexture (texture);
 }

@@ -293,7 +293,7 @@ void Pipeline::SendMaterial(Material* mat)
 
 	// Send maps to shader
 	glActiveTexture (GL_TEXTURE0);
-	GL::BindTexture (GL_TEXTURE_2D, TextureManager::Instance ().Default ()->GetGPUIndex ());
+	GL::BindTexture (GL_TEXTURE_2D, TextureManager::Instance ()->Default ()->GetGPUIndex ());
 	++ _textureCount;
 
 	if (mat->ambientTexture) {
@@ -339,7 +339,7 @@ void Pipeline::SendMaterial(Material* mat)
 		if (mat->attributes [k].type == Attribute::AttrType::ATTR_TEXTURE2D
 			|| mat->attributes [k].type == Attribute::AttrType::ATTR_TEXTURE2D_ATLAS) {
 			glActiveTexture (GL_TEXTURE0 + _textureCount);
-			Texture* tex = TextureManager::Instance ().GetTexture (mat->attributes [k].valueName);
+			Texture* tex = TextureManager::Instance ()->GetTexture (mat->attributes [k].valueName);
 			unsigned int textureID = tex->GetGPUIndex ();
 			glBindTexture (GL_TEXTURE_2D, textureID);
 			glUniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);

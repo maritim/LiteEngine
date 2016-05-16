@@ -64,7 +64,7 @@ std::vector<PipelineAttribute> BillboardParticleRenderer::GetUniformAttributes (
 
 	// Take area scale from the atlas
 	Attribute atlasMap = mat->GetAttribute (Attribute::AttrType::ATTR_TEXTURE2D_ATLAS);
-	Texture* tex = TextureManager::Instance ().GetTexture (atlasMap.valueName);
+	Texture* tex = TextureManager::Instance ()->GetTexture (atlasMap.valueName);
 
 	TextureAtlas* texAtlas = dynamic_cast <TextureAtlas*> (tex);
 
@@ -100,7 +100,7 @@ void BillboardParticleRenderer::Attach (Model* model)
 void BillboardParticleRenderer::ManageAtlasTexcoord (Material* mat, Buffer<float>* buffer)
 {
 	Attribute atlasMap = mat->GetAttribute (Attribute::AttrType::ATTR_TEXTURE2D_ATLAS);
-	Texture* tex = TextureManager::Instance ().GetTexture (atlasMap.valueName);
+	Texture* tex = TextureManager::Instance ()->GetTexture (atlasMap.valueName);
 
 	TextureAtlas* texAtlas = dynamic_cast <TextureAtlas*> (tex);
 

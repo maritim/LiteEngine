@@ -12,6 +12,10 @@
 
 #include "Core/Console/Console.h"
 
+/*
+ * TODO: Refactor this and move GPU Loading into TextureManager
+*/
+
 Object* CubeMapLoader::Load(const std::string& filename)
 {
 	unsigned int tex;

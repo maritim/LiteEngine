@@ -112,8 +112,12 @@ void MaterialLibraryLoader::ProcessCustomAttributes(std::ifstream &file, Materia
 		attrTextureName = FileSystem::GetDirectory (filename) + attrTextureName;
 		attrTextureName = FileSystem::FormatFilename (attrTextureName);	
 
-		Texture* texture = Resources::LoadTexture (attrTextureName);
-		TextureManager::Instance ().AddTexture (texture);
+		Texture* texture = TextureManager::Instance ()->GetTexture (attrTextureName);
+
+		if (texture == nullptr) {
+			texture = Resources::LoadTexture (attrTextureName);
+			TextureManager::Instance ()->AddTexture (texture);
+		}
 
 		attribute.valueName = attrTextureName;
 	}
@@ -128,8 +132,13 @@ void MaterialLibraryLoader::ProcessCustomAttributes(std::ifstream &file, Materia
 		attrTextureName = FileSystem::GetDirectory (filename) + attrTextureName;
 		attrTextureName = FileSystem::FormatFilename (attrTextureName);	
 
-		TextureAtlas* textureAtlas = Resources::LoadTextureAtlas (attrTextureName);
-		TextureManager::Instance ().AddTexture (textureAtlas);
+		Texture* texture = TextureManager::Instance ()->GetTexture (attrTextureName);
+		TextureAtlas* textureAtlas = dynamic_cast<TextureAtlas*> (texture);
+
+		if (textureAtlas == nullptr) {
+			textureAtlas = Resources::LoadTextureAtlas (attrTextureName);
+			TextureManager::Instance ()->AddTexture (textureAtlas);
+		}
 
 		attribute.valueName = attrTextureName;		
 	}
@@ -158,7 +167,7 @@ void MaterialLibraryLoader::ProcessCustomAttributes(std::ifstream &file, Materia
 			}
 
 			CubeMap* cubeMap = Resources::LoadCubemap (filenames);
-			TextureManager::Instance().AddTexture (cubeMap);
+			TextureManager::Instance()->AddTexture (cubeMap);
 
 			values.y = (float) cubeMap->GetGPUIndex ();
 		}
@@ -250,8 +259,12 @@ void MaterialLibraryLoader::ProcessDefaultAttributes(std::ifstream &file, Materi
 		textureName = FileSystem::GetDirectory (filename) + textureName;
 		textureName = FileSystem::FormatFilename (textureName);
 
-		Texture* texture = Resources::LoadTexture (textureName);
-		TextureManager::Instance ().AddTexture (texture);
+		Texture* texture = TextureManager::Instance ()->GetTexture (textureName);
+
+		if (texture == nullptr) {
+			texture = Resources::LoadTexture (textureName);
+			TextureManager::Instance ()->AddTexture (texture);
+		}
 
 		unsigned int textureId = texture->GetGPUIndex ();
 

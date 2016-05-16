@@ -1,22 +1,24 @@
 #include "TextureManager.h"
 
+#include <GL/glew.h>
+#include <SDL2/SDL.h>
 #include <map>
 #include <string>
 
 #include "Resources/Resources.h"
+#include "Wrappers/OpenGL/GL.h"
 
 TextureManager::TextureManager ()
 {
 	std::string defaultTexture = "Assets/Textures/AmbientDefault.png";	
-
+	
 	_default = Resources::LoadTexture (defaultTexture);
+	this->AddTexture (_default);
 }
 
-TextureManager& TextureManager::Instance ()
+TextureManager::~TextureManager ()
 {
-	static TextureManager instance;
 
-	return instance;
 }
 
 void TextureManager::AddTexture (Texture* texture)
@@ -25,13 +27,21 @@ void TextureManager::AddTexture (Texture* texture)
 		return ;
 	}
 
+	/*
+	 * TODO: Remove this after TextureManager complete refactorization
+	*/
+
+	if (texture->GetSurface () != nullptr) {
+		this->LoadInGPU (texture);
+	}
+
 	_textures [texture->GetName()] = texture;
 }
 
 Texture* TextureManager::GetTexture (const std::string& filename)
 {
 	if (_textures.find (filename) == _textures.end ()) {
-		return NULL;
+		return nullptr;
 	}
 
 	return _textures [filename];
@@ -42,3 +52,41 @@ Texture* TextureManager::Default()
 	return _default;
 }
 
+/*
+ * TODO: Extend this to accept external Texture settings
+*/
+
+void TextureManager::LoadInGPU (Texture* texture)
+{
+	unsigned int gpuIndex = 0;
+
+	SDL_Surface* surface = texture->GetSurface ();
+
+	GL::GenTextures(1, &gpuIndex);
+	GL::BindTexture(GL_TEXTURE_2D, gpuIndex);
+
+	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+
+	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+
+	/*
+	 * For the moment will create mipmaps for all textures
+	*/
+
+	GL::GenerateMipmap (GL_TEXTURE_2D);
+
+	/*
+	 * Unbind current texture index
+	*/
+
+	GL::BindTexture (GL_TEXTURE_2D, 0);
+
+	/*
+	 * Update texture
+	*/
+
+	texture->SetGPUIndex (gpuIndex);
+}

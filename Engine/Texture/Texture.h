@@ -16,14 +16,13 @@ protected:
 	SDL_Surface* _surface;
 
 public:
-	Texture(const std::string& name, unsigned int gpuIndex, 
-		SDL_Surface* surface);
-	Texture (const std::string& name, unsigned int gpuIndex);
+	Texture(const std::string& name, SDL_Surface* surface);
 	virtual ~Texture();
 
 	unsigned int GetGPUIndex() const;
 	std::string GetName() const;
-	glm::uvec2 GetSize ();
+	glm::uvec2 GetSize () const;
+	SDL_Surface* GetSurface () const;
 
 	void SetGPUIndex(unsigned int gpuIndex);
 	void SetName(const std::string& name);
