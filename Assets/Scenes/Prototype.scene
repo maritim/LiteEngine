@@ -22,6 +22,61 @@
 			<Component name="FrameRate" />
 		</Components>
 	</GameObject>
+	<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Lara/Lara_Croft_default.dae" >
+		<Transform>
+			<Position y="-0.1" x="3" />
+			<Rotation x="80" />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject>
+<!-- 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Dragon/Dragon.dae" >
+		<Transform>
+			<Position y="-0.1" x="9" />
+			<Rotation x=80 />
+			<Scale x=0.2 y=0.2 z=0.2 />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</AnimatedGameObject>	
+ -->
+<!-- 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Soldier/Soldier.dae" >
+		<Transform>
+			<Position y="-0.1" x="9" />
+			<Rotation x=80 />
+			<Scale x=0.2 y=0.2 z=0.2 />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</AnimatedGameObject>	
+ -->
+
+	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/Spider-Man.dae" >
+		<Transform>
+			<Position y="-0.1" x="9" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</AnimatedGameObject>
+
+	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Chestie/chestie.dae" >
+		<Transform>
+			<Position y="-0.1" x="12" />
+			<Rotation />
+			<Scale x="0.02" y="0.02" z="0.02" />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</AnimatedGameObject>
+
 	<GameObject InstanceID="1" name="CowGirl" meshpath="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" >
 		<Transform>
 			<Position />

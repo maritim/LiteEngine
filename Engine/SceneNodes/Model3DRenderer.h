@@ -44,7 +44,7 @@ public:
 	void Clear ();
 protected:
 	void ProcessObjectModel (Model* model, ObjectModel* objModel);
-	BufferObject ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup);
+	virtual BufferObject ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup);
 
 	virtual BufferObject BindVertexData (const std::vector<VertexData>& vBuf, const std::vector<unsigned int>& iBuf);
 

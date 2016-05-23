@@ -265,13 +265,18 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 					++ _textureCount;
 				}
 				break;
+			case PipelineAttribute::ATTR_MATRIX_4X4F :
+					glUniformMatrix4fv (unifLoc, 1, GL_FALSE, glm::value_ptr (attr [i].matrix));
+				break;
 		}
 	}
 }
 
-void Pipeline::SendMaterial(Material* mat)
+void Pipeline::SendMaterial(Material* mat, Shader* shader)
 {
-	Shader* shader = ShaderManager::Instance ()->GetShader (mat->shaderName);
+	if (shader == nullptr) {
+		shader = ShaderManager::Instance ()->GetShader (mat->shaderName);
+	}
 
 	if (shader == nullptr) {
 		shader = ShaderManager::Instance ()->GetShader ("DEFAULT");

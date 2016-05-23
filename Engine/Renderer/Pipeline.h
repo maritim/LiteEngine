@@ -34,7 +34,7 @@ public:
 
 	static void UpdateMatrices (Shader* shader);
 	static void SendLights (Shader* shader);
-	static void SendMaterial (Material* material);
+	static void SendMaterial (Material* material, Shader* shader = nullptr);
 	// TODO: Reimplement this
 	static void SendCustomAttributes (const std::string& shadername, 
 		const std::vector<PipelineAttribute>& attrs);

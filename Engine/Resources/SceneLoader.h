@@ -23,6 +23,7 @@ private:
 	void ProcessLight (TiXmlElement* xmlElem, Scene* scene);
 	void ProcessSkybox (TiXmlElement* xmlElem, Scene* scene);
 	void ProcessGameObject (TiXmlElement* xmlElem, Scene* scene);
+	void ProcessAnimationGameObject (TiXmlElement* xmlElem, Scene* scene);
 	void ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene);
 
 	void ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneObject* obj);

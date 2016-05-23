@@ -6,6 +6,8 @@
 
 #include "WavefrontObjectLoader.h"
 #include "StanfordObjectLoader.h"
+#include "GenericObjectModelLoader.h"
+#include "AnimationModelLoader.h"
 #include "MaterialLibraryLoader.h"
 #include "TextureLoader.h"
 #include "TextureAtlasLoader.h"
@@ -24,6 +26,8 @@ Model* Resources::LoadModel (const std::string& filename)
 	}
 	else if (extension == ".ply") {
 		return LoadStanfordModel (filename);
+	} else {
+		return LoadGenericModel (filename);
 	}
 
 	Console::LogError ("The File Format for " + extension + " is not recognized.");
@@ -51,6 +55,28 @@ Model* Resources::LoadStanfordModel (const std::string& filename)
 	delete stanfordObjectLoader;
 
 	return model;
+}
+
+Model* Resources::LoadGenericModel (const std::string& filename)
+{
+	GenericObjectModelLoader* genericModelLoader = new GenericObjectModelLoader ();
+
+	Model* model = (Model*)genericModelLoader->Load (filename);
+
+	delete genericModelLoader;
+
+	return model;
+}
+
+AnimationModel* Resources::LoadAnimatedModel (const std::string& filename)
+{
+	AnimationModelLoader* animatedModelLoader = new AnimationModelLoader ();
+
+	AnimationModel* animatedModel = (AnimationModel*)animatedModelLoader->Load (filename);
+
+	delete animatedModelLoader;
+
+	return animatedModel;
 }
 
 Texture* Resources::LoadTexture(const std::string& filename)
@@ -97,24 +123,6 @@ BitmapFont* Resources::LoadBitmapFont (const std::string& filename)
 
 	return bitmapFont;
 }
-
-// //load the filename textures (only BMP, R5G6B5 format)
-// unsigned int Resources::Load_R5G6B5_BMP(const char* filename)
-// {
-//         //nothing new in here
-//         unsigned int num;
-//         glGenTextures(1,&num);
-//         SDL_Surface* img=SDL_LoadBMP(filename);
-//         glEnable (GL_TEXTURE_2D);
-//         glBindTexture(GL_TEXTURE_2D,num);
-//         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-//         glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-//         glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,img->w,img->h,0,GL_RGB,GL_UNSIGNED_SHORT_5_6_5,img->pixels);
-//         glTexEnvi(GL_TEXTURE_2D,GL_TEXTURE_ENV_MODE,GL_MODULATE);       //maybe just this
-//         SDL_FreeSurface(img);
-//         //texture.push_back(num);
-//         return num;
-// }
 
 MaterialLibrary* Resources::LoadMaterialLibrary(const std::string& filename)
 {

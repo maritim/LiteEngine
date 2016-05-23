@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Mesh/Model.h"
+#include "Mesh/AnimationModel.h"
 #include "Material/MaterialLibrary.h"
 #include "Texture/Texture.h"
 #include "Texture/TextureAtlas.h"
@@ -18,6 +19,7 @@ class Resources
 {
 public:
 	static Model* LoadModel (const std::string& filename);
+	static AnimationModel* LoadAnimatedModel (const std::string& filename);
 //	static int SaveModel (Model* model, char* filename);
 	
 	static Texture* LoadTexture (const std::string& filename);
@@ -35,6 +37,7 @@ public:
 private:
 	static Model* LoadWavefrontModel (const std::string& filename);
 	static Model* LoadStanfordModel (const std::string& filename);
+	static Model* LoadGenericModel (const std::string& filename);
 
 //	static int SaveWavefrontModel (Model* model, char* filename);
 //	static int SaveStanfordModel (Model* model, char* filename);

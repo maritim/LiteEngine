@@ -150,6 +150,13 @@ void GL::VertexAttribPointer (GLuint index, GLint size, GLenum type, GLboolean n
 	ErrorCheck ("glVertexAttribPointer");
 }
 
+void GL::VertexAttribIPointer (GLuint index, GLint size, GLenum type, GLsizei stride, const GLvoid * pointer)
+{
+	glVertexAttribIPointer (index, size, type, stride, pointer);
+
+	ErrorCheck ("glVertexAttribIPointer");
+}
+
 void GL::VertexAttribDivisor(GLuint index, GLuint divisor)
 {
 	glVertexAttribDivisor (index, divisor);

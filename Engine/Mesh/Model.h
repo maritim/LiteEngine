@@ -17,22 +17,20 @@
 
 class Model : public Object
 {
-  // friend class CatmullClark;
-  // friend class Simplification;
+protected:
+	bool _haveUV;
+	std::string _name;
+	std::string _mtllib;
 
-private:
-  	bool _haveUV;
-  	std::string _name;
-  	std::string _mtllib;
-  	// Make this more flexible
-  	std::vector<Vector3*> _vertices;
-  	std::vector<ObjectModel*> _objectModels;
-  	std::vector<Vector3*> _normals;
-  	std::vector<Vector3*> _texcoords;
+	// Make this more flexible
+	std::vector<Vector3*> _vertices;
+	std::vector<ObjectModel*> _objectModels;
+	std::vector<Vector3*> _normals;
+	std::vector<Vector3*> _texcoords;
 
-  	// Use for normal smoothing
-  	std::vector<Vector3> _smoothNormals;
-  	std::vector<int> _smoothNormalsCount;
+	// Use for normal smoothing
+	std::vector<Vector3> _smoothNormals;
+	std::vector<int> _smoothNormalsCount;
 
 public: 
 	Model();			
@@ -71,7 +69,7 @@ public:
 
 	~Model();
 
-private:
+protected:
 	Vector3* CalculateNormal(Polygon* poly);
 };
  

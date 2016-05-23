@@ -54,6 +54,7 @@ public:
 	// Attributes
 	static void EnableVertexAttribArray (GLuint index);
 	static void VertexAttribPointer (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer);
+	static void VertexAttribIPointer (GLuint index, GLint size, GLenum type, GLsizei stride, const GLvoid * pointer);	
 	static void VertexAttribDivisor (GLuint index, GLuint divisor);
 
 	// Bind

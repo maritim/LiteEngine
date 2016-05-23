@@ -8,18 +8,18 @@
 
 class GameObject : public SceneObject, public ComponentObjectI
 {
-private:
+protected:
 	Model* _mesh;
 public:
 	GameObject ();
 
-	void AttachMesh (Model* mesh);
+	virtual void AttachMesh (Model* mesh);
 	Model* GetMesh () const;
 
 	void Update ();
 
 	~GameObject ();
-private:
+protected:
 	void DestroyCurrentMesh ();
 };
 
