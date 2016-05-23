@@ -38,18 +38,18 @@ function InstallDependenciesAptGet
 	echo "Dependencies installed"
 }
 
-function InstallDependenciesYum
+function InstallDependenciesDnf
 {
 	echo "Attempting to install dependencies using yum"
 
-	dep="gcc gcc-c++ make sdl2-image-devel sdl2-devel glew-devel"
+	dep="gcc gcc-c++ make SDL2_image-devel SDL2-devel glew-devel"
 
 	for pkg in $dep; do
 		if dpkg -l "$pkg" &> /dev/null; then
 			echo "Package '$pkg' already installed. Do nothing."
 		else
 			echo "Package '$pkg' is not installed. Installing..."
-			sudo apt-get install -y $pkg
+			dnf install -y $pkg
 		fi
 	done	
 
