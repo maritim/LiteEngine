@@ -15,12 +15,12 @@ CC = g++
 COMMANDLINE_OPTIONS = /dev/ttyS0
 
 # Compiler options during compilation
-COMPILE_OPTIONS = -g0 -march=native -mtune=native -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -foptimize-strlen -ftree-loop-distribution -ftree-loop-distribute-patterns -ffast-math -flto -std=c++11 -I$(HEADERS)
+COMPILE_OPTIONS = -g -march=native -mtune=native -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -foptimize-strlen -ftree-loop-distribution -ftree-loop-distribute-patterns -ffast-math -flto -std=c++11 -I$(HEADERS)
 
 #Header include directories
 HEADERS = Engine
 #Libraries for linking
-LIBS = -lGL -lGLU -lGLEW -lSDL2 -lSDL2_image
+LIBS = -lGL -lGLU -lGLEW -lSDL2 -lSDL2_image -lassimp
 
 # Dependency options
 DEPENDENCY_OPTIONS = -MM -std=c++11 -I$(HEADERS)

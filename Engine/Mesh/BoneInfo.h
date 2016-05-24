@@ -5,16 +5,14 @@
 
 #include <string>
 
-#include <assimp/scene.h>
-#include <assimp/Importer.hpp>
-#include <assimp/postprocess.h>
+#include "Core/Math/glm/glm.hpp"
 
 class BoneInfo : public Object
 {
 protected:
 	std::string _name;
 	std::size_t _id;
-	aiMatrix4x4 _transform;
+	glm::mat4 _transform;
 
 public:
 	BoneInfo ();
@@ -25,8 +23,8 @@ public:
 	void SetID (std::size_t id);
 	std::size_t GetID () const;
 
-	void SetTransformMatrix (aiMatrix4x4 transformMatrix);
-	aiMatrix4x4 GetTransformMatrix () const;
+	void SetTransformMatrix (const glm::mat4& transformMatrix);
+	glm::mat4 GetTransformMatrix () const;
 };
 
 #endif

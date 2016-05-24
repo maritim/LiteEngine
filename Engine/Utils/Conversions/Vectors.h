@@ -8,8 +8,8 @@
 namespace Conversions
 {
 
-glm::vec3 AssimpVectorToGLMVec (const aiVector4D& assimpVector);
-aiVector4D GLMVecToAssimpVector (const glm::vec3& vec);
+glm::vec3 AssimpVectorToGLMVec (const aiVector3D& assimpVector);
+aiVector3D GLMVecToAssimpVector (const glm::vec3& vec);
 
 }
 

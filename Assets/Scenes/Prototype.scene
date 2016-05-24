@@ -22,7 +22,7 @@
 			<Component name="FrameRate" />
 		</Components>
 	</GameObject>
-	<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Lara/Lara_Croft_default.dae" >
+<!-- 	<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Lara/Lara_Croft_default.dae" >
 		<Transform>
 			<Position y="-0.1" x="3" />
 			<Rotation x="80" />
@@ -31,10 +31,10 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
-	</GameObject>
-<!-- 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Dragon/Dragon.dae" >
+	</GameObject> -->
+	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Dragon/Dragon.dae" >
 		<Transform>
-			<Position y="-0.1" x="9" />
+			<Position y="-0.1" x="15" />
 			<Rotation x=80 />
 			<Scale x=0.2 y=0.2 z=0.2 />
 		</Transform>
@@ -42,7 +42,7 @@
 			<Gravity use="false" />
 		</Rigidbody>
 	</AnimatedGameObject>	
- -->
+
 <!-- 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Soldier/Soldier.dae" >
 		<Transform>
 			<Position y="-0.1" x="9" />
@@ -58,6 +58,17 @@
 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/Spider-Man.dae" >
 		<Transform>
 			<Position y="-0.1" x="9" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</AnimatedGameObject>
+
+	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/walking.dae" >
+		<Transform>
+			<Position y="-0.1" x="6" />
 			<Rotation />
 			<Scale />
 		</Transform>

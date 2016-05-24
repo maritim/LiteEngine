@@ -29,12 +29,12 @@ void BoneNode::SetName (const std::string& name)
 	_name = name;
 }
 
-aiMatrix4x4 BoneNode::GetTransform () const
+glm::mat4 BoneNode::GetTransform () const
 {
 	return _transform;
 }
 
-void BoneNode::SetTransform (aiMatrix4x4 transform)
+void BoneNode::SetTransform (const glm::mat4& transform)
 {
 	_transform = transform;
 }

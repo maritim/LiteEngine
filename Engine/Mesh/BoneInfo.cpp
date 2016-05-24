@@ -26,12 +26,12 @@ std::size_t BoneInfo::GetID () const
 	return _id;
 }
 
-void BoneInfo::SetTransformMatrix (aiMatrix4x4 transformMatrix)
+void BoneInfo::SetTransformMatrix (const glm::mat4& transformMatrix)
 {
 	_transform = transformMatrix;
 }
 
-aiMatrix4x4 BoneInfo::GetTransformMatrix () const
+glm::mat4 BoneInfo::GetTransformMatrix () const
 {
 	return _transform;
 }

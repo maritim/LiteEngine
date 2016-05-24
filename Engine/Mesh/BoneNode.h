@@ -6,13 +6,13 @@
 #include <vector>
 #include <string>
 
-#include <assimp/scene.h>
+#include "Core/Math/glm/glm.hpp"
 
 class BoneNode : public Object
 {
 protected:
 	std::string _name;
-	aiMatrix4x4 _transform;
+	glm::mat4 _transform;
 	BoneNode* _parent;
 	std::vector<BoneNode*> _children;
 
@@ -24,8 +24,8 @@ public:
 	std::string GetName () const;
 	void SetName (const std::string& name);
 
-	aiMatrix4x4 GetTransform () const;
-	void SetTransform (aiMatrix4x4 transform);
+	glm::mat4 GetTransform () const;
+	void SetTransform (const glm::mat4& transform);
 
 	BoneNode* GetParent ();
 	void SetParent (BoneNode* parent);

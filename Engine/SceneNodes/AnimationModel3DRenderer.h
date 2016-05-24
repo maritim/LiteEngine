@@ -3,6 +3,9 @@
 
 #include "Model3DRenderer.h"
 
+#include "Core/Math/glm/glm.hpp"
+#include "Core/Math/glm/gtc/quaternion.hpp"
+
 #include "Mesh/AnimationModel.h"
 
 #include "Renderer/PipelineAttribute.h"
@@ -30,15 +33,13 @@ protected:
 
 	std::vector<PipelineAttribute> GetCustomAttributes ();
 
-	void ProcessBoneTransform (AnimationModel* animModel, aiMatrix4x4 parentTransform,
-		AnimationContainer* animContainer, BoneNode* boneNode, aiMatrix4x4 inverseGlobalMatrix,
-		float animationTime, std::vector<aiMatrix4x4>& boneTransform);
+	void ProcessBoneTransform (AnimationModel* animModel, const glm::mat4& parentTransform,
+		AnimationContainer* animContainer, BoneNode* boneNode, const glm::mat4& inverseGlobalMatrix,
+		float animationTime, std::vector<glm::mat4>& boneTransform);
 
-	void CalcInterpolatedScaling (aiVector3D& scaling, float animTime , AnimationNode* animNode);
-	void CalcInterpolatedPosition (aiVector3D& position, float animTime , AnimationNode* animNode);
-	void CalcInterpolatedRotation (aiQuaternion& rotation, float animTime , AnimationNode* animNode);
-
-	aiMatrix4x4 GetRotationMatrix (aiQuaternion rotation);
+	void CalcInterpolatedScaling (glm::vec3& scaling, float animTime, AnimationNode* animNode);
+	void CalcInterpolatedPosition (glm::vec3& position, float animTime, AnimationNode* animNode);
+	void CalcInterpolatedRotation (glm::quat& rotation, float animTime, AnimationNode* animNode);
 
 	BufferObject BindVertexData (const std::vector<AnimatedVertexData>& vBuf, const std::vector<unsigned int>& iBuf);
 };

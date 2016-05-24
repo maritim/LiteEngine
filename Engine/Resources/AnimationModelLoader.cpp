@@ -8,6 +8,10 @@
 #include "Mesh/VertexBoneInfo.h"
 #include "Mesh/BoneTree.h"
 
+#include "Utils/Conversions/Matrices.h"
+#include "Utils/Conversions/Quaternions.h"
+#include "Utils/Conversions/Vectors.h"
+
 Object* AnimationModelLoader::Load (const std::string& fileName)
 {
 	AnimationModel* animModel = new AnimationModel ();
@@ -17,7 +21,6 @@ Object* AnimationModelLoader::Load (const std::string& fileName)
 	const aiScene* assimpScene = assimpImporter.ReadFile (fileName, 
 		aiProcess_GenSmoothNormals | 
 		aiProcess_Triangulate | 
-		aiProcess_CalcTangentSpace | 
 		aiProcess_FlipUVs |
 		aiProcess_LimitBoneWeights);
 
@@ -37,23 +40,12 @@ Object* AnimationModelLoader::Load (const std::string& fileName)
 	ProcessAnimations (animModel, assimpScene);
 	ProcessAnimationTree (animModel, assimpScene->mRootNode);
 
-	// for (std::size_t i=0;i<animModel->VertexCount ();i++) {
-	// 	DEBUG_LOG ("Vertex #" + std::to_string (i));
-
-	// 	VertexBoneInfo* vertexBoneInfo = animModel->GetVertexBoneInfo (i);
-
-	// 	for (std::size_t j=0;j<vertexBoneInfo->GetBoneIDsCount ();j++) {
-	// 		DEBUG_LOG (std::to_string (vertexBoneInfo->GetBoneID (j)) + " - " +
-	// 			std::to_string (vertexBoneInfo->GetBoneWeight (j)));
-	// 	}
-	// }
-
 	return animModel;
 }
 
 void AnimationModelLoader::ProcessObject (AnimationModel* model, aiMesh* assimpMesh, const aiScene* assimpScene, const std::string& filename)
 {
-	ObjectModel* objectModel = new ObjectModel (std::string (assimpMesh->mName.C_Str ()));
+	ObjectModel* objectModel = new ObjectModel (assimpMesh->mName.data);
 
 	ProcessFaces (model, objectModel, assimpMesh, assimpScene, filename);
 
@@ -92,9 +84,9 @@ void AnimationModelLoader::ProcessAnimationTree (AnimationModel* animModel, aiNo
 void AnimationModelLoader::ProcessAnimationNode (BoneNode*& boneNode, aiNode* assimpNode)
 {
 	boneNode->SetName (assimpNode->mName.data);
-	boneNode->SetTransform (assimpNode->mTransformation);
 
-	// DEBUG_LOG (boneNode->GetName () + " | parent -> " + (boneNode->GetParent () == nullptr ? "No parent" : boneNode->GetParent ()->GetName ()));
+	glm::mat4 transformMatrix = Conversions::AssimpMatrixToGLMMat (assimpNode->mTransformation);
+	boneNode->SetTransform (transformMatrix);
 
 	for (std::size_t i=0;i<assimpNode->mNumChildren;i++) {
 		BoneNode* bone = new BoneNode (boneNode);
@@ -108,8 +100,6 @@ void AnimationModelLoader::ProcessAnimationNode (BoneNode*& boneNode, aiNode* as
 void AnimationModelLoader::ProcessAnimations (AnimationModel* animModel, const aiScene* assimpScene)
 {
 	AnimationsController* animController = new AnimationsController ();
-
-	// DEBUG_LOG (std::to_string (assimpScene->mNumAnimations));
 
 	for (std::size_t i=0;i<assimpScene->mNumAnimations;i++) {
 		aiAnimation* assimpAnimation = assimpScene->mAnimations [i];
@@ -130,8 +120,6 @@ void AnimationModelLoader::ProcessAnimation (AnimationsController* animControlle
 	animContainer->SetDuration (assimpAnimation->mDuration);
 	animContainer->SetTicksPerSecond (assimpAnimation->mTicksPerSecond);
 
-	// DEBUG_LOG (animContainer->GetName ());
-
 	for (std::size_t i=0;i<assimpAnimation->mNumChannels;i++) {
 		aiNodeAnim* assimpAnimNode = assimpAnimation->mChannels [i];
 
@@ -147,18 +135,28 @@ void AnimationModelLoader::ProcessAnimationNode (AnimationContainer* animContain
 
 	std::string boneName = assimpAnimNode->mNodeName.data;
 
-	// DEBUG_LOG (boneName);
-
 	for (std::size_t i=0;i<assimpAnimNode->mNumRotationKeys;i++) {
-		animNode->AddRotationKey (assimpAnimNode->mRotationKeys [i]);
+		QuatKey rotationKey;
+		rotationKey.value = Conversions::AssimpQuaternionToGLMQuat (assimpAnimNode->mRotationKeys [i].mValue);
+		rotationKey.time = assimpAnimNode->mRotationKeys [i].mTime;
+
+		animNode->AddRotationKey (rotationKey);
 	}
 
 	for (std::size_t i=0;i<assimpAnimNode->mNumScalingKeys;i++) {
-		animNode->AddScalingKey (assimpAnimNode->mScalingKeys [i]);
+		VectorKey scalingKey;
+		scalingKey.value = Conversions::AssimpVectorToGLMVec (assimpAnimNode->mScalingKeys [i].mValue);
+		scalingKey.time = assimpAnimNode->mScalingKeys [i].mTime;
+
+		animNode->AddScalingKey (scalingKey);
 	}
 
 	for (std::size_t i=0;i<assimpAnimNode->mNumPositionKeys;i++) {
-		animNode->AddPositionKey (assimpAnimNode->mPositionKeys [i]);
+		VectorKey positionKey;
+		positionKey.value = Conversions::AssimpVectorToGLMVec (assimpAnimNode->mPositionKeys [i].mValue);
+		positionKey.time = assimpAnimNode->mPositionKeys [i].mTime;
+
+		animNode->AddPositionKey (positionKey);
 	}
 
 	animContainer->AddAnimationNode (boneName, animNode);
@@ -173,7 +171,9 @@ void AnimationModelLoader::ProcessBones (AnimationModel* model, const aiMesh* as
 		if (model->GetBone (boneName) == nullptr) {
 			BoneInfo* bone = new BoneInfo ();
 			bone->SetName (boneName);
-			bone->SetTransformMatrix (assimpMesh->mBones [i]->mOffsetMatrix);
+
+			glm::mat4 offsetMatrix = Conversions::AssimpMatrixToGLMMat (assimpMesh->mBones [i]->mOffsetMatrix);
+			bone->SetTransformMatrix (offsetMatrix);
 
 			model->AddBone (bone);
 		

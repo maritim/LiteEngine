@@ -1,9 +1,9 @@
 #include "AnimationModel3DRenderer.h"
 
-#include <assimp/scene.h>
 #include <vector>
 
 #include "Core/Math/Vector3.h"
+#include "Core/Math/glm/gtx/transform.hpp"
 
 #include "Renderer/Pipeline.h"
 
@@ -92,10 +92,6 @@ BufferObject AnimationModel3DRenderer::ProcessPolygonGroup (Model* model, Polygo
 				vertexData.texcoord[1] = texcoord->y;
 			}
 
-			/*
-			 * Add bone information per vertex
-			*/
-
 			VertexBoneInfo* vertexBoneInfo = animModel->GetVertexBoneInfo (polygon->GetVertex (j));
 
 			for (std::size_t k=0;k<4 && k<vertexBoneInfo->GetBoneIDsCount ();k++) {
@@ -120,23 +116,22 @@ BufferObject AnimationModel3DRenderer::ProcessPolygonGroup (Model* model, Polygo
 std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 {
 	// Calculate attribute
-	std::vector<aiMatrix4x4> boneTransform (_animationModel->GetBoneCount ());
+	std::vector<glm::mat4> boneTransform (_animationModel->GetBoneCount ());
 
 	BoneTree* boneTree = _animationModel->GetBoneTree ();
 	AnimationsController* animController = _animationModel->GetAnimationsController ();
 	// AnimationContainer* animContainer = animController->GetAnimationContainer ("combinedAnim_0");
 	AnimationContainer* animContainer = animController->GetAnimationContainer ("");
-	aiMatrix4x4 rootMatrix;
+	glm::mat4 rootMatrix (1.0f);
 
-	aiMatrix4x4 globalInverse = boneTree->GetRoot ()->GetTransform ();
-	globalInverse = globalInverse.Inverse ();
+	glm::mat4 globalInverse = boneTree->GetRoot ()->GetTransform ();
+	globalInverse = glm::inverse (globalInverse);
 
 	float animationTime = Time::GetTime () / 1000;
 	float ticksPerSecond = animContainer->GetTicksPerSecond () != 0 ? animContainer->GetTicksPerSecond () : 25.0f;
 	float timeInTicks = animationTime * ticksPerSecond;
 	animationTime = std::fmod (timeInTicks, animContainer->GetDuration ());
 
- 	DEBUG_LOG ("START");
 	ProcessBoneTransform (_animationModel, rootMatrix, animContainer, boneTree->GetRoot (), globalInverse, animationTime, boneTransform);
 
 	// Create attribute
@@ -150,7 +145,7 @@ std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 
 		boneTransformAttr.name = "boneTransforms[" + std::to_string (i) + "]";
 
-		boneTransformAttr.matrix = Conversions::AssimpMatrixToGLMMat (boneTransform [i]);
+		boneTransformAttr.matrix = boneTransform [i];
 
 		attributes.push_back (boneTransformAttr);
 	}
@@ -158,44 +153,37 @@ std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 	return attributes;
 }
 
-void AnimationModel3DRenderer::ProcessBoneTransform (AnimationModel* animModel, aiMatrix4x4 parentTransform, 
-	AnimationContainer* animContainer, BoneNode* boneNode, aiMatrix4x4 inverseGlobalMatrix,
-	float animationTime, std::vector<aiMatrix4x4>& boneTransform)
+void AnimationModel3DRenderer::ProcessBoneTransform (AnimationModel* animModel, const glm::mat4& parentTransform, 
+	AnimationContainer* animContainer, BoneNode* boneNode, const glm::mat4& inverseGlobalMatrix,
+	float animationTime, std::vector<glm::mat4>& boneTransform)
 {
 	std::string nodeName = boneNode->GetName ();
-	aiMatrix4x4 nodeTransform = boneNode->GetTransform ();
-
-	DEBUG_LOG (nodeName);
+	glm::mat4 nodeTransform = boneNode->GetTransform ();
 
 	AnimationNode* animNode = animContainer->GetAnimationNode (nodeName);
 
 	if (animNode != nullptr) {
-		// Interpolate scaling and generate scaling transformation matrix
-		aiVector3D scaling;
+		glm::vec3 scaling;
 		CalcInterpolatedScaling (scaling, animationTime, animNode);
-		aiMatrix4x4 scalingM;// = GetScalingMatrix (scaling);
-		aiMatrix4x4::Scaling (scaling, scalingM);
+		glm::mat4 scalingM = glm::scale (glm::mat4 (1), scaling);
 
-		// Interpolate rotation and generate rotation transformation matrix
-		aiQuaternion rotationQ;
+		glm::quat rotationQ;
 		CalcInterpolatedRotation(rotationQ, animationTime, animNode);
-		aiMatrix4x4 rotationM = GetRotationMatrix (rotationQ);
+		glm::mat4 rotationM = glm::mat4_cast (rotationQ);
 
-		// Interpolate translation and generate translation transformation matrixa
-		aiVector3D translation;
+		glm::vec3 translation;
 		CalcInterpolatedPosition(translation, animationTime, animNode);
-		aiMatrix4x4 translationM;// = GetTranslationMatrix (translation);
-		aiMatrix4x4::Translation (translation, translationM);
+		glm::mat4 translationM = glm::translate (glm::mat4 (1), translation);	
 
 		nodeTransform = translationM * rotationM * scalingM;
 	}
 
-	aiMatrix4x4 globalTransformation = parentTransform * nodeTransform;
+	glm::mat4 globalTransformation = parentTransform * nodeTransform;
 
 	BoneInfo* boneInfo = animModel->GetBone (nodeName);
 
 	if (boneInfo != nullptr) {
-		boneTransform [boneInfo->GetID ()] = inverseGlobalMatrix * globalTransformation * boneInfo->GetTransformMatrix ();
+		boneTransform [boneInfo->GetID ()] = (inverseGlobalMatrix * globalTransformation) * boneInfo->GetTransformMatrix ();
 	}
 
 	for (std::size_t i=0;i<boneNode->GetChildrenCount ();i++) {
@@ -204,12 +192,10 @@ void AnimationModel3DRenderer::ProcessBoneTransform (AnimationModel* animModel, 
 	}
 }
 
-void AnimationModel3DRenderer::CalcInterpolatedRotation(aiQuaternion& rotationQ, float animationTime, AnimationNode* animNode)
+void AnimationModel3DRenderer::CalcInterpolatedRotation(glm::quat& rotationQ, float animationTime, AnimationNode* animNode)
 {
-		rotationQ = animNode->GetRotationKey (0).mValue;
-		return;
 	if (animNode->GetRotationKeysCount () == 1) {
-		rotationQ = animNode->GetRotationKey (0).mValue;
+		rotationQ = animNode->GetRotationKey (0).value;
 		return ;
 	}	
 
@@ -217,29 +203,26 @@ void AnimationModel3DRenderer::CalcInterpolatedRotation(aiQuaternion& rotationQ,
 	std::size_t nextRotationIndex = 0;
 
 	while (rotationIndex < animNode->GetScalingKeysCount () - 1 &&
-		animNode->GetScalingKey (rotationIndex + 1).mTime < animationTime) {
+		animNode->GetScalingKey (rotationIndex + 1).time < animationTime) {
 		++ rotationIndex;
 	}
 
 	nextRotationIndex = rotationIndex + 1;
 
-	float deltaTime = animNode->GetRotationKey (nextRotationIndex).mTime - animNode->GetRotationKey (rotationIndex).mTime;
-	float factor = (animationTime - animNode->GetRotationKey (rotationIndex).mTime) / deltaTime;
+	float deltaTime = animNode->GetRotationKey (nextRotationIndex).time - animNode->GetRotationKey (rotationIndex).time;
+	float factor = (animationTime - animNode->GetRotationKey (rotationIndex).time) / deltaTime;
 
-	const aiQuaternion& startRotationQ = animNode->GetRotationKey (rotationIndex).mValue;
-	const aiQuaternion& endRotationQ = animNode->GetRotationKey (nextRotationIndex).mValue;
+	const glm::quat& start = animNode->GetRotationKey (rotationIndex).value;
+	const glm::quat& end = animNode->GetRotationKey (nextRotationIndex).value;
 
-	aiQuaternion::Interpolate (rotationQ, startRotationQ, endRotationQ, factor);
-	rotationQ = rotationQ.Normalize ();
+	rotationQ = glm::mix(start, end, (float)factor);
+	rotationQ = glm::normalize (rotationQ);
 }
 
-void AnimationModel3DRenderer::CalcInterpolatedScaling (aiVector3D& scalingV, float animationTime, AnimationNode* animNode)
+void AnimationModel3DRenderer::CalcInterpolatedScaling (glm::vec3& scalingV, float animationTime, AnimationNode* animNode)
 {
-	scalingV = animNode->GetScalingKey (0).mValue;
-
-	return;
 	if (animNode->GetScalingKeysCount () == 1) {
-		scalingV = animNode->GetScalingKey (0).mValue;
+		scalingV = animNode->GetScalingKey (0).value;
 		return ;
 	}	
 
@@ -247,31 +230,27 @@ void AnimationModel3DRenderer::CalcInterpolatedScaling (aiVector3D& scalingV, fl
 	std::size_t nextScalingIndex = 0;
 
 	while (scalingIndex < animNode->GetScalingKeysCount () - 1 &&
-		animNode->GetScalingKey (scalingIndex + 1).mTime < animationTime) {
+		animNode->GetScalingKey (scalingIndex + 1).time < animationTime) {
 		++ scalingIndex;
 	}
 
 	nextScalingIndex = scalingIndex + 1;
 
-	float deltaTime = animNode->GetScalingKey (nextScalingIndex).mTime - animNode->GetScalingKey (scalingIndex).mTime;
-	float factor = (animationTime - animNode->GetScalingKey (scalingIndex).mTime) / deltaTime;
+	float deltaTime = animNode->GetScalingKey (nextScalingIndex).time - animNode->GetScalingKey (scalingIndex).time;
+	float factor = (animationTime - animNode->GetScalingKey (scalingIndex).time) / deltaTime;
 
-	const aiVector3D& startScalingV = animNode->GetScalingKey (scalingIndex).mValue;
-	const aiVector3D& endScalingV = animNode->GetScalingKey (nextScalingIndex).mValue;
+	const glm::vec3& start = animNode->GetScalingKey (scalingIndex).value;
+	const glm::vec3& end = animNode->GetScalingKey (nextScalingIndex).value;
 
-	aiVector3D delta = endScalingV - startScalingV;
+	glm::vec3 delta = end - start;
 
-	scalingV = startScalingV + factor * delta;
-
-	scalingV.Normalize ();
+	scalingV = start + factor * delta;
 } 
 
-void AnimationModel3DRenderer::CalcInterpolatedPosition (aiVector3D& positionV, float animationTime, AnimationNode* animNode)
+void AnimationModel3DRenderer::CalcInterpolatedPosition (glm::vec3& positionV, float animationTime, AnimationNode* animNode)
 {
-		positionV = animNode->GetPositionKey (0).mValue;
-	return;
 	if (animNode->GetPositionKeysCount () == 1) {
-		positionV = animNode->GetPositionKey (0).mValue;
+		positionV = animNode->GetPositionKey (0).value;
 		return ;
 	}
 
@@ -279,38 +258,21 @@ void AnimationModel3DRenderer::CalcInterpolatedPosition (aiVector3D& positionV, 
 	std::size_t nextPositionIndex = 0;
 
 	while (positionIndex < animNode->GetPositionKeysCount () - 1 &&
-		animNode->GetPositionKey (positionIndex + 1).mTime < animationTime) {
+		animNode->GetPositionKey (positionIndex + 1).time < animationTime) {
 		++ positionIndex;
 	}
 
 	nextPositionIndex = positionIndex + 1;
 
-	float deltaTime = animNode->GetPositionKey (nextPositionIndex).mTime - animNode->GetPositionKey (positionIndex).mTime;
-	float factor = (animationTime - (float)animNode->GetPositionKey (positionIndex).mTime) / deltaTime;
+	float deltaTime = animNode->GetPositionKey (nextPositionIndex).time - animNode->GetPositionKey (positionIndex).time;
+	float factor = (animationTime - (float)animNode->GetPositionKey (positionIndex).time) / deltaTime;
 
-	const aiVector3D& startTranslationV = animNode->GetPositionKey (positionIndex).mValue;
-	const aiVector3D& endTranslationV = animNode->GetPositionKey (nextPositionIndex).mValue;
+	const glm::vec3& start = animNode->GetPositionKey (positionIndex).value;
+	const glm::vec3& end = animNode->GetPositionKey (nextPositionIndex).value;
  
-	aiVector3D delta = endTranslationV - startTranslationV;
+	glm::vec3 delta = end - start;
 
-	positionV = startTranslationV + factor * delta;
-
-	positionV.Normalize ();
-} 
-
-aiMatrix4x4 AnimationModel3DRenderer::GetRotationMatrix (aiQuaternion rotation)
-{
-	aiMatrix4x4 matrix;
-
-	aiMatrix3x3 rotationSubMatrix = rotation.GetMatrix ();
-
-	for (std::size_t i=0;i<3;i++) {
-		for (std::size_t j=0;j<3;j++) {
-			matrix [i][j] = rotationSubMatrix [i][j];
-		}
-	}
-
-	return matrix;
+	positionV = start + factor * delta;
 }
 
 BufferObject AnimationModel3DRenderer::BindVertexData (const std::vector<AnimatedVertexData>& vBuf, const std::vector<unsigned int>& iBuf)
