@@ -21,17 +21,19 @@ out vec2 texcoord;
 
 void main()
 {
-    mat4 boneTransform = boneTransforms[in_bone_id[0]] * in_weights[0];
-    boneTransform += boneTransforms[in_bone_id[1]] * in_weights[1];
-    boneTransform += boneTransforms[in_bone_id[2]] * in_weights[2];
-    boneTransform += boneTransforms[in_bone_id[3]] * in_weights[3];
+	mat4 boneTransform = boneTransforms[in_bone_id[0]] * in_weights[0];
+	boneTransform += boneTransforms[in_bone_id[1]] * in_weights[1];
+	boneTransform += boneTransforms[in_bone_id[2]] * in_weights[2];
+	boneTransform += boneTransforms[in_bone_id[3]] * in_weights[3];
 
 	vec4 localPosition = boneTransform * vec4 (in_position, 1);
 
 	gl_Position = modelViewProjectionMatrix * localPosition;
 
-	position = vec3 (modelMatrix * vec4 (in_position, 1));
-	normal = normalMatrix * in_normal;
+	position = (modelMatrix * localPosition).xyz;
+
+	vec4 localNormal = boneTransform * vec4 (in_normal, 0.0);
+	normal = (modelMatrix * localNormal).xyz;
 
 	texcoord = in_texcoord;
 }
