@@ -12,8 +12,10 @@
 
 struct AnimatedVertexData : VertexData
 {
-	unsigned int bones[4];
+	int bones[4];
 	float weights[4];
+
+	AnimatedVertexData ();
 };
 
 class AnimationModel3DRenderer : public Model3DRenderer

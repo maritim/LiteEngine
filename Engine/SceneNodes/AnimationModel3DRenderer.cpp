@@ -21,7 +21,13 @@
 
 #include "Utils/Conversions/Matrices.h"
 
-#include "Core/Debug/Debug.h"
+AnimatedVertexData::AnimatedVertexData () : VertexData ()
+{
+	for (std::size_t i=0;i<4;i++) {
+		bones [i] = 0;
+		weights [i] = 0;
+	}
+}
 
 void AnimationModel3DRenderer::Attach (Model* model)
 {
@@ -138,7 +144,7 @@ std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 	std::vector<PipelineAttribute> attributes;
 
 	for (std::size_t i=0;i<boneTransform.size ();i++) {
-	
+
 		PipelineAttribute boneTransformAttr;
 
 		boneTransformAttr.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
@@ -165,7 +171,7 @@ void AnimationModel3DRenderer::ProcessBoneTransform (AnimationModel* animModel, 
 	if (animNode != nullptr) {
 		glm::vec3 scaling;
 		CalcInterpolatedScaling (scaling, animationTime, animNode);
-		glm::mat4 scalingM = glm::scale (glm::mat4 (1), scaling);
+		glm::mat4 scalingM = glm::scale (glm::mat4 (1.0f), scaling);
 
 		glm::quat rotationQ;
 		CalcInterpolatedRotation(rotationQ, animationTime, animNode);
@@ -173,7 +179,7 @@ void AnimationModel3DRenderer::ProcessBoneTransform (AnimationModel* animModel, 
 
 		glm::vec3 translation;
 		CalcInterpolatedPosition(translation, animationTime, animNode);
-		glm::mat4 translationM = glm::translate (glm::mat4 (1), translation);	
+		glm::mat4 translationM = glm::translate (glm::mat4 (1), translation);
 
 		nodeTransform = translationM * rotationM * scalingM;
 	}
@@ -215,7 +221,7 @@ void AnimationModel3DRenderer::CalcInterpolatedRotation(glm::quat& rotationQ, fl
 	const glm::quat& start = animNode->GetRotationKey (rotationIndex).value;
 	const glm::quat& end = animNode->GetRotationKey (nextRotationIndex).value;
 
-	rotationQ = glm::mix(start, end, (float)factor);
+	rotationQ = glm::slerp(start, end, (float)factor);
 	rotationQ = glm::normalize (rotationQ);
 }
 

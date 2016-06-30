@@ -12,7 +12,7 @@ std::size_t VertexBoneInfo::GetBoneWeightsCount () const
 	return _boneWeights.size ();
 }
 
-unsigned int VertexBoneInfo::GetBoneID (std::size_t index) const
+int VertexBoneInfo::GetBoneID (std::size_t index) const
 {
 	if (index < 0 || index >= _boneIDs.size ()) {
 		Console::LogError ("Bone IDs size exceeded. You are trying to get" + std::to_string (index) + 
@@ -36,7 +36,7 @@ float VertexBoneInfo::GetBoneWeight (std::size_t index) const
 	return _boneWeights [index];	
 }
 
-void VertexBoneInfo::AddBone (unsigned int id, float weight)
+void VertexBoneInfo::AddBone (int id, float weight)
 {
 	_boneIDs.push_back (id);
 	_boneWeights.push_back (weight);

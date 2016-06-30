@@ -14,6 +14,15 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
+VertexData::VertexData ()
+{
+	for (std::size_t i=0;i<3;i++) {
+		position [i] = normal [i] = 0;
+	}
+
+	texcoord [0] = texcoord [1] = 0;
+}
+
 Model3DRenderer::~Model3DRenderer ()
 {
 	Clear ();
