@@ -14,8 +14,15 @@ CC = g++
 # Run Options       
 COMMANDLINE_OPTIONS = /dev/ttyS0
 
+# Makefile Params
+make CONFIG=DEBUG
+
 # Compiler options during compilation
-COMPILE_OPTIONS = -g -march=native -mtune=native -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -foptimize-strlen -ftree-loop-distribution -ftree-loop-distribute-patterns -ffast-math -flto -std=c++11 -I$(HEADERS)
+ifeq ($(CONFIG),RELEASE)
+	COMPILE_OPTIONS = -g0 -Wall -Werror -march=native -mtune=native -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -foptimize-strlen -ftree-loop-distribution -ftree-loop-distribute-patterns -ffast-math -flto -std=c++11 -I$(HEADERS)
+else
+	COMPILE_OPTIONS = -g2 -O0 -Wall -Werror -std=c++11 -I$(HEADERS)
+endif
 
 #Header include directories
 HEADERS = Engine
