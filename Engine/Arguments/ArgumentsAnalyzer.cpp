@@ -18,7 +18,7 @@ void ArgumentsAnalyzer::ProcessArguments (int argc, char** argv)
 
 	std::string lastArgument = "";
 
-	for (unsigned int i=1;i<argc;i++) {
+	for (int i=1;i<argc;i++) {
 		std::string current = argv [i];
 
 		// Command

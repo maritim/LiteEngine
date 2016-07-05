@@ -60,7 +60,7 @@ std::string FileSystem::FormatFilename (const std::string& filename)
 // TODO: Implement this
 std::string FileSystem::SwitchSlashesWindows (const std::string& filename)
 {
-
+	return "";
 }
 
 std::string FileSystem::SwitchSlashesUNIX (const std::string& filename)

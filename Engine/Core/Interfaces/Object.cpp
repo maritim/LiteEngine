@@ -2,6 +2,11 @@
 
 #include <string>
 
+Object::~Object ()
+{
+	
+}
+
 std::string Object::ToString()
 {
 	return "";

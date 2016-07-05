@@ -111,10 +111,6 @@ Matrix Matrix::Rotate (float x, float y, float z)
 {
 	Matrix result (4, 4);
 
-	float xRad = x * PI / 180;
-	float yRad = y * PI / 180;
-	float zRad = z * PI / 180;
-
 	float cosa = cos (x);
 	float cosb = cos (y);
 	float cosc = cos (z);

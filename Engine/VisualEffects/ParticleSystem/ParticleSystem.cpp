@@ -14,10 +14,10 @@
 ParticleSystem::ParticleSystem () :
 	_emiter (nullptr),
 	_emissionRate (40),
-	_partCount (500, 1000),
-	_timeFromLastEmission (0),
 	_useDepthMask (false),
-	_useGravity (true)
+	_useGravity (true),
+	_partCount (500, 1000),
+	_timeFromLastEmission (0)
 {
 	delete _renderer;
 	_renderer = new ParticleSystemRenderer (_transform);

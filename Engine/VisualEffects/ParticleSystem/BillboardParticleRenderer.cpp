@@ -106,9 +106,9 @@ void BillboardParticleRenderer::ManageAtlasTexcoord (Material* mat, Buffer<float
 
 	float lifeFactor = 1.0 * (*_timeAlive) / (*_lifetime);
 
-	int areasCount = texAtlas->GetAreasCount ();
+	std::size_t areasCount = texAtlas->GetAreasCount ();
 	std::size_t areaIndex = lifeFactor * areasCount;
-	std::size_t nextAreaIndex = areaIndex + (areaIndex < areasCount - 1);
+	std::size_t nextAreaIndex = areaIndex + (areaIndex + 1 < areasCount);
 	float texBlending = lifeFactor * areasCount - areaIndex;
 
 	Vector3 currTexOffset = texAtlas->GetOffset (areaIndex);

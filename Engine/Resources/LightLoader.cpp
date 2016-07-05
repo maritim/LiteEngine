@@ -54,6 +54,8 @@ Light* LightLoader::GetLight (TiXmlElement* xmlElem)
 	else if (type == "SPOT_LIGHT") {
 		return new SpotLight ();
 	}
+
+	return nullptr;
 }
 
 void LightLoader::ProcessColor (TiXmlElement* xmlElem, Light* light)

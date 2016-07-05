@@ -67,6 +67,8 @@ bool GBuffer::Clear ()
 	GL::DeleteTextures (1, &m_finalTexture);
 
 	GL::DeleteFramebuffers (1, &m_fbo);
+
+	return 0;
 }
 
 void GBuffer::StartFrame()

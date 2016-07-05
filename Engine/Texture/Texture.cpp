@@ -3,8 +3,8 @@
 #include <string>
 
 Texture::Texture(const std::string& name, SDL_Surface* surface) :
-	_name (name),
 	_gpuIndex (0),
+	_name (name),
 	_surface (surface)
 {
 

@@ -11,8 +11,8 @@
 #include "Core/Console/Console.h"
 
 Scene::Scene () :
-	_name (""),
-	_sceneObjects ()
+	_sceneObjects (),
+	_name ("")
 {
 
 }

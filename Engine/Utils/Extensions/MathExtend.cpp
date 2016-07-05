@@ -15,10 +15,6 @@ glm::mat4 MathExtend::Rotate (const glm::vec3& quat)
 {
 	glm::mat4 result (0.f);
 
-	float xRad = quat.x * PI / 180;
-	float yRad = quat.y * PI / 180;
-	float zRad = quat.z * PI / 180;
-
 	float cosa = cos (quat.x);
 	float cosb = cos (quat.y);
 	float cosc = cos (quat.z);
