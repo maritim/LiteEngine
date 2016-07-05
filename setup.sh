@@ -65,7 +65,7 @@ if [[ `uname` == "Linux" ]]; then
 		InstallDependenciesPacman
 	elif type apt-get 2> /dev/null; then
 		InstallDependenciesAptGet
-	elif type yum 2> /dev/null; then
+	elif type dnf 2> /dev/null; then
 		InstallDependenciesYum
 	else
 		echo "ERROR: Unknown distribution. You will have to install the dependencies manually."
