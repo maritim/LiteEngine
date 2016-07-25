@@ -3,7 +3,7 @@
 
 #include "PrimitiveEmiter.h"
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 
 #include "Particle.h"
 
@@ -18,7 +18,7 @@ public:
 
 	void SetRadius (float radius);
 protected:
-	Vector3 GetParticlePosition ();
+	glm::vec3 GetParticlePosition ();
 };
 
 #endif

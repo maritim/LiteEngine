@@ -50,7 +50,7 @@ Camera::Type Camera::GetType () const
 	return _type;
 }
 
-Vector3 Camera::GetPosition () const
+glm::vec3 Camera::GetPosition () const
 {
 	return _position;
 }
@@ -95,7 +95,7 @@ void Camera::SetType (Camera::Type type)
 	_type = type;
 }
 
-void Camera::SetPosition (Vector3 pos)
+void Camera::SetPosition (glm::vec3 pos)
 {
 	_position = pos;
 }
@@ -135,9 +135,9 @@ void Camera::SetZFar (float zFar)
 	_zFar = zFar;
 }
 
-Vector3 Camera::ToVector3(void)
+glm::vec3 Camera::ToVector3(void)
 {
-	Vector3 result;
+	glm::vec3 result;
 
 	result.x = cos (_yaw) * cos (_pitch);
 	result.y = sin (_pitch);

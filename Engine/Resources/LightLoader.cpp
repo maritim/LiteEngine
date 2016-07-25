@@ -149,7 +149,7 @@ void LightLoader::ProcessSpotExponent (TiXmlElement* xmlElem, SpotLight* light)
 
 void LightLoader::ProcessSpotDirection (TiXmlElement* xmlElem, SpotLight* light)
 {
-	Vector3 direction = Vector3::Zero;
+	glm::vec3 direction;
 
 	const char* x = xmlElem->Attribute ("x");
 	const char* y = xmlElem->Attribute ("y");

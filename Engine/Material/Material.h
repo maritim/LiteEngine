@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 
 struct Attribute
 {
@@ -18,17 +18,19 @@ struct Attribute
 
 	std::string name;
 	AttrType type;
-	Vector3 values;
+	glm::vec3 values;
 	std::string valueName;
+
+	Attribute ();
 };
 
 class Material : public Object
 {
 public:
 	std::string name;
-	Vector3 ambientColor;
-	Vector3 diffuseColor;
-	Vector3 specularColor;
+	glm::vec3 ambientColor;
+	glm::vec3 diffuseColor;
+	glm::vec3 specularColor;
 	float shininess;
 	float transparency;
 	int illum;
@@ -46,7 +48,7 @@ public:
 
 public:
 	Material(void);
-	Material(const std::string& na, Vector3 aC, Vector3 dC, Vector3 sC, float ns, float tr, int ill, unsigned int tex,
+	Material(const std::string& na, glm::vec3 aC, glm::vec3 dC, glm::vec3 sC, float ns, float tr, int ill, unsigned int tex,
 		const std::pair<int, int>& blend, unsigned int bumpTex, unsigned int cubeTex, const std::string& shaderNam, 
 		const std::vector<Attribute>& attr);
 	Material(const Material& other);

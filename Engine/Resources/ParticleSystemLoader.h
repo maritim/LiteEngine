@@ -37,7 +37,8 @@ private:
 
 	void ProcessDepthMask (TiXmlElement* xmlElem, ParticleSystem* sys);
 
-	Vector3 GetVector (TiXmlElement* xmlElem);
+	glm::vec3 GetVector (TiXmlElement* xmlElem);
+	glm::quat GetQuaternion (TiXmlElement* xmlElem);
 };
 
 #endif

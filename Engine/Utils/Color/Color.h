@@ -3,7 +3,7 @@
 
 #include "Core/Interfaces/Object.h"
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 
 class Color : public Object
 {
@@ -21,7 +21,7 @@ public:
 	Color (unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
 	Color (const Color& other);
 
-	Vector3 ToVector3 ();
+	glm::vec3 ToVector3 ();
 };
 
 #endif

@@ -15,8 +15,6 @@
 #include "Utils/Extensions/StringExtend.h"
 #include "Utils/Files/FileSystem.h"
 
-#include "Core/Math/Vector3.h"
-
 #include "Core/Console/Console.h"
 
 Object* GenericObjectModelLoader::Load (const std::string& fileName)
@@ -78,7 +76,7 @@ void GenericObjectModelLoader::ProcessVertices (Model* model, aiMesh* assimpMesh
 {
 	for (std::size_t i=0;i<assimpMesh->mNumVertices;i++)
 	{
-		Vector3* vertex = new Vector3 ();
+		glm::vec3* vertex = new glm::vec3 ();
 
 		vertex->x = assimpMesh->mVertices [i].x;
 		vertex->y = assimpMesh->mVertices [i].y;
@@ -92,7 +90,7 @@ void GenericObjectModelLoader::ProcessNormals (Model* model, aiMesh* assimpMesh)
 {
 	for (std::size_t i=0;i<assimpMesh->mNumVertices;i++)
 	{
-		Vector3* normal = new Vector3 ();
+		glm::vec3* normal = new glm::vec3 ();
 
 		normal->x = assimpMesh->mNormals [i].x;
 		normal->y = assimpMesh->mNormals [i].y;
@@ -110,7 +108,7 @@ void GenericObjectModelLoader::ProcessTexcoords (Model* model, aiMesh* assimpMes
 
 	for (std::size_t i=0;i<assimpMesh->mNumVertices;i++)
 	{
-		Vector3* texcoord = new Vector3 ();
+		glm::vec3* texcoord = new glm::vec3 ();
 
 		texcoord->x = assimpMesh->mTextureCoords [0][i].x;
 		texcoord->y = assimpMesh->mTextureCoords [0][i].y;
@@ -177,7 +175,7 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 
 	aiColor4D col;
 	aiGetMaterialColor (assimpMaterial, AI_MATKEY_COLOR_DIFFUSE, &col);
-	material->diffuseColor = Vector3 (col.r, col.g, col.b);
+	material->diffuseColor = glm::vec3 (col.r, col.g, col.b);
 
 	polyGroup->SetMaterialName (material->name);
 	MaterialManager::Instance ().AddMaterial (material);

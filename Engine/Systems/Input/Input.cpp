@@ -5,7 +5,7 @@ bool Input::_lastKeyState[256];
 bool Input::_lastMouseState[4];
 bool Input::_mouseState[4];
 bool Input::_sdlQuit (false);
-Vector3 Input::_resizeEvent (Vector3::Zero);
+glm::vec3 Input::_resizeEvent (glm::vec3 (0.0f));
 
 void Input::UpdateState ()
 {
@@ -21,7 +21,7 @@ void Input::UpdateState ()
 		_lastMouseState [i] = _mouseState [i];
 	}
 
-	_resizeEvent = Vector3::Zero;
+	_resizeEvent = glm::vec3 (0.0f);
 
 	SDL_Event event;
 
@@ -90,13 +90,13 @@ bool Input::GetMouseButtonUp (Uint8 button)
 	return !_mouseState [button] && _lastMouseState [button];
 }
 
-Vector3 Input::GetMousePosition ()
+glm::vec3 Input::GetMousePosition ()
 {
 	int x = 0, y = 0;
 
 	SDL_GetMouseState(&x, &y);
 
-	Vector3 position;
+	glm::vec3 position;
 	position.x = x;
 	position.y = y;
 
@@ -108,7 +108,7 @@ bool Input::GetQuit ()
 	return _sdlQuit;
 }
 
-Vector3 Input::GetResizeEvent ()
+glm::vec3 Input::GetResizeEvent ()
 {
 	return _resizeEvent;
 }

@@ -10,9 +10,6 @@
 #include <string>
 #include <vector>
 
-#include "Core/Math/Matrix.h"
-#include "Core/Math/Vector3.h"
-
 class Polygon : public Object
 {
 private:

@@ -1,6 +1,6 @@
 #include "PointEmiter.h"
 
-Vector3 PointEmiter::GetParticlePosition ()
+glm::vec3 PointEmiter::GetParticlePosition ()
 {
 	return this->GetTransform ()->GetPosition ();
 }

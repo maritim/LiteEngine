@@ -3,7 +3,7 @@
 
 #include "Emiter.h"
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/glm.hpp"
 
 #include "Particle.h"
 
@@ -14,7 +14,7 @@ public:
 
 	Particle* GetParticle ();
 protected:
-	virtual Vector3 GetParticlePosition ();
+	virtual glm::vec3 GetParticlePosition ();
 };
 
 #endif

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 
 #include "Renderer/Pipeline.h"
 
@@ -94,20 +94,20 @@ BufferObject Model3DRenderer::ProcessPolygonGroup (Model* model, PolygonGroup* p
 		for(std::size_t j=0;j<polygon->VertexCount();j++) {
 			VertexData vertexData;
 
-			Vector3* position = model->GetVertex (polygon->GetVertex(j));
+			glm::vec3* position = model->GetVertex (polygon->GetVertex(j));
 			vertexData.position[0] = position->x;
 			vertexData.position[1] = position->y;
 			vertexData.position[2] = position->z;
 
 			if (polygon->HaveNormals ()) {
-				Vector3* normal = model->GetNormal (polygon->GetNormal(j));
+				glm::vec3* normal = model->GetNormal (polygon->GetNormal(j));
 				vertexData.normal[0] = normal->x;
 				vertexData.normal[1] = normal->y;
 				vertexData.normal[2] = normal->z;
 			}
 
 			if (model->HaveUV()) {
-				Vector3* texcoord = model->GetTexcoord (polygon->GetTexcoord(j));
+				glm::vec3* texcoord = model->GetTexcoord (polygon->GetTexcoord(j));
 				vertexData.texcoord[0] = texcoord->x;
 				vertexData.texcoord[1] = texcoord->y;
 			}

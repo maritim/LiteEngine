@@ -69,7 +69,7 @@ std::vector<PipelineAttribute> LightRenderer::GetCustomAttributes ()
 	lightPosition.value = _transform->GetPosition ();
 	lightColor.value = _light->GetColor ().ToVector3 ();
 	lightSpecularColor.value = _light->GetSpecularColor ().ToVector3 ();
-	screenSize.value = Vector3 (Window::GetWidth (), Window::GetHeight ());
+	screenSize.value = glm::vec3 (Window::GetWidth (), Window::GetHeight (), 0.0f);
 	deferredTexture1.value.x = 0;
 	deferredTexture2.value.x = 1;
 	deferredTexture3.value.x = 2;

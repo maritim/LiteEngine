@@ -4,8 +4,7 @@
 #include <vector>
 #include <string>
 
-#include "Core/Math/Vector3.h"
-#include "Core/Math/glm/glm.hpp"
+#include "Core/Math/glm/vec3.hpp"
 
 struct PipelineAttribute
 {
@@ -23,7 +22,7 @@ struct PipelineAttribute
 
 	AttrType type;
 	std::string name;
-	Vector3 value;
+	glm::vec3 value;
 	glm::mat4 matrix;
 };
 

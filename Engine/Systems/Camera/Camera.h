@@ -3,7 +3,7 @@
 
 #include "Core/Interfaces/Object.h"
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 
 class Camera : public Object
 {
@@ -17,7 +17,7 @@ private:
 protected:
 	Type _type;
 
-	Vector3 _position;
+	glm::vec3 _position;
 	float _pitch;
 	float _yaw;
 	float _roll;
@@ -39,7 +39,7 @@ public:
 
 	Type GetType () const;
 
-	Vector3 GetPosition () const;
+	glm::vec3 GetPosition () const;
 	float GetPitch () const;
 	float GetYaw () const;
 	float GetRoll () const;
@@ -50,7 +50,7 @@ public:
 
 	void SetType (Type type);
 
-	void SetPosition (Vector3 position);
+	void SetPosition (glm::vec3 position);
 	void SetPitch (float pitch);
 	void SetYaw (float yaw);
 	void SetRoll (float roll);
@@ -59,7 +59,7 @@ public:
 	void SetZNear (float zNear);
 	void SetZFar (float zFar);
 
-	Vector3 ToVector3(void);
+	glm::vec3 ToVector3(void);
 };
 
 #endif

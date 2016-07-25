@@ -14,7 +14,7 @@ void TextureAtlas::AddTextureArea (float x, float y, float w, float h)
 	_textureAreas.push_back (area);
 }
 
-Vector3 TextureAtlas::TransformTexcoord (std::size_t areaIndex, const Vector3& texcoord)
+glm::vec3 TextureAtlas::TransformTexcoord (std::size_t areaIndex, const glm::vec3& texcoord)
 {
 	if (areaIndex >= _textureAreas.size ()) {
 		Console::LogWarning ("Area index exceed areas count for " + _name + ". " +
@@ -24,7 +24,7 @@ Vector3 TextureAtlas::TransformTexcoord (std::size_t areaIndex, const Vector3& t
 		return texcoord;
 	}
 
-	Vector3 result (Vector3::Zero);
+	glm::vec3 result (glm::vec3 (0.0f));
 	TextureArea& texArea = _textureAreas [areaIndex];
 
 	result.x = texArea.startX + texcoord.x * texArea.width;
@@ -38,32 +38,32 @@ std::size_t TextureAtlas::GetAreasCount () const
 	return _textureAreas.size ();
 }
 
-Vector3 TextureAtlas::GetOffset (std::size_t index) const
+glm::vec3 TextureAtlas::GetOffset (std::size_t index) const
 {
 	if (index >= _textureAreas.size ()) {
 		Console::LogWarning ("Area index exceed areas count for " + _name + ". " +
 			std::to_string (_textureAreas.size ()) + " < " + std::to_string (index) +
 			" Zero vector returned!");
 
-		return Vector3::Zero;
+		return glm::vec3 (0.0f);
 	}
 
-	Vector3 offset (_textureAreas [index].startX, _textureAreas [index].startY);
+	glm::vec3 offset (_textureAreas [index].startX, _textureAreas [index].startY, 0.0f);
 
 	return offset;
 }
 
-Vector3 TextureAtlas::GetSize (std::size_t index) const
+glm::vec3 TextureAtlas::GetSize (std::size_t index) const
 {
 	if (index >= _textureAreas.size ()) {
 		Console::LogWarning ("Area index exceed areas count for " + _name + ". " +
 			std::to_string (_textureAreas.size ()) + " < " + std::to_string (index) +
 			" Zero vector returned!");
 
-		return Vector3::Zero;
+		return glm::vec3 (0.0f);
 	}
 
-	Vector3 size (_textureAreas [index].width, _textureAreas [index].height);
+	glm::vec3 size (_textureAreas [index].width, _textureAreas [index].height, 0.0f);
 
 	return size;
 }

@@ -18,7 +18,7 @@ float Physics::GetG () const
 	return _g;
 }
 
-Vector3 Physics::GetGravityVector () const
+glm::vec3 Physics::GetGravityVector () const
 {
-	return Vector3::Down * _g;
+	return glm::vec3 (0.0f, -1.0f, 0.0f) * _g;
 }

@@ -14,8 +14,8 @@ Particle* PrimitiveEmiter::GetParticle ()
 	float speed = Random::Instance ().RangeF (_speed.first, _speed.second);
 	float scale = Random::Instance ().RangeF (_scale.first, _scale.second);
 
-	Vector3 position = this->GetParticlePosition ();
-	Vector3 direction = this->GetParticleDirection (position);
+	glm::vec3 position = this->GetParticlePosition ();
+	glm::vec3 direction = this->GetParticleDirection (position);
 
 	Particle* particle = InstantiateParticle ();
 
@@ -23,9 +23,9 @@ Particle* PrimitiveEmiter::GetParticle ()
 	particle->SetSpeed (speed);
 	particle->SetScaleCurve (_scaleCurve);
 	particle->SetTweenCurve (_tweenCurve);
-	particle->SetMoveDirection (new Vector3 (direction));
+	particle->SetMoveDirection (new glm::vec3 (direction));
 	particle->GetTransform ()->SetPosition (position);
-	particle->GetTransform ()->SetScale (Vector3::One * scale);
+	particle->GetTransform ()->SetScale (glm::vec3 (1.0f) * scale);
 	particle->GetTransform ()->SetRotation (this->GetTransform ()->GetRotation ());
 
 	particle->Init ();
@@ -33,7 +33,7 @@ Particle* PrimitiveEmiter::GetParticle ()
 	return particle;
 }
 
-Vector3 PrimitiveEmiter::GetParticlePosition ()
+glm::vec3 PrimitiveEmiter::GetParticlePosition ()
 {
 	return this->GetTransform ()->GetPosition ();
 }

@@ -8,9 +8,9 @@ Transform* Transform::Default ()
 }
 
 Transform::Transform () :
-	_position (Vector3::Zero),
-	_rotation (Vector3::Zero),
-	_scale (Vector3::One),
+	_position (0.0f),
+	_rotation (),
+	_scale (1.0f),
 	_parent (NULL),
 	_children ()
 {
@@ -49,9 +49,9 @@ void Transform::DetachParent ()
 	_parent = NULL;
 }
 
-Vector3 Transform::GetPosition () const
+glm::vec3 Transform::GetPosition () const
 {
-	Vector3 position (_position);
+	glm::vec3 position (_position);
 
 	for (Transform* parent = _parent; parent;parent = parent->_parent) {
 		position += parent->_position;
@@ -60,15 +60,14 @@ Vector3 Transform::GetPosition () const
 	return position;
 }
 
-// TODO: Implement with Quaternions
-Vector3 Transform::GetRotation () const
+glm::quat Transform::GetRotation () const
 {
 	return _rotation;
 }
 
-Vector3 Transform::GetScale () const
+glm::vec3 Transform::GetScale () const
 {
-	Vector3 scale (_scale);
+	glm::vec3 scale (_scale);
 
 	for (Transform* parent = _parent;parent;parent = parent->_parent) {
 		scale *= parent->_scale;
@@ -77,17 +76,17 @@ Vector3 Transform::GetScale () const
 	return scale;
 }
 
-void Transform::SetPosition (const Vector3& position)
+void Transform::SetPosition (const glm::vec3& position)
 {
 	_position = position;
 }
 
-void Transform::SetRotation (const Vector3& rotation)
+void Transform::SetRotation (const glm::quat& rotation)
 {
 	_rotation = rotation;
 }
 
-void Transform::SetScale (const Vector3& scale)
+void Transform::SetScale (const glm::vec3& scale)
 {
 	_scale = scale;
 }

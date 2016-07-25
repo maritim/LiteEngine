@@ -3,8 +3,6 @@
 
 #include "QuadEmiter.h"
 
-#include "Core/Math/Vector3.h"
-
 class CubeEmiter : public QuadEmiter
 {
 private:
@@ -15,7 +13,7 @@ public:
 
 	void SetHeight (float height);
 protected:
-	Vector3 GetParticlePosition ();
+	glm::vec3 GetParticlePosition ();
 };
 
 #endif

@@ -2,7 +2,8 @@
 
 #include "ParticleSystemRenderer.h"
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
+#include "Core/Math/glm/gtx/norm.hpp"
 
 #include "Systems/Camera/Camera.h"
 
@@ -126,14 +127,14 @@ void ParticleSystemRenderer::RemoveMarked ()
 // LE: Can improve this.
 void ParticleSystemRenderer::InsertionSort ()
 {
-	Vector3 camPos = Camera::Main ()->GetPosition ();
+	glm::vec3 camPos = Camera::Main ()->GetPosition ();
 
 	for (std::size_t i=1;i<_particleRenderers.size ();i++) {
-		float dist = Vector3::SqrDistance (camPos, 
+		float dist = glm::distance2 (camPos, 
 			_particleRenderers [i]->GetTransform ()->GetPosition ());
 
 		for (std::size_t j=i-1;j>=0;j--) {
-			float prevDist = Vector3::SqrDistance (camPos,
+			float prevDist = glm::distance2 (camPos,
 				_particleRenderers [j]->GetTransform ()->GetPosition ());
 
 			if (dist <= prevDist) {

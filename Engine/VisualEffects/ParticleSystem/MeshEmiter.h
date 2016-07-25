@@ -9,14 +9,12 @@
 
 #include "Mesh/Model.h"
 
-#include "Core/Math/Vector3.h"
-
 class MeshSample
 {
 public:
-	Vector3* a;
-	Vector3* b;
-	Vector3* c;
+	glm::vec3* a;
+	glm::vec3* b;
+	glm::vec3* c;
 };
 
 class MeshEmiter : public PrimitiveEmiter
@@ -29,7 +27,7 @@ public:
 	MeshEmiter (Model* mesh);
 	~MeshEmiter ();
 protected:
-	virtual Vector3 GetParticlePosition ();
+	glm::vec3 GetParticlePosition ();
 private:
 	void ProcessObjectModel (Model* mesh, ObjectModel* objModel);
 	void ProcessPolygonGroup (Model* mesh, PolygonGroup* polyGroup);

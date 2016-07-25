@@ -17,7 +17,7 @@ public:
 	void SetWidth (float width);
 	void SetDepth (float depth);
 protected:
-	virtual Vector3 GetParticlePosition ();
+	glm::vec3 GetParticlePosition ();
 };
 
 #endif

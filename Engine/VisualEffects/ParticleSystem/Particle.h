@@ -4,7 +4,7 @@
 #include "SceneGraph/SceneObject.h"
 
 #include "Mesh/Model.h"
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 #include "SceneGraph/Transform.h"
 
 #include "Utils/Curves/AnimationCurve.h"
@@ -15,7 +15,7 @@ protected:
 	// In milliseconds
 	unsigned int _lifetime;
 	// Movement direction
-	Vector3* _direction;
+	glm::vec3* _direction;
 	// Movement speed - units per second
 	float _speed;
 
@@ -24,9 +24,9 @@ protected:
 
 	bool _alive;
 
-	Vector3 _initialPosition;
-	Vector3 _finalDestination;
-	Vector3 _initialScale;
+	glm::vec3 _initialPosition;
+	glm::vec3 _finalDestination;
+	glm::vec3 _initialScale;
 	unsigned int _timeAlive;
 
 	Model* _mesh;
@@ -40,7 +40,7 @@ public:
 	void SetScaleCurve (AnimationCurve* scaleCurve);
 	void SetTweenCurve (AnimationCurve* tweenCurve);
 	void SetSpeed (float speed);
-	void SetMoveDirection (Vector3* direction);
+	void SetMoveDirection (glm::vec3* direction);
 
 	void Init ();
 

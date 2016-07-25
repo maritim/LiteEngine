@@ -98,7 +98,7 @@ void MaterialLibraryLoader::ProcessCustomAttributes(std::ifstream &file, Materia
 	Attribute attribute;
 	std::string attrType;
 	std::string attrName;
-	Vector3 values;
+	glm::vec3 values;
 
 	file >> attrType >> attrName;
 	if (attrType == "TEXTURE2D") {
@@ -175,7 +175,7 @@ void MaterialLibraryLoader::ProcessCustomAttributes(std::ifstream &file, Materia
 	else if (attrType == "VEC3") {
 		attribute.type = Attribute::AttrType::ATTR_VEC3;
 
-		file >> values;
+		file >> values.x >> values.y >> values.z;
 	}
 	else if (attrType == "FLOAT") {
 		attribute.type = Attribute::AttrType::ATTR_FLOAT;
@@ -199,21 +199,21 @@ void MaterialLibraryLoader::ProcessDefaultAttributes(std::ifstream &file, Materi
 		float x, y, z;
 		file >> x >> y >> z;
 
-		currentMaterial->ambientColor = Vector3 (x, y, z);
+		currentMaterial->ambientColor = glm::vec3 (x, y, z);
 	}
 	else if (fileType == "Kd")
 	{
 		float x, y, z;
 		file >> x >> y >> z;
 
-		currentMaterial->diffuseColor = Vector3 (x, y, z);
+		currentMaterial->diffuseColor = glm::vec3 (x, y, z);
 	}
 	else if (fileType == "Ks")
 	{
 		float x, y, z;
 		file >> x >> y >> z;
 
-		currentMaterial->specularColor = Vector3 (x, y, z);
+		currentMaterial->specularColor = glm::vec3 (x, y, z);
 	}
 	else if (fileType == "Ns")
 	{

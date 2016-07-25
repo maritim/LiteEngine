@@ -246,9 +246,9 @@ void SceneLoader::ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneOb
 	sceneObject->GetTransform ()->SetScale (transform.GetScale ());
 }
 
-Vector3 SceneLoader::GetPosition (TiXmlElement* xmlElem)
+glm::vec3 SceneLoader::GetPosition (TiXmlElement* xmlElem)
 {
-	Vector3 vector3;
+	glm::vec3 vector3;
 
 	const char* x = xmlElem->Attribute ("x");
 	const char* y = xmlElem->Attribute ("y");
@@ -269,14 +269,16 @@ Vector3 SceneLoader::GetPosition (TiXmlElement* xmlElem)
 	return vector3;
 }
 
-Vector3 SceneLoader::GetRotation (TiXmlElement* xmlElem)
+glm::quat SceneLoader::GetRotation (TiXmlElement* xmlElem)
 {
-	return GetPosition (xmlElem);
+	glm::vec3 eulerAngles = GetPosition (xmlElem);
+
+	return glm::quat (eulerAngles);
 }
 
-Vector3 SceneLoader::GetScale (TiXmlElement* xmlElem)
+glm::vec3 SceneLoader::GetScale (TiXmlElement* xmlElem)
 {
-	Vector3 vector3 (Vector3::One);
+	glm::vec3 vector3 (1.0f);
 
 	const char* x = xmlElem->Attribute ("x");
 	const char* y = xmlElem->Attribute ("y");

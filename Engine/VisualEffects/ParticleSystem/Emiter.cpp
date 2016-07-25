@@ -2,9 +2,9 @@
 
 #include <cmath>
 
-#include "Core/Math/Matrix.h"
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/glm.hpp"
 
+#include "Core/Math/Matrix.h"
 #include "Core/Random/Random.h"
 
 #include "Utils/Primitives/Primitive.h"
@@ -92,11 +92,11 @@ Particle* Emiter::InstantiateParticle ()
 	return clone;
 }
 
-Vector3 Emiter::GetParticleDirection (Vector3 source)
+glm::vec3 Emiter::GetParticleDirection (glm::vec3 source)
 {
 	// Pick direction (see this -> http://mathworld.wolfram.com/DiskPointPicking.html)
 
-	Vector3 destPoint;
+	glm::vec3 destPoint;
 	float angle = Random::Instance ().RangeF (0, 2 * M_PI);
 	float radius = sqrt (Random::Instance ().RangeF (0, 1));
 	
@@ -105,7 +105,8 @@ Vector3 Emiter::GetParticleDirection (Vector3 source)
 	destPoint.z = _emissionShape.second * radius * sin (angle);
 
 	// Calculate destination point by emiter rotation
-	Vector3 rotVec = this->GetTransform ()->GetRotation ();
+	glm::quat rotQuat = this->GetTransform ()->GetRotation ();
+	glm::vec3 rotVec = glm::eulerAngles (rotQuat);
 
 	Matrix rotation = Matrix::Rotate (rotVec.x, rotVec.y, rotVec.z);
 	Matrix point (4, 1); point [0][0] = destPoint.x; 
@@ -120,7 +121,7 @@ Vector3 Emiter::GetParticleDirection (Vector3 source)
 	// Calculate destination point by emiter translation
 	destPoint += this->GetTransform ()->GetPosition ();
 
-	Vector3 direction = destPoint - source;
+	glm::vec3 direction = destPoint - source;
 
 	return direction;
 }

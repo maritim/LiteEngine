@@ -1,5 +1,8 @@
 #include "CameraController.h"
 
+#include "Core/Math/glm/vec3.hpp"
+#include "Core/Math/glm/detail/func_geometric.hpp"
+
 #include "Systems/Camera/Camera.h"
 #include "Systems/Input/Input.h"
 #include "Systems/Time/Time.h"
@@ -11,11 +14,11 @@ void CameraController::Update ()
 	// http://cboard.cprogramming.com/game-programming/135390-how-properly-move-strafe-yaw-pitch-camera-opengl-glut-using-glulookat.html
 
 	float cameraVelocity = 10.0f;
-	Vector3 velocity = Vector3::Zero;
+	glm::vec3 velocity = glm::vec3 (0.0f);
 
-	Vector3 Forward = Camera::Main ()->ToVector3();
-	Vector3 Right = Forward.Cross (Vector3::Up);
-	Forward.Normalize (); Right.Normalize ();
+	glm::vec3 Forward = Camera::Main ()->ToVector3();
+	glm::vec3 Right = glm::cross (Forward, glm::vec3 (0.0f, 1.0f, 0.0f));
+	Forward = glm::normalize (Forward); Right = glm::normalize (Right);
 
 	if (Input::GetKey ('w')) {
 		velocity += Forward * cameraVelocity * Time::GetDeltaTime();
@@ -33,14 +36,14 @@ void CameraController::Update ()
 		velocity += Right * cameraVelocity * Time::GetDeltaTime();
 	}
 
-	Vector3 camPos = Camera::Main ()->GetPosition () + velocity;
+	glm::vec3 camPos = Camera::Main ()->GetPosition () + velocity;
 	Camera::Main ()->SetPosition (camPos);
 
 	static bool leftButtonDown = false;
 	static int iLastMouseMoveX = 0;
 	static int iLastMouseMoveY = 0;
 
-	Vector3 mousePosition = Input::GetMousePosition ();
+	glm::vec3 mousePosition = Input::GetMousePosition ();
 
 	if (Input::GetMouseButtonUp (SDL_BUTTON_LEFT)) {
 		leftButtonDown = false;

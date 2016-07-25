@@ -216,13 +216,13 @@ Buffer<float> TextGUIRenderer::CharData (FontChar* ch, const glm::vec2& screenPo
 }
 
 void TextGUIRenderer::UpdateText (const std::string& text, Font* font,
-	Vector3 screenPos, float lineLength)
+	glm::vec2 screenPos, float lineLength)
 {
 	_text = text;
 	_font = font;
 	_screenPos = screenPos;
-	_screenPos = Vector3 (screenPos.x, 1.0 - screenPos.y);
-	_screenPos = _screenPos * 2 - Vector3::One;
+	_screenPos = glm::vec2 (screenPos.x, 1.0 - screenPos.y);
+	_screenPos = _screenPos * 2.0f - glm::vec2 (1.0f);
 	_lineLength = lineLength;
 	_isDirty = true;
 }

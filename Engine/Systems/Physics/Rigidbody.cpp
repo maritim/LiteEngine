@@ -27,8 +27,8 @@ void Rigidbody::Update ()
 		return;
 	}
 
-	Vector3 currentPosition = _transform->GetPosition ();
-	Vector3 nextPosition = currentPosition + 
+	glm::vec3 currentPosition = _transform->GetPosition ();
+	glm::vec3 nextPosition = currentPosition + 
 		Physics::Instance ().GetGravityVector () * Time::GetDeltaTime ();
 
 	_transform->SetPosition (nextPosition);

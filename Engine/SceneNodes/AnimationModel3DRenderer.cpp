@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 #include "Core/Math/glm/gtx/transform.hpp"
 
 #include "Renderer/Pipeline.h"
@@ -80,20 +80,20 @@ BufferObject AnimationModel3DRenderer::ProcessPolygonGroup (Model* model, Polygo
 		for(std::size_t j=0;j<polygon->VertexCount();j++) {
 			AnimatedVertexData vertexData;
 
-			Vector3* position = animModel->GetVertex (polygon->GetVertex(j));
+			glm::vec3* position = animModel->GetVertex (polygon->GetVertex(j));
 			vertexData.position[0] = position->x;
 			vertexData.position[1] = position->y;
 			vertexData.position[2] = position->z;
 
 			if (polygon->HaveNormals ()) {
-				Vector3* normal = animModel->GetNormal (polygon->GetNormal(j));
+				glm::vec3* normal = animModel->GetNormal (polygon->GetNormal(j));
 				vertexData.normal[0] = normal->x;
 				vertexData.normal[1] = normal->y;
 				vertexData.normal[2] = normal->z;
 			}
 
 			if (animModel->HaveUV()) {
-				Vector3* texcoord = animModel->GetTexcoord (polygon->GetTexcoord(j));
+				glm::vec3* texcoord = animModel->GetTexcoord (polygon->GetTexcoord(j));
 				vertexData.texcoord[0] = texcoord->x;
 				vertexData.texcoord[1] = texcoord->y;
 			}

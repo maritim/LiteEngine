@@ -8,7 +8,7 @@
 
 #include "PointLightRenderer.h"
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 
 PointLight::PointLight () :
 	_constantAttenuation (1.0),
@@ -74,7 +74,7 @@ void PointLight::OnDetachedFromScene ()
 
 void PointLight::UpdateScale ()
 {
-	Vector3 color = _color.ToVector3 ();
+	glm::vec3 color = _color.ToVector3 ();
 	float MaxChannel = fmax(fmax(color.x, color.y), color.z);
 
 	float intensity = 0.0f;
@@ -83,5 +83,5 @@ void PointLight::UpdateScale ()
 		4 * _quadraticAttenuation * (_constantAttenuation - 256 * MaxChannel * intensity))) / 
 		(2 * _quadraticAttenuation);
 
-	_transform->SetScale (Vector3 (ret / 2, ret / 2, ret / 2));
+	_transform->SetScale (glm::vec3 (ret / 2, ret / 2, ret / 2));
 }

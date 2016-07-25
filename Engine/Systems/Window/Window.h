@@ -6,7 +6,7 @@
 #include <SDL2/SDL.h>
 #include <string>
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 
 class Window
 {
@@ -22,7 +22,7 @@ public:
 	static bool Init (std::size_t width, std::size_t height, std::string name);
 
 	static void SwapBuffers ();
-	static void Resize (const Vector3&);
+	static void Resize (const glm::vec3&);
 
 	static std::size_t GetWidth ();
 	static std::size_t GetHeight ();

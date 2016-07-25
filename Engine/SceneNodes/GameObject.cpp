@@ -4,8 +4,6 @@
 #include "Systems/Time/Time.h"
 #include "Model3DRenderer.h"
 
-#include "Core/Math/Vector3.h"
-
 #include "Systems/Input/Input.h"
 
 GameObject::GameObject () :

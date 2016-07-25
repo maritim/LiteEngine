@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 
 #include "Fonts/Font.h"
 
@@ -22,7 +22,7 @@ protected:
 	
 	std::string _text;
 	Font* _font;
-	Vector3 _screenPos;
+	glm::vec2 _screenPos;
 	float _lineLength;
 
 	Buffer<float> _buffer;
@@ -37,7 +37,7 @@ public:
 	virtual void Draw ();
 
 	virtual void UpdateText (const std::string& text, Font* font,
-		Vector3 screenPos, float lineLength);
+		glm::vec2 screenPos, float lineLength);
 private:
 	void CreateVBO (BufferObject&, const std::vector<BufferAttribute>&);
 	void FeedVBO (BufferObject&, const Buffer<float>&, const Buffer<unsigned int>&);

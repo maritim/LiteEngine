@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 
 #include "Light.h"
 #include "DirectionalLight.h"
@@ -21,11 +21,11 @@ private:
 	std::vector<PointLight*> _pointLights;
 	std::vector<SpotLight*> _spotLights;
 
-	Vector3 _ambientLight;
+	glm::vec3 _ambientLight;
 	
 public:
-	void SetAmbientColorLight (Vector3 ambientLight);
-	Vector3 GetAmbientColorLight ();
+	void SetAmbientColorLight (glm::vec3 ambientLight);
+	glm::vec3 GetAmbientColorLight ();
 
 	void AddDirectionalLight (DirectionalLight* light);
 	void AddPointLight (PointLight* light);

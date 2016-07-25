@@ -11,7 +11,7 @@
 #include "Material/Material.h"
 
 #include "Core/Math/Matrix.h"
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/glm.hpp"
 
 #include "Managers/TextureManager.h"
 #include "Managers/MaterialManager.h"
@@ -111,8 +111,8 @@ void BillboardParticleRenderer::ManageAtlasTexcoord (Material* mat, Buffer<float
 	std::size_t nextAreaIndex = areaIndex + (areaIndex + 1 < areasCount);
 	float texBlending = lifeFactor * areasCount - areaIndex;
 
-	Vector3 currTexOffset = texAtlas->GetOffset (areaIndex);
-	Vector3 nextTexOffset = texAtlas->GetOffset (nextAreaIndex);
+	glm::vec3 currTexOffset = texAtlas->GetOffset (areaIndex);
+	glm::vec3 nextTexOffset = texAtlas->GetOffset (nextAreaIndex);
 
 	buffer->Add (currTexOffset.x); 
 	buffer->Add (currTexOffset.y);
@@ -123,7 +123,7 @@ void BillboardParticleRenderer::ManageAtlasTexcoord (Material* mat, Buffer<float
 
 void BillboardParticleRenderer::ManageCustomAttributes (Buffer<float>* buffer)
 {
-	Vector3 scale = _transform->GetScale ();
+	glm::vec3 scale = _transform->GetScale ();
 
 	buffer->Add (scale.x);
 	buffer->Add (scale.y);

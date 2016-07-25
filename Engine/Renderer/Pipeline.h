@@ -1,7 +1,6 @@
 #ifndef PIPELINE_H
 #define PIPELINE_H
 
-#include "Core/Math/Vector3.h"
 #include "SceneGraph/Transform.h"
 #include "Material/Material.h"
 #include "Systems/Camera/Camera.h"

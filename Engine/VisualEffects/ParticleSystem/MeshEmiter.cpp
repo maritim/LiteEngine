@@ -38,15 +38,15 @@ MeshEmiter::~MeshEmiter ()
 	delete _mesh;
 }
 
-Vector3 MeshEmiter::GetParticlePosition ()
+glm::vec3 MeshEmiter::GetParticlePosition ()
 {
 	std::size_t pos = Random::Instance ().RangeI (0, _meshSamples.size () - 1);
 	float t = Random::Instance ().RangeF (0, 1);
 
 	MeshSample sample = _meshSamples [pos];
 
-	Vector3 position = (*sample.a) + (*sample.b - *sample.a) * t +
-		(*sample.c - *sample.a) * (1.0 - t);
+	glm::vec3 position = (*sample.a) + (*sample.b - *sample.a) * glm::vec3 (t, t, t) +
+		(*sample.c - *sample.a) * glm::vec3 (1.0f - t, 1.0f - t, 1.0f - t);
 
 	position += _transform->GetPosition ();
 

@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include "Core/Math/Matrix.h"
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
+#include "Core/Math/glm/gtc/matrix_transform.hpp"
 
 ParticleRenderer::~ParticleRenderer ()
 {
@@ -45,21 +45,21 @@ Buffer<float> ParticleRenderer::GetModelMatrix ()
 {
 	Buffer<float> buffer;
 
-	Vector3 position = _transform->GetPosition ();
-	Vector3 scalev = _transform->GetScale ();
-	Vector3 rotationv = _transform->GetRotation ();
+	glm::vec3 position = _transform->GetPosition ();
+	glm::vec3 scalev = _transform->GetScale ();
+	glm::quat rotationq = _transform->GetRotation ();
 
-	Matrix translate = Matrix::Translate (position.x, position.y, position.z);
-	Matrix scale = Matrix::Scale (scalev.x, scalev.y, scalev.z);
-	Matrix rotation = Matrix::Rotate (rotationv.x, rotationv.y, rotationv.z);
+	glm::mat4 translate = glm::translate (glm::mat4 (1.f), glm::vec3 (position.x, position.y, position.z));
+	glm::mat4 scale = glm::scale (glm::mat4 (1.f), glm::vec3 (scalev.x, scalev.y, scalev.z));
+	glm::mat4 rotation = glm::mat4_cast(rotationq);
 
-	Matrix modelMatrix = translate * scale * rotation;
+	glm::mat4 modelMatrix = translate * scale * rotation;
 
-	float* cMatrix = modelMatrix.C_ColMatrix ();
-	for (std::size_t i=0;i<16;i++) {
-		buffer.Add (cMatrix [i]);
+	for (short int i=0;i<4;i++) {
+		for (short int j=0;j<4;j++) {
+			buffer.Add (modelMatrix [i][j]);
+		}
 	}
-	delete[] cMatrix;
 
 	return buffer;
 }

@@ -6,7 +6,7 @@
 
 #include "Particle.h"
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/glm.hpp"
 
 class CircleEmiter : public PrimitiveEmiter
 {
@@ -18,7 +18,7 @@ public:
 
 	void SetRadius (float radius);
 private:
-	Vector3 GetParticlePosition ();
+	glm::vec3 GetParticlePosition ();
 };
 
 #endif

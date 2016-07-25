@@ -46,7 +46,7 @@ public:
 protected:
 	Particle* InstantiateParticle ();
 
-	Vector3 GetParticleDirection (Vector3 source);
+	glm::vec3 GetParticleDirection (glm::vec3 source);
 };
 
 #endif

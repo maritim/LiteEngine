@@ -15,7 +15,7 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
-#include "Core/Math/glm/glm.hpp"
+#include "Core/Math/glm/vec3.hpp"
 #include "Core/Math/glm/gtc/matrix_transform.hpp"
 #include "Core/Math/glm/gtc/type_ptr.hpp"
 
@@ -39,12 +39,12 @@ void Pipeline::CreatePerspective (float FOV, float aspect, float zNear, float zF
 
 void Pipeline::SendCamera (Camera* camera)
 {
-	Vector3 position = camera->GetPosition ();
+	glm::vec3 position = camera->GetPosition ();
 	_cameraPosition = glm::vec3 (position.x, position.y, position.z);
 
 	_viewMatrix = glm::mat4 (1.f);
 
-	Vector3 eulerAngle = camera->ToVector3 ();
+	glm::vec3 eulerAngle = camera->ToVector3 ();
 	glm::vec3 euler (eulerAngle.x, eulerAngle.y, eulerAngle.z);
 	euler = glm::normalize (euler);
 
@@ -67,17 +67,25 @@ void Pipeline::SendCamera (Camera* camera)
 	_viewMatrix =  glm::translate (_viewMatrix, glm::vec3 (-position.x, -position.y, -position.z));		
 }
 
+#include "Core/Debug/Debug.h"
+
 void Pipeline::SetObjectTransform (Transform* transform)
 {
-	Vector3 position = transform->GetPosition ();
-	Vector3 scalev = transform->GetScale ();
-	Vector3 rotationv = transform->GetRotation ();
+	glm::vec3 position = transform->GetPosition ();
+	glm::vec3 scalev = transform->GetScale ();
+	glm::quat rotationq = transform->GetRotation ();
 
 	glm::mat4 translate = glm::translate (glm::mat4 (1.f), glm::vec3 (position.x, position.y, position.z));
 	glm::mat4 scale = glm::scale (glm::mat4 (1.f), glm::vec3 (scalev.x, scalev.y, scalev.z));
-	glm::mat4 rotation =  glm::rotate (glm::mat4 (1.0f), rotationv.y, glm::vec3 (0.0f, 1.0f, 0.0f)) * 
-		glm::rotate (glm::mat4 (1.0f), rotationv.z, glm::vec3 (0.0f, 0.0f, 1.0f)) *
-		glm::rotate (glm::mat4 (1.0f), rotationv.x, glm::vec3 (1.0f, 0.0f, 0.0f));
+
+	glm::vec3 euler = glm::eulerAngles (rotationq);
+	DEBUG_LOG (std::to_string (euler.x) + " " + std::to_string (euler.y) + " " + std::to_string (euler.z));
+
+	glm::mat4 rotation = glm::mat4_cast(rotationq);
+
+		// glm::rotate (glm::mat4 (1.0f), rotationv.y, glm::vec3 (0.0f, 1.0f, 0.0f)) * 
+		// glm::rotate (glm::mat4 (1.0f), rotationv.z, glm::vec3 (0.0f, 0.0f, 1.0f)) *
+		// glm::rotate (glm::mat4 (1.0f), rotationv.x, glm::vec3 (1.0f, 0.0f, 0.0f));
 
 	_modelMatrix = translate * scale * rotation;
 }
@@ -104,7 +112,7 @@ void Pipeline::UpdateMatrices (Shader* shader)
 
 void Pipeline::SendLights (Shader* shader)
 {
-	Vector3 vec = LightsManager::Instance ()->GetAmbientColorLight ();
+	glm::vec3 vec = LightsManager::Instance ()->GetAmbientColorLight ();
 	Color color;
 
 	glUniform3f(shader->GetUniformLocation ("sceneAmbient"), vec.x, vec.y, vec.z);
@@ -372,7 +380,7 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 			glUniform1f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), value);
 		}
 		else if (mat->attributes [k].type == Attribute::AttrType::ATTR_VEC3) {
-			Vector3 values = mat->attributes [k].values;
+			glm::vec3 values = mat->attributes [k].values;
 			glUniform3f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), 
 				values.x, values.y, values.z);
 		}

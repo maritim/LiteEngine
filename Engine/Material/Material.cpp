@@ -2,6 +2,15 @@
 
 #include "Core/Console/Console.h"
 
+Attribute::Attribute () :
+	name (""),
+	type (ATTR_NONE),
+	values (),
+	valueName ("")
+{
+
+}
+
 Material::Material(void) :
 	name(""),
 	ambientColor(0.2, 0.2, 0.2),
@@ -25,7 +34,7 @@ Material::Material(void) :
 	// http://stackoverflow.com/questions/10181201/opengl-light-changes-ambient-to-diffuse-or-specular-works-but-not-the-opposite
 }
 
-Material::Material(const std::string& na, Vector3 aC, Vector3 dC, Vector3 sC, float ns, float tr, int lum, unsigned int tex,
+Material::Material(const std::string& na, glm::vec3 aC, glm::vec3 dC, glm::vec3 sC, float ns, float tr, int lum, unsigned int tex,
 	const std::pair<int, int>& blend, unsigned int bumpTex, unsigned int cubeTex, const std::string& shaderNam, 
 	const std::vector<Attribute>& attr) :
 	name(na),

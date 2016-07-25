@@ -50,7 +50,7 @@ void Particle::SetSpeed (float speed)
 	_speed = speed;
 }
 
-void Particle::SetMoveDirection (Vector3* direction)
+void Particle::SetMoveDirection (glm::vec3* direction)
 {
 	delete _direction;
 	_direction = direction;
@@ -58,11 +58,11 @@ void Particle::SetMoveDirection (Vector3* direction)
 
 void Particle::Init ()
 {
-	_direction->Normalize ();
+	*_direction = glm::normalize (*_direction);
 
 	_initialPosition = _transform->GetPosition ();
 	_initialScale = _transform->GetScale ();
-	_finalDestination = _initialPosition + (*_direction) * _speed * (_lifetime / 1000.0);
+	_finalDestination = _initialPosition + (*_direction) * _speed * (_lifetime / 1000.0f);
 }
 
 void Particle::SetMesh (Model* mesh)
@@ -113,7 +113,7 @@ void Particle::UpdatePosition ()
 	float pos = _tweenCurve->Evaluate (1.0 * _timeAlive / _lifetime);
 
 	this->GetTransform ()->SetPosition (
-		Extensions::MathExtend::Lerp<Vector3> (
+		Extensions::MathExtend::Lerp<glm::vec3> (
 			pos, _initialPosition, _finalDestination
 		)
 	);

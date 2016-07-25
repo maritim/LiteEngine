@@ -189,7 +189,7 @@ void ParticleSystemLoader::ProcessParticle (TiXmlElement* xmlElem, Emiter* emite
 {
 	std::string type = xmlElem->Attribute ("type");
 
-	Particle* particlePrototype;
+	Particle* particlePrototype = nullptr;
 
 	if (type == "BILLBOARD") {
 		particlePrototype = new BillboardParticle ();
@@ -313,16 +313,16 @@ void ParticleSystemLoader::ProcessTransform (TiXmlElement* xmlElem, Emiter* emit
 			emiter->GetTransform ()->SetScale (GetVector (content));
 		}
 		else if (name == "Rotation") {
-			emiter->GetTransform ()->SetRotation (GetVector (content));
+			emiter->GetTransform ()->SetRotation (GetQuaternion (content));
 		}
 
 		content = content->NextSiblingElement ();
 	}
 }
 
-Vector3 ParticleSystemLoader::GetVector (TiXmlElement* xmlElem)
+glm::vec3 ParticleSystemLoader::GetVector (TiXmlElement* xmlElem)
 {
-	Vector3 vec;
+	glm::vec3 vec;
 
 	const char* x = xmlElem->Attribute ("x");
 	const char* y = xmlElem->Attribute ("y");
@@ -341,6 +341,13 @@ Vector3 ParticleSystemLoader::GetVector (TiXmlElement* xmlElem)
 	}
 
 	return vec;
+}
+
+glm::quat ParticleSystemLoader::GetQuaternion (TiXmlElement* xmlElem)
+{
+	glm::vec3 vec = GetVector (xmlElem);
+
+	return glm::quat (vec);
 }
 
 void ParticleSystemLoader::ProcessEmisShape (TiXmlElement* xmlElem, Emiter* emiter)

@@ -3,7 +3,7 @@
 TextGUI::TextGUI () :
 	_text ("\0"),
 	_font (nullptr),
-	_screenPos (Vector3::Zero),
+	_screenPos (glm::vec2 (0.0f)),
 	_lineLength (1.0f),
 	_isDirty (true)
 {
@@ -16,7 +16,7 @@ TextGUI::TextGUI () :
 }
 
 TextGUI::TextGUI (const std::string& text, Font* font, 
-	Vector3 screenPos, float lineLength) :
+	glm::vec2 screenPos, float lineLength) :
 	_text (text),
 	_font (font),
 	_screenPos (screenPos),
@@ -48,7 +48,7 @@ void TextGUI::SetText (const std::string& text)
 	_isDirty = true;
 }
 
-void TextGUI::SetScreenPosition (Vector3 position)
+void TextGUI::SetScreenPosition (glm::vec2 position)
 {
 	_screenPos = position;
 	_isDirty = true;

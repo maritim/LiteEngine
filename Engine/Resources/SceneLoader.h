@@ -5,7 +5,7 @@
 
 #include "Core/Parsers/XML/TinyXml/tinyxml.h"
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 #include "Utils/Color/Color.h"
 
 #include "SceneGraph/Scene.h"
@@ -27,9 +27,9 @@ private:
 	void ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene);
 
 	void ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneObject* obj);
-	Vector3 GetPosition (TiXmlElement* xmlElem);
-	Vector3 GetRotation (TiXmlElement* xmlElem);
-	Vector3 GetScale (TiXmlElement* xmlElem);
+	glm::vec3 GetPosition (TiXmlElement* xmlElem);
+	glm::quat GetRotation (TiXmlElement* xmlElem);
+	glm::vec3 GetScale (TiXmlElement* xmlElem);
 
 	void ProcessComponents (TiXmlElement* xmlElem, GameObject* gameObject);
 	void ProcessComponent (TiXmlElement* xmlElem, GameObject* gameObject);

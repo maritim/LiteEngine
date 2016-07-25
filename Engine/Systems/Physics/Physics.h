@@ -1,7 +1,7 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 
 class Physics
 {
@@ -12,7 +12,7 @@ public:
 	static Physics& Instance ();
 
 	float GetG () const;
-	Vector3 GetGravityVector () const;
+	glm::vec3 GetGravityVector () const;
 
 private:
 	Physics ();

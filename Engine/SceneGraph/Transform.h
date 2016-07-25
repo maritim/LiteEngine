@@ -3,14 +3,15 @@
 
 #include <vector>
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
+#include "Core/Math/glm/gtc/quaternion.hpp"
 
 class Transform
 {
 private:
-	Vector3 _position;
-	Vector3 _rotation;
-	Vector3 _scale;
+	glm::vec3 _position;
+	glm::quat _rotation;
+	glm::vec3 _scale;
 
 	Transform* _parent;
 	std::vector<Transform*> _children;
@@ -24,17 +25,17 @@ public:
 	void SetParent (Transform* parent);
 	void DetachParent ();
 
-	Vector3 GetPosition () const;
-	Vector3 GetRotation () const;
-	Vector3 GetScale () const;
+	glm::vec3 GetPosition () const;
+	glm::quat GetRotation () const;
+	glm::vec3 GetScale () const;
 
-	Vector3 GetLocalPosition () const;
-	Vector3 GetLocalRotation () const;
-	Vector3 GetLocalScale () const;
+	glm::vec3 GetLocalPosition () const;
+	glm::quat GetLocalRotation () const;
+	glm::vec3 GetLocalScale () const;
 
-	void SetPosition (const Vector3& position);
-	void SetRotation (const Vector3& rotation);
-	void SetScale (const Vector3& scale);
+	void SetPosition (const glm::vec3& position);
+	void SetRotation (const glm::quat& rotation);
+	void SetScale (const glm::vec3& scale);
 
 	Transform & operator=(const Transform& other);
 private:

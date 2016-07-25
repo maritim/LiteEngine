@@ -5,7 +5,7 @@
 #include <algorithm>
 
 LightsManager::LightsManager () :
-	_ambientLight (Vector3::One)
+	_ambientLight (glm::vec3 (1.0))
 {
 
 }
@@ -15,12 +15,12 @@ LightsManager::~LightsManager ()
 
 }
 
-void LightsManager::SetAmbientColorLight (Vector3 color)
+void LightsManager::SetAmbientColorLight (glm::vec3 color)
 {
 	_ambientLight = color;
 }
 
-Vector3 LightsManager::GetAmbientColorLight ()
+glm::vec3 LightsManager::GetAmbientColorLight ()
 {
 	return _ambientLight;
 }

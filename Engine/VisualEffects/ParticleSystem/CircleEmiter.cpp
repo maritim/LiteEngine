@@ -18,9 +18,9 @@ void CircleEmiter::SetRadius (float radius)
 	_radius = radius;
 }
 
-Vector3 CircleEmiter::GetParticlePosition ()
+glm::vec3 CircleEmiter::GetParticlePosition ()
 {
-	Vector3 position;
+	glm::vec3 position;
 
 	float radius = sqrt (Random::Instance ().RangeF (0, 1.0f));
 	float angle = Random::Instance ().RangeF (0, 2 * M_PI);
@@ -29,7 +29,8 @@ Vector3 CircleEmiter::GetParticlePosition ()
 	position.z = _radius * radius * sin (angle);
 
 	// Calculate by rotation
-	Vector3 rotVec = this->GetTransform ()->GetRotation ();
+	glm::quat rotQuat = this->GetTransform ()->GetRotation ();
+	glm::vec3 rotVec = glm::eulerAngles (rotQuat);
 	Matrix rotation = Matrix::Rotate (rotVec.x, rotVec.y, rotVec.z);
 	Matrix point (4, 1); point [0][0] = position.x; point [2][0] = position.z;
 

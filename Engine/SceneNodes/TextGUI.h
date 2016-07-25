@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include "Core/Math/Vector3.h"
+#include "Core/Math/glm/vec3.hpp"
 
 #include "Fonts/Font.h"
 
@@ -16,19 +16,19 @@ class TextGUI : public SceneObject
 private:
 	std::string _text;
 	Font* _font;
-	Vector3 _screenPos;
+	glm::vec2 _screenPos;
 	float _lineLength;
 	bool _isDirty;
 
 public:
 	TextGUI ();
 	TextGUI (const std::string& text, Font* font = nullptr, 
-		Vector3 screenPos = Vector3::Zero, float lineLength = 1.0f);
+		glm::vec2 screenPos = glm::vec2 (0), float lineLength = 1.0f);
 	~TextGUI ();
 
 	void SetFont (Font* font);
 	void SetText (const std::string& text);
-	void SetScreenPosition (Vector3 screenPos);
+	void SetScreenPosition (glm::vec2 screenPos);
 	void SetLineLength (float lineLength);
 
 	void Update ();

@@ -18,8 +18,8 @@ void FrameRate::Start ()
 {
 	Font* font = Resources::LoadBitmapFont ("Assets/Fonts/Fonts/sans.fnt");
 
-	_textGUI = new TextGUI ("", font, Vector3 (0, 0.9));
-	_textGUI->GetTransform ()->SetScale (Vector3 (0.7, 0.7, 0));
+	_textGUI = new TextGUI ("", font, glm::vec2 (0.0f, 0.9f));
+	_textGUI->GetTransform ()->SetScale (glm::vec3 (0.7f, 0.7f, 0.0f));
 	SceneManager::Instance ()->Current ()->AttachObject (_textGUI);
 }
 

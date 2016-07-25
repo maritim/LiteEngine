@@ -17,7 +17,7 @@ void SpotLight::Update ()
 	
 }
 
-Vector3 SpotLight::GetSpotDirection () const
+glm::vec3 SpotLight::GetSpotDirection () const
 {
 	return _spotDirection;
 }
@@ -32,7 +32,7 @@ float SpotLight::GetSpotExponent () const
 	return _spotExponent;
 }
 
-void SpotLight::SetSpotDirection (const Vector3& spotDirection)
+void SpotLight::SetSpotDirection (const glm::vec3& spotDirection)
 {
 	_spotDirection = spotDirection;
 }

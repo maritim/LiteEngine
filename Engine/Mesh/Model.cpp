@@ -4,6 +4,8 @@
 #include <vector>
 #include <cmath>
 
+#include "Core/Math/glm/detail/func_geometric.hpp"
+
 Model::Model() :
 	_haveUV (false),
 	_name (""),
@@ -25,15 +27,15 @@ Model::Model(const Model& other) :
 	_texcoords ()
 {
 	for (std::size_t i=0;i<other._vertices.size();i++) {
-		_vertices.push_back (new Vector3 (*other._vertices [i]));
+		_vertices.push_back (new glm::vec3 (*other._vertices [i]));
 	}
 
 	for (std::size_t i=0;i<other._normals.size();i++) {
-		_normals.push_back (new Vector3 (*other._normals [i]));
+		_normals.push_back (new glm::vec3 (*other._normals [i]));
 	}
 
 	for (std::size_t i=0;i<other._texcoords.size();i++) {
-		_texcoords.push_back (new Vector3 (*other._texcoords [i]));
+		_texcoords.push_back (new glm::vec3 (*other._texcoords [i]));
 	}
 
 	for (std::size_t i=0;i<other._objectModels.size();i++) {
@@ -68,17 +70,17 @@ Model::~Model()
 	_objectModels.shrink_to_fit ();
 }
 
-void Model::AddVertex (Vector3* vertex) 
+void Model::AddVertex (glm::vec3* vertex) 
 {
 	_vertices.push_back (vertex);
 }
 
-void Model::AddNormal (Vector3* normal)
+void Model::AddNormal (glm::vec3* normal)
 {
 	_normals.push_back (normal);
 }
 
-void Model::AddTexcoord (Vector3* texcoord)
+void Model::AddTexcoord (glm::vec3* texcoord)
 {
 	_texcoords.push_back (texcoord);
 
@@ -100,7 +102,7 @@ void Model::SetMaterialLibrary (std::string mtllibName)
 	_mtllib = mtllibName;
 }
 
-void Model::SetVertex (Vector3* vertex, std::size_t position)
+void Model::SetVertex (glm::vec3* vertex, std::size_t position)
 {
 	delete _vertices [position];
 	_vertices [position] = vertex;
@@ -144,16 +146,16 @@ std::size_t Model::ObjectsCount (void) const
 	return _objectModels.size ();
 }
 
-Vector3* Model::GetVertex (std::size_t position) const 
+glm::vec3* Model::GetVertex (std::size_t position) const 
 {
 	if (position >= _vertices.size()) {
-		return NULL;
+		return nullptr;
 	}
 
 	return _vertices [position];
 }
 
-Vector3* Model::GetNormal (std::size_t position) const 
+glm::vec3* Model::GetNormal (std::size_t position) const 
 {
 	if (position >= _normals.size()) {
 		return NULL;
@@ -162,7 +164,7 @@ Vector3* Model::GetNormal (std::size_t position) const
 	return _normals [position];
 }
 
-Vector3* Model::GetTexcoord (std::size_t position) const 
+glm::vec3* Model::GetTexcoord (std::size_t position) const 
 {
 	if (position >= _texcoords.size()) {
 		return NULL;
@@ -224,7 +226,7 @@ void Model::GenerateMissingNormals()
 				Polygon* poly = polyGroup->GetPolygon (j);
 
 				if (poly->VertexCount () > 0 && !poly->HaveNormals ()) {
-					Vector3* normal = CalculateNormal (poly);
+					glm::vec3* normal = CalculateNormal (poly);
 
 					_normals.push_back (normal);
 
@@ -239,7 +241,7 @@ void Model::GenerateMissingNormals()
 
 void Model::GenerateSmoothNormals ()
 {
-	_smoothNormals.resize (_vertices.size (), Vector3::Zero);
+	_smoothNormals.resize (_vertices.size (), glm::vec3 (0.0f));
 	_smoothNormalsCount.resize (_vertices.size (), 0);
 
 	GenerateMissingNormals ();
@@ -268,7 +270,7 @@ void Model::GenerateSmoothNormals ()
 
 	for (std::size_t i=0;i<_smoothNormals.size ();i++) {
 		_smoothNormals [i] *= (1.0f / _smoothNormalsCount [i]); 
-		_smoothNormals [i].Normalize ();
+		_smoothNormals [i] = glm::normalize (_smoothNormals [i]);
 	}
 
 	for (std::size_t i=0;i<_normals.size ();i++) {
@@ -278,7 +280,7 @@ void Model::GenerateSmoothNormals ()
 	_normals.shrink_to_fit ();
 
 	for (std::size_t i=0;i<_smoothNormals.size ();i++) {
-		_normals.push_back ( new Vector3(_smoothNormals [i]));
+		_normals.push_back ( new glm::vec3(_smoothNormals [i]));
 	}
 
 	_smoothNormals.clear ();
@@ -395,7 +397,7 @@ void Model::GenerateSmoothNormals ()
 // }
 
 // TODO: Reimplement this
-Vector3* Model::CalculateNormal (Polygon* polygon)
+glm::vec3* Model::CalculateNormal (Polygon* polygon)
 {
 /* 
 	Set Vector U to (Triangle.p2 minus Triangle.p1)
@@ -408,14 +410,14 @@ Vector3* Model::CalculateNormal (Polygon* polygon)
 	Returning Normal
 */ 
 
-	Vector3 *first = _vertices[polygon->GetVertex(0)];
-	Vector3 *second = _vertices[polygon->GetVertex(1)];
-	Vector3 *third = _vertices[polygon->GetVertex(2)];
+	glm::vec3 *first = _vertices[polygon->GetVertex(0)];
+	glm::vec3 *second = _vertices[polygon->GetVertex(1)];
+	glm::vec3 *third = _vertices[polygon->GetVertex(2)];
 
-	Vector3 U = (*second) - (*first);
-	Vector3 V = (*third) - (*first);
+	glm::vec3 U = (*second) - (*first);
+	glm::vec3 V = (*third) - (*first);
 
-	Vector3 * normal = new Vector3();
+	glm::vec3 * normal = new glm::vec3();
 
 	normal->x = (U.y * V.z) - (U.z * V.y);
 	normal->y = (U.z * V.x) - (U.x * V.z);
