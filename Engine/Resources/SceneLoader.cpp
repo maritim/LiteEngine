@@ -14,6 +14,7 @@
 #include "Resources/Resources.h"
 
 #include "Utils/Extensions/StringExtend.h"
+#include "Utils/Extensions/MathExtend.h"
 
 #include "Core/Console/Console.h"
 
@@ -271,7 +272,19 @@ glm::vec3 SceneLoader::GetPosition (TiXmlElement* xmlElem)
 
 glm::quat SceneLoader::GetRotation (TiXmlElement* xmlElem)
 {
-	glm::vec3 eulerAngles = GetPosition (xmlElem);
+	/*
+	 * The rotation data extracted from scene exists as axis angles in degrees.
+	 * It needs to be converted into euler angles by converting the degrees in
+	 * radians.
+	*/
+
+	glm::vec3 eulerAngles = GetPosition (xmlElem) * DEG2RAD;
+
+	/*
+	 * The euler angles are converted in quaternions, in which type will be
+	 * processed from now on. The specialised glm::quat constructor is used
+	 * for conversion.
+	*/
 
 	return glm::quat (eulerAngles);
 }

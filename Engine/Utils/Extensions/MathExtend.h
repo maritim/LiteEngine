@@ -3,7 +3,10 @@
 
 #include <algorithm>
 
-#include "Core/Math/glm/glm.hpp"
+#define PI 3.14159265359
+#define F_PI 3.14159f
+
+#define DEG2RAD (float)(F_PI / 180.0f)
 
 namespace Extensions
 {
@@ -18,8 +21,6 @@ namespace Extensions
 		static T Clamp (T n, T lower, T upper);
 
 		static float Ctan (float x);
-
-		static glm::mat4 Rotate (const glm::vec3& quat);
 	};
 
 	template <class T>
