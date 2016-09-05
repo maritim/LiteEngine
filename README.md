@@ -3,6 +3,9 @@ LiteEngine
 
 Lite 3D Game Engine
 
+<img src="https://raw.githubusercontent.com/maritim/LiteEngine/gh-pages/Particles.png" alt="Particles" width="420px"/>
+<img src="https://raw.githubusercontent.com/maritim/LiteEngine/gh-pages/Animations.png" alt="Animations" width="420px"/>
+
 Debian Install Guide
 =================
 
