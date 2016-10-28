@@ -15,7 +15,7 @@ CC = g++
 COMMANDLINE_OPTIONS = /dev/ttyS0
 
 # Makefile Params
-make CONFIG=DEBUG
+# make CONFIG=DEBUG
 
 # Compiler options during compilation
 ifeq ($(CONFIG),RELEASE)
@@ -69,11 +69,6 @@ all: $(DEPENDENCIES) $(PROJECT)
 
 $(PROJECT): $(OBJECTS)
 	$(CC) -o $(PROJECT) $(OBJECTS) $(LIBS)
-
-# Include dependencies (if there are any)
-ifneq "$(strip $(DEPENDENCIES))" ""
-  include $(DEPENDENCIES)
-endif
 
 # Compile every cpp file to an object
 %.o: %.cpp
