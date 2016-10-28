@@ -142,8 +142,6 @@ void RenderManager::PrepareDrawing ()
 	_frameBuffer->StartFrame ();
 }
 
-#include "Core/Debug/Debug.h"
-
 void RenderManager::GeometryPass (Scene* scene)
 {
 	_frameBuffer->BindForGeomPass ();
@@ -169,8 +167,6 @@ void RenderManager::GeometryPass (Scene* scene)
 		if (scene->GetObjectAt (i)->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
 			continue;
 		}
-
-		DEBUG_LOG (scene->GetObjectAt (i)->GetName ());
 
 		renderers.push_back (scene->GetObjectAt (i)->GetRenderer ());
 	}

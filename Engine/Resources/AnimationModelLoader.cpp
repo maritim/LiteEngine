@@ -113,8 +113,6 @@ void AnimationModelLoader::ProcessAnimation (AnimationsController* animControlle
 {
 	AnimationContainer* animContainer = new AnimationContainer ();
 
-	Console::LogWarning (assimpAnimation->mName.data);
-
 	animContainer->SetName (assimpAnimation->mName.data);
 	animContainer->SetDuration (assimpAnimation->mDuration);
 	animContainer->SetTicksPerSecond (assimpAnimation->mTicksPerSecond);

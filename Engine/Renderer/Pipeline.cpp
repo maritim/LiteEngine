@@ -67,8 +67,6 @@ void Pipeline::SendCamera (Camera* camera)
 	_viewMatrix =  glm::translate (_viewMatrix, glm::vec3 (-position.x, -position.y, -position.z));		
 }
 
-#include "Core/Debug/Debug.h"
-
 void Pipeline::SetObjectTransform (Transform* transform)
 {
 	glm::vec3 position = transform->GetPosition ();
@@ -78,14 +76,7 @@ void Pipeline::SetObjectTransform (Transform* transform)
 	glm::mat4 translate = glm::translate (glm::mat4 (1.f), glm::vec3 (position.x, position.y, position.z));
 	glm::mat4 scale = glm::scale (glm::mat4 (1.f), glm::vec3 (scalev.x, scalev.y, scalev.z));
 
-	glm::vec3 euler = glm::eulerAngles (rotationq);
-	DEBUG_LOG (std::to_string (euler.x) + " " + std::to_string (euler.y) + " " + std::to_string (euler.z));
-
 	glm::mat4 rotation = glm::mat4_cast(rotationq);
-
-		// glm::rotate (glm::mat4 (1.0f), rotationv.y, glm::vec3 (0.0f, 1.0f, 0.0f)) * 
-		// glm::rotate (glm::mat4 (1.0f), rotationv.z, glm::vec3 (0.0f, 0.0f, 1.0f)) *
-		// glm::rotate (glm::mat4 (1.0f), rotationv.x, glm::vec3 (1.0f, 0.0f, 0.0f));
 
 	_modelMatrix = translate * scale * rotation;
 }
