@@ -48,6 +48,7 @@ DIRS := ./Engine/Core/Interfaces/ \
 		./Engine/Wrappers/*/ \
 		./Engine/VisualEffects/*/ \
 		./Engine/Systems/*/ \
+		./Engine/Debug/*/ \
 		./Engine/Utils/*/ \
 		./Engine/Utils/*/*/ \
 		./Engine/*/ \
