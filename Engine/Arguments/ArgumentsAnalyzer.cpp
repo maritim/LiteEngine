@@ -37,6 +37,10 @@ void ArgumentsAnalyzer::ProcessArguments (int argc, char** argv)
 			continue;
 		}
 	}
+
+	if (lastArgument != "") {
+		AddArgument (lastArgument, "");
+	}
 }
 
 bool ArgumentsAnalyzer::HaveArgument (const std::string& argName)
