@@ -6,6 +6,8 @@
 #include "Systems/Physics/PhysicsSystem.h"
 #include "Systems/Components/ComponentManager.h"
 
+#include "Debug/Profiler/Profiler.h"
+
 #include "Renderer/RenderManager.h"
 
 #include "Managers/SceneManager.h"
@@ -36,6 +38,9 @@ void Game::Start ()
 
 	while(running)
 	{
+		PROFILER_FRAME
+		PROFILER_LOGGER("Frame")
+
 		Time::UpdateFrame();
 		Input::UpdateState ();
 
@@ -51,7 +56,7 @@ void Game::Start ()
 		UpdateScene ();
 		DisplayScene ();
 
-		Window::SwapBuffers ();
+		Window::SwapBuffers ();			
 
 		// if(TICKS_PER_FRAME > Time::GetElapsedTimeMS () - Time::GetTimeMS ()) {
 		// 	SDL_Delay(TICKS_PER_FRAME - (Time::GetElapsedTimeMS () - Time::GetTimeMS ()));
@@ -61,6 +66,8 @@ void Game::Start ()
 	
 void Game::UpdateScene() 
 {
+	PROFILER_LOGGER("Update")
+
 	SceneManager::Instance ()->Current ()->Update ();
 
 	ComponentManager::Instance ()->Update ();
@@ -69,5 +76,7 @@ void Game::UpdateScene()
 
 void Game::DisplayScene() 
 {
+	PROFILER_LOGGER("Render")
+
 	RenderManager::Instance ()->RenderScene (SceneManager::Instance ()->Current (), Camera::Main ());
 }
