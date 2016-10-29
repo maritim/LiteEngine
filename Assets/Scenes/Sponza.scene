@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Scene name="VXGI Test" >
+	<Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
+<!-- 	<Camera path="Assets/Cameras/Main.cam" >
+		<Transform>
+			<Position y="-0.1" />
+			<Rotation />
+		</Transform>
+	</Camera> -->
+	<GameObject InstanceID="0" name="Sponza Atrium" meshpath="Assets/Models/Sponza/SponzaNoFlag.obj" >
+		<Transform>
+			<Position y="-0.1" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+		<Components>
+			<Component name="CameraController" />
+			<Component name="FrameRate" />
+		</Components>
+	</GameObject>
+<!-- 	<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Lara/Lara_Croft_default.dae" >
+		<Transform>
+			<Position y="-0.1" x="3" />
+			<Rotation x="80" />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject> -->
+<!-- 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Dragon/Dragon.dae" >
+		<Transform>
+			<Position y="-0.1" x="15" />
+			<Rotation x="-90" />
+			<Scale x="0.2" y="0.2" z="0.2" />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</AnimatedGameObject>	 -->
+
+<!-- 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Soldier/Soldier.dae" >
+		<Transform>
+			<Position y="-0.1" x="9" />
+			<Rotation x=80 />
+			<Scale x=0.2 y=0.2 z=0.2 />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</AnimatedGameObject>	
+ -->
+<!-- 
+	<AnimatedGameObject InstanceID="0" name="SpiderManStatic" meshpath="Assets/Models/SpiderMan/Spider-Man.dae" >
+		<Transform>
+			<Position y="-0.1" x="9" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</AnimatedGameObject>
+
+	<AnimatedGameObject InstanceID="0" name="SpiderManWalking" meshpath="Assets/Models/SpiderMan/walking.dae" >
+		<Transform>
+			<Position y="-0.1" x="6" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</AnimatedGameObject>
+
+	<AnimatedGameObject InstanceID="0" name="chestie" meshpath="Assets/Models/Chestie/chestie.dae" >
+		<Transform>
+			<Position y="-0.1" x="12" />
+			<Rotation />
+			<Scale x="0.02" y="0.02" z="0.02" />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</AnimatedGameObject>
+
+	<GameObject InstanceID="1" name="CowGirl" meshpath="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" >
+		<Transform>
+			<Position />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject>
+	<GameObject InstanceID="2" name="FantasyGirl" meshpath="Assets/Models/Lightning/lightning_obj.obj" >
+		<Transform>
+			<Position x="-5" y="2" />
+			<Rotation />
+			<Scale x="0.03" y="0.03" z="0.03" />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject>	
+	<GameObject InstanceID="3" name="Cat" meshpath="Assets/Models/Cat/cat.obj" >
+		<Transform>
+			<Position x="-10" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject>
+	<GameObject InstanceID="4" name="SpirderMan" meshpath="Assets/Models/Spider-Man/Spider-Man.obj" >
+		<Transform>
+			<Position x="-15" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject> -->
+	<Light InstanceID="40" name="Sun" path="Assets/Lights/PrototypeSceneSun.light">
+		<Transform>
+			<Position x="1" y="1" z="1" />
+		</Transform>
+	</Light>
+	<Light InstanceID="41" name="LightBulb" path="Assets/Lights/PrototypeScenePoint.light">
+		<Transform>
+			<Position x="-1" y="-1" z="-1" />
+		</Transform>
+	</Light>
+
+<!--  	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" >
+		<Transform>
+			<Position x=-10 z=-0.5 />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem>
+	<ParticleSystem InstanceID="6" name="Smoke" path="Assets/ParticleSystem/Smoke/Smoke.psys" >
+		<Transform>
+			<Position x="10" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem> -->
+
+<!-- 	<ParticleSystem InstanceID="7" name="Fireworks" path="Assets/ParticleSystem/Fireworks/Fireworks.psys" >
+		<Transform>
+			<Position x="0" y="5" z="-5" />
+			<Rotation x="0" y="0" z="0" />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem> -->
+<!--   	<ParticleSystem InstanceID="8" name="Snow" path="Assets/ParticleSystem/SponzaSnow/SponzaSnow.psys" >
+		<Transform>
+			<Position y="1400" z="-5" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem>
+ --><!-- 	<ParticleSystem InstanceID="8" name="Rain" path="Assets/ParticleSystem/Rain/Rain.psys" >
+		<Transform>
+			<Position y="20" z="-5" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem> -->
+<!-- 	<ParticleSystem InstanceID="9" name="PigSnow" path="Assets/ParticleSystem/MeshPigs/Pigs.psys" >
+		<Transform>
+			<Position y="20" z="5" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem> -->
+<!-- 	<ParticleSystem InstanceID="10" name="Tail" path="Assets/ParticleSystem/Tail/Tail.psys" >
+		<Transform parent="CowGirl" >
+			<Position />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</ParticleSystem> -->
+</Scene>

@@ -1,0 +1,7 @@
+original sponza model and textures from: http://www.crytek.com/cryengine/cryengine3/downloads/
+
+<img src="http://img10.deviantart.net/76f0/i/2010/189/d/9/sponza_crytek_no__1_by_patlefort.png" width=640px />
+
+changes:
+ * converted all textures to .png
+ * fixed material file: use existing textures everywhere / fixed map_* entries
