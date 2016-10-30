@@ -1,33 +1,25 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
+#include <map>
+
 #include "Core/Math/glm/vec3.hpp"
-
-#include <SDL2/SDL.h>
-
-/*
- * Maybe change this into a Hash Table?
-*/
-
-#define KEYS_COUNT (1<<8)
+#include "Systems/Input/InputKey.h"
 
 class Input
 {
 private:
-	static bool _keyState[KEYS_COUNT];
-	static bool _lastKeyState[KEYS_COUNT];
-	static bool _lastMouseState[4];
-	static bool _mouseState[4];
+	static std::map<int, bool> _keyState;
+	static std::map<int, bool> _lastKeyState;
+	static std::map<int, bool> _mouseState;
+	static std::map<int, bool> _lastMouseState;
 	static bool _sdlQuit;
 	static glm::vec3 _resizeEvent;
-public:
-	static bool GetButton (SDL_Keycode key);
-	static bool GetButtonDown (SDL_Keycode key);
-	static bool GetButtonUp (SDL_Keycode key);
 
-	static bool GetKey (unsigned char key);
-	static bool GetKeyDown (unsigned char key);
-	static bool GetKeyUp (unsigned char key);
+public:
+	static bool GetKey (InputKey key);
+	static bool GetKeyDown (InputKey key);
+	static bool GetKeyUp (InputKey key);
 
 	static bool GetMouseButton (Uint8 button);
 	static bool GetMouseButtonDown (Uint8 button);

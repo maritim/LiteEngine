@@ -1,24 +1,20 @@
 #include "Input.h"
 
-bool Input::_keyState[256];
-bool Input::_lastKeyState[256];
-bool Input::_lastMouseState[4];
-bool Input::_mouseState[4];
+std::map<int, bool> Input::_keyState;
+std::map<int, bool> Input::_lastKeyState;
+std::map<int, bool> Input::_mouseState;
+std::map<int, bool> Input::_lastMouseState;
 bool Input::_sdlQuit (false);
 glm::vec3 Input::_resizeEvent (glm::vec3 (0.0f));
 
 void Input::UpdateState ()
 {
-	/*
-	 * TODO: Change this with a map
-	*/
-
-	for (int i=0;i<KEYS_COUNT;i++) {
-		_lastKeyState [i] = _keyState [i];
+	for (auto const& key : _keyState) {
+		_lastKeyState [key.first] = key.second;
 	}
 
-	for (int i=1;i<4;i++) {
-		_lastMouseState [i] = _mouseState [i];
+	for (auto const& key : _mouseState) {
+		_lastMouseState [key.first] = key.second;
 	}
 
 	_resizeEvent = glm::vec3 (0.0f);
@@ -39,15 +35,9 @@ void Input::UpdateState ()
 				}
 				break;
             case SDL_KEYDOWN:
-				if ((int)event.key.keysym.sym >= KEYS_COUNT) {
-					break;
-				}
 				_keyState[(int)event.key.keysym.sym] = true;
             	break;
             case SDL_KEYUP:
-				if ((int)event.key.keysym.sym >= KEYS_COUNT) {
-					break;
-				}
 				_keyState[(int)event.key.keysym.sym] = false;
                 break;
             case SDL_MOUSEBUTTONDOWN:
@@ -60,17 +50,17 @@ void Input::UpdateState ()
     }
 }
 
-bool Input::GetKey (unsigned char ch)
+bool Input::GetKey (InputKey ch)
 {
 	return _keyState [(int)ch];
 }
 
-bool Input::GetKeyDown (unsigned char key)
+bool Input::GetKeyDown (InputKey key)
 {
 	return _keyState [(int)key] && !_lastKeyState [(int)key];
 }
 
-bool Input::GetKeyUp (unsigned char key)
+bool Input::GetKeyUp (InputKey key)
 {
 	return !_keyState [(int)key] && _lastKeyState [(int)key];
 }

@@ -7,6 +7,8 @@
 class CameraController : public Component
 {
 public:
+	void Start ();
+	
 	void Update ();
 };
 

@@ -12,8 +12,6 @@
 
 #include "Managers/SceneManager.h"
 
-#define KEY_ESCAPE 27
-
 #define FRAMES_PER_SECOND 1000
 #define TICKS_PER_FRAME (1000 / FRAMES_PER_SECOND)
 #define MILLISECONDS_PER_FRAME (1.0 / FRAMES_PER_SECOND)
@@ -44,7 +42,11 @@ void Game::Start ()
 		Time::UpdateFrame();
 		Input::UpdateState ();
 
-		if (Input::GetQuit () || Input::GetKeyDown (27)) {
+		/*
+		 * Remove Exit on Escape Free from here
+		*/
+
+		if (Input::GetQuit () || Input::GetKeyDown (InputKey::ESCAPE)) {
 			running = false;
 			continue;
 		}
