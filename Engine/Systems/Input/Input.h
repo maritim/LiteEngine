@@ -1,6 +1,7 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
+#include <cstdint>
 #include <map>
 
 #include "Core/Math/glm/vec3.hpp"
@@ -13,6 +14,7 @@ private:
 	static std::map<int, bool> _lastKeyState;
 	static std::map<int, bool> _mouseState;
 	static std::map<int, bool> _lastMouseState;
+	static glm::vec3 _mouseWheelState;
 	static bool _sdlQuit;
 	static glm::vec3 _resizeEvent;
 
@@ -21,9 +23,10 @@ public:
 	static bool GetKeyDown (InputKey key);
 	static bool GetKeyUp (InputKey key);
 
-	static bool GetMouseButton (Uint8 button);
-	static bool GetMouseButtonDown (Uint8 button);
-	static bool GetMouseButtonUp (Uint8 button);
+	static bool GetMouseButton (unsigned int button);
+	static bool GetMouseButtonDown (unsigned int button);
+	static bool GetMouseButtonUp (unsigned int button);
+	static glm::vec3 GetMouseWheel ();
 	static glm::vec3 GetMousePosition ();
 
 	static bool GetQuit ();
