@@ -4,7 +4,6 @@
 #include <string>
 #include <chrono>
 
-#include "Core/Interfaces/Object.h"
 #include "Debug/Profiler/Profiler.h"
 
 #define PROFILER_LOGGER(NAME) ProfilerLogger profilerLoggerTemporalObject(#NAME); 

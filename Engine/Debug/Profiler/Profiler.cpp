@@ -30,7 +30,7 @@ bool Profiler::IsActive () const
 void Profiler::AddEventAt (const ProfilerLoggerContainer& eventContainer, std::size_t index)
 {
 	if (_eventsQueue.size () <= index) {
-		Allocate (_eventsQueue.size () - index + 1)
+		Allocate (index - _eventsQueue.size () + 1);
 	}
 
 	_eventsQueue [index] = eventContainer;
@@ -43,10 +43,6 @@ const std::vector<ProfilerLoggerContainer>& Profiler::GetEvents () const
 
 void Profiler::Clear ()
 {
-	/*
-	 * Clear stack by replacing it with an empty new stack
-	*/
-	 
 	_eventsQueue.clear ();
 	_eventsQueue.shrink_to_fit ();
 }
