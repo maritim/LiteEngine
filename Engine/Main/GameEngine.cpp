@@ -42,7 +42,7 @@ void GameEngine::Init ()
 
 	// Debugger::Init ();
 
-	// Input::Init ();
+	Input::Init ();
 
 	Skybox::Init ();
 

@@ -2,14 +2,38 @@
 
 std::map<int, bool> Input::_keyState;
 std::map<int, bool> Input::_lastKeyState;
+
 std::map<int, bool> Input::_mouseState;
 std::map<int, bool> Input::_lastMouseState;
 glm::vec3 Input::_mouseWheelState (glm::vec3 (0.0f));
+
+std::map<int, std::map<int, bool> > Input::Input::_joystickButtonState;
+std::map<int, std::map<int, bool> > Input::_lastJoystickButtonState;
+std::map<int, std::map<int, std::int16_t> > Input::_joystickAxisState;
+
 bool Input::_sdlQuit (false);
 glm::vec3 Input::_resizeEvent (glm::vec3 (0.0f));
 
+void Input::Init ()
+{
+	InitJoysticks ();
+}
+
+void Input::InitJoysticks ()
+{
+	SDL_JoystickEventState(SDL_ENABLE);
+
+	for (int joystickIndex=0;joystickIndex<SDL_NumJoysticks ();joystickIndex ++) {
+		SDL_JoystickOpen (joystickIndex);
+	}
+}
+
 void Input::UpdateState ()
 {
+	/*
+	 * Update/Clear last input state
+	*/
+
 	for (auto const& key : _keyState) {
 		_lastKeyState [key.first] = key.second;
 	}
@@ -18,8 +42,18 @@ void Input::UpdateState ()
 		_lastMouseState [key.first] = key.second;
 	}
 
+	for (auto const& joystick : _joystickButtonState) {
+		for (auto const& key : joystick.second) {
+			_lastJoystickButtonState [joystick.first] [key.first] = key.second;
+		}		
+	}
+
 	_mouseWheelState = glm::vec3 (0.0f);
 	_resizeEvent = glm::vec3 (0.0f);
+
+	/*
+	 * Update input state
+	*/
 
 	SDL_Event event;
 
@@ -52,6 +86,24 @@ void Input::UpdateState ()
 				_mouseWheelState.x = event.wheel.x;
 				_mouseWheelState.y = event.wheel.y;
 				break;
+			case SDL_JOYBUTTONDOWN: {
+					int joystick = (int)event.jbutton.which;
+					int button = (int)event.jbutton.button;
+					_joystickButtonState [joystick][button] = true;
+				}
+				break;
+			case SDL_JOYBUTTONUP: {
+					int joystick = (int)event.jbutton.which;
+					int button = (int)event.jbutton.button;
+					_joystickButtonState [joystick][button] = false;
+				}
+				break;
+			case SDL_JOYAXISMOTION: {
+					int joystick = (int)event.jaxis.which;
+					int axis = (int)event.jaxis.axis;
+					_joystickAxisState [joystick][axis] = event.jaxis.value;
+				}
+				break;
         }
     }
 }
@@ -71,17 +123,17 @@ bool Input::GetKeyUp (InputKey key)
 	return !_keyState [(int)key] && _lastKeyState [(int)key];
 }
 
-bool Input::GetMouseButton (unsigned int button)
+bool Input::GetMouseButton (std::uint8_t button)
 {
 	return _mouseState [button];
 }
 
-bool Input::GetMouseButtonDown (unsigned int button)
+bool Input::GetMouseButtonDown (std::uint8_t button)
 {
 	return _mouseState [button] && !_lastMouseState [button];
 }
 
-bool Input::GetMouseButtonUp (unsigned int button)
+bool Input::GetMouseButtonUp (std::uint8_t button)
 {
 	return !_mouseState [button] && _lastMouseState [button];
 }
@@ -102,6 +154,51 @@ glm::vec3 Input::GetMousePosition ()
 	position.y = y;
 
 	return position;
+}
+
+bool Input::GetJoystickButton (std::uint8_t button, std::uint8_t joystick)
+{
+	if (_joystickButtonState.find (joystick) == _joystickButtonState.end ()) {
+		return false;
+	}
+
+	return _joystickButtonState [joystick][button];
+}
+
+bool Input::GetJoystickButtonDown (std::uint8_t button, std::uint8_t joystick)
+{
+	if (_joystickButtonState.find (joystick) == _joystickButtonState.end () ||
+			_lastJoystickButtonState.find (joystick) == _lastJoystickButtonState.end ()) {
+		return false;
+	}
+
+	return _joystickButtonState [joystick][button] && !_lastJoystickButtonState [joystick][button];
+}
+
+bool Input::GetJoystickButtonUp (std::uint8_t button, std::uint8_t joystick)
+{
+	if (_joystickButtonState.find (joystick) == _joystickButtonState.end () ||
+			_lastJoystickButtonState.find (joystick) == _lastJoystickButtonState.end ()) {
+		return false;
+	}
+
+	return !_joystickButtonState [joystick][button] && _lastJoystickButtonState [joystick][button];
+}
+
+glm::vec3 Input::GetJoystickAxis (std::uint8_t axis, std::uint8_t joystick)
+{
+	if (_joystickAxisState.find (joystick) == _joystickAxisState.end ()) {
+		return glm::vec3 (0.0f);
+	}
+
+	std::uint8_t realAxisX = axis * 2;
+	std::uint8_t realAxisY = axis * 2 + 1;
+
+	glm::vec3 axisValue;
+	axisValue.x = _joystickAxisState [joystick][realAxisX];
+	axisValue.y = _joystickAxisState [joystick][realAxisY];
+
+	return axisValue;
 }
 
 bool Input::GetQuit ()
