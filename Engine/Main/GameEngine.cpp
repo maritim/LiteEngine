@@ -1,10 +1,8 @@
 #include "GameEngine.h"
 
-#include <SDL2/SDL.h>
-#include <GL/glew.h>
-
 #include "Systems/Window/Window.h"
 #include "Systems/Screen/Screen.h"
+#include "Systems/Input/Input.h"
 #include "Systems/Time/Time.h"
 
 #include "Managers/ShaderManager.h"
@@ -18,12 +16,16 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
+// #include "Debug/Debugger.h"
+
+#include "Modules/SDLModule.h"
+
 /*
  * TODO: Change this to Game Engine properties
 */
 
-#define DEFAULT_WINDOW_WIDTH 640
-#define DEFAULT_WINDOW_HEIGHT 480
+#define DEFAULT_WINDOW_WIDTH 1280
+#define DEFAULT_WINDOW_HEIGHT 720
 #define DEFAULT_WINDOW_TITLE "Lite Engine"
 
 /*
@@ -32,14 +34,15 @@
 
 void GameEngine::Init ()
 {
-	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-		Console::LogError ("Failed to init SDL 2.0. Aborting...");
-		exit (0);
-	}
+	SDLModule::Init ();
 
 	Window::Init (DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_TITLE);
 
 	InitOpenGL ();
+
+	// Debugger::Init ();
+
+	// Input::Init ();
 
 	Skybox::Init ();
 
@@ -50,7 +53,7 @@ void GameEngine::Clear ()
 {
 	Window::Close ();
 
-	SDL_Quit ();
+	SDLModule::Quit ();
 }
 
 void GameEngine::InitOpenGL ()
