@@ -22,7 +22,7 @@
 glm::mat4 Pipeline::_modelMatrix (0);
 glm::mat4 Pipeline::_viewMatrix (0);
 glm::mat4 Pipeline::_projectionMatrix (0);
-glm::vec3 Pipeline::_cameraPosition;
+glm::vec3 Pipeline::_cameraPosition (0);
 std::size_t Pipeline::_textureCount (0);
 
 void Pipeline::SetShader (Shader* shader)
@@ -39,32 +39,10 @@ void Pipeline::CreatePerspective (float FOV, float aspect, float zNear, float zF
 
 void Pipeline::SendCamera (Camera* camera)
 {
-	glm::vec3 position = camera->GetPosition ();
-	_cameraPosition = glm::vec3 (position.x, position.y, position.z);
+	_cameraPosition = camera->GetPosition ();
+	_viewMatrix = glm::mat4_cast (camera->GetRotation ());
 
-	_viewMatrix = glm::mat4 (1.f);
-
-	glm::vec3 eulerAngle = camera->ToVector3 ();
-	glm::vec3 euler (eulerAngle.x, eulerAngle.y, eulerAngle.z);
-	euler = glm::normalize (euler);
-
-	glm::vec3 zaxis = glm::normalize (euler * glm::vec3 (-1, -1, -1));
-	glm::vec3 xaxis = glm::normalize (glm::cross (glm::vec3 (0, 1, 0), zaxis));
-	glm::vec3 yaxis = glm::cross (zaxis, xaxis);
-
-	_viewMatrix [0][0] = xaxis.x;
-	_viewMatrix [0][1] = yaxis.x;
-	_viewMatrix [0][2] = zaxis.x;
-
-	_viewMatrix [1][0] = xaxis.y;
-	_viewMatrix [1][1] = yaxis.y;
-	_viewMatrix [1][2] = zaxis.y;
-
-	_viewMatrix [2][0] = xaxis.z;
-	_viewMatrix [2][1] = yaxis.z;
-	_viewMatrix [2][2] = zaxis.z;
-
-	_viewMatrix =  glm::translate (_viewMatrix, glm::vec3 (-position.x, -position.y, -position.z));		
+	_viewMatrix =  glm::translate (_viewMatrix, _cameraPosition * -1.0f);
 }
 
 void Pipeline::SetObjectTransform (Transform* transform)

@@ -4,6 +4,7 @@
 #include "Core/Interfaces/Object.h"
 
 #include "Core/Math/glm/vec3.hpp"
+#include "Core/Math/glm/gtc/quaternion.hpp"
 
 class Camera : public Object
 {
@@ -18,9 +19,7 @@ protected:
 	Type _type;
 
 	glm::vec3 _position;
-	float _pitch;
-	float _yaw;
-	float _roll;
+	glm::quat _rotation;
 
 	float _fieldOfViewAngle;
 	float _aspect;
@@ -40,9 +39,7 @@ public:
 	Type GetType () const;
 
 	glm::vec3 GetPosition () const;
-	float GetPitch () const;
-	float GetYaw () const;
-	float GetRoll () const;
+	glm::quat GetRotation () const;
 	float GetFieldOfView () const;
 	float GetAspect () const;
 	float GetZNear () const;
@@ -50,16 +47,21 @@ public:
 
 	void SetType (Type type);
 
-	void SetPosition (glm::vec3 position);
-	void SetPitch (float pitch);
-	void SetYaw (float yaw);
-	void SetRoll (float roll);
+	void SetPosition (const glm::vec3& position);
+	void SetRotation (const glm::quat& rotation);
+	void SetRotation (const glm::vec3& eulerAngles);
 	void SetFieldOfView (float FOV);
 	void SetAspect (float aspect);
 	void SetZNear (float zNear);
 	void SetZFar (float zFar);
 
-	glm::vec3 ToVector3(void);
+	glm::vec3 GetForward () const;
+	glm::vec3 GetUp () const;
+	glm::vec3 GetLeft () const;
+
+	void Rotate (const glm::vec3&);
+	void Rotate (float, const glm::vec3&);
+	void Rotate (const glm::quat& rotation);
 };
 
 #endif

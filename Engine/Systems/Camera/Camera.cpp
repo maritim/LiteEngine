@@ -1,17 +1,17 @@
 #include "Camera.h"
 
+#include "Utils/Extensions/MathExtend.h"
+
 #include <cmath>
 
 Camera::Camera(void) :
 	_type (Type::PERSPECTIVE),
 	_position (),
-	_pitch(0),
-	_yaw(0),
-	_roll(0),
+	_rotation (),
 	_fieldOfViewAngle (45),
 	_aspect (0.75),
 	_zNear (0.3),
-	_zFar (100.0)
+	_zFar (10000.0)
 {
 }
 
@@ -55,19 +55,9 @@ glm::vec3 Camera::GetPosition () const
 	return _position;
 }
 
-float Camera::GetPitch () const
+glm::quat Camera::GetRotation () const
 {
-	return _pitch;
-}
-
-float Camera::GetYaw () const
-{
-	return _yaw;
-} 
-
-float Camera::GetRoll () const
-{
-	return _roll;
+	return _rotation;
 }
 
 float Camera::GetFieldOfView () const
@@ -95,24 +85,19 @@ void Camera::SetType (Camera::Type type)
 	_type = type;
 }
 
-void Camera::SetPosition (glm::vec3 pos)
+void Camera::SetPosition (const glm::vec3& pos)
 {
 	_position = pos;
 }
 
-void Camera::SetPitch (float pitch)
+void Camera::SetRotation (const glm::quat& rotation)
 {
-	_pitch = pitch;
+	_rotation = glm::normalize (rotation);
 }
 
-void Camera::SetYaw (float yaw)
+void Camera::SetRotation(const glm::vec3& eulerAngles)
 {
-	_yaw = yaw;
-}
-
-void Camera::SetRoll (float roll)
-{
-	_roll = roll;
+	_rotation = glm::normalize (glm::quat (eulerAngles * DEG2RAD));
 }
 
 void Camera::SetFieldOfView (float FOV)
@@ -135,13 +120,36 @@ void Camera::SetZFar (float zFar)
 	_zFar = zFar;
 }
 
-glm::vec3 Camera::ToVector3(void)
+glm::vec3 Camera::GetForward () const
 {
-	glm::vec3 result;
+	return glm::conjugate (_rotation) * glm::vec3 (0.0f, 0.0f, -1.0f);
+}
 
-	result.x = cos (_yaw) * cos (_pitch);
-	result.y = sin (_pitch);
-	result.z = sin (_yaw) * cos (_pitch);
+glm::vec3 Camera::GetLeft () const
+{
+	return glm::conjugate (_rotation) * glm::vec3 (-1.0, 0.0f, 0.0f);
+}
 
-	return result;
+glm::vec3 Camera::GetUp () const
+{
+	return glm::conjugate (_rotation) * glm::vec3 (0.0f, 1.0f, 0.0f);
+}
+
+void Camera::Rotate (const glm::vec3& angleRadians)
+{
+	Rotate (angleRadians.x, glm::vec3 (1.0f, 0.0f, 0.0f));
+	Rotate (angleRadians.y, glm::vec3 (0.0f, 1.0f, 0.0f));
+	Rotate (angleRadians.z, glm::vec3 (0.0f, 0.0f, 1.0f));
+}
+
+void Camera::Rotate (float angleRadians, const glm::vec3& axis) 
+{
+	glm::quat q = glm::angleAxis(angleRadians, axis);
+	Rotate(q);
+}
+
+void Camera::Rotate (const glm::quat& rotation) 
+{
+	_rotation = rotation * _rotation;
+	_rotation = glm::normalize (_rotation);
 }
