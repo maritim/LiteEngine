@@ -18,10 +18,32 @@
 			<Gravity use="false" />
 		</Rigidbody>
 		<Components>
-			<Component name="CameraController" />
+			<Component name="FPSCameraController" />
 			<Component name="FrameRate" />
 		</Components>
 	</GameObject>
+<!-- 	<AnimatedGameObject InstanceID="0" name="weapon" meshpath="Assets/Models/fps/fps.dae" >
+		<Transform>
+			<Position y="-0.1" x="15" />
+			<Rotation x="-90" />
+			<Scale x="55" y="55" z="55" />
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+		<Components>
+			<Component name="WeaponComponent" />
+		</Components>
+	</AnimatedGameObject>
+	<GameObject parent="weapon" InstanceID="0" name="Gun" meshpath="Assets/Models/Gun/Gun.dae" >
+		<Transform>
+			<Position y="-0.1" x="3" />
+			<Scale x="1" y="1" z="1"/>
+		</Transform>
+		<Rigidbody>
+			<Gravity use="false" />
+		</Rigidbody>
+	</GameObject> -->
 <!-- 	<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Lara/Lara_Croft_default.dae" >
 		<Transform>
 			<Position y="-0.1" x="3" />
