@@ -11,9 +11,6 @@
 #include "Resources/Resources.h"
 
 #include "Utils/Extensions/MathExtend.h"
-#include "Utils/Extensions/QuaternionExtend.h"
-
-#include "Debug/Logger/Logger.h"
 
 void FlyCameraController::Start ()
 {
