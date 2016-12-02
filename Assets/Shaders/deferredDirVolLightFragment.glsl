@@ -62,6 +62,5 @@ void main()
 
 	in_normal = normalize(in_normal);
 
-	// out_color = vec3 (1.0, 0.0, 0.0); 
 	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
 } 

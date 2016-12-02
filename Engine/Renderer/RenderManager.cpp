@@ -17,6 +17,8 @@
 #include "Systems/Window/Window.h"
 #include "Systems/Input/Input.h"
 
+#include "Debug/Profiler/Profiler.h"
+
 /*
  * Singleton Part
 */
@@ -63,6 +65,8 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 
 void RenderManager::DeferredPass (Scene* scene)
 {
+	PROFILER_LOGGER ("Deferred Pass");
+
 	/*
 	 * Update GBuffer if needed
 	*/
@@ -92,8 +96,6 @@ void RenderManager::DeferredPass (Scene* scene)
 	*/
 
 	SkyboxPass ();
-	// ParticleSystemPass ();
-	// GUIPass ();
 
 	/*
 	 * Deferred Rendering: End Drawing
@@ -104,6 +106,7 @@ void RenderManager::DeferredPass (Scene* scene)
 
 void RenderManager::ForwardPass (Scene* scene)
 {
+	PROFILER_LOGGER("ForwardPass");
 	/*
 	 * Render scene entities to framebuffer at Forward Rendering Stage
 	*/
@@ -209,36 +212,118 @@ void RenderManager::DirectionalLightPass ()
 
 void RenderManager::PointLightPass ()
 {
-	PointLightStencilPass ();
-	PointLightDrawPass ();
+	for (std::size_t i=0;i<LightsManager::Instance ()->GetPointLightsCount ();i++) {
+		VolumetricLight* volumetricLight = LightsManager::Instance ()->GetPointLight (i);
+
+		PointLightStencilPass (volumetricLight);
+		PointLightDrawPass (volumetricLight);
+	}
 }
 
-void RenderManager::PointLightStencilPass ()
+void RenderManager::PointLightStencilPass (VolumetricLight* volumetricLight)
 {
+	_frameBuffer->BindForStencilPass ();
 
+	/*
+	 * Don't need to write the light on depth buffer.
+	*/
+
+	GL::Enable (GL_DEPTH_TEST);
+	GL::DepthMask (GL_FALSE);
+
+	/*
+	 * Stencil pass technique. For more details please look at the link bellow.
+	 * http://ogldev.atspace.co.uk/www/tutorial37/tutorial37.html
+	 *
+	 * It uses stencil test to identify the fragments that are in light. 
+	*/
+
+	GL::Enable (GL_STENCIL_TEST);
+	GL::StencilFunc (GL_ALWAYS, 0, 0);
+
+	GL::StencilOpSeparate (GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+	GL::StencilOpSeparate (GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
+
+	/*
+	 * Both faces need to be drawn.
+	*/
+
+	GL::Disable (GL_CULL_FACE);
+
+	/*
+	 * Volumetric light draw.
+	*/
+
+	volumetricLight->GetLightRenderer ()->Draw ();
+
+	/*
+	 * Reset the settings.
+	*/
+
+	GL::DepthMask (GL_TRUE);
+
+	GL::Enable (GL_CULL_FACE);
+	GL::Disable (GL_STENCIL_TEST);
 }
 
-void RenderManager::PointLightDrawPass ()
+void RenderManager::PointLightDrawPass (VolumetricLight* volumetricLight)
 {
-	// glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+	_frameBuffer->BindForLightPass ();
 
-	// GL::Disable(GL_DEPTH_TEST);
-	// GL::Enable(GL_BLEND);
-	// glBlendEquation(GL_FUNC_ADD);
-	// GL::BlendFunc(GL_ONE, GL_ONE);
+	/*
+	 * Don't need to write the light on depth buffer.
+	*/
 
-	// GL::Enable(GL_CULL_FACE);
-	// glCullFace(GL_FRONT);
+	GL::Disable (GL_DEPTH_TEST);
+	GL::DepthMask (GL_FALSE);
+	
+	/*
+	 * Pass the fragment only if it is like that
+	 *
+	 * 				(buffer frag) > (value '1')
+	 *
+	 * Don't override the sky, which have value '0'.
+	 * Override only what fragments that are in light.
+	 *
+	 * After drawing, Stencil Buffer is refilled with 1's.
+	*/
 
-	// for (std::size_t i=0;i<LightsManager::Instance ()->GetPointLightsCount ();i++) {
-	// 	VolumetricLight* volumetricLight = LightsManager::Instance ()->GetPointLight (i);
+	GL::Enable (GL_STENCIL_TEST);
+	GL::StencilFunc (GL_LESS, 1, 0xFF);
+	GL::StencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
 
-	// 	volumetricLight->GetLightRenderer ()->Draw ();
-	// }
+	/*
+	 * Blend between point lights with same weight.
+	*/
 
-	// glCullFace(GL_BACK);
+	GL::Enable (GL_BLEND);
+	GL::BlendEquation (GL_FUNC_ADD);
+	GL::BlendFunc (GL_ONE, GL_ONE);
 
-	// GL::Disable(GL_BLEND);	
+	/*
+	 * Process fragments single time. Front Face randomly chosen.
+	*/
+
+	GL::Enable (GL_CULL_FACE);
+	GL::CullFace (GL_FRONT);
+
+	/*
+	 * Draw the volumetric light.
+	*/
+
+	volumetricLight->GetLightRenderer ()->Draw ();
+
+	/*
+	 * Reset the settings.
+	*/
+
+	GL::CullFace (GL_BACK);
+
+	GL::Disable (GL_STENCIL_TEST);
+	GL::Disable (GL_BLEND);
+
+	GL::DepthMask (GL_TRUE);
+	GL::Enable (GL_DEPTH_TEST);
 }
 
 void RenderManager::SkyboxPass ()

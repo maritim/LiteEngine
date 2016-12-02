@@ -26,6 +26,8 @@
 #include "SceneGraph/Scene.h"
 #include "Systems/Camera/Camera.h"
 
+#include "Lighting/VolumetricLight.h"
+
 #include "Renderer.h"
 #include "GBuffer.h"
 
@@ -59,8 +61,8 @@ private:
 	void DirectionalLightPass ();
 	void PointLightPass ();
 
-	void PointLightStencilPass ();
-	void PointLightDrawPass ();
+	void PointLightStencilPass (VolumetricLight* light);
+	void PointLightDrawPass (VolumetricLight* light);
 };
 
 #endif

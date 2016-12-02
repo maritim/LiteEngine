@@ -232,6 +232,13 @@ void GL::StencilOp(GLenum sfail, GLenum dpfail, GLenum dppass)
 	ErrorCheck ("glStencilOp");
 }
 
+void GL::StencilOpSeparate(GLenum face, GLenum sfail, GLenum dpfail, GLenum dppass)
+{
+	glStencilOpSeparate(face, sfail, dpfail, dppass);
+
+	ErrorCheck ("glStencilOpSeparate");
+}
+
 void GL::StencilMask(GLuint mask)
 {
 	glStencilMask (mask);
@@ -255,6 +262,13 @@ void GL::BlendFunci (GLuint buf, GLenum sfactor, GLenum dfactor)
 	glBlendFunci (buf, sfactor, dfactor);
 
 	ErrorCheck ("glBlendFunci");
+}
+
+void GL::BlendEquation (GLenum mode)
+{
+	glBlendEquation (mode);
+
+	ErrorCheck ("glBlendEquation");
 }
 
 /*

@@ -23,7 +23,13 @@ PointLight::PointLight () :
 
 void PointLight::Update ()
 {
-	
+	/*
+	 * TODO: Remove this after fix transforms.
+	*/
+
+	if (_transform->GetScale ().x < 2.0f) {
+		UpdateScale ();
+	}
 }
 
 float PointLight::GetConstantAttenuation () const
@@ -77,7 +83,7 @@ void PointLight::UpdateScale ()
 	glm::vec3 color = _color.ToVector3 ();
 	float MaxChannel = fmax(fmax(color.x, color.y), color.z);
 
-	float intensity = 0.0f;
+	float intensity = 0.01f;
 
 	float ret = (-_linearAttenuation + sqrtf(_linearAttenuation * _linearAttenuation -
 		4 * _quadraticAttenuation * (_constantAttenuation - 256 * MaxChannel * intensity))) / 

@@ -76,11 +76,13 @@ public:
 
 	static void StencilFunc(GLenum func, GLint ref, GLuint mask);
 	static void StencilOp(GLenum sfail, GLenum dpfail, GLenum dppass);
+	static void StencilOpSeparate(GLenum face, GLenum sfail, GLenum dpfail, GLenum dppass);
 	static void StencilMask(GLuint mask);
 
 	// Blend
 	static void BlendFunc (GLenum sfactor, GLenum dfactor);
 	static void BlendFunci (GLuint buf, GLenum sfactor, GLenum dfactor);
+	static void BlendEquation (GLenum mode);
 
 	// Generators
 	static void GenVertexArrays (GLsizei n, GLuint * arrays);

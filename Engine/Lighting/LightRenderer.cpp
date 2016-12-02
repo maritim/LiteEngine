@@ -19,7 +19,7 @@ LightRenderer::LightRenderer (Light* light) :
 void LightRenderer::Draw ()
 {
 	Pipeline::SetObjectTransform (_transform);
-	
+
 	for (std::size_t i=0;i<_drawableObjects.size ();i++) {
 		Pipeline::SetShader (ShaderManager::Instance ()->GetShader (_shaderName));
 

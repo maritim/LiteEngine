@@ -18,26 +18,20 @@ std::vector<PipelineAttribute> PointLightRenderer::GetCustomAttributes ()
 {
 	std::vector<PipelineAttribute> attributes = LightRenderer::GetCustomAttributes ();
 
+	PipelineAttribute attenuation;
+
+	attenuation.type = PipelineAttribute::AttrType::ATTR_3F;
+
+	attenuation.name = "attenuationComp";
+
+	PointLight* pointLight = dynamic_cast<PointLight*> (_light);
+
+	attenuation.value = glm::vec3 (
+		pointLight->GetConstantAttenuation (),
+		pointLight->GetLinearAttenuation (),
+		pointLight->GetQuadraticAttenuation ());
+
+	attributes.push_back (attenuation);
+
 	return attributes;
-	// std::vector<PipelineAttribute> attributes;
-
-	// PipelineAttribute lightPosition;
-	// PipelineAttribute lightColor;
-	// PipelineAttribute lightSpecularColor;
-
-	// lightPosition.type = PipelineAttribute::AttrType::ATTR_3F;
-	// lightColor.type = PipelineAttribute::AttrType::ATTR_3F;
-	// lightSpecularColor.type = PipelineAttribute::AttrType::ATTR_3F;
-
-	// lightPosition.name = "lightPosition";
-	// lightColor.name = "lightColor";
-	// lightSpecularColor = "lightSpecularColor";
-
-	// lightPosition.value = _transform->GetPosition ();
-	// lightColor.value = _light->GetColor ().ToVector3 ();
-	// lightSpecularColor.value = _light->GetSpecularColor ().ToVector3 ();
-
-	// attributes.push_back (lightPosition;
-	// attributes.push_back (lightColor);
-	// attributes.push_back (lightSpecularColor);
 } 
