@@ -188,7 +188,7 @@ Buffer<float> TextGUIRenderer::CharData (FontChar* ch, const glm::vec2& screenPo
 	Buffer<float> bufferData;
 
 	Texture* texture = _font->GetTexture (0);
-	glm::vec2 texSize (texture->GetSize ().x, texture->GetSize ().y);
+	glm::vec2 texSize (texture->GetSize ().width, texture->GetSize ().height);
 	glm::vec2 screenSize (Screen::Instance ()->GetSize ());
 	glm::vec2 scale = (glm::vec2) ch->GetSize () / screenSize * fontSize;
 	glm::vec2 offset = glm::vec2(ch->GetOffset ().x, -ch->GetOffset ().y) / screenSize * fontSize;

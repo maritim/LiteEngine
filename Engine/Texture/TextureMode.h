@@ -1,0 +1,68 @@
+#ifndef TEXTURE_MODE
+#define TEXTURE_MODE
+
+enum TEXTURE_WRAP_MODE
+{
+	WRAP_REPEAT = 0,
+	WRAP_CLAMP
+};
+
+enum TEXTURE_MIPMAP_FILTER
+{
+	MIPMAP_DEFAULT = 0,
+	MIPMAP_NEAREST,
+	MIPMAP_BOX,
+	MIPMAP_BILINEAR,
+	MIPMAP_BICUBIC,
+	MIPMAP_LANCZOS,
+	MIPMAP_MAX
+};
+
+enum TEXTURE_FORMAT_TYPE
+{
+	FORMAT_DEFAULT = 0,
+	FORMAT_RGB8,
+	FORMAT_RGBA8,
+	FORMAT_BGR8,
+	FORMAT_ABGR8,
+	FORMAT_R5G6B5,
+	FORMAT_RGBA4,
+	FORMAT_RGB5A1,
+	FORMAT_RGB10A2,
+	FORMAT_R3G3B2,
+	FORMAT_A8,
+	FORMAT_L8,
+	FORMAT_L8A8,
+	FORMAT_AEXP,
+	FORMAT_YCOCG,
+	FORMAT_MAX
+};
+
+enum TEXTURE_COMPRESSION_TYPE
+{
+	DDS_COMPRESS_NONE = 0,
+	DDS_COMPRESS_BC1,        /* DXT1  */
+	DDS_COMPRESS_BC2,        /* DXT3  */
+	DDS_COMPRESS_BC3,        /* DXT5  */
+	DDS_COMPRESS_BC3N,       /* DXT5n */
+	DDS_COMPRESS_BC4,        /* ATI1  */
+	DDS_COMPRESS_BC5,        /* ATI2  */
+	DDS_COMPRESS_AEXP,       /* DXT5  */
+	DDS_COMPRESS_YCOCG,      /* DXT5  */
+	DDS_COMPRESS_YCOCGS,     /* DXT5  */
+	DDS_COMPRESS_MAX
+};
+
+struct Size
+{
+	std::size_t width;
+	std::size_t height;
+
+	Size (std::size_t width, std::size_t height) :
+		width (width),
+		height (height)
+	{
+	}
+};
+
+#endif

@@ -31,7 +31,7 @@ void TextureManager::AddTexture (Texture* texture)
 	 * TODO: Remove this after TextureManager complete refactorization
 	*/
 
-	if (texture->GetSurface () != nullptr) {
+	if (texture->GetPixels () != nullptr) {
 		this->LoadInGPU (texture);
 	}
 
@@ -60,23 +60,48 @@ void TextureManager::LoadInGPU (Texture* texture)
 {
 	unsigned int gpuIndex = 0;
 
-	SDL_Surface* surface = texture->GetSurface ();
+	Size size (texture->GetSize ());
 
 	GL::GenTextures(1, &gpuIndex);
 	GL::BindTexture(GL_TEXTURE_2D, gpuIndex);
 
-	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
-
-	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
-	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sizs.width, size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->GetPixels ());
 
 	/*
-	 * For the moment will create mipmaps for all textures
+	 * Wrap Mode
 	*/
 
-	GL::GenerateMipmap (GL_TEXTURE_2D);
+	if (texture->GetWrapMode () == TEXTURE_WRAP_MODE::WRAP_REPEAT) {
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);		
+	}
+	else if (texture->GetWrapMode () == TEXTURE_WRAP_MODE::WRAP_CLAMP) {
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);		
+	}
+
+	/*
+	 * Magnifying and minifying properties
+	*/
+
+	if (texture->GetMipmapFilter () == TEXTURE_MIPMAP_FILTER::MIPMAP_NEAREST) {
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST_MIPMAP_NEAREST);
+	}
+	else if (texture->GetMipmapFilter () == TEXTURE_MIPMAP_FILTER::MIPMAP_BILINEAR) {
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);		
+	}
+
+	/*
+	 * Generate mipmaps
+	 *
+	 * TODO: Extend this to create mipmaps with multiple filters.
+	*/
+
+	if (texture->GenerateMipmaps () && !texture->HasMipmaps ()) {
+		GL::GenerateMipmap (GL_TEXTURE_2D);
+	}
 
 	/*
 	 * Unbind current texture index

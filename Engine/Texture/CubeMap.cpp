@@ -5,7 +5,7 @@
 #include <vector>
 
 CubeMap::CubeMap(std::string filename, unsigned int gpuIndex) :
-	Texture(filename, nullptr)
+	Texture(filename)
 {
 	_gpuIndex = gpuIndex;
 }
