@@ -8,6 +8,7 @@
 #include "Transform.h"
 #include "Renderer/Renderer.h"
 #include "Systems/Physics/Rigidbody.h"
+#include "Systems/Collision/Collider.h"
 
 class SceneObject : public Object
 {
@@ -17,6 +18,7 @@ protected:
 	Transform* _transform;
 	Renderer* _renderer;
 	Rigidbody* _rigidbody;
+	Collider* _collider;
 
 public:
 	SceneObject ();
@@ -30,6 +32,7 @@ public:
 	Transform* GetTransform () const;
 	Renderer* GetRenderer () const;
 	Rigidbody* GetRigidbody () const;
+	Collider* GetCollider () const;
 
 	virtual void Update () = 0;
 

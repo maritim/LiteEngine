@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "Core/Math/glm/vec3.hpp"
 
@@ -13,6 +14,11 @@
 #include "Mesh/Polygon.h"
 
 #include "Wrappers/OpenGL/GL.h"
+
+inline bool BufferObjectSorter::operator() (const BufferObject& object1, const BufferObject& object2)
+{
+    return object1.MAT_NAME < object2.MAT_NAME;
+}
 
 VertexData::VertexData ()
 {
@@ -33,6 +39,8 @@ void Model3DRenderer::Attach (Model* model)
 	for (std::size_t i=0;i<model->ObjectsCount ();i++) {
 		ProcessObjectModel (model, model->GetObject (i));
 	}
+
+	// std::sort (_drawableObjects.begin (), _drawableObjects.end (), BufferObjectSorter());
 }
 
 void Model3DRenderer::Draw ()
@@ -40,17 +48,19 @@ void Model3DRenderer::Draw ()
 	GL::DepthMask (GL_TRUE);
 
 	Pipeline::SetObjectTransform (_transform);
-	
+
 	for (std::size_t i=0;i<_drawableObjects.size ();i++) {
-		Material* mat = MaterialManager::Instance ().GetMaterial (_drawableObjects [i].MAT_NAME);
+		// if (i == 0 || _drawableObjects [i].MAT_NAME != _drawableObjects [i-1].MAT_NAME) {
+			Material* mat = MaterialManager::Instance ().GetMaterial (_drawableObjects [i].MAT_NAME);
 
-		if (mat == NULL) {
-			mat = MaterialManager::Instance ().Default ();
-		}
+			if (mat == NULL) {
+				mat = MaterialManager::Instance ().Default ();
+			}
 
-		GL::BlendFunc (mat->blending.first, mat->blending.second);
+			GL::BlendFunc (mat->blending.first, mat->blending.second);
 
-		Pipeline::SendMaterial (mat);
+			Pipeline::SendMaterial (mat);
+		// }
 
 		//bind pe containerul de stare de geometrie (vertex array object)
 		GL::BindVertexArray(_drawableObjects [i].VAO_INDEX);

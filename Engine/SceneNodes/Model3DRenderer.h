@@ -20,6 +20,11 @@ struct BufferObject
 	std::size_t INDEX_COUNT;
 };
 
+struct BufferObjectSorter
+{
+	bool operator() (const BufferObject& object1, const BufferObject& object2);
+};
+
 struct VertexData
 {
 	float position[3];

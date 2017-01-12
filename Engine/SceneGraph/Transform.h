@@ -16,6 +16,8 @@ private:
 	Transform* _parent;
 	std::vector<Transform*> _children;
 
+	bool _isDirty;
+
 public:
 	Transform ();
 	Transform (const Transform& other);
@@ -36,6 +38,9 @@ public:
 	void SetPosition (const glm::vec3& position);
 	void SetRotation (const glm::quat& rotation);
 	void SetScale (const glm::vec3& scale);
+
+	bool IsDirty () const;
+	void SetIsDirty (bool isDirty);
 
 	Transform & operator=(const Transform& other);
 private:

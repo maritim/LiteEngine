@@ -5,6 +5,8 @@
 
 #include "Renderer.h"
 
+#include "Core/Intersections/Intersection.h"
+
 #include "SceneGraph/SceneObject.h"
 #include "Skybox/Skybox.h"
 #include "Lighting/LightsManager.h"
@@ -18,6 +20,8 @@
 #include "Systems/Input/Input.h"
 
 #include "Debug/Profiler/Profiler.h"
+#include "Debug/Statistics/StatisticsManager.h"
+#include "Debug/Statistics/DrawnObjectsCountStat.h"
 
 /*
  * Singleton Part
@@ -54,7 +58,7 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	 * Deferred Rendering Pass
 	*/
 
-	DeferredPass (scene);
+	DeferredPass (scene, camera);
 
 	/*
 	 * Forward Rendering Pass
@@ -63,7 +67,7 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	ForwardPass (scene);
 }	
 
-void RenderManager::DeferredPass (Scene* scene)
+void RenderManager::DeferredPass (Scene* scene, Camera* camera)
 {
 	PROFILER_LOGGER ("Deferred Pass");
 
@@ -83,7 +87,7 @@ void RenderManager::DeferredPass (Scene* scene)
 	 * Deferred Rendering: Geometry Pass
 	*/
 
-	GeometryPass (scene);
+	GeometryPass (scene, camera);
 
 	/*
 	 * Deferred Rendering: Light Pass (atm)
@@ -145,7 +149,7 @@ void RenderManager::PrepareDrawing ()
 	_frameBuffer->StartFrame ();
 }
 
-void RenderManager::GeometryPass (Scene* scene)
+void RenderManager::GeometryPass (Scene* scene, Camera* camera)
 {
 	_frameBuffer->BindForGeomPass ();
 
@@ -166,13 +170,34 @@ void RenderManager::GeometryPass (Scene* scene)
 
 	std::vector<Renderer*> renderers;
 
+	FrustumVolume* frustum = camera->GetFrustumVolume ();
+
+	std::size_t drawnObjectsCount = 0;
+
 	for (std::size_t i=0;i<scene->GetObjectsCount ();i++) {
 		if (scene->GetObjectAt (i)->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
 			continue;
 		}
 
+		/*
+		 * Culling Check
+		*/
+
+		if (scene->GetObjectAt (i)->GetCollider () == nullptr) {
+			continue;
+		}
+
+		GeometricPrimitive* primitive = scene->GetObjectAt (i)->GetCollider ()->GetGeometricPrimitive ();
+		if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
+			continue;
+		}
+
+		drawnObjectsCount ++;
+
 		renderers.push_back (scene->GetObjectAt (i)->GetRenderer ());
 	}
+
+	StatisticsManager::Instance ()->SetStatisticsObject ("DrawnObjectsCount", new DrawnObjectsCountStat (drawnObjectsCount));
 
 	std::sort (renderers.begin (), renderers.end (), cmp);
 

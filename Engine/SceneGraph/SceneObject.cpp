@@ -6,7 +6,8 @@
 SceneObject::SceneObject () :
 	_transform (new Transform ()),
 	_renderer (new Renderer (_transform)),
-	_rigidbody (new Rigidbody (_transform))
+	_rigidbody (new Rigidbody (_transform)),
+	_collider (nullptr)
 {
 
 }
@@ -16,6 +17,10 @@ SceneObject::~SceneObject ()
 	delete _transform;
 	delete _renderer;
 	delete _rigidbody;
+
+	if (_collider != nullptr) {
+		delete _collider;
+	}
 }
 
 // Don't ever modify this object's pointer
@@ -32,6 +37,11 @@ Renderer* SceneObject::GetRenderer () const
 Rigidbody* SceneObject::GetRigidbody () const
 {
 	return _rigidbody;
+}
+
+Collider* SceneObject::GetCollider () const
+{
+	return _collider;
 }
 
 std::string SceneObject::GetName () const

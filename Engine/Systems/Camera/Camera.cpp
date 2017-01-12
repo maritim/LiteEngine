@@ -4,6 +4,8 @@
 
 #include <cmath>
 
+#include "Core/Math/glm/gtc/matrix_transform.hpp"
+
 Camera::Camera(void) :
 	_type (Type::PERSPECTIVE),
 	_position (),
@@ -152,4 +154,18 @@ void Camera::Rotate (const glm::quat& rotation)
 {
 	_rotation = rotation * _rotation;
 	_rotation = glm::normalize (_rotation);
+}
+
+FrustumVolume* Camera::GetFrustumVolume () const
+{
+	glm::mat4 projection = glm::perspective (_fieldOfViewAngle, _aspect, _zNear, _zFar);
+
+	glm::mat4 view = glm::mat4_cast (GetRotation ());
+	view = glm::translate (view, GetPosition () * -1.0f);
+
+	glm::mat4 mvp = projection * view;
+
+	FrustumVolume* frustum = new FrustumVolume (mvp);
+
+	return frustum;
 }

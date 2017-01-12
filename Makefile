@@ -44,6 +44,7 @@ DIRS := ./Engine/Core/Interfaces/ \
 		./Engine/Core/Console/ \
 		./Engine/Core/Debug/ \
 		./Engine/Core/Parsers/XML/TinyXml/ \
+		./Engine/Core/Intersections/ \
 		./Engine/Core/ \
 		./Engine/Wrappers/*/ \
 		./Engine/VisualEffects/*/ \

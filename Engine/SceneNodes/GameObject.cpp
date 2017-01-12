@@ -1,8 +1,8 @@
 #include "GameObject.h"
 
 #include "SceneGraph/Transform.h"
-#include "Systems/Time/Time.h"
 #include "Model3DRenderer.h"
+#include "Systems/Collision/AABBCollider.h"
 
 #include "Systems/Input/Input.h"
 
@@ -13,7 +13,11 @@ GameObject::GameObject () :
 	delete _renderer;
 	_renderer = new Model3DRenderer (_transform);
 	_renderer->SetPriority (1);
+
+	_collider = new AABBCollider ();
 }
+
+#include "Debug/Logger/Logger.h"
 
 void GameObject::AttachMesh (Model * mesh)
 {
@@ -23,6 +27,9 @@ void GameObject::AttachMesh (Model * mesh)
 
 	Model3DRenderer* model3dRenderer = dynamic_cast<Model3DRenderer*>(_renderer);
 	model3dRenderer->Attach (_mesh);
+
+	DEBUG_LOG (_name);
+	_collider->Rebuild (_mesh, _transform);
 }
 
 Model* GameObject::GetMesh () const
@@ -33,7 +40,11 @@ Model* GameObject::GetMesh () const
 
 void GameObject::Update() 
 {
+	if (_transform->IsDirty ()) {
+		_collider->Rebuild (_mesh, _transform);
+	}
 
+	_transform->SetIsDirty (false);
 }
 
 void GameObject::DestroyCurrentMesh ()

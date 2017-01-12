@@ -12,6 +12,8 @@
 
 #include "Core/Math/glm/vec3.hpp"
 
+#include "BoundingBox.h"
+
 #include "Polygon.h"
 #include "ObjectModel.h"
 
@@ -28,9 +30,11 @@ protected:
 	std::vector<glm::vec3*> _normals;
 	std::vector<glm::vec3*> _texcoords;
 
-	// Use for normal smoothing
+	// Used for normal smoothing
 	std::vector<glm::vec3> _smoothNormals;
 	std::vector<int> _smoothNormalsCount;
+
+	BoundingBox* _boundingBox;
 
 public: 
 	Model();			
@@ -60,6 +64,8 @@ public:
 	ObjectModel* GetObject (std::size_t position) const;
 	ObjectModel* GetObject (std::string objectName) const;
 
+	BoundingBox* GetBoundingBox ();
+
 	void SetVertex (glm::vec3* vertex, std::size_t position);
 	void ClearObjects ();
 
@@ -71,6 +77,8 @@ public:
 
 protected:
 	glm::vec3* CalculateNormal(Polygon* poly);
+
+	BoundingBox* CalculateBoundingBox ();
 };
  
 #endif

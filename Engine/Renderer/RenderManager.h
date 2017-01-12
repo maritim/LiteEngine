@@ -49,11 +49,11 @@ private:
 	void UpdateCamera (Camera* camera);
 	void UpdateGBuffer ();
 
-	void DeferredPass (Scene*);
+	void DeferredPass (Scene*, Camera* camera);
 	void ForwardPass (Scene*);
 
 	void PrepareDrawing ();
-	void GeometryPass (Scene* scene);
+	void GeometryPass (Scene* scene, Camera* camera);
 	void LightPass ();
 	void SkyboxPass ();
 	void EndDrawing ();

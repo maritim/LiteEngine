@@ -12,7 +12,8 @@ Transform::Transform () :
 	_rotation (),
 	_scale (1.0f),
 	_parent (NULL),
-	_children ()
+	_children (),
+	_isDirty (false)
 {
 
 }
@@ -23,7 +24,8 @@ Transform::Transform(const Transform& other) :
 	_rotation (other._rotation),
 	_scale (other._scale),
 	_parent (NULL),
-	_children ()
+	_children (),
+	_isDirty (false)
 {
 
 }
@@ -34,6 +36,8 @@ void Transform::SetParent (Transform* parent)
 	_parent->AttachChild (this);
 
 	_position -= _parent->GetPosition ();
+
+	_isDirty = true;
 }
 
 void Transform::DetachParent ()
@@ -47,6 +51,8 @@ void Transform::DetachParent ()
 	_position += _parent->GetPosition ();
 
 	_parent = NULL;
+
+	_isDirty = true;
 }
 
 glm::vec3 Transform::GetPosition () const
@@ -79,16 +85,22 @@ glm::vec3 Transform::GetScale () const
 void Transform::SetPosition (const glm::vec3& position)
 {
 	_position = position;
+
+	_isDirty = true;
 }
 
 void Transform::SetRotation (const glm::quat& rotation)
 {
 	_rotation = rotation;
+
+	_isDirty = true;
 }
 
 void Transform::SetScale (const glm::vec3& scale)
 {
 	_scale = scale;
+
+	_isDirty = true;
 }
 
 Transform & Transform::operator=(const Transform& other)
@@ -97,7 +109,19 @@ Transform & Transform::operator=(const Transform& other)
 	_rotation = other._rotation;
 	_scale = other._scale;
 
+	_isDirty = true;
+
 	return *this;
+}
+
+bool Transform::IsDirty () const
+{
+	return _isDirty;
+}
+
+void Transform::SetIsDirty (bool isDirty)
+{
+	_isDirty = isDirty;
 }
 
 void Transform::AttachChild (Transform* transform)

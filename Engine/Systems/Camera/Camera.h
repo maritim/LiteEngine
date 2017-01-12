@@ -6,6 +6,8 @@
 #include "Core/Math/glm/vec3.hpp"
 #include "Core/Math/glm/gtc/quaternion.hpp"
 
+#include "Core/Intersections/FrustumVolume.h"
+
 class Camera : public Object
 {
 public:
@@ -62,6 +64,8 @@ public:
 	void Rotate (const glm::vec3&);
 	void Rotate (float, const glm::vec3&);
 	void Rotate (const glm::quat& rotation);
+
+	FrustumVolume* GetFrustumVolume () const;
 };
 
 #endif

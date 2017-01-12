@@ -13,7 +13,8 @@ Model::Model() :
 	_vertices (),
 	_objectModels (),
 	_normals (),
-	_texcoords ()
+	_texcoords (),
+	_boundingBox (nullptr)
 {
 }
 
@@ -24,7 +25,8 @@ Model::Model(const Model& other) :
 	_vertices (),
 	_objectModels (),
 	_normals (),
-	_texcoords ()
+	_texcoords (),
+	_boundingBox (nullptr)
 {
 	for (std::size_t i=0;i<other._vertices.size();i++) {
 		_vertices.push_back (new glm::vec3 (*other._vertices [i]));
@@ -68,6 +70,10 @@ Model::~Model()
 	}
 	_objectModels.clear();
 	_objectModels.shrink_to_fit ();
+
+	if (_boundingBox != nullptr) {
+		delete _boundingBox;
+	}
 }
 
 void Model::AddVertex (glm::vec3* vertex) 
@@ -202,6 +208,15 @@ std::string Model::GetName (void) const
 std::string Model::GetMaterialLibrary (void) const 
 {
 	return _mtllib;
+}
+
+BoundingBox* Model::GetBoundingBox ()
+{
+	if (_boundingBox == nullptr) {
+		_boundingBox = CalculateBoundingBox ();
+	}
+
+	return _boundingBox;
 }
 
 void Model::ClearObjects (void) 
@@ -432,4 +447,36 @@ glm::vec3* Model::CalculateNormal (Polygon* polygon)
 	normal->z /= val;
 
 	return normal;
+}
+
+BoundingBox* Model::CalculateBoundingBox ()
+{
+	BoundingBox* boundingBox = new BoundingBox ();
+
+	for (std::size_t obji=0;obji<_objectModels.size ();obji++) {
+		ObjectModel* objModel = _objectModels [obji];
+
+		for (std::size_t i=0;i<objModel->GetPolygonCount ();i++) {
+			PolygonGroup* polyGroup = objModel->GetPolygonGroup (i);
+
+			for (std::size_t j=0;j<polyGroup->GetPolygonCount ();j++) {
+				Polygon* poly = polyGroup->GetPolygon (j);
+
+				for (std::size_t k=0;k<poly->VertexCount ();k++) {
+					glm::vec3* vertex = _vertices [poly->GetVertex (k)];
+
+					boundingBox->xmin = std::min (boundingBox->xmin, vertex->x);
+					boundingBox->xmax = std::max (boundingBox->xmax, vertex->x);
+
+					boundingBox->ymin = std::min (boundingBox->ymin, vertex->y);
+					boundingBox->ymax = std::max (boundingBox->ymax, vertex->y);
+
+					boundingBox->zmin = std::min (boundingBox->zmin, vertex->z);
+					boundingBox->zmax = std::max (boundingBox->zmax, vertex->z);
+				}
+			}
+		}
+	}
+
+	return boundingBox;	
 }
