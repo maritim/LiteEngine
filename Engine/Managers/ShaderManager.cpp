@@ -12,8 +12,8 @@
 ShaderManager::ShaderManager ()
 {
 	// AddShader ("DEFAULT", "Assets/Shaders/defaultVertex.glsl", "Assets/Shaders/defaultFragment.glsl");	
-	AddShader ("DEFAULT", "Assets/Shaders/deferredVertex.glsl", "Assets/Shaders/deferredFragment.glsl");
-	AddShader ("DEFAULT_ANIMATED", "Assets/Shaders/deferredVertexAnimation.glsl", "Assets/Shaders/deferredFragment.glsl");
+	AddShader ("DEFAULT", "Assets/Shaders/deferredVertex.glsl", "Assets/Shaders/deferredFragment.glsl", "Assets/Shaders/deferredGeometry.glsl");
+	AddShader ("DEFAULT_ANIMATED", "Assets/Shaders/deferredVertexAnimation.glsl", "Assets/Shaders/deferredFragment.glsl", "Assets/Shaders/deferredGeometry.glsl");
 }
 
 ShaderManager::~ShaderManager ()
@@ -24,6 +24,26 @@ ShaderManager::~ShaderManager ()
 	}
 
 	_shaderCollection.clear ();
+}
+
+/*
+ * Load shader file, compile it based on type (vertex, geometry, fragment), attach
+ * the shader to respective program.
+*/
+
+unsigned int ShaderManager::BuildShaderFile (unsigned int program, int shaderType, const std::string& filename)
+{
+	unsigned int shader;
+	std::string source;
+
+	Console::Log ("Loading and compiling \"" + filename + "\" !");
+
+	LoadShaderFile (filename, source);
+	shader = LoadShader (source, (GLenum)shaderType);
+
+	GL::AttachShader (program, shader);	
+
+	return shader;
 }
 
 // medium priority TODO: Improve this
@@ -64,40 +84,52 @@ unsigned int ShaderManager::LoadShader (const std::string& source, unsigned int 
 }
 
 int ShaderManager::AddShader (const std::string& shaderName,
-	const std::string& vertexFile, const std::string& fragmentFile)
+	const std::string& vertexFile, const std::string& fragmentFile,
+	const std::string& geometryFile)
 {
-	if (_shaderCollection.find (shaderName) != _shaderCollection.end ()) {
-		return 1;
+	/*
+	 * Return the program if already exists
+	*/
+
+	auto it = _shaderCollection.find (shaderName);
+	if (it != _shaderCollection.end ()) {
+		return it->second->GetProgram ();
 	}
 
-	unsigned int vertex, fragment, program;
-	std::string source;
+	unsigned int program = GL::CreateProgram ();
 
-	Console::Log ("Loading and compiling \"" + vertexFile + "\" !");
+	/*
+	 * Load, compile and attach vertex shader
+	*/
 
-	source = "";
-	LoadShaderFile (vertexFile, source);
-	vertex = LoadShader (source, GL_VERTEX_SHADER);
+	unsigned int vertex = BuildShaderFile (program, GL_VERTEX_SHADER, vertexFile);
 
-	Console::Log ("Loading and compiling \"" + fragmentFile + "\" !");
+	/*
+	 * Load, compile and attach fragment shader
+	*/
 
-	source = "";
-	LoadShaderFile (fragmentFile, source);
-	fragment = LoadShader (source, GL_FRAGMENT_SHADER);
+	unsigned int fragment = BuildShaderFile (program, GL_FRAGMENT_SHADER, fragmentFile);
 
-	program = GL::CreateProgram ();
-	GL::AttachShader (program, vertex);
-	GL::AttachShader (program, fragment);
+	/*
+	 * Load, compile and attach geometry shader if exists
+	*/
+
+	unsigned int geometry = 0;
+
+	if (geometryFile != "") {
+		geometry = BuildShaderFile (program, GL_GEOMETRY_SHADER, geometryFile);
+	}
 
 	GL::LinkProgram (program);
 
-	Shader* shader = new Shader (shaderName, program, vertex, fragment);
+	Shader* shader = new Shader (shaderName, program, vertex, fragment, geometry);
 	shader->SetVertexFilename (vertexFile);
 	shader->SetFragmentFilename (fragmentFile);
+	shader->SetGeometryFilename (geometryFile);
 
 	_shaderCollection [shaderName] = shader;
 
-	return 0; 
+	return program; 
 }
 
 int ShaderManager::DeleteShader (const std::string& shaderName)

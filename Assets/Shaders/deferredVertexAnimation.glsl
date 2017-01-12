@@ -15,9 +15,9 @@ uniform mat3 normalWorldMatrix;
 
 uniform mat4 boneTransforms[253];
 
-out vec3 position;
-out vec3 normal;
-out vec2 texcoord;
+out vec3 vert_position;
+out vec3 vert_normal;
+out vec2 vert_texcoord;
 
 void main()
 {
@@ -30,10 +30,10 @@ void main()
 
 	gl_Position = modelViewProjectionMatrix * localPosition;
 
-	position = (modelMatrix * localPosition).xyz;
+	vert_position = (modelMatrix * localPosition).xyz;
 
 	vec4 localNormal = boneTransform * vec4 (in_normal, 0.0);
-	normal = (modelMatrix * localNormal).xyz;
+	vert_normal = (modelMatrix * localNormal).xyz;
 
-	texcoord = in_texcoord;
+	vert_texcoord = in_texcoord;
 }

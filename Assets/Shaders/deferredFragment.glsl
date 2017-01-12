@@ -13,44 +13,40 @@ uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
 
 uniform vec4 MaterialDiffuse;
-uniform vec4 MaterialAmbient;
-uniform vec4 MaterialSpecular;
-uniform float MaterialShininess;
-uniform float MaterialTransparency;
 
-uniform sampler2D AmbientMap;
 uniform sampler2D DiffuseMap;
-uniform sampler2D SpecularMap;
-uniform sampler2D AlphaMap;
 
 uniform vec3 cameraPosition;
 
 uniform vec3 sceneAmbient;
 
-in vec3 position;
-in vec3 normal; 
-in vec2 texcoord;
+in vec3 geom_position;
+in vec3 geom_normal; 
+in vec2 geom_texcoord;
 
 void main()
 {
-	float alphaMap = MaterialTransparency * texture2D (AlphaMap, texcoord.xy).x;
+	/*
+	 * Get color of all used texture maps
+	*/
 
-	if (alphaMap == 0) {
-		discard;
-	}
-
-	vec3 ambientMap = vec3 (MaterialAmbient * texture2D (AmbientMap, texcoord.xy));
-	vec3 diffuseMap = vec3 (MaterialDiffuse * texture2D (DiffuseMap, 	texcoord.xy));
-	vec3 specularMap = vec3 (MaterialSpecular * texture2D (SpecularMap, texcoord.xy));
+	vec3 diffuseMap = vec3 (MaterialDiffuse * texture2D (DiffuseMap, 	geom_texcoord.xy));
 
 	// ambient lightDirection
 	// vec3 totalLighting = vec3 (MaterialAmbient) * ambientMap * diffuseMap;
 
-	// Renormalise normal vector
-	vec3 norm = normalize (normal);
+	/*
+	 * Renormalize normal vector
+	*/ 
 
-	out_position = vec4 (position, 1.0);
-	out_diffuse = vec4 (diffuseMap, alphaMap);
+	vec3 norm = normalize (geom_normal);
+
+	/*
+	 * Output texel for geometry pass in deferred rendering
+	*/
+
+	out_position = vec4 (geom_position, 1.0);
+	out_diffuse = vec4 (diffuseMap, 1);
 	out_normal = vec4 (norm, 1.0);
-	out_specular = vec4 (diffuseMap, MaterialShininess);
+	out_specular = vec4 (diffuseMap, 1);
 }

@@ -11,16 +11,24 @@ uniform mat4 modelViewProjectionMatrix;
 uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
 
-out vec3 position;
-out vec3 normal;
-out vec2 texcoord;
+out vec3 vert_position;
+out vec3 vert_normal;
+out vec2 vert_texcoord;
 
 void main()
 {
+	/*
+	 * Emit position for rasterizer
+	*/
+
 	gl_Position = modelViewProjectionMatrix * vec4 (in_position, 1);
 
-	position = vec3 (modelMatrix * vec4 (in_position, 1));
-	normal = normalMatrix * in_normal;
+	/*
+	 * Emit position on the world
+	*/
 
-	texcoord = in_texcoord;
+	vert_position = vec3 (modelMatrix * vec4 (in_position, 1));
+	vert_normal = normalMatrix * in_normal;
+
+	vert_texcoord = in_texcoord;
 }
