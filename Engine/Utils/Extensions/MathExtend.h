@@ -32,7 +32,7 @@ namespace Extensions
 	template <class T>
 	T MathExtend::Clamp (T n, T lower, T upper)
 	{
-		return std::max (upper, std::min (n, lower));
+		return std::min (upper, std::max (n, lower));
 	}
 }
 
