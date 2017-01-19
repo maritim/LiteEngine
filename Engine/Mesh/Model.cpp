@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <algorithm>
 
 #include "Core/Math/glm/detail/func_geometric.hpp"
 

@@ -2,7 +2,7 @@
 
 #include "StringExtend.h"
 
-#include <locale>
+#include <cctype>
 #include <algorithm>
 
 #include "Core/Console/Console.h"
