@@ -19,6 +19,10 @@
  * The random point inside the sphere will have coordinates ([x], [y], [z]).
  */
 
+#ifdef _MSC_VER
+	#define _USE_MATH_DEFINES
+#endif
+
 #include "SphereEmiter.h"
 
 #include <cmath>
