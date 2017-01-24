@@ -71,11 +71,11 @@ void Model3DRenderer::Draw ()
 
 void Model3DRenderer::Clear ()
 {
-	for (std::size_t i=0;i<_drawableObjects.size ();i++) {		
+	for (std::size_t i=0;i<_drawableObjects.size ();i++) {
+		GL::DeleteBuffers(1, &_drawableObjects[i].VBO_INDEX);
+		GL::DeleteBuffers(1, &_drawableObjects[i].VBO_INSTANCE_INDEX);
+		GL::DeleteBuffers(1, &_drawableObjects[i].IBO_INDEX);
 		GL::DeleteVertexArrays(1, &_drawableObjects [i].VAO_INDEX);
-		GL::DeleteBuffers(1, &_drawableObjects [i].VBO_INDEX);
-		GL::DeleteBuffers(1, &_drawableObjects [i].VBO_INSTANCE_INDEX);
-		GL::DeleteBuffers(1, &_drawableObjects [i].IBO_INDEX);
 	}
 
 	_drawableObjects.clear ();

@@ -83,10 +83,10 @@ void GameEngine::InitOpenGL ()
 	std::string glewvers = (char*) glewGetString(GLEW_VERSION);
 	Console::Log ("Status: Using GLEW " + glewvers);
 
-	if (glewIsSupported ("GL_VERSION_3_3")) {
-		Console::Log ("Ready for OpenGL 3.3");
+	if (glewIsSupported ("GL_VERSION_4_5")) {
+		Console::Log ("Ready for OpenGL 4.5");
 	} else {
-		Console::LogError ("OpenGL 3.3 not supported");
+		Console::LogError ("OpenGL 4.5 not supported");
 	}
 }
 

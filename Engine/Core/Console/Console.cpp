@@ -4,17 +4,19 @@
 
 #include "Console.h"
 
+std::ofstream Console::_outStream("Console.log");
+
 void Console::Log (std::string message)
 {
-	std::cout << message << std::endl;
+	_outStream << message << std::endl;
 }
 
 void Console::LogError (std::string message)
 {
-	std::cout << "Error: " << message << std::endl;
+	_outStream << "Error: " << message << std::endl;
 }
 
 void Console::LogWarning (std::string message)
 {
-	std::cout << "Warning: " << message << std::endl;
+	_outStream << "Warning: " << message << std::endl;
 }

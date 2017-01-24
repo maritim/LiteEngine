@@ -230,14 +230,14 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 				break;
 			case PipelineAttribute::ATTR_TEXTURE_2D :	{
 					glActiveTexture (GL_TEXTURE0 + _textureCount);
-					glBindTexture (GL_TEXTURE_2D, (unsigned int) attr [i].value.x);
+					GL::BindTexture (GL_TEXTURE_2D, (unsigned int) attr [i].value.x);
 					glUniform1i (unifLoc, _textureCount);
 					++ _textureCount;
 				}
 				break;
 			case PipelineAttribute::ATTR_TEXTURE_CUBE : {
 					glActiveTexture (GL_TEXTURE0 + _textureCount);
-					glBindTexture (GL_TEXTURE_CUBE_MAP, (unsigned int) attr [i].value.x);
+					GL::BindTexture (GL_TEXTURE_CUBE_MAP, (unsigned int) attr [i].value.x);
 					glUniform1i (unifLoc, _textureCount);
 					++ _textureCount;
 				}
@@ -323,7 +323,7 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 			glActiveTexture (GL_TEXTURE0 + _textureCount);
 			Texture* tex = TextureManager::Instance ()->GetTexture (mat->attributes [k].valueName);
 			unsigned int textureID = tex->GetGPUIndex ();
-			glBindTexture (GL_TEXTURE_2D, textureID);
+			GL::BindTexture (GL_TEXTURE_2D, textureID);
 			glUniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
 
 			++ _textureCount;
@@ -339,7 +339,7 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 				textureID = (unsigned int)mat->attributes [k].values.y;
 			}
 
-			glBindTexture (GL_TEXTURE_CUBE_MAP, textureID);
+			GL::BindTexture (GL_TEXTURE_CUBE_MAP, textureID);
 			glUniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
 
 			++ _textureCount;
