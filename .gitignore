@@ -16,7 +16,6 @@
 *.lai
 *.la
 *.a
-*.lib
 
 # Compiled Dynamic Libraries
 *.so
@@ -52,3 +51,5 @@ TODOS
 # NVidia Debugger
 *.csv
 
+# Visual Studio
+.vs/
