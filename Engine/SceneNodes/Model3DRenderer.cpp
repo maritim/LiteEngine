@@ -147,12 +147,12 @@ BufferObject Model3DRenderer::BindVertexData (const std::vector<VertexData>& vBu
 	//creeaza vbo
 	GL::GenBuffers(1, &VBO);
 	GL::BindBuffer(GL_ARRAY_BUFFER, VBO);
-	GL::BufferData(GL_ARRAY_BUFFER, sizeof(VertexData)*vBuf.size(), &vBuf[0], GL_STATIC_DRAW);
+	GL::BufferData(GL_ARRAY_BUFFER, sizeof(VertexData)*vBuf.size(), vBuf.data(), GL_STATIC_DRAW);
 	
 	//creeaza ibo
 	GL::GenBuffers(1, &IBO);
 	GL::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
-	GL::BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*iBuf.size(), &iBuf[0], GL_STATIC_DRAW);
+	GL::BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)*iBuf.size(), iBuf.data(), GL_STATIC_DRAW);
 	
 	// metoda 1: seteaza atribute folosind pipe-urile interne ce fac legatura OpenGL - GLSL, in shader folosim layout(location = pipe_index)
 	// metoda cea mai buna, specificare explicita prin qualificator layout)

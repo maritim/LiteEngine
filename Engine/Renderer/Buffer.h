@@ -92,7 +92,7 @@ T& Buffer<T>::operator[] (std::size_t pos)
 template <class T>
 const T* Buffer<T>::GetPointer () const
 {
-	return &_buffer [0];
+	return _buffer.data();
 }
 
 template <class T>

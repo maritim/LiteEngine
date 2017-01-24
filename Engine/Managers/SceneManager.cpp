@@ -4,6 +4,8 @@
 
 #include "Core/Console/Console.h"
 
+#define SCENE_LOADING_ERROR_CODE 10
+
 SceneManager::SceneManager () :
 	_current (nullptr)
 {
@@ -32,7 +34,7 @@ Scene* SceneManager::Load (const std::string& sceneName)
 
 	if (_current == nullptr) {
 		Console::LogError ("An error occured while tryng to load " + sceneName);
-		return nullptr;
+		std::exit(SCENE_LOADING_ERROR_CODE);
 	}
 
 	/*

@@ -73,8 +73,8 @@
     <LibraryPath>G:\LiteEngine\3rdparty\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>G:\LiteEngine\3rdparty\include;G:\LiteEngine\Engine;$(IncludePath)</IncludePath>
-    <LibraryPath>G:\LiteEngine\3rdparty\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Engine;$(SolutionDir)3rdparty\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)3rdparty\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(SolutionDir)Engine;$(SolutionDir)3rdparty\include;$(IncludePath)</IncludePath>
@@ -97,7 +97,7 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>assimp.lib;glew32.lib;SDL2.lib;SDL2_image.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp.lib;SDL2.lib;SDL2_image.lib;glew32.lib;glew32s.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
