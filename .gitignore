@@ -21,7 +21,6 @@
 # Compiled Dynamic Libraries
 *.so
 *.dylib
-*.dll
 
 # Dependency files
 *.d
@@ -34,6 +33,7 @@
 # Build
 Assets/Examples/
 Build/
+Debug/
 .Utils/
 
 # python bytecode
