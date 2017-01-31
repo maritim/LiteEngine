@@ -51,6 +51,9 @@ void GameEngine::Init ()
 
 void GameEngine::Clear ()
 {
+	ShaderManager::Instance()->Clear();
+	SceneManager::Instance()->Clear();
+
 	Window::Close ();
 
 	SDLModule::Quit ();

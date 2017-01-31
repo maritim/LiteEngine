@@ -52,5 +52,6 @@ void SceneManager::Clear ()
 		return ;
 	}
 
-	delete _current;	
+	delete _current;
+	_current = nullptr;
 }

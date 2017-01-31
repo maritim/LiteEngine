@@ -18,12 +18,7 @@ ShaderManager::ShaderManager ()
 
 ShaderManager::~ShaderManager ()
 {
-	std::map<std::string, Shader*>::iterator it = _shaderCollection.begin ();
-	for (;it != _shaderCollection.end ();it++) {
-		DeleteShader (it->first);
-	}
-
-	_shaderCollection.clear ();
+	Clear();
 }
 
 /*
@@ -162,6 +157,13 @@ Shader* ShaderManager::GetShader (const std::string& shaderName)
 	}
 
 	return it->second;
+}
+
+void ShaderManager::Clear()
+{
+	while (_shaderCollection.size() != 0) {
+		DeleteShader(_shaderCollection.begin()->first);
+	}
 }
 
 void ShaderManager::ErrorCheck (unsigned int shader)

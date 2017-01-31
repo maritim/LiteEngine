@@ -21,6 +21,7 @@ public:
 		const std::string& geometryFile = "");
 	int DeleteShader (const std::string& shaderName);
 	Shader* GetShader (const std::string& shaderName);
+	void Clear();
 
 private:
 	ShaderManager ();

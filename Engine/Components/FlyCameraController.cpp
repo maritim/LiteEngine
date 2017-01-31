@@ -15,13 +15,11 @@
 void FlyCameraController::Start ()
 {
 	_pitch = _yaw = 0;
-
-	Camera::Main ()->SetPosition (glm::vec3 (170, 100, 170));
 }
 
 void FlyCameraController::Update ()
 {
-	float cameraVelocity = 200.0f;
+	float cameraVelocity = 10.0f;
 	glm::vec3 velocity = glm::vec3 (0.0f);
 
 	glm::vec3 Forward = Camera::Main ()->GetForward ();
