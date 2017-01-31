@@ -20,6 +20,8 @@ public:
 
 	static void Clear(GLbitfield  mask);
 	static void ClearColor(GLclampf red,  GLclampf green,  GLclampf blue,  GLclampf alpha); 
+	static void ColorMask(GLboolean red,  GLboolean green,  GLboolean blue,  GLboolean alpha);
+	static void FramebufferTexture (GLenum target, GLenum attachment, GLuint texture, GLint level);
 	static void FramebufferTexture2D(GLenum target,  GLenum attachment,  GLenum textarget,  GLuint texture,  GLint level);
 	static void DrawBuffer(GLenum buf);
 	static void DrawBuffers(GLsizei n, const GLenum *bufs);
@@ -92,13 +94,24 @@ public:
 
 	// Textures
 	static void BindTexture(GLenum target, GLuint texture);
+	static void ActiveTexture(GLenum texture);
+
 	static void TexImage2D(GLenum target,  GLint level,  GLint internalformat,  GLsizei width,  
 		GLsizei height,  GLint border,  GLenum format,  GLenum type,  const GLvoid * data); 
+	static void TexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, 
+		GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
+
 	static void TexEnvi(GLenum target,  GLenum pname,  GLint param);
 	static void TexEnvf(GLenum target,  GLenum pname,  GLfloat param);
 	static void TexParameteri(GLenum target,  GLenum pname,  GLint param);
 	static void TexParameterf(GLenum target,  GLenum pname,  GLfloat param);
 	static void GenerateMipmap(GLenum target);
+
+	/*
+	 * Image Textures
+	*/
+
+	static void BindImageTexture (GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format);
 
 	/*
 	 * Shaders
@@ -118,6 +131,12 @@ public:
 	static void AttachShader(GLuint program, GLuint shader);
 	static void DetachShader(GLuint program, GLuint shader);
 	static GLint GetUniformLocation(GLuint program, const GLchar *name);
+
+	/*
+	 * Memory
+	*/
+
+	static void MemoryBarrier(GLbitfield barriers);
 
 	/*
 	 * Capabilities

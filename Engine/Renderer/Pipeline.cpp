@@ -229,14 +229,21 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 					attr [i].value.y, attr [i].value.z);
 				break;
 			case PipelineAttribute::ATTR_TEXTURE_2D :	{
-					glActiveTexture (GL_TEXTURE0 + _textureCount);
+					GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
 					GL::BindTexture (GL_TEXTURE_2D, (unsigned int) attr [i].value.x);
 					glUniform1i (unifLoc, _textureCount);
 					++ _textureCount;
 				}
 				break;
+			case PipelineAttribute::ATTR_TEXTURE_3D : {
+					GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
+					GL::BindTexture (GL_TEXTURE_3D, (unsigned int) attr [i].value.x);
+					glUniform1i (unifLoc, _textureCount);
+					++ _textureCount;
+				}
+				break;
 			case PipelineAttribute::ATTR_TEXTURE_CUBE : {
-					glActiveTexture (GL_TEXTURE0 + _textureCount);
+					GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
 					GL::BindTexture (GL_TEXTURE_CUBE_MAP, (unsigned int) attr [i].value.x);
 					glUniform1i (unifLoc, _textureCount);
 					++ _textureCount;
@@ -266,26 +273,26 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	// Send basic material attributes to shader
 	glUniform4f (shader->GetUniformLocation ("MaterialDiffuse"), mat->diffuseColor.x, 
 		mat->diffuseColor.y, mat->diffuseColor.z, 1.0);
-	glUniform4f (shader->GetUniformLocation ("MaterialAmbient"), mat->ambientColor.x,
-		mat->ambientColor.y, mat->ambientColor.z, 1.0);
-	glUniform4f (shader->GetUniformLocation ("MaterialSpecular"), mat->specularColor.x,
-		mat->specularColor.y, mat->specularColor.z, 1.0);
-	glUniform1f (shader->GetUniformLocation ("MaterialShininess"), mat->shininess);
-	glUniform1f (shader->GetUniformLocation ("MaterialTransparency"), mat->transparency);
+	// glUniform4f (shader->GetUniformLocation ("MaterialAmbient"), mat->ambientColor.x,
+	// 	mat->ambientColor.y, mat->ambientColor.z, 1.0);
+	// glUniform4f (shader->GetUniformLocation ("MaterialSpecular"), mat->specularColor.x,
+	// 	mat->specularColor.y, mat->specularColor.z, 1.0);
+	// glUniform1f (shader->GetUniformLocation ("MaterialShininess"), mat->shininess);
+	// glUniform1f (shader->GetUniformLocation ("MaterialTransparency"), mat->transparency);
 
 	// Send maps to shader
 	glActiveTexture (GL_TEXTURE0);
 	GL::BindTexture (GL_TEXTURE_2D, TextureManager::Instance ()->Default ()->GetGPUIndex ());
 	++ _textureCount;
 
-	if (mat->ambientTexture) {
-		glActiveTexture (GL_TEXTURE0+_textureCount);
-		GL::BindTexture (GL_TEXTURE_2D, mat->ambientTexture);
-		glUniform1i (shader->GetUniformLocation ("AmbientMap"), _textureCount);
-		_textureCount ++;
-	} else {
-		glUniform1i (shader->GetUniformLocation ("AmbientMap"), 0);
-	}
+	// if (mat->ambientTexture) {
+	// 	glActiveTexture (GL_TEXTURE0+_textureCount);
+	// 	GL::BindTexture (GL_TEXTURE_2D, mat->ambientTexture);
+	// 	glUniform1i (shader->GetUniformLocation ("AmbientMap"), _textureCount);
+	// 	_textureCount ++;
+	// } else {
+	// 	glUniform1i (shader->GetUniformLocation ("AmbientMap"), 0);
+	// }
 
 	if (mat->diffuseTexture) {
 		glActiveTexture (GL_TEXTURE0+_textureCount);
@@ -296,23 +303,23 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 		glUniform1i (shader->GetUniformLocation ("DiffuseMap"), 0);
 	}
 
-	if (mat->specularTexture) {
-		glActiveTexture (GL_TEXTURE0 + _textureCount);
-		GL::BindTexture (GL_TEXTURE_2D, mat->specularTexture);
-		glUniform1i (shader->GetUniformLocation ("SpecularMap"), _textureCount);
-		++ _textureCount;
-	} else {
-		glUniform1i (shader->GetUniformLocation ("SpecularMap"), 0);
-	}
+	// if (mat->specularTexture) {
+	// 	glActiveTexture (GL_TEXTURE0 + _textureCount);
+	// 	GL::BindTexture (GL_TEXTURE_2D, mat->specularTexture);
+	// 	glUniform1i (shader->GetUniformLocation ("SpecularMap"), _textureCount);
+	// 	++ _textureCount;
+	// } else {
+	// 	glUniform1i (shader->GetUniformLocation ("SpecularMap"), 0);
+	// }
 
-	if (mat->alphaTexture) {
-		glActiveTexture (GL_TEXTURE0 + _textureCount);
-		GL::BindTexture (GL_TEXTURE_2D, mat->alphaTexture);
-		glUniform1i (shader->GetUniformLocation ("AlphaMap"), _textureCount);
-		++ _textureCount;
-	} else {
-		glUniform1i (shader->GetUniformLocation ("AlphaMap"), 0);
-	}
+	// if (mat->alphaTexture) {
+	// 	glActiveTexture (GL_TEXTURE0 + _textureCount);
+	// 	GL::BindTexture (GL_TEXTURE_2D, mat->alphaTexture);
+	// 	glUniform1i (shader->GetUniformLocation ("AlphaMap"), _textureCount);
+	// 	++ _textureCount;
+	// } else {
+	// 	glUniform1i (shader->GetUniformLocation ("AlphaMap"), 0);
+	// }
 
 	// Send custom attributes
 

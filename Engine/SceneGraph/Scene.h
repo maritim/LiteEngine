@@ -7,6 +7,8 @@
 #include "SceneObject.h"
 #include "Skybox/Skybox.h"
 
+#include "Core/Intersections/AABBVolume.h"
+
 class Scene
 {
 private:
@@ -14,6 +16,8 @@ private:
 protected:
 	std::string _name;
 	Skybox* _skybox;
+	AABBVolume* _boundingBox;
+
 public:
 	Scene ();
 	virtual ~Scene ();
@@ -33,8 +37,11 @@ public:
 	SceneObject* GetObject (const std::string& name) const;
 
 	std::size_t GetObjectsCount () const;	
+	AABBVolume* GetBoundingBox () const;
 
 	void Update ();
+private:
+	void UpdateBoundingBox (SceneObject* object);
 };
 
 #endif
