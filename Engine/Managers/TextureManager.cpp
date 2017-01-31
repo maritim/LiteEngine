@@ -65,7 +65,7 @@ void TextureManager::LoadInGPU (Texture* texture)
 	GL::GenTextures(1, &gpuIndex);
 	GL::BindTexture(GL_TEXTURE_2D, gpuIndex);
 
-	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sizs.width, size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->GetPixels ());
+	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.width, size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->GetPixels ());
 
 	/*
 	 * Wrap Mode

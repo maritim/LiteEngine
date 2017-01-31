@@ -16,7 +16,7 @@
 
 Object* TextureAtlasLoader::Load (const std::string& filename)
 {
-	TextureAtlas* texAtlas = new TextureAtlas ("", nullptr);
+	TextureAtlas* texAtlas = new TextureAtlas ("");
 
 	LoadTexture (filename, texAtlas);
 
@@ -35,7 +35,8 @@ void TextureAtlasLoader::LoadTexture (const std::string& filename, TextureAtlas*
 	Texture* texture = Resources::LoadTexture (filename);
 
 	texAtlas->SetName (texture->GetName ());
-	texAtlas->SetSurface (texture->GetSurface ());
+	texAtlas->SetSize (texture->GetSize ());
+	texAtlas->SetPixels (texture->GetPixels (), 4u * texture->GetSize ().width * texture->GetSize ().height);
 }
 
 void TextureAtlasLoader::LoadAtlas (const std::string& filename, TextureAtlas* texAtlas)
