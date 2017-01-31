@@ -37,6 +37,7 @@ class RenderManager : public Singleton<RenderManager>
 
 private:
 	GBuffer* _frameBuffer;
+	unsigned int _volumeTexture;
 
 public:
 	void RenderScene (Scene* scene, Camera* camera);
@@ -49,6 +50,8 @@ private:
 	void UpdateCamera (Camera* camera);
 	void UpdateGBuffer ();
 
+	void VoxelizePass (Scene*);
+	void VoxelRayTracePass ();
 	void DeferredPass (Scene*, Camera* camera);
 	void ForwardPass (Scene*);
 
@@ -63,6 +66,10 @@ private:
 
 	void PointLightStencilPass (VolumetricLight* light);
 	void PointLightDrawPass (VolumetricLight* light);
+
+	void UpdateVoxelizationPipelineAttributes (Scene*);
+	void UpdateVoxelRayTracePipelineAttributes ();
+	void ClearVoxels ();
 };
 
 #endif

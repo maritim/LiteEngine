@@ -7,9 +7,6 @@ FrustumVolume::FrustumVolume (FrustumVolumeInformation* data) :
 
 }
 
-#include "Debug/Logger/Logger.h"
-#include "Core/Math/glm/gtx/string_cast.hpp"
-
 FrustumVolume::FrustumVolume (const glm::mat4& MVP1)
 {
 	FrustumVolumeInformation* frustum = new FrustumVolumeInformation ();
@@ -48,10 +45,6 @@ FrustumVolume::FrustumVolume (const glm::mat4& MVP1)
 
 	for (std::size_t i=0;i<6;i++) {
 		frustum->plane [i] = glm::normalize (frustum->plane [i]);
-	}
-
-	for (int i=0;i<6;i++) {
-		DEBUG_LOG (glm::to_string (frustum->plane [i]));
 	}
 
 	_data = frustum;

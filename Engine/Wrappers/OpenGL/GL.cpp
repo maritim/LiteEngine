@@ -31,6 +31,20 @@ void GL::ClearColor(GLclampf red,  GLclampf green,  GLclampf blue,  GLclampf alp
 	ErrorCheck ("glClearColor");
 } 
 
+void GL::ColorMask(GLboolean red,  GLboolean green,  GLboolean blue,  GLboolean alpha)
+{
+	glColorMask (red, green, blue, alpha);
+
+	ErrorCheck ("glColorMask");
+}
+
+void GL::FramebufferTexture (GLenum target, GLenum attachment, GLuint texture, GLint level)
+{
+	glFramebufferTexture (target, attachment, texture, level);
+
+	ErrorCheck ("glFramebufferTexture");
+}
+
 void GL::FramebufferTexture2D(GLenum target,  GLenum attachment,  GLenum textarget,  GLuint texture,  GLint level)
 {
 	glFramebufferTexture2D (target, attachment, textarget, texture, level);
@@ -304,6 +318,17 @@ void GL::GenFramebuffers(GLsizei n,  GLuint * framebuffers)
 }
 
 /*
+ * Memory
+*/
+
+void GL::MemoryBarrier (GLbitfield barriers)
+{
+	glMemoryBarrier (barriers);
+
+	ErrorCheck ("glMemoryBarrier");
+}
+
+/*
  * Capabilities
 */
 
@@ -339,6 +364,14 @@ void GL::BindTexture(GLenum target, GLuint texture)
 	ErrorCheck ("glBindTexture");
 }
 
+void GL::ActiveTexture(GLenum texture)
+{
+	glActiveTexture (texture);
+
+	ErrorCheck ("glActiveTexture");
+}
+
+
 void GL::TexImage2D(GLenum target,  GLint level,  GLint internalformat,  
 	GLsizei width,  GLsizei height,  GLint border,  GLenum format,  
 	GLenum type,  const GLvoid * data)
@@ -347,6 +380,16 @@ void GL::TexImage2D(GLenum target,  GLint level,  GLint internalformat,
 		format, type, data);
 
 	ErrorCheck ("glTexImage2D");
+}
+
+void GL::TexImage3D(GLenum target, GLint level, GLint internalFormat, 
+	GLsizei width, GLsizei height, GLsizei depth, GLint border, 
+	GLenum format, GLenum type, const GLvoid * data)
+{
+	glTexImage3D(target, level, internalFormat, width, height, depth, 
+		border, format, type, data);
+
+	ErrorCheck ("glTexImage3D");
 }
 
 void GL::TexEnvi(GLenum target,  GLenum pname,  GLint param)
@@ -382,6 +425,17 @@ void GL::GenerateMipmap (GLenum target)
 	glGenerateMipmap(target);
 
 	ErrorCheck ("glGenerateMipmap");
+}
+
+/*
+ * Image Textures
+*/
+
+void GL::BindImageTexture (GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format)
+{
+	glBindImageTexture (unit, texture, level, layered, layer, access, format);
+
+	ErrorCheck ("glBindImageTexture");
 }
 
 /*
