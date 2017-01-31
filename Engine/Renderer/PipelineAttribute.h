@@ -16,6 +16,7 @@ struct PipelineAttribute
 		ATTR_2F,
 		ATTR_3F,
 		ATTR_TEXTURE_2D,
+		ATTR_TEXTURE_3D,
 		ATTR_TEXTURE_CUBE,
 		ATTR_MATRIX_4X4F
 	};

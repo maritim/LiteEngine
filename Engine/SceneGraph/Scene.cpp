@@ -12,7 +12,8 @@
 
 Scene::Scene () :
 	_sceneObjects (),
-	_name ("")
+	_name (""),
+	_boundingBox (new AABBVolume (new AABBVolume::AABBVolumeInformation ()))
 {
 
 }
@@ -39,6 +40,12 @@ void Scene::AttachObject (SceneObject* object)
 	_sceneObjects.push_back (object);
 
 	object->OnAttachedToScene ();
+
+	/*
+	 * Update scene bounding box
+	*/
+
+	UpdateBoundingBox (object);
 }
 
 void Scene::DetachObject (SceneObject* object)
@@ -54,6 +61,8 @@ void Scene::DetachObject (SceneObject* object)
 	_sceneObjects.erase (it);
 
 	(*it)->OnDetachedFromScene ();
+
+	// TODO: Recalculate Bounding Box when detach object
 }
 
 SceneObject* Scene::GetObjectAt (std::size_t index) const
@@ -83,6 +92,11 @@ std::size_t Scene::GetObjectsCount () const
 	return _sceneObjects.size();
 }
 
+AABBVolume* Scene::GetBoundingBox () const
+{
+	return _boundingBox;
+}
+
 void Scene::Update()
 {
 	for(std::size_t i=0;i<_sceneObjects.size();i++) {
@@ -110,4 +124,34 @@ Scene::~Scene ()
 
 	_sceneObjects.clear ();
 	_sceneObjects.shrink_to_fit ();
+}
+
+#include "Debug/Logger/Logger.h"
+#include "Core/Math/glm/gtx/string_cast.hpp"
+
+void Scene::UpdateBoundingBox (SceneObject* sceneObject)
+{
+	/*
+	 * Check only objects that have collider
+	*/
+
+	if (sceneObject->GetCollider () == nullptr) {
+		return;
+	}
+
+	AABBVolume::AABBVolumeInformation* volume = _boundingBox->GetVolumeInformation ();
+
+	GeometricPrimitive* sceneObjectVolumePrimitive = sceneObject->GetCollider ()->GetGeometricPrimitive ();
+	AABBVolume* sceneObjectBoundingBox = dynamic_cast<AABBVolume*> (sceneObjectVolumePrimitive);
+	AABBVolume::AABBVolumeInformation* sceneObjectVolume = sceneObjectBoundingBox->GetVolumeInformation ();
+
+	volume->minVertex = glm::vec3 (std::min (volume->minVertex.x, sceneObjectVolume->minVertex.x),
+		std::min (volume->minVertex.y, sceneObjectVolume->minVertex.y),
+		std::min (volume->minVertex.z, sceneObjectVolume->minVertex.z));
+	volume->maxVertex = glm::vec3 (std::max (volume->maxVertex.x, sceneObjectVolume->maxVertex.x),
+		std::max (volume->maxVertex.y, sceneObjectVolume->maxVertex.y),
+		std::max (volume->maxVertex.z, sceneObjectVolume->maxVertex.z));
+
+	DEBUG_LOG ("Min vertex: " + glm::to_string (volume->minVertex));
+	DEBUG_LOG ("Max vertex: " + glm::to_string (volume->maxVertex));
 }
