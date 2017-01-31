@@ -65,7 +65,43 @@ void TextureManager::LoadInGPU (Texture* texture)
 	GL::GenTextures(1, &gpuIndex);
 	GL::BindTexture(GL_TEXTURE_2D, gpuIndex);
 
-	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sizs.width, size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->GetPixels ());
+	/*
+	 * Get Pixel Format
+	*/
+
+	int pixelFormat = GL_RGBA;
+
+	switch (texture->GetPixelFormat ()) {
+		case FORMAT_RGB8:
+			pixelFormat = GL_RGB;
+			break;
+		case FORMAT_BGR8:
+			pixelFormat = GL_BGR;
+			break;
+		case FORMAT_RGBA8:
+			pixelFormat = GL_RGBA;
+			break;
+		case FORMAT_ABGR8:
+			pixelFormat = GL_BGRA;
+			break;
+		default:
+			pixelFormat = GL_RGBA;
+			break;
+	}
+
+	/*
+	 * Send MipMaps to GPU
+	*/
+
+	for (std::size_t i=0;i<texture->GetMipMapLevels ();i++) {
+		int internalFormat = texture->GetInternalFormat ();
+
+		if (internalFormat == 0) {
+			internalFormat = GL_RGBA;
+		}
+
+		GL::TexImage2D(GL_TEXTURE_2D, i, internalFormat, size.width, size.height, 0, pixelFormat, GL_UNSIGNED_BYTE, texture->GetMipmapLevel (i));
+	}
 
 	/*
 	 * Wrap Mode
