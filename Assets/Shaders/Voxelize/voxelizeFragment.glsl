@@ -67,12 +67,11 @@ void main()
 	coords.z = GetInterpolatedPosition (coords.z, minPosition.z, maxPosition.z, textureSize.z);
 
 	vec3 fragmentColor = diffuseMap;
-	
-	memoryBarrier ();
+
 	imageStore(volumeTexture, ivec3(coords), vec4(fragmentColor, 1.0));
+	memoryBarrier ();
 
 	// imageStore(volumeTexture, ivec3(0, 0, 0), vec4(1.0, 1.0, 1.0, 1.0));
-	memoryBarrier ();
 	// imageStore(volumeTexture, ivec3(255, 254, 0), vec4(0.0, 0.0, 0.0, 1.0));
 	// imageStore(volumeTexture, ivec3(254, 254, 0), vec4(0.0, 0.0, 0.0, 1.0));
 	// imageStore(volumeTexture, ivec3(254, 255, 0), vec4(0.0, 0.0, 0.0, 1.0));

@@ -8,14 +8,30 @@ uniform sampler3D volumeTexture;
 
 layout(location = 0) out vec4 outputColor;
 
+vec2 GetPositionOnVolume ()
+{
+	return vec2 (gl_FragCoord.x * 255, gl_FragCoord.y * 255);
+}
+
 void main ()
 {
 	vec3 oZPosition = vec3 (vs_RayCoordinates.x, vs_RayCoordinates.y, 0);
 
-	vec4 fragColor = texture(volumeTexture, vec3 (0, 0, 0)); //oZPosition);
+	//vec4 fragColor = texture(volumeTexture, vec3 (0, 0, 0)); //oZPosition);
+	vec4 fragColor = vec4 (0.0, 0.0, 0.0, 1.0);
+
+	vec2 posInVolume = GetPositionOnVolume ();
+
+	for (int i=0;i<256;i++) {
+		fragColor += texture (volumeTexture, vec3 (posInVolume, i));
+	}
+
+	fragColor.x /= 256;
+	fragColor.y /= 256;
+	fragColor.z /= 256;
+	fragColor.w /= 256;
 
 	outputColor = fragColor;
-	// outputColor = vec4 (1.0, 0, 1.0, 1.0);
 }
 
 // uniform sampler3D VolumeTexture;

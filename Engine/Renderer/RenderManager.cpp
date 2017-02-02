@@ -101,7 +101,7 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	 * Forward Rendering Pass
 	*/
 
-	ForwardPass (scene);
+	//ForwardPass (scene);
 }
 
 #include "Debug/Logger/Logger.h"
