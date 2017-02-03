@@ -67,14 +67,14 @@ void Pipeline::UpdateMatrices (Shader* shader)
 	glm::mat3 normalWorldMatrix = glm::transpose (glm::inverse (glm::mat3 (modelViewMatrix)));
 	glm::mat3 normalMatrix = glm::transpose (glm::inverse (glm::mat3 (_modelMatrix)));
 
-	glUniformMatrix4fv (shader->GetUniformLocation ("modelMatrix"), 1, GL_FALSE, glm::value_ptr (_modelMatrix));
-	glUniformMatrix4fv (shader->GetUniformLocation ("viewMatrix"), 1, GL_FALSE, glm::value_ptr (_viewMatrix));
-	glUniformMatrix4fv (shader->GetUniformLocation ("modelViewMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewMatrix));
-	glUniformMatrix4fv (shader->GetUniformLocation ("projectionMatrix"), 1, GL_FALSE, glm::value_ptr (_projectionMatrix));
-	glUniformMatrix4fv (shader->GetUniformLocation ("modelViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewProjectionMatrix));
-	glUniformMatrix3fv (shader->GetUniformLocation ("normalMatrix"), 1, GL_FALSE, glm::value_ptr (normalMatrix));
-	glUniformMatrix3fv (shader->GetUniformLocation ("normalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (normalWorldMatrix));
-	glUniform3fv (shader->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_cameraPosition));
+	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelMatrix"), 1, GL_FALSE, glm::value_ptr (_modelMatrix));
+	GL::UniformMatrix4fv (shader->GetUniformLocation ("viewMatrix"), 1, GL_FALSE, glm::value_ptr (_viewMatrix));
+	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelViewMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewMatrix));
+	GL::UniformMatrix4fv (shader->GetUniformLocation ("projectionMatrix"), 1, GL_FALSE, glm::value_ptr (_projectionMatrix));
+	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewProjectionMatrix));
+	GL::UniformMatrix3fv (shader->GetUniformLocation ("normalMatrix"), 1, GL_FALSE, glm::value_ptr (normalMatrix));
+	GL::UniformMatrix3fv (shader->GetUniformLocation ("normalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (normalWorldMatrix));
+	GL::Uniform3fv (shader->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_cameraPosition));
 
 	// SendLights (shader);
 }
@@ -84,7 +84,7 @@ void Pipeline::SendLights (Shader* shader)
 	glm::vec3 vec = LightsManager::Instance ()->GetAmbientColorLight ();
 	Color color;
 
-	glUniform3f(shader->GetUniformLocation ("sceneAmbient"), vec.x, vec.y, vec.z);
+	GL::Uniform3f(shader->GetUniformLocation ("sceneAmbient"), vec.x, vec.y, vec.z);
 
 	// const int lightsLimit = 3;
 
@@ -207,50 +207,50 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 
 		switch (attr [i].type) {
 			case PipelineAttribute::ATTR_1I :
-				glUniform1i (unifLoc, (int) attr [i].value.x);
+				GL::Uniform1i (unifLoc, (int) attr [i].value.x);
 				break;
 			case PipelineAttribute::ATTR_2I :
-				glUniform2i (unifLoc, (int) attr [i].value.x,
+				GL::Uniform2i (unifLoc, (int) attr [i].value.x,
 					(int) attr [i].value.y);
 				break;
 			case PipelineAttribute::ATTR_3I :
-				glUniform3i (unifLoc, (int) attr [i].value.x,
+				GL::Uniform3i (unifLoc, (int) attr [i].value.x,
 					(int) attr [i].value.y, (int) attr [i].value.z);
 				break;
 			case PipelineAttribute::ATTR_1F :
-				glUniform1f (unifLoc, attr [i].value.x);
+				GL::Uniform1f (unifLoc, attr [i].value.x);
 				break;
 			case PipelineAttribute::ATTR_2F :
-				glUniform2f (unifLoc, attr [i].value.x,
+				GL::Uniform2f (unifLoc, attr [i].value.x,
 					attr [i].value.y);
 				break;
 			case PipelineAttribute::ATTR_3F :
-				glUniform3f (unifLoc, attr [i].value.x,
+				GL::Uniform3f (unifLoc, attr [i].value.x,
 					attr [i].value.y, attr [i].value.z);
 				break;
 			case PipelineAttribute::ATTR_TEXTURE_2D :	{
 					GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
 					GL::BindTexture (GL_TEXTURE_2D, (unsigned int) attr [i].value.x);
-					glUniform1i (unifLoc, _textureCount);
+					GL::Uniform1i (unifLoc, _textureCount);
 					++ _textureCount;
 				}
 				break;
 			case PipelineAttribute::ATTR_TEXTURE_3D : {
 					GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
 					GL::BindTexture (GL_TEXTURE_3D, (unsigned int) attr [i].value.x);
-					glUniform1i (unifLoc, _textureCount);
+					GL::Uniform1i (unifLoc, _textureCount);
 					++ _textureCount;
 				}
 				break;
 			case PipelineAttribute::ATTR_TEXTURE_CUBE : {
 					GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
 					GL::BindTexture (GL_TEXTURE_CUBE_MAP, (unsigned int) attr [i].value.x);
-					glUniform1i (unifLoc, _textureCount);
+					GL::Uniform1i (unifLoc, _textureCount);
 					++ _textureCount;
 				}
 				break;
 			case PipelineAttribute::ATTR_MATRIX_4X4F :
-					glUniformMatrix4fv (unifLoc, 1, GL_FALSE, glm::value_ptr (attr [i].matrix));
+					GL::UniformMatrix4fv (unifLoc, 1, GL_FALSE, glm::value_ptr (attr [i].matrix));
 				break;
 		}
 	}
@@ -271,7 +271,7 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	Pipeline::UpdateMatrices (shader);
 
 	// Send basic material attributes to shader
-	glUniform4f (shader->GetUniformLocation ("MaterialDiffuse"), mat->diffuseColor.x, 
+	GL::Uniform4f (shader->GetUniformLocation ("MaterialDiffuse"), mat->diffuseColor.x, 
 		mat->diffuseColor.y, mat->diffuseColor.z, 1.0);
 	// glUniform4f (shader->GetUniformLocation ("MaterialAmbient"), mat->ambientColor.x,
 	// 	mat->ambientColor.y, mat->ambientColor.z, 1.0);
@@ -281,7 +281,7 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	// glUniform1f (shader->GetUniformLocation ("MaterialTransparency"), mat->transparency);
 
 	// Send maps to shader
-	glActiveTexture (GL_TEXTURE0);
+	GL::ActiveTexture (GL_TEXTURE0);
 	GL::BindTexture (GL_TEXTURE_2D, TextureManager::Instance ()->Default ()->GetGPUIndex ());
 	++ _textureCount;
 
@@ -295,12 +295,12 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	// }
 
 	if (mat->diffuseTexture) {
-		glActiveTexture (GL_TEXTURE0+_textureCount);
+		GL::ActiveTexture (GL_TEXTURE0+_textureCount);
 		GL::BindTexture (GL_TEXTURE_2D, mat->diffuseTexture);
-		glUniform1i (shader->GetUniformLocation ("DiffuseMap"), _textureCount);
+		GL::Uniform1i (shader->GetUniformLocation ("DiffuseMap"), _textureCount);
 		++ _textureCount;
 	} else {
-		glUniform1i (shader->GetUniformLocation ("DiffuseMap"), 0);
+		GL::Uniform1i (shader->GetUniformLocation ("DiffuseMap"), 0);
 	}
 
 	// if (mat->specularTexture) {
@@ -327,16 +327,16 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	{
 		if (mat->attributes [k].type == Attribute::AttrType::ATTR_TEXTURE2D
 			|| mat->attributes [k].type == Attribute::AttrType::ATTR_TEXTURE2D_ATLAS) {
-			glActiveTexture (GL_TEXTURE0 + _textureCount);
+			GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
 			Texture* tex = TextureManager::Instance ()->GetTexture (mat->attributes [k].valueName);
 			unsigned int textureID = tex->GetGPUIndex ();
 			GL::BindTexture (GL_TEXTURE_2D, textureID);
-			glUniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
+			GL::Uniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
 
 			++ _textureCount;
 		}
 		else if (mat->attributes [k].type == Attribute::AttrType::ATTR_TEXTURE_CUBE) {
-			glActiveTexture (GL_TEXTURE0 + _textureCount);
+			GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
 
 			unsigned int textureID = 0;
 			if (mat->attributes [k].values.x == 0) {
@@ -347,17 +347,17 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 			}
 
 			GL::BindTexture (GL_TEXTURE_CUBE_MAP, textureID);
-			glUniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
+			GL::Uniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
 
 			++ _textureCount;
 		}
 		else if (mat->attributes [k].type == Attribute::AttrType::ATTR_FLOAT) {
 			float value = mat->attributes [k].values.x;
-			glUniform1f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), value);
+			GL::Uniform1f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), value);
 		}
 		else if (mat->attributes [k].type == Attribute::AttrType::ATTR_VEC3) {
 			glm::vec3 values = mat->attributes [k].values;
-			glUniform3f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), 
+			GL::Uniform3f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), 
 				values.x, values.y, values.z);
 		}
 	}
