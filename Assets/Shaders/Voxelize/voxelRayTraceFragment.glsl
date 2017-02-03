@@ -10,7 +10,9 @@ layout(location = 0) out vec4 outputColor;
 
 vec2 GetPositionOnVolume ()
 {
-	return vec2 (gl_FragCoord.x * 255, gl_FragCoord.y * 255);
+	vec2 normalizedPos = vec2 (gl_FragCoord.x / 1280, gl_FragCoord.y / 720);
+
+	return vec2 (normalizedPos.x * 255, normalizedPos.y * 255);
 }
 
 void main ()
@@ -22,7 +24,7 @@ void main ()
 
 	vec2 posInVolume = GetPositionOnVolume ();
 
-	for (int i=0;i<256;i++) {
+	for (float i=0;i<=1;i += 1.0 / 256.0) {
 		fragColor += texture (volumeTexture, vec3 (posInVolume, i));
 	}
 

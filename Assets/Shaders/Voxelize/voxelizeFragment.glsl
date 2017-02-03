@@ -25,6 +25,8 @@ uniform vec3 sceneAmbient;
 uniform vec3 minPosition;
 uniform vec3 maxPosition;
 
+uniform vec3 volumeSize;
+
 in vec3 geom_worldPosition;
 in vec3 geom_worldNormal;
 in vec2 geom_texcoord;
@@ -45,6 +47,17 @@ float GetInterpolatedPosition (float x, float minValue, float maxValue, int doma
 	return ((x - minValue) / maxValue) * domain;
 }
 
+vec3 GetPositionInTexture3D (vec3 position)
+{
+	vec3 resultCoords;
+
+	resultCoords.x = GetInterpolatedPosition (position.x, minPosition.x, maxPosition.x, textureSize.x);
+	resultCoords.y = GetInterpolatedPosition (position.y, minPosition.y, maxPosition.y, textureSize.y);
+	resultCoords.z = GetInterpolatedPosition (position.z, minPosition.z, maxPosition.z, textureSize.z);
+
+	return resultCoords;
+}
+
 void main()
 {
 	/*
@@ -53,31 +66,21 @@ void main()
 
 	vec3 diffuseMap = vec3 (MaterialDiffuse * texture2D (DiffuseMap, geom_texcoord.xy));
 
-	ivec2 viewportSize = imageSize(volumeTexture).xy;
+	vec3 fragmentColor = diffuseMap;
 
-	// vec2 bboxMin = floor((gs_BBox.xy * 0.5 + 0.5) * viewportSize);
-	// vec2 bboxMax = ceil((gs_BBox.zw * 0.5 + 0.5) * viewportSize);
+	/*
+	 * Calculate the position in texture 3D
+	*/
 	
-	// if (all(greaterThanEqual(gl_FragCoord.xy, bboxMin)) && all(lessThanEqual(gl_FragCoord.xy, bboxMax))) {
 	ivec3 textureSize = imageSize (volumeTexture);
 
-	vec3 coords = geom_swizzleMatrixInv * gl_FragCoord.xyz;
-	coords.x = GetInterpolatedPosition (coords.x, minPosition.x, maxPosition.x, textureSize.x);
-	coords.y = GetInterpolatedPosition (coords.y, minPosition.y, maxPosition.y, textureSize.y);
-	coords.z = GetInterpolatedPosition (coords.z, minPosition.z, maxPosition.z, textureSize.z);
+	vec3 coords = geom_swizzleMatrixInv * geom_worldPosition;
+	coords = GetPositionInTexture3D (coords);
 
-	vec3 fragmentColor = diffuseMap;
+	/*
+	 * Save in texture
+	*/
 
 	imageStore(volumeTexture, ivec3(coords), vec4(fragmentColor, 1.0));
 	memoryBarrier ();
-
-	// imageStore(volumeTexture, ivec3(0, 0, 0), vec4(1.0, 1.0, 1.0, 1.0));
-	// imageStore(volumeTexture, ivec3(255, 254, 0), vec4(0.0, 0.0, 0.0, 1.0));
-	// imageStore(volumeTexture, ivec3(254, 254, 0), vec4(0.0, 0.0, 0.0, 1.0));
-	// imageStore(volumeTexture, ivec3(254, 255, 0), vec4(0.0, 0.0, 0.0, 1.0));
-
-	// }
-	// else{
-	//     discard;
-	// }	
 }

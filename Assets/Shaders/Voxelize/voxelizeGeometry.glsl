@@ -18,14 +18,33 @@ out vec3 geom_worldNormal;
 out vec2 geom_texcoord;
 out mat3 geom_swizzleMatrixInv;
 
+uniform vec3 minPosition;
+uniform vec3 maxPosition;
+
 layout (binding = 0, rgba8) coherent uniform image3D volumeTexture;
+
+float GetInterpolatedComp (float comp, float minValue, float maxValue)
+{
+	return ((comp - minValue) / maxValue);
+}
+
+vec4 GetScreenNormalizedPosition (vec4 position)
+{
+	vec4 screenPos = vec4 (1.0);
+
+	screenPos.x = GetInterpolatedComp (position.x, minPosition.x, maxPosition.x);
+	screenPos.y = GetInterpolatedComp (position.y, minPosition.y, maxPosition.y);
+	screenPos.z = GetInterpolatedComp (position.z, minPosition.z, maxPosition.z);
+
+	return screenPos;
+}
 
 void main ()
 {
     // Calculate swizzle matrix based on eye space normal's dominant direction.
-    vec3 eyeSpaceV1 = normalize(gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz);
-	vec3 eyeSpaceV2 = normalize(gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz);
-	vec3 eyeSpaceNormal = abs(cross(eyeSpaceV1, eyeSpaceV2));
+    vec3 worldSpaceV1 = vert_worldPosition[1].xyz - vert_worldPosition[0].xyz;
+	vec3 worldSpaceV2 = vert_worldPosition[2].xyz - vert_worldPosition[0].xyz;
+	vec3 eyeSpaceNormal = abs(cross(worldSpaceV1, worldSpaceV2));
 	float dominantAxis = max(eyeSpaceNormal.x, max(eyeSpaceNormal.y, eyeSpaceNormal.z));
 
 	mat3 swizzleMatrix;
@@ -50,15 +69,6 @@ void main ()
 
     // Pass inverse of swizzle matrix to fragment shader.
     geom_swizzleMatrixInv = inverse(swizzleMatrix);
-
- //    // Calculate screen coordinates for triangle.
-	// vec4 screenPos[3];
-	// screenPos[0] = ProjectionMatrix * vec4(swizzleMatrix * gl_in[0].gl_Position.xyz, 1.0);
-	// screenPos[1] = ProjectionMatrix * vec4(swizzleMatrix * gl_in[1].gl_Position.xyz, 1.0);
-	// screenPos[2] = ProjectionMatrix * vec4(swizzleMatrix * gl_in[2].gl_Position.xyz, 1.0);
- //    screenPos[0] /= screenPos[0].w;
- //    screenPos[1] /= screenPos[1].w;
- //    screenPos[2] /= screenPos[2].w;
     
  //    // Calculate screen space bounding box to be used for clipping in the fragment shader.
  //    geom_BBox.xy = min(screenPos[0].xy, min(screenPos[1].xy, screenPos[2].xy));
@@ -77,7 +87,10 @@ void main ()
 	*/
 
 	for (int index = 0; index < VERTEX_COUNT; ++index) {
-		gl_Position = gl_in [index].gl_Position;
+		vec4 screenPos = vec4 (swizzleMatrix * gl_in[index].gl_Position.xyz, 1.0f);
+		screenPos /= screenPos.w;
+
+		gl_Position = GetScreenNormalizedPosition (screenPos);
 
 		geom_worldPosition = vert_worldPosition [index];
 		geom_worldNormal = vert_worldNormal [index];

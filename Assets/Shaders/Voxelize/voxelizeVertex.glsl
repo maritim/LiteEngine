@@ -28,7 +28,7 @@ void main()
 	*/
 
 	vert_worldPosition = vec3 (modelMatrix * vec4 (in_position, 1));
-	vert_worldNormal = normalMatrix * in_normal;
+	vert_worldNormal = normalWorldMatrix * in_normal;
 
 	vert_texcoord = in_texcoord;
 }
