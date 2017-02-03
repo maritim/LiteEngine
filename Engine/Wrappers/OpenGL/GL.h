@@ -53,11 +53,22 @@ public:
 	static void BufferData (GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage);
 	static void BufferSubData (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
 
-	// Attributes
+	/*
+	 * Vertex Attributes
+	*/
+
 	static void EnableVertexAttribArray (GLuint index);
 	static void VertexAttribPointer (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer);
 	static void VertexAttribIPointer (GLuint index, GLint size, GLenum type, GLsizei stride, const GLvoid * pointer);	
 	static void VertexAttribDivisor (GLuint index, GLuint divisor);
+	static void VertexAttrib1f(GLuint index,  GLfloat v0); 
+	static void VertexAttrib2f(GLuint index,  GLfloat v0,  GLfloat v1); 
+	static void VertexAttrib3f(GLuint index,  GLfloat v0,  GLfloat v1,  GLfloat v2);
+	static void VertexAttrib4f(GLuint index,  GLfloat v0,  GLfloat v1,  GLfloat v2,  GLfloat v3); 
+	static void VertexAttrib1fv(GLuint index,  const GLfloat *v); 
+	static void VertexAttrib2fv(GLuint index,  const GLfloat *v); 
+	static void VertexAttrib3fv(GLuint index,  const GLfloat *v); 
+	static void VertexAttrib4fv(GLuint index,  const GLfloat *v);
 
 	// Bind
 	static void BindVertexArray (GLuint array);
@@ -131,6 +142,44 @@ public:
 	static void AttachShader(GLuint program, GLuint shader);
 	static void DetachShader(GLuint program, GLuint shader);
 	static GLint GetUniformLocation(GLuint program, const GLchar *name);
+
+	/*
+	 * Uniforms
+	*/
+
+	static void Uniform1f(GLint location,  GLfloat v0);
+	static void Uniform2f(GLint location,  GLfloat v0,  GLfloat v1);
+	static void Uniform3f(GLint location,  GLfloat v0,  GLfloat v1,  GLfloat v2);
+	static void Uniform4f(GLint location,  GLfloat v0,  GLfloat v1,  GLfloat v2,  GLfloat v3);
+	static void Uniform1i(GLint location,  GLint v0); 
+	static void Uniform2i(GLint location,  GLint v0,  GLint v1);
+	static void Uniform3i(GLint location,  GLint v0,  GLint v1,  GLint v2); 
+	static void Uniform4i(GLint location,  GLint v0,  GLint v1,  GLint v2,  GLint v3); 
+	static void Uniform1ui(GLint location, GLuint v0);
+	static void Uniform2ui(GLint location, GLuint v0, GLuint v1);
+	static void Uniform3ui(GLint location, GLuint v0, GLuint v1, GLuint v2); 
+	static void Uniform4ui(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
+	static void Uniform1fv(GLint location, GLsizei count, const GLfloat *value);
+	static void Uniform2fv(GLint location, GLsizei count, const GLfloat *value);
+	static void Uniform3fv(GLint location, GLsizei count, const GLfloat *value);
+	static void Uniform4fv(GLint location, GLsizei count, const GLfloat *value);
+	static void Uniform1iv(GLint location, GLsizei count, const GLint *value);
+	static void Uniform2iv(GLint location, GLsizei count, const GLint *value);
+	static void Uniform3iv(GLint location, GLsizei count, const GLint *value);
+	static void Uniform4iv(GLint location, GLsizei count, const GLint *value);
+	static void Uniform1uiv(GLint location, GLsizei count, const GLuint *value);
+	static void Uniform2uiv(GLint location, GLsizei count, const GLuint *value);
+	static void Uniform3uiv(GLint location, GLsizei count, const GLuint *value);
+	static void Uniform4uiv(GLint location, GLsizei count, const GLuint *value);
+	static void UniformMatrix2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+	static void UniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+	static void UniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value); 
+	static void UniformMatrix2x3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value); 
+	static void UniformMatrix3x2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+	static void UniformMatrix2x4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value); 
+	static void UniformMatrix4x2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value); 
+	static void UniformMatrix3x4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
+	static void UniformMatrix4x3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value);
 
 	/*
 	 * Memory

@@ -25,6 +25,8 @@
 
 #include "Managers/ShaderManager.h"
 
+#include "Debug/Logger/Logger.h"
+
 #define VOLUME_DIMENSTIONS 256
 
 /*
@@ -33,7 +35,8 @@
 
 RenderManager::RenderManager () :
 	_frameBuffer (new GBuffer ()),
-	_volumeTexture (0)
+	_volumeTexture (0),
+	_volumeFbo (0)
 {
 	_frameBuffer->Init (Window::GetWidth (), Window::GetHeight ());
 
@@ -51,11 +54,11 @@ RenderManager::RenderManager () :
 	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
 
 	// Create an fbo for clearing the 3D texture.
-	// unsigned int volumeFbo;
-	// GL::GenFramebuffers(1, &volumeFbo);
-	// GL::BindFramebuffer(GL_FRAMEBUFFER, volumeFbo);
-	// GL::FramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _volumeTexture, 0);
-	// GL::BindFramebuffer(GL_FRAMEBUFFER, 0);    
+	GL::GenFramebuffers(1, &_volumeFbo);
+	DEBUG_LOG (std::to_string (_volumeFbo));
+	GL::BindFramebuffer(GL_FRAMEBUFFER, _volumeFbo);
+	GL::FramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _volumeTexture, 0);
+	GL::BindFramebuffer(GL_FRAMEBUFFER, 0);    
 }
 
 RenderManager::~RenderManager ()
@@ -101,10 +104,8 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	 * Forward Rendering Pass
 	*/
 
-	//ForwardPass (scene);
+	// ForwardPass (scene);
 }
-
-#include "Debug/Logger/Logger.h"
 
 void RenderManager::VoxelizePass (Scene* scene)
 {
@@ -127,7 +128,7 @@ void RenderManager::VoxelizePass (Scene* scene)
 	Pipeline::SetShader (ShaderManager::Instance ()->GetShader ("VOXELIZATION_SHADER"));
 
 	GL::BindImageTexture (0, _volumeTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
-	glUniform1i(0, 0);
+	// GL::Uniform1i(0, 0);
 
 	UpdateVoxelizationPipelineAttributes (scene);
 
@@ -140,9 +141,9 @@ void RenderManager::VoxelizePass (Scene* scene)
 		scene->GetObjectAt (i)->GetRenderer ()->Draw ();
 	}
 
+	GL::Viewport (0, 0, Window::GetWidth (), Window::GetHeight ());
 	GL::ColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	GL::DepthMask(GL_TRUE);
-	GL::Viewport (0, 0, Window::GetWidth (), Window::GetHeight ());
 
 	// unsigned int glBakeFbo;
 
@@ -150,11 +151,11 @@ void RenderManager::VoxelizePass (Scene* scene)
 	// glBindFramebuffer(GL_FRAMEBUFFER, glBakeFbo);
 	// glBindFramebuffer(GL_READ_FRAMEBUFFER, glBakeFbo);
 
-	GL::MemoryBarrier(GL_ALL_BARRIER_BITS);
-	static char data[VOLUME_DIMENSTIONS * VOLUME_DIMENSTIONS * VOLUME_DIMENSTIONS * 4] = {0};
-	glGetTexImage(GL_TEXTURE_3D, 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, data);
+	// GL::MemoryBarrier(GL_ALL_BARRIER_BITS);
+	// static char data[VOLUME_DIMENSTIONS * VOLUME_DIMENSTIONS * VOLUME_DIMENSTIONS * 4] = {0};
+	// glGetTexImage(GL_TEXTURE_3D, 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, data);
 
-	DEBUG_LOG (std::to_string (data [0]));
+	// DEBUG_LOG (std::to_string (data [0]));
 
 	// int numBytes = VOLUME_DIMENSTIONS * VOLUME_DIMENSTIONS * VOLUME_DIMENSTIONS * 4;
 	// unsigned char *pixels = (unsigned char*)malloc(numBytes); // allocate image data into RAM
@@ -206,13 +207,13 @@ void RenderManager::VoxelRayTracePass ()
 	UpdateVoxelRayTracePipelineAttributes ();
 
 	// Render fullscreen quad.	
-	glEnableVertexAttribArray(0);
+	GL::EnableVertexAttribArray(0);
 
 	glBegin(GL_QUADS);
-		glVertexAttrib2f(0, -1.0f, -1.0f);
-		glVertexAttrib2f(0, 1.0f, -1.0f);
-		glVertexAttrib2f(0, 1.0f, 1.0f);
-		glVertexAttrib2f(0, -1.0f, 1.0f);
+		GL::VertexAttrib2f(0, -1.0f, -1.0f);
+		GL::VertexAttrib2f(0, 1.0f, -1.0f);
+		GL::VertexAttrib2f(0, 1.0f, 1.0f);
+		GL::VertexAttrib2f(0, -1.0f, 1.0f);
 	glEnd();
 }
 
@@ -235,11 +236,10 @@ void RenderManager::UpdateVoxelRayTracePipelineAttributes ()
 
 void RenderManager::ClearVoxels ()
 {
-	unsigned int volumeFbo;
-	GL::GenFramebuffers(1, &volumeFbo);
-	GL::BindFramebuffer(GL_FRAMEBUFFER, volumeFbo);
-	GL::FramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _volumeTexture, 0);
-	GL::BindFramebuffer(GL_FRAMEBUFFER, 0);
+	// GL::BindFramebuffer(GL_FRAMEBUFFER, _volumeFbo);
+	// GL::ClearColor(0, 0, 0, 0);
+	// GL::Clear(GL_COLOR_BUFFER_BIT);
+	// GL::BindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void RenderManager::DeferredPass (Scene* scene, Camera* camera)
