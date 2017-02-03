@@ -37,7 +37,9 @@ class RenderManager : public Singleton<RenderManager>
 
 private:
 	GBuffer* _frameBuffer;
+	// TODO: Merge these
 	unsigned int _volumeTexture;
+	unsigned int _volumeFbo;
 
 public:
 	void RenderScene (Scene* scene, Camera* camera);

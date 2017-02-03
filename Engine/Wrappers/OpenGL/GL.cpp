@@ -147,7 +147,7 @@ void GL::BufferSubData (GLenum target, GLintptr offset, GLsizeiptr size, const G
 }
 
 /*
- * Attributes
+ * Vertex Attributes
 */
 
 void GL::EnableVertexAttribArray (GLuint index)
@@ -176,6 +176,62 @@ void GL::VertexAttribDivisor(GLuint index, GLuint divisor)
 	glVertexAttribDivisor (index, divisor);
 
 	ErrorCheck ("glVertexAttribDivisor");
+}
+
+void GL::VertexAttrib1f(GLuint index,  GLfloat v0)
+{
+	glVertexAttrib1f(index, v0);
+
+	ErrorCheck ("glVertexAttrib1f");
+}
+
+void GL::VertexAttrib2f(GLuint index,  GLfloat v0,  GLfloat v1)
+{
+	glVertexAttrib2f (index, v0, v1);
+
+	ErrorCheck ("glVertexAttrib2f");
+}
+
+void GL::VertexAttrib3f(GLuint index,  GLfloat v0,  GLfloat v1,  GLfloat v2)
+{
+	glVertexAttrib3f (index, v0, v1, v2);
+
+	ErrorCheck ("glVertexAttrib3f");
+}
+
+void GL::VertexAttrib4f(GLuint index,  GLfloat v0,  GLfloat v1,  GLfloat v2,  GLfloat v3)
+{
+	glVertexAttrib4f (index, v0, v1, v2, v3);
+
+	ErrorCheck ("glVertexAttrib4f");
+}
+
+void GL::VertexAttrib1fv(GLuint index,  const GLfloat *v)
+{
+	glVertexAttrib1fv (index, v);
+
+	ErrorCheck ("glVertexAttrib1fv");
+}
+
+void GL::VertexAttrib2fv(GLuint index,  const GLfloat *v)
+{
+	glVertexAttrib2fv (index, v);
+
+	ErrorCheck ("glVertexAttrib2fv");
+}
+
+void GL::VertexAttrib3fv(GLuint index,  const GLfloat *v)
+{
+	glVertexAttrib3fv (index, v);
+
+	ErrorCheck ("glVertexAttrib3fv");
+}
+
+void GL::VertexAttrib4fv(GLuint index,  const GLfloat *v)
+{
+	glVertexAttrib4fv (index, v);
+
+	ErrorCheck ("glVertexAttrib4fv");
 }
 
 /*
@@ -315,6 +371,241 @@ void GL::GenFramebuffers(GLsizei n,  GLuint * framebuffers)
 	glGenFramebuffers (n, framebuffers);
 
 	ErrorCheck ("glGenFramebuffers");
+}
+
+/*
+ * Uniforms
+*/
+
+void GL::Uniform1f(GLint location,  GLfloat v0)
+{
+	glUniform1f(location, v0);
+
+	ErrorCheck ("glUniform1f");
+}
+
+void GL::Uniform2f(GLint location,  GLfloat v0,  GLfloat v1)
+{
+	glUniform2f(location, v0, v1);
+
+	ErrorCheck ("glUniform2f");
+}
+
+void GL::Uniform3f(GLint location,  GLfloat v0,  GLfloat v1,  GLfloat v2)
+{
+	glUniform3f(location, v0, v1, v2);
+
+	ErrorCheck ("glUniform3f");
+}
+
+void GL::Uniform4f(GLint location,  GLfloat v0,  GLfloat v1,  GLfloat v2,  GLfloat v3)
+{
+	glUniform4f (location, v0, v1, v2, v3);
+
+	ErrorCheck ("glUniform4f");
+}
+
+void GL::Uniform1i(GLint location,  GLint v0)
+{
+	glUniform1i (location, v0); 
+
+	ErrorCheck ("glUniform1i");
+}
+
+void GL::Uniform2i(GLint location,  GLint v0,  GLint v1)
+{
+	glUniform2i(location, v0, v1);
+
+	ErrorCheck ("glUniform2i");
+}
+
+void GL::Uniform3i(GLint location,  GLint v0,  GLint v1,  GLint v2)
+{
+	glUniform3i(location, v0, v1, v2); 
+
+	ErrorCheck ("glUniform3i");
+}
+
+void GL::Uniform4i(GLint location,  GLint v0,  GLint v1,  GLint v2,  GLint v3)
+{
+	glUniform4i(location, v0, v1, v2, v3);
+
+	ErrorCheck ("glUniform4i");
+}
+
+void GL::Uniform1ui(GLint location, GLuint v0)
+{
+	glUniform1ui(location, v0);
+
+	ErrorCheck ("glUniform1ui");
+}
+
+void GL::Uniform2ui(GLint location, GLuint v0, GLuint v1)
+{
+	glUniform2ui(location, v0, v1);
+
+	ErrorCheck ("glUniform2ui");
+}
+
+void GL::Uniform3ui(GLint location, GLuint v0, GLuint v1, GLuint v2)
+{
+	glUniform3ui(location, v0, v1, v2);
+
+	ErrorCheck ("glUniform3ui");
+}
+
+void GL::Uniform4ui(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3)
+{
+	glUniform4ui(location, v0, v1, v2, v3);
+
+	ErrorCheck ("glUniform4ui");
+}
+
+void GL::Uniform1fv(GLint location, GLsizei count, const GLfloat *value)
+{
+	glUniform1fv(location, count, value);
+
+	ErrorCheck ("glUniform1fv");
+}
+
+void GL::Uniform2fv(GLint location, GLsizei count, const GLfloat *value)
+{
+	glUniform2fv(location, count, value);
+
+	ErrorCheck ("glUniform2fv");
+}
+
+void GL::Uniform3fv(GLint location, GLsizei count, const GLfloat *value)
+{
+	glUniform3fv(location, count, value);
+
+	ErrorCheck ("glUniform3fv");
+}
+
+void GL::Uniform4fv(GLint location, GLsizei count, const GLfloat *value)
+{
+	glUniform4fv (location, count, value);
+
+	ErrorCheck ("glUniform4fv");
+}
+
+void GL::Uniform1iv(GLint location, GLsizei count, const GLint *value)
+{
+	glUniform1iv (location, count, value);
+
+	ErrorCheck ("glUniform1iv");
+}
+
+void GL::Uniform2iv(GLint location, GLsizei count, const GLint *value)
+{
+	glUniform2iv (location, count, value);
+
+	ErrorCheck ("glUniform2iv");
+}
+
+void GL::Uniform3iv(GLint location, GLsizei count, const GLint *value)
+{
+	glUniform3iv (location, count, value);
+
+	ErrorCheck ("glUniform3iv");
+}
+
+void GL::Uniform4iv(GLint location, GLsizei count, const GLint *value)
+{
+	glUniform4iv (location, count, value);
+
+	ErrorCheck ("glUniform4iv");
+}
+
+void GL::Uniform1uiv(GLint location, GLsizei count, const GLuint *value)
+{
+	glUniform1uiv (location, count, value);
+
+	ErrorCheck ("glUniform1uiv");
+}
+
+void GL::Uniform2uiv(GLint location, GLsizei count, const GLuint *value)
+{
+	glUniform2uiv (location, count, value);
+
+	ErrorCheck ("glUniform2uiv");
+}
+
+void GL::Uniform3uiv(GLint location, GLsizei count, const GLuint *value)
+{
+	glUniform3uiv (location, count, value);
+
+	ErrorCheck ("glUniform3uiv");
+}
+
+void GL::Uniform4uiv(GLint location, GLsizei count, const GLuint *value)
+{
+	glUniform4uiv (location, count, value);
+
+	ErrorCheck ("glUniform4uiv");
+}
+
+void GL::UniformMatrix2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
+{
+	glUniformMatrix2fv(location, count, transpose, value);
+
+	ErrorCheck ("glUniformMatrix2fv");
+}
+
+void GL::UniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
+{
+	glUniformMatrix3fv(location, count, transpose, value);
+
+	ErrorCheck ("glUniformMatrix3fv");
+}
+
+void GL::UniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
+{
+	glUniformMatrix4fv(location, count, transpose, value); 
+
+	ErrorCheck ("glUniformMatrix4fv");
+}
+
+void GL::UniformMatrix2x3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
+{
+	glUniformMatrix2x3fv(location, count, transpose, value); 
+
+	ErrorCheck ("glUniformMatrix2x3fv");
+}
+
+void GL::UniformMatrix3x2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
+{
+	glUniformMatrix3x2fv(location, count, transpose, value);
+
+	ErrorCheck ("glUniformMatrix3x2fv");
+}
+
+void GL::UniformMatrix2x4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
+{
+	glUniformMatrix2x4fv(location, count, transpose, value); 
+
+	ErrorCheck ("glUniformMatrix2x4fv");
+}
+
+void GL::UniformMatrix4x2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
+{
+	glUniformMatrix4x2fv(location, count, transpose, value);
+
+	ErrorCheck ("glUniformMatrix4x2fv");
+} 
+
+void GL::UniformMatrix3x4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
+{
+	glUniformMatrix3x4fv(location, count, transpose, value);
+
+	ErrorCheck ("glUniformMatrix3x4fv");
+}
+
+void GL::UniformMatrix4x3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value)
+{
+	glUniformMatrix4x3fv(location, count, transpose, value);
+
+	ErrorCheck ("glUniformMatrix4x3fv");
 }
 
 /*
