@@ -1,10 +1,7 @@
 #version 420 core
 
-#extension GL_ARB_shader_image_size : enable
+uniform layout (binding = 0, r32ui) coherent volatile uimage3D volumeTexture;
 
-#define PIXEL_DIAGONAL 2000
-
-coherent uniform layout (binding = 0, rgba8) writeonly image3D volumeTexture;
 layout (location = 0) out vec4 fragColor;
 
 uniform mat4 modelMatrix;
@@ -18,48 +15,63 @@ uniform vec4 MaterialDiffuse;
 
 uniform sampler2D DiffuseMap;
 
-uniform vec3 cameraPosition;
-
 uniform vec3 sceneAmbient;
 
 uniform vec3 minPosition;
 uniform vec3 maxPosition;
 
-uniform vec3 volumeSize;
+uniform ivec3 volumeSize;
 
 in vec3 geom_worldPosition;
 in vec3 geom_worldNormal;
 in vec2 geom_texcoord;
 in mat3 geom_swizzleMatrixInv;
+in vec4 geom_BBox;
 
-// vec3 PhongModel(vec3 diffuseMap)
-// {
-// 	lightDir = normalize(vec3 (-0.5, -0.5, -0.5));
+/*
+ * Thanks to: https://rauwendaal.net/2013/02/07/glslrunningaverage/
+*/
+
+void ImageAtomicAverageRGBA8(layout(r32ui) coherent volatile uimage3D voxels, ivec3 coord, vec3 nextVec3)
+{
+    uint nextUint = packUnorm4x8(vec4(nextVec3,1.0f/255.0f));
+    uint prevUint = 0;
+    uint currUint;
  
-//     float sDotN = max(dot(lightDir, normal), 0.0);
-//     vec3 diffuse = textureColor * sDotN;
-
-//     return ambient + diffuse;
-// }
-
-float GetInterpolatedPosition (float x, float minValue, float maxValue, int domain)
-{
-	return ((x - minValue) / maxValue) * domain;
-}
-
-vec3 GetPositionInTexture3D (vec3 position)
-{
-	vec3 resultCoords;
-
-	resultCoords.x = GetInterpolatedPosition (position.x, minPosition.x, maxPosition.x, textureSize.x);
-	resultCoords.y = GetInterpolatedPosition (position.y, minPosition.y, maxPosition.y, textureSize.y);
-	resultCoords.z = GetInterpolatedPosition (position.z, minPosition.z, maxPosition.z, textureSize.z);
-
-	return resultCoords;
+    vec4 currVec4;
+ 
+    vec3 average;
+    uint count;
+ 
+    //"Spin" while threads are trying to change the voxel
+    while((currUint = imageAtomicCompSwap(voxels, coord, prevUint, nextUint)) != prevUint)
+    {
+        prevUint = currUint;                    //store packed rgb average and count
+        currVec4 = unpackUnorm4x8(currUint);    //unpack stored rgb average and count
+ 
+        average =      currVec4.rgb;        //extract rgb average
+        count   = uint(currVec4.a*255.0f);  //extract count
+ 
+        //Compute the running average
+        average = (average*count + nextVec3) / (count+1);
+ 
+        //Pack new average and incremented count back into a uint
+        nextUint = packUnorm4x8(vec4(average, (count+1)/255.0f));
+    }
 }
 
 void main()
 {
+	/*
+	 *
+	*/
+
+	vec2 bboxMin = floor((geom_BBox.xy * 0.5 + 0.5) * volumeSize.xy);
+	vec2 bboxMax = ceil((geom_BBox.zw * 0.5 + 0.5) * volumeSize.xy);
+	if (!all(greaterThanEqual(gl_FragCoord.xy, bboxMin)) || !all(lessThanEqual(gl_FragCoord.xy, bboxMax))) {
+		discard;
+	}
+
 	/*
 	 * Get color of all used texture maps
 	*/
@@ -72,15 +84,11 @@ void main()
 	 * Calculate the position in texture 3D
 	*/
 	
-	ivec3 textureSize = imageSize (volumeTexture);
-
-	vec3 coords = geom_swizzleMatrixInv * geom_worldPosition;
-	coords = GetPositionInTexture3D (coords);
+	vec3 coords = geom_swizzleMatrixInv * vec3(gl_FragCoord.xy, gl_FragCoord.z * volumeSize.z);
 
 	/*
 	 * Save in texture
 	*/
 
-	imageStore(volumeTexture, ivec3(coords), vec4(fragmentColor, 1.0));
-	memoryBarrier ();
+	ImageAtomicAverageRGBA8 (volumeTexture, ivec3 (coords), fragmentColor);
 }

@@ -1,6 +1,5 @@
 #include "ShaderManager.h"
 
-#include <GL/glew.h>
 #include <string>
 #include <map>
 #include <fstream>
@@ -11,14 +10,9 @@
 
 ShaderManager::ShaderManager ()
 {
-	// AddShader ("DEFAULT", "Assets/Shaders/defaultVertex.glsl", "Assets/Shaders/defaultFragment.glsl");	
-	//AddShader ("DEFAULT", "Assets/Shaders/deferredVertex.glsl", "Assets/Shaders/deferredFragment.glsl", "Assets/Shaders/deferredGeometry.glsl");
+	//AddShader ("DEFAULT", "Assets/Shaders/defaultVertex.glsl", "Assets/Shaders/defaultFragment.glsl");	
+	AddShader ("DEFAULT", "Assets/Shaders/deferredVertex.glsl", "Assets/Shaders/deferredFragment.glsl", "Assets/Shaders/deferredGeometry.glsl");
 	AddShader ("DEFAULT_ANIMATED", "Assets/Shaders/deferredVertexAnimation.glsl", "Assets/Shaders/deferredFragment.glsl", "Assets/Shaders/deferredGeometry.glsl");
-
-	AddShader("DEFAULT",
-		"Assets/Shaders/Voxelize/voxelizeVertex.glsl",
-		"Assets/Shaders/Voxelize/voxelizeFragment.glsl",
-		"Assets/Shaders/Voxelize/voxelizeGeometry.glsl");
 }
 
 ShaderManager::~ShaderManager ()

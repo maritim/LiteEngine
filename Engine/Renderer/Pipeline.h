@@ -24,8 +24,13 @@ private:
 
 	static std::size_t _textureCount;
 
+	static Shader* _lockedShader;
+
 public:
 	static void SetShader (Shader* shader);
+
+	static void LockShader (Shader* shader);
+	static void UnlockShader ();
 
 	static void SetObjectTransform (Transform *transform);
 	static void SendCamera (Camera* camera);
@@ -37,6 +42,8 @@ public:
 	// TODO: Reimplement this
 	static void SendCustomAttributes (const std::string& shadername, 
 		const std::vector<PipelineAttribute>& attrs);
+
+	static void ClearObjectTransform ();
 };
 
 #endif

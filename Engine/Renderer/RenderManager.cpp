@@ -26,8 +26,10 @@
 #include "Managers/ShaderManager.h"
 
 #include "Debug/Logger/Logger.h"
+#include "Core/Console/Console.h"
+#include "Core/Math/glm/gtx/string_cast.hpp"
 
-#define VOLUME_DIMENSTIONS 256
+#define VOLUME_DIMENSTIONS 512
 
 /*
  * Singleton Part
@@ -35,30 +37,10 @@
 
 RenderManager::RenderManager () :
 	_frameBuffer (new GBuffer ()),
-	_volumeTexture (0),
-	_volumeFbo (0)
+	_voxelVolume (new VoxelVolume ())
 {
 	_frameBuffer->Init (Window::GetWidth (), Window::GetHeight ());
-
-	// GL::Enable(GL_TEXTURE_3D);
-
-	GL::GenTextures (1, &_volumeTexture);
-	GL::BindTexture (GL_TEXTURE_3D, _volumeTexture);
-	GL::TexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, 
-		VOLUME_DIMENSTIONS, VOLUME_DIMENSTIONS, VOLUME_DIMENSTIONS, 
-		0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
-
-	// Create an fbo for clearing the 3D texture.
-	GL::GenFramebuffers(1, &_volumeFbo);
-	DEBUG_LOG (std::to_string (_volumeFbo));
-	GL::BindFramebuffer(GL_FRAMEBUFFER, _volumeFbo);
-	GL::FramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _volumeTexture, 0);
-	GL::BindFramebuffer(GL_FRAMEBUFFER, 0);    
+	_voxelVolume->Init (VOLUME_DIMENSTIONS);
 }
 
 RenderManager::~RenderManager ()
@@ -86,7 +68,12 @@ void RenderManager::RenderScene (Scene* scene, Camera* camera)
 	 * Voxelize the scene
 	*/
 
-	VoxelizePass (scene);
+	static bool firstTime = true;
+
+	if (firstTime) {
+		VoxelizePass(scene);
+		firstTime = false;
+	}
 
 	/*
 	 * Voxel Ray Trace Pass
@@ -111,135 +98,119 @@ void RenderManager::VoxelizePass (Scene* scene)
 {
 	PROFILER_LOGGER ("Voxelize Pass");
 
-	ClearVoxels ();
+	/*
+	 * Voxelization start
+	*/
 
-	// Render to window but mask out all color.
-	GL::ColorMask (GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	GL::DepthMask (GL_FALSE);
-	GL::Viewport (0, 0, VOLUME_DIMENSTIONS, VOLUME_DIMENSTIONS);
+	StartVoxelization ();
 
-	// Load shader
-	ShaderManager::Instance ()->AddShader ("VOXELIZATION_SHADER",
-		"Assets/Shaders/Voxelize/voxelizeVertex.glsl",
-		"Assets/Shaders/Voxelize/voxelizeFragment.glsl",
-		"Assets/Shaders/Voxelize/voxelizeGeometry.glsl");
+	/*
+	 * Voxelization: voxelize geomtry
+	*/
 
-	// Use shader
-	Pipeline::SetShader (ShaderManager::Instance ()->GetShader ("VOXELIZATION_SHADER"));
+	GeometryVoxelizationPass (scene);
 
-	GL::BindImageTexture (0, _volumeTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
-	// GL::Uniform1i(0, 0);
+	/*
+	 * Clear opengl state after voxelization
+	*/
 
-	UpdateVoxelizationPipelineAttributes (scene);
+	EndVoxelization ();
+}
 
-	// Render
-	for (std::size_t i=0;i<scene->GetObjectsCount ();i++) {
-		if (scene->GetObjectAt (i)->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
+void RenderManager::StartVoxelization()
+{
+	_voxelVolume->ClearVoxels();
+
+	_voxelVolume->StartVoxelizationPass ();
+}
+
+void RenderManager::GeometryVoxelizationPass(Scene* scene)
+{
+	/*
+	 * Update voxel volume based on scene bounding box
+	*/
+
+	UpdateVoxelVolumeBoundingBox (scene);
+
+	/*
+	 * Bind voxel volume to geometry render pass
+	*/
+
+	_voxelVolume->BindForVoxelizationPass();
+
+	/*
+	 * Render geometry 
+	*/
+	
+	for (std::size_t i = 0; i<scene->GetObjectsCount(); i++) {
+		if (scene->GetObjectAt(i)->GetRenderer()->GetStageType() != Renderer::StageType::DEFERRED_STAGE) {
 			continue;
 		}
 
-		scene->GetObjectAt (i)->GetRenderer ()->Draw ();
+		scene->GetObjectAt(i)->GetRenderer()->Draw();
 	}
-
-	GL::Viewport (0, 0, Window::GetWidth (), Window::GetHeight ());
-	GL::ColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	GL::DepthMask(GL_TRUE);
-
-	// unsigned int glBakeFbo;
-
-	// glGenFramebuffers(1, &glBakeFbo);
-	// glBindFramebuffer(GL_FRAMEBUFFER, glBakeFbo);
-	// glBindFramebuffer(GL_READ_FRAMEBUFFER, glBakeFbo);
-
-	// GL::MemoryBarrier(GL_ALL_BARRIER_BITS);
-	// static char data[VOLUME_DIMENSTIONS * VOLUME_DIMENSTIONS * VOLUME_DIMENSTIONS * 4] = {0};
-	// glGetTexImage(GL_TEXTURE_3D, 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, data);
-
-	// DEBUG_LOG (std::to_string (data [0]));
-
-	// int numBytes = VOLUME_DIMENSTIONS * VOLUME_DIMENSTIONS * VOLUME_DIMENSTIONS * 4;
-	// unsigned char *pixels = (unsigned char*)malloc(numBytes); // allocate image data into RAM
-
-	// glReadPixels( 0, 0, VOLUME_DIMENSTIONS, VOLUME_DIMENSTIONS, GL_RGBA , GL_UNSIGNED_BYTE , pixels);
-	// free(pixels);
 }
 
-void RenderManager::UpdateVoxelizationPipelineAttributes (Scene* scene)
+void RenderManager::EndVoxelization()
 {
-	AABBVolume* boundingBox = scene->GetBoundingBox ();
-	AABBVolume::AABBVolumeInformation* volume = boundingBox->GetVolumeInformation ();
+	_voxelVolume->EndVoxelizationPass ();
+}
 
-	std::vector<PipelineAttribute> attributes;
+void RenderManager::UpdateVoxelVolumeBoundingBox(Scene* scene)
+{
+	AABBVolume* boundingBox = scene->GetBoundingBox();
+	AABBVolume::AABBVolumeInformation* volume = boundingBox->GetVolumeInformation();
 
-	PipelineAttribute minPosition;
-	PipelineAttribute maxPosition;
+	glm::vec3 minVertex = volume->minVertex;
+	glm::vec3 maxVertex = volume->maxVertex;
 
-	minPosition.type = PipelineAttribute::AttrType::ATTR_3F;
-	maxPosition.type = PipelineAttribute::AttrType::ATTR_3F;
-
-	minPosition.name = "minPosition";
-	maxPosition.name = "maxPosition";
-
-	minPosition.value = volume->minVertex;
-	maxPosition.value = volume->maxVertex;
-
-	attributes.push_back (minPosition);
-	attributes.push_back (maxPosition);
-
-	Pipeline::SendCustomAttributes ("VOXELIZATION_SHADER", attributes);
+	_voxelVolume->UpdateBoundingBox (minVertex, maxVertex);
 }
 
 void RenderManager::VoxelRayTracePass ()
 {
 	PROFILER_LOGGER ("Ray Trace Pass");
 
-	// Render Ox projection to window
+	/*
+	 * Start Ray Trace Pass
+	*/
+
+	StartRayTrace ();
+
+	/*
+	 * Ray Trace Rendering Pass
+	*/
+
+	VoxelRenderingRayTracePass ();
+}
+
+void RenderManager::StartRayTrace()
+{
+	_voxelVolume->StartRayTracePass ();
+}
+
+void RenderManager::VoxelRenderingRayTracePass()
+{
+	_voxelVolume->BindForRayTracePass ();
+
+	/*
+	 * Clear framebuffer
+	*/
+
 	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Load shader
-	ShaderManager::Instance ()->AddShader ("VOXEL_RAY_TRACE_SHADER",
-		"Assets/Shaders/Voxelize/voxelRayTraceVertex.glsl",
-		"Assets/Shaders/Voxelize/voxelRayTraceFragment.glsl");
+	/*
+	 * Render fullscreen quad.	
+	*/
 
-	// Use shader
-	Pipeline::SetShader (ShaderManager::Instance ()->GetShader ("VOXEL_RAY_TRACE_SHADER"));
-
-	UpdateVoxelRayTracePipelineAttributes ();
-
-	// Render fullscreen quad.	
 	GL::EnableVertexAttribArray(0);
 
-	glBegin(GL_QUADS);
+	GL::Begin(GL_QUADS);
 		GL::VertexAttrib2f(0, -1.0f, -1.0f);
 		GL::VertexAttrib2f(0, 1.0f, -1.0f);
 		GL::VertexAttrib2f(0, 1.0f, 1.0f);
 		GL::VertexAttrib2f(0, -1.0f, 1.0f);
-	glEnd();
-}
-
-void RenderManager::UpdateVoxelRayTracePipelineAttributes ()
-{
-	std::vector<PipelineAttribute> attributes;
-
-	PipelineAttribute volumeTexture;
-
-	volumeTexture.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
-
-	volumeTexture.name = "volumeTexture";
-
-	volumeTexture.value.x = _volumeTexture;
-
-	attributes.push_back (volumeTexture);
-
-	Pipeline::SendCustomAttributes ("VOXEL_RAY_TRACE_SHADER", attributes);	
-}
-
-void RenderManager::ClearVoxels ()
-{
-	// GL::BindFramebuffer(GL_FRAMEBUFFER, _volumeFbo);
-	// GL::ClearColor(0, 0, 0, 0);
-	// GL::Clear(GL_COLOR_BUFFER_BIT);
-	// GL::BindFramebuffer(GL_FRAMEBUFFER, 0);
+	GL::End();
 }
 
 void RenderManager::DeferredPass (Scene* scene, Camera* camera)

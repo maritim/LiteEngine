@@ -1,7 +1,5 @@
 #include "Pipeline.h"
 
-#include <GL/glew.h>
-
 #include "Lighting/LightsManager.h"
 #include "Lighting/Light.h"
 #include "Texture/Texture.h"
@@ -24,12 +22,37 @@ glm::mat4 Pipeline::_viewMatrix (0);
 glm::mat4 Pipeline::_projectionMatrix (0);
 glm::vec3 Pipeline::_cameraPosition (0);
 std::size_t Pipeline::_textureCount (0);
+Shader* Pipeline::_lockedShader(nullptr);
+
+#include "Debug/Logger/Logger.h"
 
 void Pipeline::SetShader (Shader* shader)
 {
-	GL::UseProgram (shader->GetProgram ());
-
 	_textureCount = 0;
+
+	if (_lockedShader != nullptr) {
+		return;
+	}
+
+	DEBUG_LOG (shader->GetName ());
+	DEBUG_LOG (std::to_string (shader->GetProgram ()));
+
+	GL::UseProgram (shader->GetProgram ());
+}
+
+void Pipeline::LockShader (Shader* shader)
+{
+	if (_lockedShader != nullptr) {
+		return;
+	}
+
+	SetShader (shader);
+	_lockedShader = shader;
+}
+
+void Pipeline::UnlockShader ()
+{
+	_lockedShader = nullptr;
 }
 
 void Pipeline::CreatePerspective (float FOV, float aspect, float zNear, float zFar)
@@ -59,13 +82,24 @@ void Pipeline::SetObjectTransform (Transform* transform)
 	_modelMatrix = translate * scale * rotation;
 }
 
+void Pipeline::ClearObjectTransform ()
+{
+	_modelMatrix = glm::mat4 (1.0);
+}
+
 void Pipeline::UpdateMatrices (Shader* shader)
 {
+	if (_lockedShader != nullptr) {
+		shader = _lockedShader;
+	}
+
 	glm::mat4 modelViewMatrix = _viewMatrix * _modelMatrix;
 	glm::mat4 modelViewProjectionMatrix = _projectionMatrix * _viewMatrix * _modelMatrix;
 
 	glm::mat3 normalWorldMatrix = glm::transpose (glm::inverse (glm::mat3 (modelViewMatrix)));
 	glm::mat3 normalMatrix = glm::transpose (glm::inverse (glm::mat3 (_modelMatrix)));
+
+	glm::mat4 inverseViewProjectionMatrix = glm::inverse (modelViewProjectionMatrix);
 
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelMatrix"), 1, GL_FALSE, glm::value_ptr (_modelMatrix));
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("viewMatrix"), 1, GL_FALSE, glm::value_ptr (_viewMatrix));
@@ -74,6 +108,7 @@ void Pipeline::UpdateMatrices (Shader* shader)
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewProjectionMatrix));
 	GL::UniformMatrix3fv (shader->GetUniformLocation ("normalMatrix"), 1, GL_FALSE, glm::value_ptr (normalMatrix));
 	GL::UniformMatrix3fv (shader->GetUniformLocation ("normalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (normalWorldMatrix));
+	GL::UniformMatrix4fv (shader->GetUniformLocation ("inverseViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (inverseViewProjectionMatrix));
 	GL::Uniform3fv (shader->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_cameraPosition));
 
 	// SendLights (shader);
@@ -81,6 +116,10 @@ void Pipeline::UpdateMatrices (Shader* shader)
 
 void Pipeline::SendLights (Shader* shader)
 {
+	if (_lockedShader != nullptr) {
+		shader = _lockedShader;
+	}
+
 	glm::vec3 vec = LightsManager::Instance ()->GetAmbientColorLight ();
 	Color color;
 
@@ -201,6 +240,10 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 {
 	Shader* shader = ShaderManager::Instance ()->GetShader (shaderName);
 
+	if (_lockedShader != nullptr) {
+		shader = _lockedShader;
+	}
+
 	for (std::size_t i=0;i<attr.size ();i++) {
 
 		int unifLoc = shader->GetUniformLocation (attr [i].name.c_str ());
@@ -269,6 +312,10 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	SetShader (shader);
 
 	Pipeline::UpdateMatrices (shader);
+
+	if (_lockedShader != nullptr) {
+		shader = _lockedShader;
+	}
 
 	// Send basic material attributes to shader
 	GL::Uniform4f (shader->GetUniformLocation ("MaterialDiffuse"), mat->diffuseColor.x, 

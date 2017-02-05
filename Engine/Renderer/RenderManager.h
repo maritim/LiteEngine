@@ -30,6 +30,7 @@
 
 #include "Renderer.h"
 #include "GBuffer.h"
+#include "VoxelVolume.h"
 
 class RenderManager : public Singleton<RenderManager>
 {
@@ -37,9 +38,7 @@ class RenderManager : public Singleton<RenderManager>
 
 private:
 	GBuffer* _frameBuffer;
-	// TODO: Merge these
-	unsigned int _volumeTexture;
-	unsigned int _volumeFbo;
+	VoxelVolume* _voxelVolume;
 
 public:
 	void RenderScene (Scene* scene, Camera* camera);
@@ -69,9 +68,14 @@ private:
 	void PointLightStencilPass (VolumetricLight* light);
 	void PointLightDrawPass (VolumetricLight* light);
 
-	void UpdateVoxelizationPipelineAttributes (Scene*);
-	void UpdateVoxelRayTracePipelineAttributes ();
-	void ClearVoxels ();
+	void StartVoxelization ();
+	void GeometryVoxelizationPass (Scene* scene);
+	void EndVoxelization ();
+
+	void StartRayTrace ();
+	void VoxelRenderingRayTracePass ();
+
+	void UpdateVoxelVolumeBoundingBox (Scene*);
 };
 
 #endif
