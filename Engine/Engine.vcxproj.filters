@@ -486,6 +486,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer\VoxelVolume.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arguments\Argument.h">
@@ -1410,6 +1413,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Wrappers\OpenGL\GL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer\VoxelVolume.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -201,6 +201,7 @@
     <ClCompile Include="Renderer\Pipeline.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\RenderManager.cpp" />
+    <ClCompile Include="Renderer\VoxelVolume.cpp" />
     <ClCompile Include="Resources\AnimationModelLoader.cpp" />
     <ClCompile Include="Resources\BitmapFontLoader.cpp" />
     <ClCompile Include="Resources\CubeMapLoader.cpp" />
@@ -507,6 +508,7 @@
     <ClInclude Include="Renderer\PipelineAttribute.h" />
     <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Renderer\RenderManager.h" />
+    <ClInclude Include="Renderer\VoxelVolume.h" />
     <ClInclude Include="Resources\AnimationModelLoader.h" />
     <ClInclude Include="Resources\BitmapFontLoader.h" />
     <ClInclude Include="Resources\CubeMapLoader.h" />
