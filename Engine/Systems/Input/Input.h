@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <map>
 
-#include "Core/Math/glm/vec3.hpp"
+#include "Core/Math/glm/vec2.hpp"
 #include "Systems/Input/InputKey.h"
 
 class Input
@@ -24,7 +24,7 @@ private:
 
 	static std::map<int, bool> _mouseState;
 	static std::map<int, bool> _lastMouseState;
-	static glm::vec3 _mouseWheelState;
+	static glm::ivec2 _mouseWheelState;
 
 	/*
 	 * Joysticks/Game controllers state
@@ -39,7 +39,7 @@ private:
 	*/
 
 	static bool _sdlQuit;
-	static glm::vec3 _resizeEvent;
+	static glm::ivec2 _resizeEvent;
 
 public:
 	static bool GetKey (InputKey key);
@@ -49,16 +49,16 @@ public:
 	static bool GetMouseButton (std::uint8_t button);
 	static bool GetMouseButtonDown (std::uint8_t button);
 	static bool GetMouseButtonUp (std::uint8_t button);
-	static glm::vec3 GetMouseWheel ();
-	static glm::vec3 GetMousePosition ();
+	static glm::ivec2 GetMouseWheel ();
+	static glm::ivec2 GetMousePosition ();
 
 	static bool GetJoystickButton (std::uint8_t button, std::uint8_t joystick = 0);
 	static bool GetJoystickButtonDown (std::uint8_t button, std::uint8_t joystick = 0);
 	static bool GetJoystickButtonUp (std::uint8_t button, std::uint8_t joystick = 0);
-	static glm::vec3 GetJoystickAxis (std::uint8_t axis = 0, std::uint8_t joystick = 0);
+	static glm::ivec2 GetJoystickAxis (std::uint8_t axis = 0, std::uint8_t joystick = 0);
 
 	static bool GetQuit ();
-	static glm::vec3 GetResizeEvent ();
+	static glm::ivec2 GetResizeEvent ();
 
 	static void Init ();
 	static void UpdateState ();

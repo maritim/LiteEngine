@@ -49,7 +49,7 @@ void Window::SwapBuffers ()
 	SDL_GL_SwapWindow(_window);
 }
 
-void Window::Resize (const glm::vec3& dimensions)
+void Window::Resize (const glm::ivec2& dimensions)
 {
 	_width = (std::size_t)dimensions.x;
 	_height = (std::size_t)dimensions.y;

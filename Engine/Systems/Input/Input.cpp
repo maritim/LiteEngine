@@ -5,14 +5,14 @@ std::map<int, bool> Input::_lastKeyState;
 
 std::map<int, bool> Input::_mouseState;
 std::map<int, bool> Input::_lastMouseState;
-glm::vec3 Input::_mouseWheelState (glm::vec3 (0.0f));
+glm::ivec2 Input::_mouseWheelState (glm::ivec2 (0));
 
 std::map<int, std::map<int, bool> > Input::Input::_joystickButtonState;
 std::map<int, std::map<int, bool> > Input::_lastJoystickButtonState;
 std::map<int, std::map<int, std::int16_t> > Input::_joystickAxisState;
 
 bool Input::_sdlQuit (false);
-glm::vec3 Input::_resizeEvent (glm::vec3 (0.0f));
+glm::ivec2 Input::_resizeEvent (glm::ivec2 (0));
 
 void Input::Init ()
 {
@@ -48,8 +48,8 @@ void Input::UpdateState ()
 		}		
 	}
 
-	_mouseWheelState = glm::vec3 (0.0f);
-	_resizeEvent = glm::vec3 (0.0f);
+	_mouseWheelState = glm::ivec2 (0);
+	_resizeEvent = glm::ivec2 (0);
 
 	/*
 	 * Update input state
@@ -138,20 +138,18 @@ bool Input::GetMouseButtonUp (std::uint8_t button)
 	return !_mouseState [button] && _lastMouseState [button];
 }
 
-glm::vec3 Input::GetMouseWheel ()
+glm::ivec2 Input::GetMouseWheel ()
 {
 	return _mouseWheelState;
 }
 
-glm::vec3 Input::GetMousePosition ()
+glm::ivec2 Input::GetMousePosition ()
 {
 	int x = 0, y = 0;
 
 	SDL_GetMouseState(&x, &y);
 
-	glm::vec3 position;
-	position.x = x;
-	position.y = y;
+	glm::ivec2 position = glm::ivec2 (0, 0);
 
 	return position;
 }
@@ -185,16 +183,16 @@ bool Input::GetJoystickButtonUp (std::uint8_t button, std::uint8_t joystick)
 	return !_joystickButtonState [joystick][button] && _lastJoystickButtonState [joystick][button];
 }
 
-glm::vec3 Input::GetJoystickAxis (std::uint8_t axis, std::uint8_t joystick)
+glm::ivec2 Input::GetJoystickAxis (std::uint8_t axis, std::uint8_t joystick)
 {
 	if (_joystickAxisState.find (joystick) == _joystickAxisState.end ()) {
-		return glm::vec3 (0.0f);
+		return glm::ivec2 (0);
 	}
 
 	std::uint8_t realAxisX = axis * 2;
 	std::uint8_t realAxisY = axis * 2 + 1;
 
-	glm::vec3 axisValue;
+	glm::ivec2 axisValue;
 	axisValue.x = _joystickAxisState [joystick][realAxisX];
 	axisValue.y = _joystickAxisState [joystick][realAxisY];
 
@@ -206,7 +204,7 @@ bool Input::GetQuit ()
 	return _sdlQuit;
 }
 
-glm::vec3 Input::GetResizeEvent ()
+glm::ivec2 Input::GetResizeEvent ()
 {
 	return _resizeEvent;
 }

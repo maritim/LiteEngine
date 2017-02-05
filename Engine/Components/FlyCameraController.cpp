@@ -19,7 +19,7 @@ void FlyCameraController::Start ()
 
 void FlyCameraController::Update ()
 {
-	float cameraVelocity = 10.0f;
+	float cameraVelocity = 50.0f;
 	glm::vec3 velocity = glm::vec3 (0.0f);
 
 	glm::vec3 Forward = Camera::Main ()->GetForward ();
@@ -49,7 +49,7 @@ void FlyCameraController::Update ()
 	static int iLastMouseMoveX = 0;
 	static int iLastMouseMoveY = 0;
 
-	glm::vec3 mousePosition = Input::GetMousePosition ();
+	glm::ivec2 mousePosition = Input::GetMousePosition ();
 
 	if (Input::GetMouseButtonUp (MOUSE_BUTTON_LEFT)) {
 		leftButtonDown = false;

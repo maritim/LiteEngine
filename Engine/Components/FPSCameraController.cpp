@@ -46,7 +46,7 @@ void FPSCameraController::Update ()
 	static int iLastMouseMoveX = 0;
 	static int iLastMouseMoveY = 0;
 
-	glm::vec3 mousePosition = Input::GetMousePosition ();
+	glm::ivec2 mousePosition = Input::GetMousePosition ();
 
 	if (Input::GetMouseButtonUp (MOUSE_BUTTON_LEFT)) {
 		leftButtonDown = false;

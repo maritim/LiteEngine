@@ -51,7 +51,7 @@ void Game::Start ()
 			continue;
 		}
 
-		if (Input::GetResizeEvent () != glm::vec3 (0.0f)) {
+		if (Input::GetResizeEvent () != glm::ivec2 (0)) {
 			Window::Resize (Input::GetResizeEvent ());
 		}
 
