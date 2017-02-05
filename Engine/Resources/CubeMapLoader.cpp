@@ -1,5 +1,4 @@
 #include <SDL2/SDL_image.h>
-#include <GL/glew.h>
 
 #include "CubeMapLoader.h"
 

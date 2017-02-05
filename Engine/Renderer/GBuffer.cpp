@@ -47,7 +47,7 @@ bool GBuffer::Init(unsigned int bufferWidth, unsigned int bufferHeight)
 	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_FLOAT, NULL);
 	GL::FramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, m_finalTexture, 0);
 
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	GLenum status = GL::CheckFramebufferStatus(GL_FRAMEBUFFER);
 
 	if (status != GL_FRAMEBUFFER_COMPLETE) {
 		Console::LogError ("Framebuffer status error" + status);
@@ -101,8 +101,8 @@ void GBuffer::BindForLightPass()
 	GL::DrawBuffer(GL_COLOR_ATTACHMENT4);
 
 	for (unsigned int i = 0 ; i < ARRAY_SIZE_IN_ELEMENTS(m_textures); i++) {
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, m_textures[GBUFFER_TEXTURE_TYPE_POSITION + i]);
+		GL::ActiveTexture(GL_TEXTURE0 + i);
+		GL::BindTexture(GL_TEXTURE_2D, m_textures[GBUFFER_TEXTURE_TYPE_POSITION + i]);
 	}
 }
 

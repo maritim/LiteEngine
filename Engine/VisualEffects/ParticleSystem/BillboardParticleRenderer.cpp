@@ -1,6 +1,5 @@
 #include "BillboardParticleRenderer.h"
 
-#include <GL/glew.h>
 #include <vector>
 
 #include "SceneNodes/Model3DRenderer.h"

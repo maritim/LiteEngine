@@ -4,10 +4,23 @@
 #include <GL/glew.h>
 #include <string>
 
+#define GL_DEPRECATED_PERMIT
+
 class GL
 {
 public:
 	
+#ifdef GL_DEPRECATED_PERMIT
+	
+	/*
+	 * Not intended to be used
+	*/
+
+	static void Begin(GLenum  mode);
+	static void End();
+
+#endif
+
 	/*
 	 * Viewport
 	*/
@@ -29,6 +42,8 @@ public:
 	static void BindFramebuffer(GLenum target,  GLuint framebuffer);
 	static void BlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, 
 		GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+	static GLenum CheckFramebufferStatus(GLenum target);
+	static GLenum CheckNamedFramebufferStatus(GLuint framebuffer, GLenum target);
 
 	/*
 	 * Culling

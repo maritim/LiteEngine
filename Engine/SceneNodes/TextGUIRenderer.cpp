@@ -81,9 +81,9 @@ void TextGUIRenderer::CreateVBO (BufferObject& bufferObject, const std::vector<B
 	GL::BufferData(GL_ARRAY_BUFFER, bufferAttributes [0].stride * charLimit, NULL, GL_DYNAMIC_DRAW);
 
 	// Create IBO
-	glGenBuffers(1, &bufferObject.IBO_INDEX);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObject.IBO_INDEX);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferAttributes [0].stride * charLimit, NULL, GL_DYNAMIC_DRAW);
+	GL::GenBuffers(1, &bufferObject.IBO_INDEX);
+	GL::BindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObject.IBO_INDEX);
+	GL::BufferData(GL_ELEMENT_ARRAY_BUFFER, bufferAttributes [0].stride * charLimit, NULL, GL_DYNAMIC_DRAW);
 
 	for (BufferAttribute attr : bufferAttributes) {
 		GL::EnableVertexAttribArray (attr.index);

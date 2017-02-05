@@ -1,5 +1,3 @@
-#include <GL/glew.h>
-
 #include "SkyboxRenderer.h"
 
 #include <string>

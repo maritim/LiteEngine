@@ -1,6 +1,5 @@
 #include "Model3DRenderer.h"
 
-#include <GL/glew.h>
 #include <string>
 #include <vector>
 #include <algorithm>

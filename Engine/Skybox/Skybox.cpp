@@ -1,6 +1,5 @@
 #include "Skybox.h"
 
-#include <GL/glew.h>
 #include <string>
 #include <vector>
 
@@ -14,6 +13,8 @@
 #include "Mesh/Model.h"
 
 #include "Utils/Primitives/Primitive.h"
+
+#include "Wrappers/OpenGL/GL.h"
 
 Skybox* Skybox::_currentSkybox (NULL);
 
@@ -30,7 +31,7 @@ Skybox::Skybox () :
 Skybox::~Skybox ()
 {
     unsigned int texture[] = { _cubemap->GetGPUIndex () };
-    glDeleteTextures(1,texture);
+    GL::DeleteTextures(1,texture);
 
     delete _renderer;
 }

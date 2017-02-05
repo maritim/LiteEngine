@@ -2,6 +2,28 @@
 
 #include "Core/Console/Console.h"
 
+#ifdef GL_DEPRECATED_PERMIT
+
+/*
+* Not intended to be used
+*/
+
+void GL::Begin(GLenum  mode)
+{
+	glBegin (mode);
+
+	ErrorCheck ("glBegin");
+}
+
+void GL::End()
+{
+	glEnd();
+
+	ErrorCheck ("glEnd");
+}
+
+#endif
+
 /*
  * Viewport
 */
@@ -86,6 +108,24 @@ void GL::BlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
 	glBlitFramebuffer (srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
 
 	ErrorCheck ("glBlitFramebuffer");
+}
+
+GLenum GL::CheckFramebufferStatus(GLenum target)
+{
+	GLenum check = glCheckFramebufferStatus (target);
+
+	ErrorCheck ("glCheckFramebufferStatus");
+
+	return check;
+}
+
+GLenum GL::CheckNamedFramebufferStatus(GLuint framebuffer, GLenum target)
+{
+	GLenum check = glCheckNamedFramebufferStatus (framebuffer, target);
+
+	ErrorCheck ("glCheckNamedFramebufferStatus");
+
+	return check;
 }
 
 /*
