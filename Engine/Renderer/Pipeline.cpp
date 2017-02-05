@@ -24,8 +24,6 @@ glm::vec3 Pipeline::_cameraPosition (0);
 std::size_t Pipeline::_textureCount (0);
 Shader* Pipeline::_lockedShader(nullptr);
 
-#include "Debug/Logger/Logger.h"
-
 void Pipeline::SetShader (Shader* shader)
 {
 	_textureCount = 0;
@@ -33,9 +31,6 @@ void Pipeline::SetShader (Shader* shader)
 	if (_lockedShader != nullptr) {
 		return;
 	}
-
-	DEBUG_LOG (shader->GetName ());
-	DEBUG_LOG (std::to_string (shader->GetProgram ()));
 
 	GL::UseProgram (shader->GetProgram ());
 }
