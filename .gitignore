@@ -55,6 +55,7 @@ TODOS
 *.db
 *.opendb
 *.cfg
+*.user
 Engine/x64
 Engine/x86
 x86/
