@@ -52,4 +52,11 @@ TODOS
 *.csv
 
 # Visual Studio
+*.db
+*.opendb
+*.cfg
+Engine/x64
+Engine/x86
+x86/
+x64/
 .vs/
