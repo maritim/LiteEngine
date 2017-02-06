@@ -20,7 +20,7 @@ std::string FileSystem::GetDirectory(const std::string& filename)
 		--directoryEndIndex;
 	}
 
-	for (int i=0;i<= directoryEndIndex;i++) {
+	for (std::size_t i=0; i <= directoryEndIndex;i++) {
 		directory += filename [i];
 	}
 
