@@ -202,6 +202,9 @@
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\RenderManager.cpp" />
     <ClCompile Include="Renderer\VoxelVolume.cpp" />
+    <ClCompile Include="Renderer\RenderModule.cpp" />
+    <ClCompile Include="Renderer\DeferredRenderModule.cpp" />
+    <ClCompile Include="Renderer\VoxelizationRenderModule.cpp" />
     <ClCompile Include="Resources\AnimationModelLoader.cpp" />
     <ClCompile Include="Resources\BitmapFontLoader.cpp" />
     <ClCompile Include="Resources\CubeMapLoader.cpp" />
@@ -509,6 +512,9 @@
     <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Renderer\RenderManager.h" />
     <ClInclude Include="Renderer\VoxelVolume.h" />
+    <ClCompile Include="Renderer\RenderModule.h" />
+    <ClCompile Include="Renderer\DeferredRenderModule.h" />
+    <ClCompile Include="Renderer\VoxelizationRenderModule.h" />
     <ClInclude Include="Resources\AnimationModelLoader.h" />
     <ClInclude Include="Resources\BitmapFontLoader.h" />
     <ClInclude Include="Resources\CubeMapLoader.h" />
