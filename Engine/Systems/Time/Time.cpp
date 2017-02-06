@@ -10,7 +10,7 @@ float Time::GetDeltaTime()
 
 float Time::GetTime()
 {
-	return _currentTimeMS;
+	return (float) _currentTimeMS;
 }
 
 void Time::Init() 

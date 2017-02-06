@@ -105,7 +105,7 @@ void ParticleSystem::Update ()
 	// Generate particle at specified rate
 	_timeFromLastEmission += Time::GetDeltaTime ();
 
-	float timePerEmission = 1.0 / _emissionRate;
+	float timePerEmission = 1.0f / _emissionRate;
 
 	while ((_timeFromLastEmission > timePerEmission ||
 		_particles.size () < _partCount.first) &&

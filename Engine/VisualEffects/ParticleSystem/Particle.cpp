@@ -16,7 +16,7 @@ Particle::Particle () :
 	_scaleCurve (NULL),
 	_tweenCurve (NULL),
 	_alive (true),
-	_timeAlive (0.0f),
+	_timeAlive (0),
 	_mesh (NULL)
 {
 	delete _renderer;
@@ -110,7 +110,7 @@ void Particle::Update ()
 
 void Particle::UpdatePosition ()
 {
-	float pos = _tweenCurve->Evaluate (1.0 * _timeAlive / _lifetime);
+	float pos = _tweenCurve->Evaluate (1.0f * _timeAlive / _lifetime);
 
 	this->GetTransform ()->SetPosition (
 		Extensions::MathExtend::Lerp<glm::vec3> (
@@ -121,7 +121,7 @@ void Particle::UpdatePosition ()
 
 void Particle::UpdateScale ()
 {
-	float scale = _scaleCurve->Evaluate (1.0 - 1.0 * _timeAlive / _lifetime);
+	float scale = _scaleCurve->Evaluate (1.0f - 1.0f * _timeAlive / _lifetime);
 
 	this->GetTransform ()->SetScale (_initialScale * scale);
 }

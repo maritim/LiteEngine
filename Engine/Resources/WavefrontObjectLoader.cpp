@@ -274,20 +274,20 @@ void WavefrontObjectLoader::IndexNormalization (Model* model)
 				for (std::size_t l=0;l<poly->VertexCount ();l++) {
 					int verPos = poly->GetVertex (l);
 					if (verPos < 0) {
-						poly->SetVertex (model->VertexCount () + verPos + 1, l);
+						poly->SetVertex ((int) model->VertexCount () + verPos + 1, l);
 					}
 
 					if (poly->HaveNormals ()) {
 						int norPos = poly->GetNormal (l);
 						if (norPos < 0) {
-							poly->SetNormal (model->NormalsCount () + norPos + 1, l);
+							poly->SetNormal ((int) model->NormalsCount () + norPos + 1, l);
 						}
 					}
 
 					if (poly->HaveUV ()) {
 						int texPos = poly->GetTexcoord (l);
 						if (texPos < 0) {
-							poly->SetTexcoord (model->TexcoordsCount () + texPos + 1, l);
+							poly->SetTexcoord ((int) model->TexcoordsCount () + texPos + 1, l);
 						}
 					}
 				}

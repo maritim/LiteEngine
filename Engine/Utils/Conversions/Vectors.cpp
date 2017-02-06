@@ -4,9 +4,9 @@ glm::vec3 Conversions::AssimpVectorToGLMVec (const aiVector3D& assimpVector)
 {
 	glm::vec3 vec;
 
-	vec.x = assimpVector.x;
-	vec.y = assimpVector.y;
-	vec.z = assimpVector.z;
+	vec.x = (float) assimpVector.x;
+	vec.y = (float) assimpVector.y;
+	vec.z = (float) assimpVector.z;
 
 	return vec;
 }

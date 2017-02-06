@@ -108,9 +108,9 @@ BufferObject AnimationModel3DRenderer::ProcessPolygonGroup (Model* model, Polygo
 			vertexBuffer.push_back (vertexData);
 		}
 
-		indexBuffer.push_back (3 * i);
-		indexBuffer.push_back (3 * i + 1);
-		indexBuffer.push_back (3 * i + 2);
+		indexBuffer.push_back (3 * (unsigned int) i);
+		indexBuffer.push_back (3 * (unsigned int) i + 1);
+		indexBuffer.push_back (3 * (unsigned int) i + 2);
 	}
 
 	BufferObject bufObj = BindVertexData (vertexBuffer, indexBuffer);

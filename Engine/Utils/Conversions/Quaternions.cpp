@@ -4,10 +4,10 @@ glm::quat Conversions::AssimpQuaternionToGLMQuat (const aiQuaternion& quaternion
 {
 	glm::quat glmQuat;
 
-	glmQuat.x = quaternion.x;
-	glmQuat.y = quaternion.y;
-	glmQuat.z = quaternion.z;
-	glmQuat.w = quaternion.w;
+	glmQuat.x = (float) quaternion.x;
+	glmQuat.y = (float) quaternion.y;
+	glmQuat.z = (float) quaternion.z;
+	glmQuat.w = (float) quaternion.w;
 
 	return glmQuat;
 }

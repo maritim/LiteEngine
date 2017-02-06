@@ -136,7 +136,7 @@ std::vector<PipelineAttribute> TextGUIRenderer::GetUniformAttributes (Font* font
 
 	fontTexture.name = "FontTexture";
 
-	fontTexture.value.x = font->GetTexture (0)->GetGPUIndex ();
+	fontTexture.value.x = (float) font->GetTexture (0)->GetGPUIndex ();
 
 	attributes.push_back (fontTexture);
 
@@ -174,8 +174,8 @@ Buffer<unsigned int> TextGUIRenderer::CharIndexData (std::size_t textSize)
 	Buffer<unsigned int> iBuf;
 
 	for (std::size_t i=0;i<textSize;i++) {
-		std::size_t upLeft = i * 4, upRight = i * 4 + 1,
-			downLeft = i * 4 + 2, downRight = i * 4 + 3;
+		unsigned int upLeft = (unsigned int) i * 4, upRight = (unsigned int) i * 4 + 1,
+			downLeft = (unsigned int) i * 4 + 2, downRight = (unsigned int) i * 4 + 3;
 		iBuf.Add (upLeft); iBuf.Add (downLeft); iBuf.Add (upRight);
 		iBuf.Add (upRight); iBuf.Add (downLeft); iBuf.Add (downRight);
 	}

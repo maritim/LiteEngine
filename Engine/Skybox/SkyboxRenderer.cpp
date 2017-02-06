@@ -74,7 +74,7 @@ void SkyboxRenderer::ManageCustomAttributes ()
 	uniformTintColor.name = "tintColor";
 	uniformBrightness.name = "brightness";
 
-	uniformCubeMap.value.x = _cubeMap->GetGPUIndex ();
+	uniformCubeMap.value.x = (float) _cubeMap->GetGPUIndex ();
 	uniformTintColor.value = _tintColor->ToVector3 ();
 	uniformBrightness.value.x = *_brightness;
 

@@ -29,9 +29,9 @@ bool Intersection::CheckFrustumVsAABB (FrustumVolume* frustum, AABBVolume* aabb)
 		const glm::vec4& plane = frustumData->plane [i];
 
 		// p-vertex selection
-		const int px = std::signbit (plane.x) ? aabbData->minVertex.x : aabbData->maxVertex.x;
-		const int py = std::signbit (plane.y) ? aabbData->minVertex.y : aabbData->maxVertex.y;
-		const int pz = std::signbit (plane.z) ? aabbData->minVertex.z : aabbData->maxVertex.z;
+		const int px = std::signbit (plane.x) ? (int) aabbData->minVertex.x : (int) aabbData->maxVertex.x;
+		const int py = std::signbit (plane.y) ? (int) aabbData->minVertex.y : (int) aabbData->maxVertex.y;
+		const int pz = std::signbit (plane.z) ? (int) aabbData->minVertex.z : (int) aabbData->maxVertex.z;
 
 		// dot product
 		// project p-vertex on plane normal

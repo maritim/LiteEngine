@@ -16,7 +16,7 @@ GBuffer::~GBuffer ()
 
 }
 
-bool GBuffer::Init(unsigned int bufferWidth, unsigned int bufferHeight)
+bool GBuffer::Init(std::size_t bufferWidth, std::size_t bufferHeight)
 {
 	// Create the FBO
 	GL::GenFramebuffers(1, &m_fbo);

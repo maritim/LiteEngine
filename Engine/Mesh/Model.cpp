@@ -247,7 +247,7 @@ void Model::GenerateMissingNormals()
 					_normals.push_back (normal);
 
 					for (std::size_t k=0;k<poly->VertexCount ();k++) {
-						poly->AddNormal (_normals.size () - 1);
+						poly->AddNormal ((int) _normals.size () - 1);
 					}
 				}
 			}
@@ -278,7 +278,7 @@ void Model::GenerateSmoothNormals ()
 					_smoothNormals [vertex] += *(_normals [normal]);
 					_smoothNormalsCount [vertex] ++;
 
-					poly->SetNormal (vertex, l);
+					poly->SetNormal ((int) vertex, l);
 				}
 			}
 		}

@@ -224,7 +224,7 @@ void MaterialLibraryLoader::ProcessDefaultAttributes(std::ifstream &file, Materi
 			Console::LogWarning ("The shininess of material is " + 
 				std::to_string (currentMaterial->shininess) + 
 				". Clamped to minimum value (0.100000).");
-			currentMaterial->shininess = 0.1;
+			currentMaterial->shininess = 0.1f;
 		}
 	}
 	else if (fileType == "d" || fileType == "Tr")

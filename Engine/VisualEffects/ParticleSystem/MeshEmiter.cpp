@@ -40,7 +40,7 @@ MeshEmiter::~MeshEmiter ()
 
 glm::vec3 MeshEmiter::GetParticlePosition ()
 {
-	std::size_t pos = Random::Instance ().RangeI (0, _meshSamples.size () - 1);
+	std::size_t pos = Random::Instance ().RangeI (0, (int) _meshSamples.size () - 1);
 	float t = Random::Instance ().RangeF (0, 1);
 
 	MeshSample sample = _meshSamples [pos];

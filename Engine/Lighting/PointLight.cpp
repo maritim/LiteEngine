@@ -11,9 +11,9 @@
 #include "Core/Math/glm/vec3.hpp"
 
 PointLight::PointLight () :
-	_constantAttenuation (1.0),
-	_linearAttenuation (0.1),
-	_quadraticAttenuation (0.01)
+	_constantAttenuation (1.0f),
+	_linearAttenuation (0.1f),
+	_quadraticAttenuation (0.01f)
 {
 	delete _lightRenderer;
 	_lightRenderer = new PointLightRenderer (this);

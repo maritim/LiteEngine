@@ -2,6 +2,7 @@
 #define GBUFFER_H
 
 #include <GL/glew.h>
+#include <cstddef>
 
 class GBuffer
 {
@@ -24,7 +25,7 @@ public:
     GBuffer();
     ~GBuffer();
 
-    bool Init(unsigned int screenWidth, unsigned int screenHeight);
+    bool Init(std::size_t screenWidth, std::size_t screenHeight);
     bool Clear ();
 
     void StartFrame();

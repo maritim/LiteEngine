@@ -34,7 +34,7 @@ ProfilerLogger::~ProfilerLogger ()
 
 	std::chrono::time_point<std::chrono::high_resolution_clock> endMoment = std::chrono::high_resolution_clock::now ();
 
-	std::chrono::duration<double, std::milli> duration = endMoment - _startMoment;
+	std::chrono::duration<float, std::milli> duration = endMoment - _startMoment;
 
 	ProfilerLoggerContainer container;
 	container.Name = _name;

@@ -190,7 +190,7 @@ void VoxelVolume::UpdateVoxelizationPipelineAttributes ()
 
 	minPosition.value = _minVertex;
 	maxPosition.value = _maxVertex;
-	volumeSize.value = glm::vec3 (_volumeSize);
+	volumeSize.value = glm::vec3 ((float) _volumeSize);
 
 	attributes.push_back(minPosition);
 	attributes.push_back(maxPosition);
@@ -218,10 +218,10 @@ void VoxelVolume::UpdateVoxelRayTracePipelineAttributes()
 	maxVertex.name = "maxVertex";
 	volumeSize.name = "volumeSize";
 
-	volumeTexture.value.x = _volumeTexture;
+	volumeTexture.value.x = (float) _volumeTexture;
 	minVertex.value = _minVertex;
 	maxVertex.value = _maxVertex;
-	volumeSize.value = glm::vec3 (_volumeSize);
+	volumeSize.value = glm::vec3 ((float) _volumeSize);
 
 	attributes.push_back(volumeTexture);
 	attributes.push_back(minVertex);

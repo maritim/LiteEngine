@@ -395,7 +395,7 @@ void BitmapFontLoader::ProcessPageTexture (const std::string& data, BitmapFontPa
 
 void BitmapFontLoader::ProcessCharId (const std::string& data, BitmapFontChar* ch)
 {
-	ch->SetId (std::stoul (data));
+	ch->SetId ((unsigned char) std::stoul (data));
 }
 
 void BitmapFontLoader::ProcessCharPositionX (const std::string& data, BitmapFontChar* ch)
@@ -458,7 +458,7 @@ void BitmapFontLoader::ProcessCharPage (const std::string& data, BitmapFontChar*
 
 void BitmapFontLoader::ProcessCharChannel (const std::string& data, BitmapFontChar* ch)
 {
-	ch->SetChannel (std::stoul (data));
+	ch->SetChannel ((char) std::stoul (data));
 }
 
 std::pair<std::string, std::string> BitmapFontLoader::ProcessAttribute (

@@ -14,7 +14,7 @@ std::string FileSystem::GetCurrentDirectory()
 std::string FileSystem::GetDirectory(const std::string& filename)
 {
 	std::string directory = "";
-	int directoryEndIndex = filename.size ();
+	std::size_t directoryEndIndex = filename.size ();
 
 	while (directoryEndIndex >= 0 && filename[directoryEndIndex] != '/') {
 		--directoryEndIndex;

@@ -11,9 +11,9 @@ Camera::Camera(void) :
 	_position (),
 	_rotation (),
 	_fieldOfViewAngle (45),
-	_aspect (0.75),
-	_zNear (0.3),
-	_zFar (10000.0)
+	_aspect (0.75f),
+	_zNear (0.3f),
+	_zFar (10000.0f)
 {
 }
 

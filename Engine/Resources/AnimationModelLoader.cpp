@@ -114,8 +114,8 @@ void AnimationModelLoader::ProcessAnimation (AnimationsController* animControlle
 	AnimationContainer* animContainer = new AnimationContainer ();
 
 	animContainer->SetName (assimpAnimation->mName.data);
-	animContainer->SetDuration (assimpAnimation->mDuration);
-	animContainer->SetTicksPerSecond (assimpAnimation->mTicksPerSecond);
+	animContainer->SetDuration ((float) assimpAnimation->mDuration);
+	animContainer->SetTicksPerSecond ((float) assimpAnimation->mTicksPerSecond);
 
 	for (std::size_t i=0;i<assimpAnimation->mNumChannels;i++) {
 		aiNodeAnim* assimpAnimNode = assimpAnimation->mChannels [i];
@@ -135,7 +135,7 @@ void AnimationModelLoader::ProcessAnimationNode (AnimationContainer* animContain
 	for (std::size_t i=0;i<assimpAnimNode->mNumRotationKeys;i++) {
 		QuatKey rotationKey;
 		rotationKey.value = Conversions::AssimpQuaternionToGLMQuat (assimpAnimNode->mRotationKeys [i].mValue);
-		rotationKey.time = assimpAnimNode->mRotationKeys [i].mTime;
+		rotationKey.time = (float) assimpAnimNode->mRotationKeys [i].mTime;
 
 		animNode->AddRotationKey (rotationKey);
 	}
@@ -143,7 +143,7 @@ void AnimationModelLoader::ProcessAnimationNode (AnimationContainer* animContain
 	for (std::size_t i=0;i<assimpAnimNode->mNumScalingKeys;i++) {
 		VectorKey scalingKey;
 		scalingKey.value = Conversions::AssimpVectorToGLMVec (assimpAnimNode->mScalingKeys [i].mValue);
-		scalingKey.time = assimpAnimNode->mScalingKeys [i].mTime;
+		scalingKey.time = (float) assimpAnimNode->mScalingKeys [i].mTime;
 
 		animNode->AddScalingKey (scalingKey);
 	}
@@ -151,7 +151,7 @@ void AnimationModelLoader::ProcessAnimationNode (AnimationContainer* animContain
 	for (std::size_t i=0;i<assimpAnimNode->mNumPositionKeys;i++) {
 		VectorKey positionKey;
 		positionKey.value = Conversions::AssimpVectorToGLMVec (assimpAnimNode->mPositionKeys [i].mValue);
-		positionKey.time = assimpAnimNode->mPositionKeys [i].mTime;
+		positionKey.time = (float) assimpAnimNode->mPositionKeys [i].mTime;
 
 		animNode->AddPositionKey (positionKey);
 	}
@@ -183,7 +183,7 @@ void AnimationModelLoader::ProcessBones (AnimationModel* model, const aiMesh* as
 			std::size_t vertexID = model->VertexCount () + assimpMesh->mBones [i]->mWeights [j].mVertexId;
 			float weight = assimpMesh->mBones [i]->mWeights [j].mWeight;
 
-			model->GetVertexBoneInfo (vertexID)->AddBone (boneID, weight);
+			model->GetVertexBoneInfo (vertexID)->AddBone ((int) boneID, weight);
 		}
 	}
 }

@@ -103,10 +103,10 @@ void BillboardParticleRenderer::ManageAtlasTexcoord (Material* mat, Buffer<float
 
 	TextureAtlas* texAtlas = dynamic_cast <TextureAtlas*> (tex);
 
-	float lifeFactor = 1.0 * (*_timeAlive) / (*_lifetime);
+	float lifeFactor = 1.0f * (*_timeAlive) / (*_lifetime);
 
 	std::size_t areasCount = texAtlas->GetAreasCount ();
-	std::size_t areaIndex = lifeFactor * areasCount;
+	std::size_t areaIndex = (std::size_t) (lifeFactor * (float) areasCount);
 	std::size_t nextAreaIndex = areaIndex + (areaIndex + 1 < areasCount);
 	float texBlending = lifeFactor * areasCount - areaIndex;
 

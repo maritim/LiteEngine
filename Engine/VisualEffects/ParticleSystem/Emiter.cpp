@@ -21,9 +21,9 @@ Emiter::Emiter () :
 	_scaleCurve (new AnimationCurve (EaseCurve::EaseType::ONE)),
 	_tweenCurve (new AnimationCurve ()),
 	_lifetime (1000, 2000),
-	_speed (1.0, 1.0),
-	_scale (1.0, 1.0),
-	_emissionShape (10.0, 1.0)
+	_speed (1.0f, 1.0f),
+	_scale (1.0f, 1.0f),
+	_emissionShape (10.0f, 1.0f)
 {
 
 }

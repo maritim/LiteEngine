@@ -281,9 +281,9 @@ void RenderManager::ForwardPass (Scene* scene)
 
 void RenderManager::UpdateGBuffer ()
 {
-	glm::vec3 resizeEvent = Input::GetResizeEvent ();
+	glm::ivec2 resizeEvent = Input::GetResizeEvent ();
 
-	if (resizeEvent == glm::vec3 (0.0f)) {
+	if (resizeEvent == glm::ivec2 (0)) {
 		return ;
 	}
 

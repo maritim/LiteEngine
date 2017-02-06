@@ -78,9 +78,9 @@ void GenericObjectModelLoader::ProcessVertices (Model* model, aiMesh* assimpMesh
 	{
 		glm::vec3* vertex = new glm::vec3 ();
 
-		vertex->x = assimpMesh->mVertices [i].x;
-		vertex->y = assimpMesh->mVertices [i].y;
-		vertex->z = assimpMesh->mVertices [i].z;
+		vertex->x = (float) assimpMesh->mVertices [i].x;
+		vertex->y = (float) assimpMesh->mVertices [i].y;
+		vertex->z = (float) assimpMesh->mVertices [i].z;
 
 		model->AddVertex (vertex);
 	}
@@ -92,9 +92,9 @@ void GenericObjectModelLoader::ProcessNormals (Model* model, aiMesh* assimpMesh)
 	{
 		glm::vec3* normal = new glm::vec3 ();
 
-		normal->x = assimpMesh->mNormals [i].x;
-		normal->y = assimpMesh->mNormals [i].y;
-		normal->z = assimpMesh->mNormals [i].z;
+		normal->x = (float) assimpMesh->mNormals [i].x;
+		normal->y = (float) assimpMesh->mNormals [i].y;
+		normal->z = (float) assimpMesh->mNormals [i].z;
 
 		model->AddNormal (normal);
 	}
@@ -110,8 +110,8 @@ void GenericObjectModelLoader::ProcessTexcoords (Model* model, aiMesh* assimpMes
 	{
 		glm::vec3* texcoord = new glm::vec3 ();
 
-		texcoord->x = assimpMesh->mTextureCoords [0][i].x;
-		texcoord->y = assimpMesh->mTextureCoords [0][i].y;
+		texcoord->x = (float) assimpMesh->mTextureCoords [0][i].x;
+		texcoord->y = (float) assimpMesh->mTextureCoords [0][i].y;
 
 		model->AddTexcoord (texcoord);
 	}	
@@ -127,11 +127,11 @@ void GenericObjectModelLoader::ProcessFaces (Model* model, ObjectModel* objectMo
 		Polygon* polygon = new Polygon ();
 
 		for (std::size_t j=0;j<assimpFace.mNumIndices;j++) {
-			polygon->AddVertex (model->VertexCount () + assimpFace.mIndices [j]);
-			polygon->AddNormal (model->VertexCount () + assimpFace.mIndices [j]);
+			polygon->AddVertex ((int) model->VertexCount () + assimpFace.mIndices [j]);
+			polygon->AddNormal ((int) model->VertexCount () + assimpFace.mIndices [j]);
 
 			if (assimpMesh->mTextureCoords[0]) {
-				polygon->AddTexcoord (model->VertexCount () + assimpFace.mIndices [j]);
+				polygon->AddTexcoord ((int) model->VertexCount () + assimpFace.mIndices [j]);
 			}
 		}
 
@@ -155,7 +155,7 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 
 	aiMaterial* assimpMaterial = assimpScene->mMaterials [assimpMesh->mMaterialIndex];
 
-	for (std::size_t i=0;i<assimpMaterial->GetTextureCount (aiTextureType_DIFFUSE); i++) {
+	for (unsigned int i=0;i<assimpMaterial->GetTextureCount (aiTextureType_DIFFUSE); i++) {
 		aiString textureNameS;
 		assimpMaterial->GetTexture (aiTextureType_DIFFUSE, i, &textureNameS);
 		std::string textureName = textureNameS.C_Str ();

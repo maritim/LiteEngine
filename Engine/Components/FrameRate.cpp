@@ -30,12 +30,12 @@ void FrameRate::Update()
 	static float lastFrameRate = -1;
 
 	float dt = Time::GetDeltaTime();
-	float roughFrameRate = 1.0 / (dt == 0 ? 1 : dt);
+	float roughFrameRate = 1.0f / (dt == 0 ? 1 : dt);
 
 	if(lastFrameRate == -1) {
 		lastFrameRate = roughFrameRate;
 	} else {
-		lastFrameRate = 0.9 * lastFrameRate + 0.1 * roughFrameRate;
+		lastFrameRate = 0.9f * lastFrameRate + 0.1f * roughFrameRate;
 	}
 
 	if (_timeElapsed < _computeRange) {
