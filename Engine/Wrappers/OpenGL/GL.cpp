@@ -119,15 +119,6 @@ GLenum GL::CheckFramebufferStatus(GLenum target)
 	return check;
 }
 
-GLenum GL::CheckNamedFramebufferStatus(GLuint framebuffer, GLenum target)
-{
-	GLenum check = glCheckNamedFramebufferStatus (framebuffer, target);
-
-	ErrorCheck ("glCheckNamedFramebufferStatus");
-
-	return check;
-}
-
 /*
  * Behaviour
 */
