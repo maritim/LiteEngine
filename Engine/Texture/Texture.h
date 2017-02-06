@@ -5,7 +5,7 @@
 
 #include "TextureMode.h"
 
-#define MAX_MIPMAP_LEVEL 16
+#define MAX_TEXTURE_MIPMAP_LEVEL 16
 
 // TODO: Extend this
 class Texture : public Object
@@ -14,11 +14,13 @@ protected:
 	unsigned int _gpuIndex;
 	std::string _name;
 
-	unsigned char *_pixels[MAX_MIPMAP_LEVEL];
+	unsigned char *_pixels[MAX_TEXTURE_MIPMAP_LEVEL];
 
 	Size _size;
 	bool _generateMipmaps;
 	std::size_t _mipmapLevels;
+	int _internalFormat;
+	TEXTURE_PIXEL_FORMAT _pixelFormat;
 	TEXTURE_WRAP_MODE _wrapMode;
 	TEXTURE_MIPMAP_FILTER _mipmapFilter;
 	TEXTURE_COMPRESSION_TYPE _compressionType;
@@ -31,10 +33,12 @@ public:
 
 	unsigned int GetGPUIndex() const;
 	std::string GetName() const;
-
 	Size GetSize () const;
 	bool GenerateMipmaps () const;
 	bool HasMipmaps () const;
+	std::size_t GetMipMapLevels () const;
+	int GetInternalFormat () const;
+	TEXTURE_PIXEL_FORMAT GetPixelFormat () const;
 	TEXTURE_WRAP_MODE GetWrapMode () const;
 	TEXTURE_MIPMAP_FILTER GetMipmapFilter () const;
 	TEXTURE_COMPRESSION_TYPE GetCompressionType () const;
@@ -43,9 +47,10 @@ public:
 
 	void SetGPUIndex(unsigned int gpuIndex);
 	void SetName(const std::string& name);
-
 	void SetSize (Size size);
 	void SetMipmapsGeneration (bool generate);
+	void SetInternalFormat (int internalFormat);
+	void SetPixelFormat (TEXTURE_PIXEL_FORMAT pixelFormat);
 	void SetWrapMode (TEXTURE_WRAP_MODE wrapMode);
 	void SetMipmapFilter (TEXTURE_MIPMAP_FILTER mipmapFilter);
 	void SetCompressionType (TEXTURE_COMPRESSION_TYPE compressionType);

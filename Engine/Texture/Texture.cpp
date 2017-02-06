@@ -11,12 +11,14 @@ Texture::Texture(const std::string& name) :
 	_size (0, 0),
 	_generateMipmaps (true),
 	_mipmapLevels (1),
+	_internalFormat (0),
+	_pixelFormat (TEXTURE_PIXEL_FORMAT::FORMAT_RGBA8),
 	_wrapMode (TEXTURE_WRAP_MODE::WRAP_REPEAT),
 	_mipmapFilter (TEXTURE_MIPMAP_FILTER::MIPMAP_BILINEAR),
-	_compressionType (TEXTURE_COMPRESSION_TYPE::DDS_COMPRESS_NONE),
+	_compressionType (TEXTURE_COMPRESSION_TYPE::COMPRESS_NONE),
 	_isDirty (false)
 {
-	for (std::size_t i=0;i<MAX_MIPMAP_LEVEL; i++) {
+	for (std::size_t i=0;i<MAX_TEXTURE_MIPMAP_LEVEL; i++) {
 		_pixels [i] = nullptr;
 	}
 }
@@ -51,6 +53,21 @@ bool Texture::GenerateMipmaps () const
 bool Texture::HasMipmaps () const
 {
 	return _mipmapLevels > 1;
+}
+
+std::size_t Texture::GetMipMapLevels () const
+{
+	return _mipmapLevels;
+}
+
+int Texture::GetInternalFormat () const
+{
+	return _internalFormat;
+}
+
+TEXTURE_PIXEL_FORMAT Texture::GetPixelFormat () const
+{
+	return _pixelFormat;
 }
 
 TEXTURE_WRAP_MODE Texture::GetWrapMode () const
@@ -106,6 +123,16 @@ void Texture::SetMipmapsGeneration (bool generate)
 	_isDirty = true;
 }
 
+void Texture::SetInternalFormat (int internalFormat)
+{
+	_internalFormat = internalFormat;
+}
+
+void Texture::SetPixelFormat (TEXTURE_PIXEL_FORMAT pixelFormat)
+{
+	_pixelFormat = pixelFormat;
+}
+
 void Texture::SetWrapMode (TEXTURE_WRAP_MODE wrapMode)
 {
 	_wrapMode = wrapMode;
@@ -131,7 +158,7 @@ void Texture::SetPixels (const unsigned char* pixels, std::size_t length)
 
 void Texture::SetMipmapLevel (const unsigned char* pixels, std::size_t mipmapLevel, std::size_t length)
 {
-	if (mipmapLevel >= MAX_MIPMAP_LEVEL) {
+	if (mipmapLevel >= MAX_TEXTURE_MIPMAP_LEVEL) {
 		return ;
 	}
 
