@@ -24,7 +24,7 @@ function InstallDependenciesAptGet
 {
 	echo "Attempting to install dependencies using apt-get"
 
-	dep="build-essential libsdl2-image-dev libsdl2-dev libglew-dev assimp-utils"
+	dep="build-essential libsdl2-image-dev libsdl2-dev libglew-dev libassimp-dev"
 
 	for pkg in $dep; do
 		if dpkg -l "$pkg" &> /dev/null; then
