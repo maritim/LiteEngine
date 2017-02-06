@@ -21,61 +21,39 @@
 
 #include "Core/Singleton/Singleton.h"
 
-#include <vector>
-
 #include "SceneGraph/Scene.h"
 #include "Systems/Camera/Camera.h"
 
-#include "Lighting/VolumetricLight.h"
+#include "RenderModule.h"
 
-#include "Renderer.h"
-#include "GBuffer.h"
-#include "VoxelVolume.h"
+#include <vector>
+
+enum RenderMode {
+	RENDER_MODE_DEFERRED = 0,
+	RENDER_MODE_VOXELIZATION
+};
 
 class RenderManager : public Singleton<RenderManager>
 {
 	friend class Singleton<RenderManager>;
 
 private:
-	GBuffer* _frameBuffer;
-	VoxelVolume* _voxelVolume;
+	RenderModule* _currentRenderModule;
+	RenderMode _currentRenderMode;
+	std::vector<RenderModule*> _renderModules;
 
 public:
+	void SetRenderMode (RenderMode);
+	RenderMode GetRenderMode () const;
+
 	void RenderScene (Scene* scene, Camera* camera);
+
+	void Clear ();
 private:
 	RenderManager ();
 	RenderManager (const RenderManager& other);
 	RenderManager& operator=(const RenderManager& other);
 	~RenderManager ();
-
-	void UpdateCamera (Camera* camera);
-	void UpdateGBuffer ();
-
-	void VoxelizePass (Scene*);
-	void VoxelRayTracePass ();
-	void DeferredPass (Scene*, Camera* camera);
-	void ForwardPass (Scene*);
-
-	void PrepareDrawing ();
-	void GeometryPass (Scene* scene, Camera* camera);
-	void LightPass ();
-	void SkyboxPass ();
-	void EndDrawing ();
-
-	void DirectionalLightPass ();
-	void PointLightPass ();
-
-	void PointLightStencilPass (VolumetricLight* light);
-	void PointLightDrawPass (VolumetricLight* light);
-
-	void StartVoxelization ();
-	void GeometryVoxelizationPass (Scene* scene);
-	void EndVoxelization ();
-
-	void StartRayTrace ();
-	void VoxelRenderingRayTracePass ();
-
-	void UpdateVoxelVolumeBoundingBox (Scene*);
 };
 
 #endif
