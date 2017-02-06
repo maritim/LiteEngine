@@ -149,7 +149,9 @@ glm::ivec2 Input::GetMousePosition ()
 
 	SDL_GetMouseState(&x, &y);
 
-	glm::ivec2 position = glm::ivec2 (0, 0);
+	glm::ivec2 position;
+	position.x = x;
+	position.y = y;
 
 	return position;
 }
