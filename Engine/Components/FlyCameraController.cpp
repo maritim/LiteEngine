@@ -12,14 +12,18 @@
 
 #include "Utils/Extensions/MathExtend.h"
 
+#include "Renderer/RenderManager.h"
+
 void FlyCameraController::Start ()
 {
 	_pitch = _yaw = 0;
+
+	// Camera::Main ()->SetPosition (glm::vec3 (1200, 1300, 300));		
 }
 
 void FlyCameraController::Update ()
 {
-	float cameraVelocity = 50.0f;
+	float cameraVelocity = 10.0f;
 	glm::vec3 velocity = glm::vec3 (0.0f);
 
 	glm::vec3 Forward = Camera::Main ()->GetForward ();
@@ -92,5 +96,14 @@ void FlyCameraController::Update ()
 		Camera::Main ()->SetRotation (glm::quat ());
 		Camera::Main ()->Rotate (_pitch, glm::vec3 (0.0f, 1.0f, 0.0f));
 		Camera::Main ()->Rotate (_yaw, glm::vec3(1.0f, 0.0f, 0.0f));
+	}
+
+	if (Input::GetKeyDown (InputKey::Q)) {
+		if (RenderManager::Instance ()->GetRenderMode () == RenderMode::RENDER_MODE_DEFERRED) {
+			RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_VOXELIZATION);
+		}
+		else if (RenderManager::Instance ()->GetRenderMode () == RenderMode::RENDER_MODE_VOXELIZATION) {
+			RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_DEFERRED);
+		}
 	}
 }

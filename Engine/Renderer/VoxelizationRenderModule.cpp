@@ -13,7 +13,7 @@
 
 #include "Debug/Profiler/Profiler.h"
 
-#define VOLUME_DIMENSTIONS 256
+#define VOLUME_DIMENSTIONS 512
 
 VoxelizationRenderModule::VoxelizationRenderModule () :
 	_voxelVolume (new VoxelVolume ())

@@ -38,6 +38,22 @@ vec3 RayBoundingBoxTest(vec3 rayOrigin, vec3 rayDir, vec3 vertexMin, vec3 vertex
 	return result;
 }
 
+float GetInterpolatedComp (float comp, float minValue, float maxValue, float domain)
+{
+	return ((comp - minValue) / (maxValue - minValue)) * domain;
+}
+
+vec3 GetRayOriginInVolume (vec3 worldRayOrigin, ivec3 volumeSize)
+{
+	vec3 rayOriginInVolume;
+
+	rayOriginInVolume.x = GetInterpolatedComp (worldRayOrigin.x, minVertex.x, maxVertex.x, volumeSize.x);
+	rayOriginInVolume.y = GetInterpolatedComp (worldRayOrigin.y, minVertex.y, maxVertex.y, volumeSize.y);
+	rayOriginInVolume.z = GetInterpolatedComp (worldRayOrigin.z, minVertex.z, maxVertex.z, volumeSize.z);
+
+	return rayOriginInVolume;
+}
+
 void main ()
 {
     /*
@@ -55,6 +71,8 @@ void main ()
  	vec3 rayDir = worldRayCoords2.xyz - worldRayCoords1.xyz;
  	rayDir = normalize(rayDir);
 
+ 	rayOrigin = GetRayOriginInVolume (rayOrigin, volumeSize);
+
     /*
 	 * Check for ray components being parallel to axes (i.e. values of 0).
 	*/
@@ -68,7 +86,7 @@ void main ()
 	 * Perform AABB test with volume.
 	*/
 
- 	vec3 result = RayBoundingBoxTest (rayOrigin, rayDir, minVertex, maxVertex);
+ 	vec3 result = RayBoundingBoxTest (rayOrigin, rayDir, vec3 (0.0f), vec3 (volumeSize));
 
 	if (result.x == 0.0) {
 		discard;
@@ -98,6 +116,7 @@ void main ()
 		// Sample 3D texture at current position.
 		vec3 texCoords = voxelPos / volumeSize;
 		vec4 color = texture(volumeTexture, texCoords);
+		
 
 		// Exit loop if a single sample has an alpha value greater than 0.
 		if (color.a > 0.0) {

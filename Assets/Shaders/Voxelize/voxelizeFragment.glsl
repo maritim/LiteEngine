@@ -34,7 +34,7 @@ in vec4 geom_BBox;
 
 void ImageAtomicAverageRGBA8(layout(r32ui) coherent volatile uimage3D voxels, ivec3 coord, vec3 nextVec3)
 {
-    uint nextUint = packUnorm4x8(vec4(nextVec3,1.0f/255.0f));
+    uint nextUint = packUnorm4x8 (vec4 (nextVec3, 1.0f / 255.0f));
     uint prevUint = 0;
     uint currUint;
  
@@ -50,13 +50,13 @@ void ImageAtomicAverageRGBA8(layout(r32ui) coherent volatile uimage3D voxels, iv
         currVec4 = unpackUnorm4x8(currUint);    //unpack stored rgb average and count
  
         average =      currVec4.rgb;        //extract rgb average
-        count   = uint(currVec4.a*255.0f);  //extract count
+        count   = uint(currVec4.a * 255.0f);  //extract count
  
         //Compute the running average
-        average = (average*count + nextVec3) / (count+1);
+        average = (average*count + nextVec3) / (count + 1);
  
         //Pack new average and incremented count back into a uint
-        nextUint = packUnorm4x8(vec4(average, (count+1)/255.0f));
+        nextUint = packUnorm4x8(vec4(average, (count + 1) / 255.0f));
     }
 }
 

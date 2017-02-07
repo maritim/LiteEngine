@@ -71,6 +71,8 @@ void VoxelVolume::StartVoxelizationPass()
 	 * Render to window but mask out all color.
 	*/
 
+	GL::Disable(GL_CULL_FACE);
+
 	GL::ColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	GL::DepthMask(GL_FALSE);
 	GL::Viewport(0, 0, _volumeSize, _volumeSize);
@@ -93,6 +95,8 @@ void VoxelVolume::EndVoxelizationPass ()
 	GL::Viewport(0, 0, Window::GetWidth(), Window::GetHeight());
 	GL::ColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	GL::DepthMask(GL_TRUE);
+
+	GL::Enable(GL_CULL_FACE);
 
 	/*
 	 * Unlock voxelization shader
@@ -129,11 +133,11 @@ void VoxelVolume::UpdateBoundingBox(const glm::vec3& minVertex, const glm::vec3&
 	float difX, difY, difZ;
 	difX = difY = difZ = 0;
 
-	if (sizeX > sizeY && sizeX > sizeZ) {
+	if (sizeX >= sizeY && sizeX >= sizeZ) {
 		difY = sizeX - sizeY;
 		difZ = sizeX - sizeZ;
 	}
-	else if (sizeY > sizeZ) {
+	else if (sizeY >= sizeZ) {
 		difX = sizeY - sizeX;
 		difZ = sizeZ - sizeX;
 	}

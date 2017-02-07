@@ -22,7 +22,7 @@ uniform ivec3 volumeSize;
 
 mat3 GetSwizzleMatrix ()
 {
-    vec3 worldSpaceV1 = vert_worldPosition[1].xyz - vert_worldPosition[0].xyz;
+	vec3 worldSpaceV1 = vert_worldPosition[1].xyz - vert_worldPosition[0].xyz;
 	vec3 worldSpaceV2 = vert_worldPosition[2].xyz - vert_worldPosition[0].xyz;
 	vec3 worldSpaceNormal = abs(cross(worldSpaceV1, worldSpaceV2));
 
@@ -30,12 +30,12 @@ mat3 GetSwizzleMatrix ()
 		return mat3(vec3(0.0, 0.0, 1.0),
 					vec3(0.0, 1.0, 0.0),
 					vec3(1.0, 0.0, 0.0));
-    }
+	}
 	else if (worldSpaceNormal.y >= worldSpaceNormal.z) {
 		return mat3(vec3(1.0, 0.0, 0.0),
 					vec3(0.0, 0.0, 1.0),
 					vec3(0.0, 1.0, 0.0));
-    }
+	}
 
 	return mat3(vec3(1.0, 0.0, 0.0),
 				vec3(0.0, 1.0, 0.0),
@@ -51,38 +51,38 @@ float GetPixelDiagonal ()
 
  void ExpandTriangle(inout vec4 screenPos[3], float pixelDiagonal)
  {
- 	vec2 edge[3];
- 	edge[0] = screenPos[1].xy - screenPos[0].xy;
- 	edge[1] = screenPos[2].xy - screenPos[1].xy;
- 	edge[2] = screenPos[0].xy - screenPos[2].xy;
+	vec2 edge[3];
+	edge[0] = screenPos[1].xy - screenPos[0].xy;
+	edge[1] = screenPos[2].xy - screenPos[1].xy;
+	edge[2] = screenPos[0].xy - screenPos[2].xy;
 
- 	vec2 edgeNormal[3];
- 	edgeNormal[0] = normalize(edge[0]);
- 	edgeNormal[1] = normalize(edge[1]);
- 	edgeNormal[2] = normalize(edge[2]);
- 	edgeNormal[0] = vec2(-edgeNormal[0].y, edgeNormal[0].x);
- 	edgeNormal[1] = vec2(-edgeNormal[1].y, edgeNormal[1].x);
- 	edgeNormal[2] = vec2(-edgeNormal[2].y, edgeNormal[2].x);
+	vec2 edgeNormal[3];
+	edgeNormal[0] = normalize(edge[0]);
+	edgeNormal[1] = normalize(edge[1]);
+	edgeNormal[2] = normalize(edge[2]);
+	edgeNormal[0] = vec2(-edgeNormal[0].y, edgeNormal[0].x);
+	edgeNormal[1] = vec2(-edgeNormal[1].y, edgeNormal[1].x);
+	edgeNormal[2] = vec2(-edgeNormal[2].y, edgeNormal[2].x);
 
-    // If triangle is back facing, flip it's edge normals so triangle does not shrink.
-    vec3 a = normalize(screenPos[1].xyz - screenPos[0].xyz);
- 	vec3 b = normalize(screenPos[2].xyz - screenPos[0].xyz);
- 	vec3 clipSpaceNormal = cross(a, b);
-     if (clipSpaceNormal.z < 0.0) {
-         edgeNormal[0] *= -1.0;
-         edgeNormal[1] *= -1.0;
-         edgeNormal[2] *= -1.0;
-     }
+	// If triangle is back facing, flip it's edge normals so triangle does not shrink.
+	vec3 a = normalize(screenPos[1].xyz - screenPos[0].xyz);
+	vec3 b = normalize(screenPos[2].xyz - screenPos[0].xyz);
+	vec3 clipSpaceNormal = cross(a, b);
+	if (clipSpaceNormal.z < 0.0) {
+		edgeNormal[0] *= -1.0;
+		edgeNormal[1] *= -1.0;
+		edgeNormal[2] *= -1.0;
+	}
 
- 	vec3 edgeDist;
- 	edgeDist.x = dot(edgeNormal[0], screenPos[0].xy);
- 	edgeDist.y = dot(edgeNormal[1], screenPos[1].xy);
- 	edgeDist.z = dot(edgeNormal[2], screenPos[2].xy);
+	vec3 edgeDist;
+	edgeDist.x = dot(edgeNormal[0], screenPos[0].xy);
+	edgeDist.y = dot(edgeNormal[1], screenPos[1].xy);
+	edgeDist.z = dot(edgeNormal[2], screenPos[2].xy);
 
- 	screenPos[0].xy = screenPos[0].xy - pixelDiagonal * (edge[2] / dot(edge[2], edgeNormal[0]) + edge[0] / dot(edge[0], edgeNormal[2]));
- 	screenPos[1].xy = screenPos[1].xy - pixelDiagonal * (edge[0] / dot(edge[0], edgeNormal[1]) + edge[1] / dot(edge[1], edgeNormal[0]));
- 	screenPos[2].xy = screenPos[2].xy - pixelDiagonal * (edge[1] / dot(edge[1], edgeNormal[2]) + edge[2] / dot(edge[2], edgeNormal[1]));
- }
+	screenPos[0].xy = screenPos[0].xy - pixelDiagonal * (edge[2] / dot(edge[2], edgeNormal[0]) + edge[0] / dot(edge[0], edgeNormal[2]));
+	screenPos[1].xy = screenPos[1].xy - pixelDiagonal * (edge[0] / dot(edge[0], edgeNormal[1]) + edge[1] / dot(edge[1], edgeNormal[0]));
+	screenPos[2].xy = screenPos[2].xy - pixelDiagonal * (edge[1] / dot(edge[1], edgeNormal[2]) + edge[2] / dot(edge[2], edgeNormal[1]));
+}
 
 float GetInterpolatedComp (float comp, float minValue, float maxValue)
 {
@@ -130,7 +130,7 @@ void main ()
     geom_BBox.xy -= vec2(pixelDiagonal);
     geom_BBox.zw += vec2(pixelDiagonal);
     
-	ExpandTriangle(screenPos, pixelDiagonal);
+	// ExpandTriangle(screenPos, pixelDiagonal);
 
 	/*
 	 * Emit every vertex of the triangle, one by one
