@@ -70,7 +70,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)3rdparty/include;$(RemoteDebuggerWorkingDirectory);$(IncludePath)</IncludePath>
-    <LibraryPath>G:\LiteEngine\3rdparty\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)3rdparty\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(SolutionDir)Engine;$(SolutionDir)3rdparty\include;$(IncludePath)</IncludePath>
@@ -197,14 +197,14 @@
     <ClCompile Include="Mesh\PolygonGroup.cpp" />
     <ClCompile Include="Mesh\VertexBoneInfo.cpp" />
     <ClCompile Include="Modules\SDLModule.cpp" />
+    <ClCompile Include="Renderer\DeferredRenderModule.cpp" />
     <ClCompile Include="Renderer\GBuffer.cpp" />
     <ClCompile Include="Renderer\Pipeline.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\RenderManager.cpp" />
+    <ClCompile Include="Renderer\VoxelizationRenderModule.cpp" />
     <ClCompile Include="Renderer\VoxelVolume.cpp" />
     <ClCompile Include="Renderer\RenderModule.cpp" />
-    <ClCompile Include="Renderer\DeferredRenderModule.cpp" />
-    <ClCompile Include="Renderer\VoxelizationRenderModule.cpp" />
     <ClCompile Include="Resources\AnimationModelLoader.cpp" />
     <ClCompile Include="Resources\BitmapFontLoader.cpp" />
     <ClCompile Include="Resources\CubeMapLoader.cpp" />
@@ -506,15 +506,15 @@
     <ClInclude Include="Modules\SDLModule.h" />
     <ClInclude Include="Renderer\Buffer.h" />
     <ClInclude Include="Renderer\BufferAttribute.h" />
+    <ClInclude Include="Renderer\DeferredRenderModule.h" />
     <ClInclude Include="Renderer\GBuffer.h" />
     <ClInclude Include="Renderer\Pipeline.h" />
     <ClInclude Include="Renderer\PipelineAttribute.h" />
     <ClInclude Include="Renderer\Renderer.h" />
     <ClInclude Include="Renderer\RenderManager.h" />
+    <ClInclude Include="Renderer\VoxelizationRenderModule.h" />
     <ClInclude Include="Renderer\VoxelVolume.h" />
-    <ClCompile Include="Renderer\RenderModule.h" />
-    <ClCompile Include="Renderer\DeferredRenderModule.h" />
-    <ClCompile Include="Renderer\VoxelizationRenderModule.h" />
+    <ClInclude Include="Renderer\RenderModule.h" />
     <ClInclude Include="Resources\AnimationModelLoader.h" />
     <ClInclude Include="Resources\BitmapFontLoader.h" />
     <ClInclude Include="Resources\CubeMapLoader.h" />
