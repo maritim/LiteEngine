@@ -7,8 +7,9 @@
 /*
  * TODO: Change this somewhere else
 */
-
+ 
 #include "Cameras/PerspectiveCamera.h"
+#include "Cameras/OrthographicCamera.h"
 
 Camera::Camera(void) :
 	_position (),
