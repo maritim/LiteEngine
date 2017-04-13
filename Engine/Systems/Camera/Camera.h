@@ -4,33 +4,28 @@
 #include "Core/Interfaces/Object.h"
 
 #include "Core/Math/glm/vec3.hpp"
+#include "Core/Math/glm/mat4x4.hpp"
 #include "Core/Math/glm/gtc/quaternion.hpp"
 
 #include "Core/Intersections/FrustumVolume.h"
 
 class Camera : public Object
 {
-public:
-	enum Type {PERSPECTIVE, ORTOGRAPHIC};
-
 private:
 	static Camera* _main;
 	static Camera* _active;
 
 protected:
-	Type _type;
-
 	glm::vec3 _position;
 	glm::quat _rotation;
 
-	float _fieldOfViewAngle;
 	float _aspect;
 	float _zNear;
 	float _zFar;
 
 public:
 	Camera(void);
-	~Camera ();
+	virtual ~Camera ();
 
 	static Camera* Main ();
 	// static Camera* Active ();
@@ -38,34 +33,32 @@ public:
 	// void Activate ();
 	// void SetMain ();
 
-	Type GetType () const;
+	virtual glm::vec3 GetPosition () const;
+	virtual glm::quat GetRotation () const;
 
-	glm::vec3 GetPosition () const;
-	glm::quat GetRotation () const;
-	float GetFieldOfView () const;
-	float GetAspect () const;
-	float GetZNear () const;
-	float GetZFar () const;
+	virtual float GetAspect () const;
+	virtual float GetZNear () const;
+	virtual float GetZFar () const;
 
-	void SetType (Type type);
+	virtual void SetPosition (const glm::vec3& position);
+	virtual void SetRotation (const glm::quat& rotation);
+	virtual void SetRotation (const glm::vec3& eulerAngles);
 
-	void SetPosition (const glm::vec3& position);
-	void SetRotation (const glm::quat& rotation);
-	void SetRotation (const glm::vec3& eulerAngles);
-	void SetFieldOfView (float FOV);
-	void SetAspect (float aspect);
-	void SetZNear (float zNear);
-	void SetZFar (float zFar);
+	virtual void SetZNear (float zNear);
+	virtual void SetZFar (float zFar);
+	virtual void SetAspect (float aspect);
 
-	glm::vec3 GetForward () const;
-	glm::vec3 GetUp () const;
-	glm::vec3 GetLeft () const;
+	virtual glm::vec3 GetForward () const;
+	virtual glm::vec3 GetUp () const;
+	virtual glm::vec3 GetLeft () const;
 
 	void Rotate (const glm::vec3&);
 	void Rotate (float, const glm::vec3&);
 	void Rotate (const glm::quat& rotation);
 
-	FrustumVolume* GetFrustumVolume () const;
+	virtual FrustumVolume* GetFrustumVolume () const = 0;
+
+	virtual glm::mat4 GetProjectionMatrix () const = 0;
 };
 
 #endif
