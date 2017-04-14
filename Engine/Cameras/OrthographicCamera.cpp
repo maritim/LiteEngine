@@ -21,9 +21,17 @@ void OrthographicCamera::SetOrthographicSize (float orthographicSize)
 	_orthographicSize = orthographicSize;
 }
 
+/*
+ * Frustum Volume is calculated using the MVP matrix
+ * Thanks to: 
+ * 
+ * 		http://ruh.li/CameraViewFrustum.html
+ *
+*/
+
 FrustumVolume* OrthographicCamera::GetFrustumVolume () const
 {
-	glm::mat4 projection = glm::perspective (90.0f, 1.0f, _zNear, _zFar);
+	glm::mat4 projection = GetProjectionMatrix ();
 
 	glm::mat4 view = glm::mat4_cast (GetRotation ());
 	view = glm::translate (view, GetPosition () * -1.0f);
