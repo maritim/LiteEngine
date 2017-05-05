@@ -7,7 +7,7 @@ class PointLightRenderer : public LightRenderer
 {
 public:
 	PointLightRenderer (Light* light);
-
+protected:
 	std::vector<PipelineAttribute> GetCustomAttributes ();
 };
 

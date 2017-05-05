@@ -16,6 +16,7 @@ class Light : public SceneObject
 protected:
 	Color _color;
 	Color _specularColor;
+	bool _castShadows;
 
 public:
 	Light ();
@@ -23,9 +24,11 @@ public:
 
 	Color GetColor () const;
 	Color GetSpecularColor () const;
+	bool IsShadowCasting () const;
 
 	void SetColor (const Color& color);
 	void SetSpecularColor (const Color& specularColor);
+	virtual void SetShadowCasting (bool castShadows);
 
 	virtual void Update () = 0;
 };

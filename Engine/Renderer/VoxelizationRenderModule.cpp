@@ -180,13 +180,8 @@ void VoxelizationRenderModule::VoxelRenderingRayTracePass()
 	
 void VoxelizationRenderModule::UpdateCamera (Camera* camera)
 {
-	// Create Perspective Projection
-	if (camera->GetType () == Camera::Type::PERSPECTIVE) {
-		Pipeline::CreatePerspective (camera->GetFieldOfView (),
-			camera->GetAspect (), camera->GetZNear (), camera->GetZFar ());
-	} else {
-		//TODO: Add Orthographic 
-	}
+	// Create Projection
+	Pipeline::CreateProjection (camera);
 
 	// Create View Matrix
 	Pipeline::SendCamera (camera);	

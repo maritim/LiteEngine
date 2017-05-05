@@ -26,11 +26,11 @@ Shader* Pipeline::_lockedShader(nullptr);
 
 void Pipeline::SetShader (Shader* shader)
 {
-	_textureCount = 0;
-
 	if (_lockedShader != nullptr) {
 		return;
 	}
+
+	_textureCount = 0;
 
 	GL::UseProgram (shader->GetProgram ());
 }
@@ -50,9 +50,14 @@ void Pipeline::UnlockShader ()
 	_lockedShader = nullptr;
 }
 
-void Pipeline::CreatePerspective (float FOV, float aspect, float zNear, float zFar)
+void Pipeline::CreateProjection (Camera* camera)
 {
-	_projectionMatrix = glm::perspective (FOV, aspect, zNear, zFar);
+	CreateProjection (camera->GetProjectionMatrix ());
+}
+
+void Pipeline::CreateProjection (glm::mat4 projectionMatrix)
+{
+	_projectionMatrix = projectionMatrix;
 }
 
 void Pipeline::SendCamera (Camera* camera)

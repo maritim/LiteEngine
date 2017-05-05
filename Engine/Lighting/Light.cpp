@@ -2,7 +2,8 @@
 
 Light::Light () :
 	_color (Color::White),
-	_specularColor (Color::White)
+	_specularColor (Color::White),
+	_castShadows (false)
 {
 	_rigidbody->SetGravityUse (0);
 }
@@ -22,6 +23,11 @@ Color Light::GetSpecularColor () const
 	return _specularColor;
 }
 
+bool Light::IsShadowCasting () const
+{
+	return _castShadows;
+}
+
 void Light::SetColor (const Color& color)
 {
 	_color = color;
@@ -30,4 +36,9 @@ void Light::SetColor (const Color& color)
 void Light::SetSpecularColor (const Color& specularColor)
 {
 	_specularColor = specularColor;
+}
+
+void Light::SetShadowCasting (bool castShadows)
+{
+	_castShadows = castShadows;
 }

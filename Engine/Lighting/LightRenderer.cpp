@@ -16,7 +16,12 @@ LightRenderer::LightRenderer (Light* light) :
 		"Assets/Shaders/deferredDirVolLightFragment.glsl");
 }
 
-void LightRenderer::Draw ()
+LightRenderer::~LightRenderer ()
+{
+	
+}
+
+void LightRenderer::Draw (Scene* scene, Camera* camera)
 {
 	Pipeline::SetObjectTransform (_transform);
 
@@ -31,7 +36,7 @@ void LightRenderer::Draw ()
 		GL::BindVertexArray(_drawableObjects [i].VAO_INDEX);
 		//comanda desenare
 		GL::DrawElements (GL_TRIANGLES, _drawableObjects [i].INDEX_COUNT, GL_UNSIGNED_INT, 0);
-	}
+	}		
 }
 
 std::vector<PipelineAttribute> LightRenderer::GetCustomAttributes ()

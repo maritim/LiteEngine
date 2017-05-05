@@ -5,7 +5,10 @@
 
 #include <vector>
 
+#include "SceneGraph/Scene.h"
 #include "SceneGraph/Transform.h"
+
+#include "Systems/Camera/Camera.h"
 
 #include "Renderer/PipelineAttribute.h"
 #include "Lighting/Light.h"
@@ -18,9 +21,10 @@ protected:
 
 public:
 	LightRenderer (Light* light);
+	virtual ~LightRenderer ();
 
-	void Draw ();
-
+	virtual void Draw (Scene*, Camera*);
+protected:
 	virtual std::vector<PipelineAttribute> GetCustomAttributes ();
 };
 

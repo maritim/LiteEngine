@@ -84,7 +84,7 @@ void DeferredRenderModule::DeferredPass (Scene* scene, Camera* camera)
 	 * Deferred Rendering: Light Pass (atm)
 	*/
 
-	LightPass ();
+	LightPass (scene, camera);
 
 	/*
 	 * Deferred Rendering: Decorations Pass
@@ -204,15 +204,15 @@ void DeferredRenderModule::GeometryPass (Scene* scene, Camera* camera)
 	GL::Disable (GL_STENCIL_TEST);
 }
 
-void DeferredRenderModule::LightPass ()
+void DeferredRenderModule::LightPass (Scene* scene, Camera* camera)
 {
 	_frameBuffer->BindForLightPass();
 
-	DirectionalLightPass ();
-	PointLightPass ();
+	DirectionalLightPass (scene, camera);
+	PointLightPass (scene, camera);
 }
 
-void DeferredRenderModule::DirectionalLightPass ()
+void DeferredRenderModule::DirectionalLightPass (Scene* scene, Camera* camera)
 {
 	GL::Disable(GL_DEPTH_TEST);
 	GL::BlendFunc (GL_ONE, GL_ZERO);
@@ -220,14 +220,14 @@ void DeferredRenderModule::DirectionalLightPass ()
 	for (std::size_t i=0;i<LightsManager::Instance ()->GetDirectionalLightsCount ();i++) {
 		VolumetricLight* volumetricLight = LightsManager::Instance ()->GetDirectionalLight (i);
 
-		volumetricLight->GetLightRenderer ()->Draw ();
+		volumetricLight->GetLightRenderer ()->Draw (scene, camera);
 	}
 
 	GL::Disable(GL_BLEND);
 	GL::Enable (GL_DEPTH_TEST);
 }
 
-void DeferredRenderModule::PointLightPass ()
+void DeferredRenderModule::PointLightPass (Scene* scene, Camera* camera)
 {
 	for (std::size_t i=0;i<LightsManager::Instance ()->GetPointLightsCount ();i++) {
 		VolumetricLight* volumetricLight = LightsManager::Instance ()->GetPointLight (i);
@@ -271,7 +271,7 @@ void DeferredRenderModule::PointLightStencilPass (VolumetricLight* volumetricLig
 	 * Volumetric light draw.
 	*/
 
-	volumetricLight->GetLightRenderer ()->Draw ();
+	volumetricLight->GetLightRenderer ()->Draw (nullptr, nullptr);
 
 	/*
 	 * Reset the settings.
@@ -328,7 +328,7 @@ void DeferredRenderModule::PointLightDrawPass (VolumetricLight* volumetricLight)
 	 * Draw the volumetric light.
 	*/
 
-	volumetricLight->GetLightRenderer ()->Draw ();
+	volumetricLight->GetLightRenderer ()->Draw (nullptr, nullptr);
 
 	/*
 	 * Reset the settings.
@@ -373,13 +373,8 @@ void DeferredRenderModule::EndDrawing ()
 	
 void DeferredRenderModule::UpdateCamera (Camera* camera)
 {
-	// Create Perspective Projection
-	if (camera->GetType () == Camera::Type::PERSPECTIVE) {
-		Pipeline::CreatePerspective (camera->GetFieldOfView (),
-			camera->GetAspect (), camera->GetZNear (), camera->GetZFar ());
-	} else {
-		//TODO: Add Orthographic 
-	}
+	// Create Projection
+	Pipeline::CreateProjection (camera);
 
 	// Create View Matrix
 	Pipeline::SendCamera (camera);	

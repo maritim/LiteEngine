@@ -1,5 +1,7 @@
 #include "LightLoader.h"
 
+#include "Utils/Extensions/StringExtend.h"
+
 Object* LightLoader::Load (const std::string& filename)
 {
 	TiXmlDocument doc;
@@ -31,6 +33,9 @@ Object* LightLoader::Load (const std::string& filename)
 		}
 		else if (name == "Spot") {
 			ProcessSpotLight (content, light);
+		}
+		else if (name == "Shadows") {
+			ProcessShadows (content, light);
 		}
 
 		content = content->NextSiblingElement ();
@@ -70,6 +75,15 @@ void LightLoader::ProcessSpecularColor (TiXmlElement* xmlElem, Light* light)
 	Color specularColor = GetColor (xmlElem);
 
 	light->SetSpecularColor (specularColor);
+}
+
+void LightLoader::ProcessShadows (TiXmlElement* xmlElem, Light* light)
+{
+	const char* casting = xmlElem->Attribute ("casting");
+
+	if (casting) {
+		light->SetShadowCasting (Extensions::StringExtend::ToBool (casting));
+	}
 }
 
 void LightLoader::ProcessPointLight (TiXmlElement* xmlElem, Light* light)

@@ -6,7 +6,8 @@
 class DirectionalLightRenderer : public LightRenderer
 {
 public:
-	using LightRenderer::LightRenderer;
+	DirectionalLightRenderer (Light* light);
+	~DirectionalLightRenderer ();
 };
 
 #endif

@@ -21,6 +21,7 @@ private:
 
 	void ProcessColor (TiXmlElement* xmlElem, Light* light);
 	void ProcessSpecularColor (TiXmlElement* xmlElem, Light* light);
+	void ProcessShadows (TiXmlElement* xmlElem, Light* light);
 
 	void ProcessPointLight (TiXmlElement* xmlElem, Light* light);
 	void ProcessSpotLight (TiXmlElement* xmlElem, Light* light);

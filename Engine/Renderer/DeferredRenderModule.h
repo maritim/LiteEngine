@@ -26,12 +26,12 @@ protected:
 
 	void PrepareDrawing ();
 	void GeometryPass (Scene* scene, Camera* camera);
-	void LightPass ();
+	void LightPass (Scene* scene, Camera* camera);
 	void SkyboxPass ();
 	void EndDrawing ();
 
-	void DirectionalLightPass ();
-	void PointLightPass ();
+	void DirectionalLightPass (Scene* scene, Camera* camera);
+	void PointLightPass (Scene* scene, Camera* camera);
 
 	void PointLightStencilPass (VolumetricLight* light);
 	void PointLightDrawPass (VolumetricLight* light);
