@@ -24,7 +24,7 @@ public:
 
 	Color GetColor () const;
 	Color GetSpecularColor () const;
-	bool IsShadowCasting () const;
+	bool IsCastingShadows () const;
 
 	void SetColor (const Color& color);
 	void SetSpecularColor (const Color& specularColor);

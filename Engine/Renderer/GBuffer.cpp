@@ -98,6 +98,8 @@ void GBuffer::BindForStencilPass()
 
 void GBuffer::BindForLightPass()
 {
+	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+	
 	GL::DrawBuffer(GL_COLOR_ATTACHMENT4);
 
 	for (unsigned int i = 0 ; i < ARRAY_SIZE_IN_ELEMENTS(m_textures); i++) {

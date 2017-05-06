@@ -220,7 +220,7 @@ void DeferredRenderModule::DirectionalLightPass (Scene* scene, Camera* camera)
 	for (std::size_t i=0;i<LightsManager::Instance ()->GetDirectionalLightsCount ();i++) {
 		VolumetricLight* volumetricLight = LightsManager::Instance ()->GetDirectionalLight (i);
 
-		volumetricLight->GetLightRenderer ()->Draw (scene, camera);
+		volumetricLight->GetLightRenderer ()->Draw (scene, camera, _frameBuffer);
 	}
 
 	GL::Disable(GL_BLEND);

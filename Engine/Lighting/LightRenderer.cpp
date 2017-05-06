@@ -21,7 +21,7 @@ LightRenderer::~LightRenderer ()
 	
 }
 
-void LightRenderer::Draw (Scene* scene, Camera* camera)
+void LightRenderer::Draw (Scene* scene, Camera* camera, GBuffer* gBuffer)
 {
 	Pipeline::SetObjectTransform (_transform);
 

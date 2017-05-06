@@ -12,7 +12,7 @@ LightShadowMapRenderer::~LightShadowMapRenderer ()
 	delete _volume;
 }
 
-void LightShadowMapRenderer::Draw (Scene* scene, Camera* camera)
+void LightShadowMapRenderer::Draw (Scene* scene, Camera* camera, GBuffer* gBuffer)
 {
 	/*
 	 * Shadow Pass
@@ -24,7 +24,7 @@ void LightShadowMapRenderer::Draw (Scene* scene, Camera* camera)
 	 * Object Rendering Pass
 	*/
 
-	RenderingPass (scene, camera);
+	RenderingPass (scene, camera, gBuffer);
 }
 
 /*
@@ -52,9 +52,19 @@ void LightShadowMapRenderer::ShadowMapPass (Scene* scene, Camera* camera)
 	_volume->EndDrawing ();	
 }
 
-void LightShadowMapRenderer::RenderingPass (Scene* scene, Camera* camera)
+void LightShadowMapRenderer::RenderingPass (Scene* scene, Camera* camera, GBuffer* gBuffer)
 {
-	LightRenderer::Draw (scene, camera);
+	/*
+	 * Bind drawing frame buffer
+	*/
+
+	gBuffer->BindForLightPass ();
+
+	/*
+	 * Draw the volumetric light 
+	*/
+
+	LightRenderer::Draw (scene, camera, nullptr);
 }
 
 void LightShadowMapRenderer::ShadowMapRender (Scene* scene, Camera* camera)

@@ -23,7 +23,7 @@ ShadowMapDirectionalLightVolume::ShadowMapDirectionalLightVolume () :
 
 ShadowMapDirectionalLightVolume::~ShadowMapDirectionalLightVolume ()
 {
-	
+
 }
 
 bool ShadowMapDirectionalLightVolume::Init ()
@@ -67,7 +67,7 @@ bool ShadowMapDirectionalLightVolume::Init ()
 void ShadowMapDirectionalLightVolume::BindForShadowMapCatch ()
 {
 	GL::Viewport (0, 0, SHADOW_MAP_RESOLUTION_WIDTH, SHADOW_MAP_RESOLUTION_HEIGHT);
-	GL::BindFramebuffer(GL_FRAMEBUFFER, _frameBufferIndex);
+	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBufferIndex);
 	GL::Clear (GL_DEPTH_BUFFER_BIT);
 
 	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
@@ -77,8 +77,8 @@ void ShadowMapDirectionalLightVolume::EndDrawing ()
 {
 	Pipeline::UnlockShader ();
 
-	GL::BindFramebuffer(GL_FRAMEBUFFER, 0);
-	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	// GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	std::size_t windowWidth = Window::GetWidth ();
 	std::size_t windowHeight = Window::GetHeight ();

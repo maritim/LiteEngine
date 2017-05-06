@@ -23,7 +23,7 @@ Color Light::GetSpecularColor () const
 	return _specularColor;
 }
 
-bool Light::IsShadowCasting () const
+bool Light::IsCastingShadows () const
 {
 	return _castShadows;
 }

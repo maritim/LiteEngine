@@ -33,6 +33,8 @@ protected:
 	void DirectionalLightPass (Scene* scene, Camera* camera);
 	void PointLightPass (Scene* scene, Camera* camera);
 
+	void DirectionalLightShadowPass (VolumetricLight* light, Scene* scene, Camera* camera);
+
 	void PointLightStencilPass (VolumetricLight* light);
 	void PointLightDrawPass (VolumetricLight* light);
 };
