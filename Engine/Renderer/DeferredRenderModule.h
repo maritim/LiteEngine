@@ -27,7 +27,7 @@ protected:
 	void PrepareDrawing ();
 	void GeometryPass (Scene* scene, Camera* camera);
 	void LightPass (Scene* scene, Camera* camera);
-	void SkyboxPass ();
+	void SkyboxPass (Camera* camera);
 	void EndDrawing ();
 
 	void DirectionalLightPass (Scene* scene, Camera* camera);

@@ -90,7 +90,7 @@ void DeferredRenderModule::DeferredPass (Scene* scene, Camera* camera)
 	 * Deferred Rendering: Decorations Pass
 	*/
 
-	SkyboxPass ();
+	SkyboxPass (camera);
 
 	/*
 	 * Deferred Rendering: End Drawing
@@ -343,11 +343,14 @@ void DeferredRenderModule::PointLightDrawPass (VolumetricLight* volumetricLight)
 	GL::Enable (GL_DEPTH_TEST);
 }
 
-void DeferredRenderModule::SkyboxPass ()
+void DeferredRenderModule::SkyboxPass (Camera* camera)
 {
 	GL::Enable (GL_STENCIL_TEST);
 	GL::StencilFunc (GL_EQUAL, 0, 0xFF);
 	GL::StencilOp (GL_KEEP, GL_KEEP, GL_KEEP);
+
+	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
+	Pipeline::SendCamera (camera);
 
 	Skybox::Render ();
 
