@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Light type="DIRECTIONAL_LIGHT">
+	<Color r=" 255" g="244 " b="215" />
+	<SpecularColor r="25" g="25" b="25" />
+  <Shadows casting="true" />
+</Light>
