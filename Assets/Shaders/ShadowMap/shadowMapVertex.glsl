@@ -15,5 +15,5 @@ out vec3 vert_position;
 
 void main()
 {
-	gl_Position =  modelViewProjection * vec4 (in_position, 1);
+	gl_Position =  modelViewProjectionMatrix * vec4 (in_position, 1);
 }

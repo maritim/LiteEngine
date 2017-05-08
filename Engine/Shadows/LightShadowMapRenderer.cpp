@@ -1,5 +1,7 @@
 #include "LightShadowMapRenderer.h"
 
+#include "Renderer/Pipeline.h"
+
 LightShadowMapRenderer::LightShadowMapRenderer (Light* light) :
 	LightRenderer (light),
 	_volume (nullptr)

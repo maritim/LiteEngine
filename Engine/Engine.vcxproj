@@ -130,6 +130,8 @@
   <ItemGroup>
     <ClCompile Include="Arguments\Argument.cpp" />
     <ClCompile Include="Arguments\ArgumentsAnalyzer.cpp" />
+    <ClCompile Include="Cameras\OrthographicCamera.cpp" />
+    <ClCompile Include="Cameras\PerspectiveCamera.cpp" />
     <ClCompile Include="Components\FlyCameraController.cpp" />
     <ClCompile Include="Components\FPSCameraController.cpp" />
     <ClCompile Include="Components\FrameRate.cpp" />
@@ -167,6 +169,7 @@
     <ClCompile Include="Fonts\Font.cpp" />
     <ClCompile Include="Fonts\FontChar.cpp" />
     <ClCompile Include="Lighting\DirectionalLight.cpp" />
+    <ClCompile Include="Lighting\DirectionalLightRenderer.cpp" />
     <ClCompile Include="Lighting\Light.cpp" />
     <ClCompile Include="Lighting\LightRenderer.cpp" />
     <ClCompile Include="Lighting\LightsManager.cpp" />
@@ -231,6 +234,10 @@
     <ClCompile Include="SceneNodes\TextGUI.cpp" />
     <ClCompile Include="SceneNodes\TextGUIRenderer.cpp" />
     <ClCompile Include="Shader\Shader.cpp" />
+    <ClCompile Include="Shadows\DirectionalLightShadowMapRenderer.cpp" />
+    <ClCompile Include="Shadows\LightShadowMapRenderer.cpp" />
+    <ClCompile Include="Shadows\ShadowMapDirectionalLightVolume.cpp" />
+    <ClCompile Include="Shadows\ShadowMapVolume.cpp" />
     <ClCompile Include="Skybox\Skybox.cpp" />
     <ClCompile Include="Skybox\SkyboxRenderer.cpp" />
     <ClCompile Include="Systems\Camera\Camera.cpp" />
@@ -293,6 +300,8 @@
   <ItemGroup>
     <ClInclude Include="Arguments\Argument.h" />
     <ClInclude Include="Arguments\ArgumentsAnalyzer.h" />
+    <ClInclude Include="Cameras\OrthographicCamera.h" />
+    <ClInclude Include="Cameras\PerspectiveCamera.h" />
     <ClInclude Include="Components\FlyCameraController.h" />
     <ClInclude Include="Components\FPSCameraController.h" />
     <ClInclude Include="Components\FrameRate.h" />
@@ -542,6 +551,10 @@
     <ClInclude Include="SceneNodes\TextGUI.h" />
     <ClInclude Include="SceneNodes\TextGUIRenderer.h" />
     <ClInclude Include="Shader\Shader.h" />
+    <ClInclude Include="Shadows\DirectionalLightShadowMapRenderer.h" />
+    <ClInclude Include="Shadows\LightShadowMapRenderer.h" />
+    <ClInclude Include="Shadows\ShadowMapDirectionalLightVolume.h" />
+    <ClInclude Include="Shadows\ShadowMapVolume.h" />
     <ClInclude Include="Skybox\Skybox.h" />
     <ClInclude Include="Skybox\SkyboxRenderer.h" />
     <ClInclude Include="Systems\Camera\Camera.h" />

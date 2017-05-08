@@ -18,6 +18,11 @@ Shader::~Shader ()
 
 }
 
+std::string Shader::GetName() const
+{
+	return _name;
+}
+
 unsigned int Shader::GetProgram () const
 {
 	return _program;

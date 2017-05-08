@@ -24,6 +24,8 @@ public:
 		unsigned int vertex, unsigned int fragment, unsigned int geometry = 0);
 	~Shader ();
 
+	std::string GetName () const;
+
 	unsigned int GetProgram () const;
 	unsigned int GetVertexShader () const;
 	unsigned int GetGeometryShader () const;

@@ -44,7 +44,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	vec3 reflection = reflect (-lightDirection, in_normal);
 
 	// Specular contribution
-	float sCont = pow (max (dot (surface2view, reflection), 0.0), 1);
+	float sCont = pow (max (dot (surface2view, reflection), 0.0), 1.0);
 
 	vec3 specularColor = lightSpecularColor * in_diffuse * sCont;
 
@@ -63,4 +63,6 @@ void main()
 	in_normal = normalize(in_normal);
 
 	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
+
+	//out_color = vec3 (1, 1, 1);
 } 

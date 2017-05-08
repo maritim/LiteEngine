@@ -90,7 +90,7 @@ vec3 CalcPointLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_
 	vec3 specularColor = lightSpecularColor * in_diffuse * sCont;
 
 	// Calculate shadow
-	vec4 lightSpacePos = lightSpaceMatrix * in_position;
+	vec4 lightSpacePos = lightSpaceMatrix * vec4 (in_position, 0);
 	float shadow = ShadowCalculation (lightSpacePos);
 
 	return (1.0 - shadow) * (diffuseColor + specularColor);

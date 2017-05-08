@@ -34,9 +34,9 @@ bool ShadowMapDirectionalLightVolume::Init ()
 
 	GL::GenTextures (1, &_shadowMapIndex);
 	GL::BindTexture (GL_TEXTURE_2D, _shadowMapIndex);
-	GL::TexImage2D (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 
+	GL::TexImage2D (GL_TEXTURE_2D, 0, GL_RGB,
 		SHADOW_MAP_RESOLUTION_WIDTH, SHADOW_MAP_RESOLUTION_HEIGHT, 
-		0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		0, GL_RGB, GL_FLOAT, NULL);
 	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
@@ -48,7 +48,7 @@ bool ShadowMapDirectionalLightVolume::Init ()
 
 	GL::GenFramebuffers (1, &_frameBufferIndex);
 	GL::BindFramebuffer(GL_FRAMEBUFFER, _frameBufferIndex);
-	GL::FramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowMapIndex, 0);
+	GL::FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _shadowMapIndex, 0);
 	GL::DrawBuffer(GL_NONE);
 	GL::ReadBuffer(GL_NONE);
 	GL::BindFramebuffer(GL_FRAMEBUFFER, 0);  
@@ -68,7 +68,11 @@ void ShadowMapDirectionalLightVolume::BindForShadowMapCatch ()
 {
 	GL::Viewport (0, 0, SHADOW_MAP_RESOLUTION_WIDTH, SHADOW_MAP_RESOLUTION_HEIGHT);
 	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBufferIndex);
-	GL::Clear (GL_DEPTH_BUFFER_BIT);
+
+	GL::DrawBuffer (GL_COLOR_ATTACHMENT0);
+	GL::ReadBuffer (GL_NONE);
+
+	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
 }
@@ -77,8 +81,11 @@ void ShadowMapDirectionalLightVolume::EndDrawing ()
 {
 	Pipeline::UnlockShader ();
 
+	GL::DrawBuffer(GL_NONE);
+	GL::ReadBuffer(GL_NONE);
+
 	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	// GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	std::size_t windowWidth = Window::GetWidth ();
 	std::size_t windowHeight = Window::GetHeight ();
