@@ -19,6 +19,7 @@ protected:
 	Renderer* _renderer;
 	Rigidbody* _rigidbody;
 	Collider* _collider;
+	int _sceneLayers;
 
 public:
 	SceneObject ();
@@ -33,6 +34,7 @@ public:
 	Renderer* GetRenderer () const;
 	Rigidbody* GetRigidbody () const;
 	Collider* GetCollider () const;
+	int GetLayers () const;
 
 	virtual void Update () = 0;
 

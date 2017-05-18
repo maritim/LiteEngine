@@ -3,6 +3,8 @@
 
 #include "Core/Interfaces/Object.h"
 
+#include "SceneNodes/SceneLayer.h"
+
 class ShadowMapVolume : public Object
 {
 public:
@@ -14,6 +16,7 @@ public:
 	virtual void EndDrawing () = 0;
 
 	virtual void BindForLightPass() = 0;
+	virtual void LockShader (int sceneLayers) = 0;
 };
 
 #endif

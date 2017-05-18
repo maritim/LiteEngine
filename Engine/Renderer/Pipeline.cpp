@@ -311,11 +311,11 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 
 	SetShader (shader);
 
-	Pipeline::UpdateMatrices (shader);
-
 	if (_lockedShader != nullptr) {
 		shader = _lockedShader;
 	}
+
+	Pipeline::UpdateMatrices (shader);
 
 	// Send basic material attributes to shader
 	GL::Uniform4f (shader->GetUniformLocation ("MaterialDiffuse"), mat->diffuseColor.x, 

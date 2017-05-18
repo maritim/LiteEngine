@@ -57,7 +57,7 @@
 	</AnimatedGameObject>	
  -->
 
-	<!--<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/Spider-Man.dae" >
+	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/Spider-Man.dae" >
 		<Transform>
 			<Position y="-0.1" x="9" />
 			<Rotation />
@@ -88,7 +88,7 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
-	</AnimatedGameObject>-->
+	</AnimatedGameObject>
 
 	<GameObject InstanceID="1" name="CowGirl" meshpath="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" >
 		<Transform>

@@ -11,12 +11,17 @@
 #define SHADOW_MAP_RESOLUTION_HEIGHT 2048
 
 ShadowMapDirectionalLightVolume::ShadowMapDirectionalLightVolume () :
-	_shaderName ("SHADOW_MAP"),
+	_staticShaderName ("STATIC_SHADOW_MAP"),
+	_animationShaderName ("ANIMATION_SHADOW_MAP"),
 	_shadowMapIndex (0),
 	_frameBufferIndex (0)
 {
-	ShaderManager::Instance ()->AddShader (_shaderName,
+	ShaderManager::Instance ()->AddShader (_staticShaderName,
 		"Assets/Shaders/ShadowMap/shadowMapVertex.glsl",
+		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
+
+	ShaderManager::Instance ()->AddShader (_animationShaderName,
+		"Assets/Shaders/ShadowMap/shadowMapVertexAnimation.glsl",
 		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
 
 	Init ();
@@ -39,6 +44,7 @@ bool ShadowMapDirectionalLightVolume::Init ()
 	/*
 	 * Create shadow map texture 
 	*/
+
 	GL::GenTextures(1, &_shadowMapIndex);
 	GL::BindTexture(GL_TEXTURE_2D, _shadowMapIndex);
 	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
@@ -46,6 +52,7 @@ bool ShadowMapDirectionalLightVolume::Init ()
 		0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
@@ -87,8 +94,6 @@ void ShadowMapDirectionalLightVolume::BindForShadowMapCatch ()
 	GL::BindFramebuffer(GL_FRAMEBUFFER, _frameBufferIndex);
 
 	GL::Clear(GL_DEPTH_BUFFER_BIT);
-
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
 }
 
 void ShadowMapDirectionalLightVolume::EndDrawing ()
@@ -115,4 +120,17 @@ void ShadowMapDirectionalLightVolume::BindForLightPass ()
 
 
 	GL::BindTexture (GL_TEXTURE_2D, _shadowMapIndex);
+}
+
+void ShadowMapDirectionalLightVolume::LockShader (int sceneLayers)
+{
+	Pipeline::UnlockShader ();
+
+	if (sceneLayers & SceneLayer::ANIMATION) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+	}
+
+	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+	}
 }

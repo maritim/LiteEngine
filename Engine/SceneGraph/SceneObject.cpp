@@ -2,12 +2,14 @@
 
 #include "Transform.h"
 #include "Renderer/Renderer.h"
+#include "SceneNodes/SceneLayer.h"
 
 SceneObject::SceneObject () :
 	_transform (new Transform ()),
 	_renderer (new Renderer (_transform)),
 	_rigidbody (new Rigidbody (_transform)),
-	_collider (nullptr)
+	_collider (nullptr),
+	_sceneLayers ((int) SceneLayer::STATIC)
 {
 
 }
@@ -42,6 +44,11 @@ Rigidbody* SceneObject::GetRigidbody () const
 Collider* SceneObject::GetCollider () const
 {
 	return _collider;
+}
+
+int SceneObject::GetLayers() const
+{
+	return _sceneLayers;
 }
 
 std::string SceneObject::GetName () const

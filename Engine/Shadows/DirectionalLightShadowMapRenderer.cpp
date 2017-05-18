@@ -69,6 +69,16 @@ void DirectionalLightShadowMapRenderer::ShadowMapRender (Scene* scene, Camera* c
 			continue;
 		}
 
+		/*
+		 * Lock shader based on scene object layer
+		*/
+
+		_volume->LockShader (scene->GetObjectAt (i)->GetLayers ());
+
+		/*
+		 * Render object on shadow map
+		*/
+
 		scene->GetObjectAt (i)->GetRenderer ()->Draw ();
 	}
 }

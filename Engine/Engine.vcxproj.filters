@@ -1481,6 +1481,9 @@
     <ClInclude Include="Components\ShadowTestComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SceneNodes\SceneLayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\Math\glm\detail\func_common.inl">

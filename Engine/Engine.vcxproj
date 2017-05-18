@@ -550,6 +550,7 @@
     <ClInclude Include="SceneNodes\FontQuad.h" />
     <ClInclude Include="SceneNodes\GameObject.h" />
     <ClInclude Include="SceneNodes\Model3DRenderer.h" />
+    <ClInclude Include="SceneNodes\SceneLayer.h" />
     <ClInclude Include="SceneNodes\TextGUI.h" />
     <ClInclude Include="SceneNodes\TextGUIRenderer.h" />
     <ClInclude Include="Shader\Shader.h" />

@@ -10,7 +10,8 @@
 class ShadowMapDirectionalLightVolume : public ShadowMapVolume
 {
 protected:
-	std::string _shaderName;
+	std::string _staticShaderName;
+	std::string _animationShaderName;
 
 	GLuint _shadowMapIndex;
 	GLuint _frameBufferIndex;
@@ -24,6 +25,7 @@ public:
 	void EndDrawing ();
 
 	void BindForLightPass ();
+	void LockShader (int sceneLayers);
 };
 
 #endif
