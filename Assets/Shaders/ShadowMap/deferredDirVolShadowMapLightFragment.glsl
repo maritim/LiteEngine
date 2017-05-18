@@ -54,43 +54,47 @@ float ShadowCalculation (vec4 lightSpacePos)
     // Get depth of current fragment from light's perspective
     float currentDepth = projCoords.z;
     
+	float bias = 0.002;
+
     // Check whether current frag pos is in shadow
-    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+    float shadow = 0.0;
+
+	vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+	for(int x = -1; x <= 1; ++x)
+	{
+		for(int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+		}    
+	}
+
+	shadow /= 9.0;
 
     return shadow;
 }
 
-vec3 CalcPointLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
+vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
 {
-	// Vector from Light Source to Fragment
-	vec3 lightDirection = in_position - lightPosition;
-
-	// Distance from Light Source to Fragment
-	float dist = length (lightDirection);
-	
-	// Normalize light vector from light source
-	lightDirection = normalize (lightDirection);
-
-	// Calculate Point Light Attenuation over distance
-	float attenuation = 1.0 / (attenuationComp.x + attenuationComp.y * dist + attenuationComp.z * dist * dist);
+	// The position is also a direction for Directional Lights
+	vec3 lightDirection = normalize (lightPosition);
 
 	// Diffuse contribution
 	float dCont = max (dot (in_normal, lightDirection), 0.0);
 
-	// Calculate Diffuse Color
-	vec3 diffuseColor = lightColor * in_diffuse * dCont * attenuation;
+	// Attenuation is 1.0 for Directional Lights
+	vec3 diffuseColor = lightColor * in_diffuse * dCont;
 
-	// Vector from Camera Positon to Fragment
 	vec3 surface2view = normalize (cameraPosition - in_position);
 	vec3 reflection = reflect (-lightDirection, in_normal);
 
 	// Specular contribution
-	float sCont = pow (max (dot (surface2view, reflection), 0.0), 3);
+	float sCont = pow (max (dot (surface2view, reflection), 0.0), 1.0);
 
 	vec3 specularColor = lightSpecularColor * in_diffuse * sCont;
 
 	// Calculate shadow
-	vec4 lightSpacePos = lightSpaceMatrix * vec4 (in_position, 0);
+	vec4 lightSpacePos = lightSpaceMatrix * vec4 (in_position, 1.0f);
 	float shadow = ShadowCalculation (lightSpacePos);
 
 	return (1.0 - shadow) * (diffuseColor + specularColor);
@@ -107,5 +111,7 @@ void main()
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcPointLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
+	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
+
+	//out_color = texture2D (shadowMap, texCoord).xyz;// + vec3 (0.2, 0, 0);
 } 

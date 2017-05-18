@@ -8,7 +8,7 @@ PerspectiveCamera::PerspectiveCamera () :
 {
 	_aspect = 0.75f;
 	_zNear = 0.3f;
-	_zFar = 10000.0f;
+	_zFar = 100.0f;
 }
 
 float PerspectiveCamera::GetFieldOfView () const

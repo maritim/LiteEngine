@@ -7,6 +7,7 @@ class OrthographicCamera : public Camera
 {
 protected:
 	float _orthographicSize;
+	float _leftLimit, _bottomLimit;
 
 public:
 	OrthographicCamera ();
@@ -14,6 +15,7 @@ public:
 	virtual float GetOrthographicSize () const;
 
 	virtual void SetOrthographicSize (float);
+	virtual void SetOrthographicInfo (float left, float right, float bottom, float top, float zNear, float zFar);
 
 	virtual FrustumVolume* GetFrustumVolume () const;
 

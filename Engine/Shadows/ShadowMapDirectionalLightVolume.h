@@ -3,6 +3,8 @@
 
 #include "ShadowMapVolume.h"
 
+#include "Wrappers/OpenGL/GL.h"
+
 #include <string>
 
 class ShadowMapDirectionalLightVolume : public ShadowMapVolume
@@ -10,8 +12,8 @@ class ShadowMapDirectionalLightVolume : public ShadowMapVolume
 protected:
 	std::string _shaderName;
 
-	unsigned int _shadowMapIndex;
-	unsigned int _frameBufferIndex;
+	GLuint _shadowMapIndex;
+	GLuint _frameBufferIndex;
 
 public:
 	ShadowMapDirectionalLightVolume ();
@@ -20,6 +22,8 @@ public:
 	bool Init ();
 	void BindForShadowMapCatch ();
 	void EndDrawing ();
+
+	void BindForLightPass ();
 };
 
 #endif

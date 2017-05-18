@@ -21,6 +21,7 @@
 			<Component name="FlyCameraController" />
       <!--<Component name="StatisticsView" />-->
 			<Component name="FrameRate" />
+      <Component name="ShadowTestComponent" />
 		</Components>
 	</GameObject>
  	<!--<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Lara/Lara_Croft_default.dae" >
@@ -42,7 +43,7 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
-	</AnimatedGameObject>	
+	</AnimatedGameObject>-->	
 
 <!-- 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Soldier/Soldier.dae" >
 		<Transform>
@@ -56,7 +57,7 @@
 	</AnimatedGameObject>	
  -->
 
-	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/Spider-Man.dae" >
+	<!--<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/Spider-Man.dae" >
 		<Transform>
 			<Position y="-0.1" x="9" />
 			<Rotation />
@@ -87,7 +88,7 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
-	</AnimatedGameObject>
+	</AnimatedGameObject>-->
 
 	<GameObject InstanceID="1" name="CowGirl" meshpath="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" >
 		<Transform>
@@ -119,7 +120,7 @@
 			<Gravity use="false" />
 		</Rigidbody>
 	</GameObject>
-	<GameObject InstanceID="4" name="SpirderMan" meshpath="Assets/Models/Spider-Man/Spider-Man.obj" >
+	<GameObject InstanceID="4" name="SpiderMan" meshpath="Assets/Models/Spider-Man/Spider-Man.obj" >
 		<Transform>
 			<Position x="-15" />
 			<Rotation />

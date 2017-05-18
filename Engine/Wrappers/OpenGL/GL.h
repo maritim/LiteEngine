@@ -130,7 +130,15 @@ public:
 	static void TexEnvf(GLenum target,  GLenum pname,  GLfloat param);
 	static void TexParameteri(GLenum target,  GLenum pname,  GLint param);
 	static void TexParameterf(GLenum target,  GLenum pname,  GLfloat param);
+	static void TexParameteriv(GLenum target, GLenum pname, const GLint * params);
+	static void TexParameterfv(GLenum target, GLenum pname, const GLfloat * params);
 	static void GenerateMipmap(GLenum target);
+
+	/*
+	 * Pixels
+	*/
+
+	static void PixelStorei(GLenum pname, GLint param);
 
 	/*
 	 * Image Textures

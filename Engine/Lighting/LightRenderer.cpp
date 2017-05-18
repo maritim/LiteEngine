@@ -21,11 +21,12 @@ LightRenderer::~LightRenderer ()
 	
 }
 
-#include "Debug/Logger/Logger.h"
-
 void LightRenderer::Draw (Scene* scene, Camera* camera, GBuffer* gBuffer)
 {
 	Pipeline::SetObjectTransform (_transform);
+
+	GL::Disable(GL_DEPTH_TEST);
+	GL::BlendFunc(GL_ONE, GL_ZERO);
 
 	for (std::size_t i=0;i<_drawableObjects.size ();i++) {
 		Pipeline::SetShader (ShaderManager::Instance ()->GetShader (_shaderName));
@@ -33,8 +34,6 @@ void LightRenderer::Draw (Scene* scene, Camera* camera, GBuffer* gBuffer)
 		Pipeline::UpdateMatrices (ShaderManager::Instance ()->GetShader (_shaderName));
 		std::vector<PipelineAttribute> customAttributes = GetCustomAttributes ();
 		Pipeline::SendCustomAttributes (_shaderName, customAttributes);
-
-		DEBUG_LOG (std::to_string (_drawableObjects [i].VAO_INDEX));
 
 		//bind pe containerul de stare de geometrie (vertex array object)
 		GL::BindVertexArray(_drawableObjects [i].VAO_INDEX);

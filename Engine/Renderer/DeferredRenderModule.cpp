@@ -157,6 +157,13 @@ void DeferredRenderModule::GeometryPass (Scene* scene, Camera* camera)
 	GL::StencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	/*
+	 * Enable Back Face Culling
+	*/
+
+	GL::Enable (GL_CULL_FACE);
+	GL::CullFace (GL_BACK);
+
+	/*
 	 * Render scene entities to framebuffer at Deferred Rendering Stage
 	*/
 

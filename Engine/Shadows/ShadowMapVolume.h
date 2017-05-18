@@ -12,6 +12,8 @@ public:
 	virtual bool Init () = 0;
 	virtual void BindForShadowMapCatch () = 0;
 	virtual void EndDrawing () = 0;
+
+	virtual void BindForLightPass() = 0;
 };
 
 #endif

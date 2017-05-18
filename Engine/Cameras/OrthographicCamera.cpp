@@ -4,7 +4,9 @@
 
 OrthographicCamera::OrthographicCamera () :
 	Camera (),
-	_orthographicSize (20.0f)
+	_orthographicSize (100.0f),
+	_leftLimit (0.0f),
+	_bottomLimit (0.0f)
 {
 	_aspect = 0.75;
 	_zNear = 0.3f;
@@ -19,6 +21,20 @@ float OrthographicCamera::GetOrthographicSize () const
 void OrthographicCamera::SetOrthographicSize (float orthographicSize)
 {
 	_orthographicSize = orthographicSize;
+}
+
+
+void OrthographicCamera::SetOrthographicInfo(float left, float right, float bottom, float top, float zNear, float zFar)
+{
+	_leftLimit = left;
+
+	_bottomLimit = bottom;
+
+	_zNear = zNear;
+	_zFar = zFar;
+
+	_orthographicSize = top - _bottomLimit;
+	_aspect = (right - _leftLimit) / _orthographicSize;
 }
 
 /*
@@ -45,10 +61,10 @@ FrustumVolume* OrthographicCamera::GetFrustumVolume () const
 
 glm::mat4 OrthographicCamera::GetProjectionMatrix () const
 {
-	float horizontalSize = _orthographicSize * _aspect;
-	float verticalSize = _orthographicSize;
+	float rightLimit = _leftLimit + _orthographicSize * _aspect;
+	float topLimit = _bottomLimit + _orthographicSize;
 
-	glm::mat4 projectionMatrix = glm::ortho (0.0f, horizontalSize, 0.0f, verticalSize, _zNear, _zFar);
+	glm::mat4 projectionMatrix = glm::ortho (_leftLimit, rightLimit, _bottomLimit, topLimit, _zNear, _zFar);
 
 	return projectionMatrix;
 }

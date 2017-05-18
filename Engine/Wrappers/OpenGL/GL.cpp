@@ -742,11 +742,36 @@ void GL::TexParameterf(GLenum target,  GLenum pname,  GLfloat param)
 	ErrorCheck ("glTexParameterf");
 }
 
+void GL::TexParameteriv(GLenum target, GLenum pname, const GLint * params)
+{
+	glTexParameteriv(target, pname, params);
+
+	ErrorCheck("glTexParameteriv");
+}
+
+void GL::TexParameterfv(GLenum target, GLenum pname, const GLfloat * params)
+{
+	glTexParameterfv(target, pname, params);
+
+	ErrorCheck ("glTexParameterfv");
+}
+
 void GL::GenerateMipmap (GLenum target)
 {
 	glGenerateMipmap(target);
 
 	ErrorCheck ("glGenerateMipmap");
+}
+
+/*
+ * Pixels
+*/
+
+void GL::PixelStorei(GLenum pname, GLint param)
+{
+	glPixelStorei(pname, param);
+
+	ErrorCheck ("glPixelStorei");
 }
 
 /*
