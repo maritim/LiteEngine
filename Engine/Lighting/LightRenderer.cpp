@@ -23,10 +23,15 @@ LightRenderer::~LightRenderer ()
 
 void LightRenderer::Draw (Scene* scene, Camera* camera, GBuffer* gBuffer)
 {
+	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
+	Pipeline::SendCamera (camera);
+
 	Pipeline::SetObjectTransform (_transform);
 
 	GL::Disable(GL_DEPTH_TEST);
 	GL::BlendFunc(GL_ONE, GL_ZERO);
+
+	GL::Disable(GL_CULL_FACE);
 
 	for (std::size_t i=0;i<_drawableObjects.size ();i++) {
 		Pipeline::SetShader (ShaderManager::Instance ()->GetShader (_shaderName));
