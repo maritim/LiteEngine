@@ -135,7 +135,6 @@
     <ClCompile Include="Components\FlyCameraController.cpp" />
     <ClCompile Include="Components\FPSCameraController.cpp" />
     <ClCompile Include="Components\FrameRate.cpp" />
-    <ClCompile Include="Components\ShadowTestComponent.cpp" />
     <ClCompile Include="Components\StatisticsView.cpp" />
     <ClCompile Include="Core\Console\Console.cpp" />
     <ClCompile Include="Core\Interfaces\Object.cpp" />
@@ -306,7 +305,6 @@
     <ClInclude Include="Components\FlyCameraController.h" />
     <ClInclude Include="Components\FPSCameraController.h" />
     <ClInclude Include="Components\FrameRate.h" />
-    <ClInclude Include="Components\ShadowTestComponent.h" />
     <ClInclude Include="Components\StatisticsView.h" />
     <ClInclude Include="Core\Console\Console.h" />
     <ClInclude Include="Core\Interfaces\Object.h" />

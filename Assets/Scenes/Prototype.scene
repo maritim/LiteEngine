@@ -21,7 +21,6 @@
 			<Component name="FlyCameraController" />
       <!--<Component name="StatisticsView" />-->
 			<Component name="FrameRate" />
-      <Component name="ShadowTestComponent" />
 		</Components>
 	</GameObject>
  	<!--<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Lara/Lara_Croft_default.dae" >

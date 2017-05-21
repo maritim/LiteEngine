@@ -519,9 +519,6 @@
     <ClCompile Include="Lighting\DirectionalLightRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Components\ShadowTestComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arguments\Argument.h">
@@ -1476,9 +1473,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shadows\ShadowMapVolume.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\ShadowTestComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SceneNodes\SceneLayer.h">
