@@ -15,7 +15,7 @@ Material::Material(void) :
 	name(""),
 	ambientColor(0.2, 0.2, 0.2),
 	diffuseColor(0.8, 0.8, 0.8),
-	specularColor(0.0, 0.0, 0.0),
+	specularColor (1.0, 1.0, 1.0),
 	shininess(32),
 	transparency (1.0),
 	illum(0),

@@ -13,8 +13,12 @@ uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
 
 uniform vec4 MaterialDiffuse;
+uniform vec4 MaterialSpecular;
+
+uniform float MaterialShininess;
 
 uniform sampler2D DiffuseMap;
+uniform sampler2D SpecularMap;
 
 uniform vec3 cameraPosition;
 
@@ -31,9 +35,7 @@ void main()
 	*/
 
 	vec3 diffuseMap = vec3 (MaterialDiffuse * texture2D (DiffuseMap, 	geom_texcoord.xy));
-
-	// ambient lightDirection
-	// vec3 totalLighting = vec3 (MaterialAmbient) * ambientMap * diffuseMap;
+	vec3 specularMap = vec3 (MaterialSpecular * texture2D (SpecularMap, geom_texcoord.xy));
 
 	/*
 	 * Renormalize normal vector
@@ -48,5 +50,5 @@ void main()
 	out_position = vec4 (geom_position, 1.0);
 	out_diffuse = vec4 (diffuseMap, 1);
 	out_normal = vec4 (norm, 1.0);
-	out_specular = vec4 (diffuseMap, 1);
+	out_specular = vec4 (specularMap, 1.0);
 }

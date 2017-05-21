@@ -94,6 +94,7 @@ void Pipeline::UpdateMatrices (Shader* shader)
 	}
 
 	glm::mat4 modelViewMatrix = _viewMatrix * _modelMatrix;
+	glm::mat4 viewProjectionMatrix = _projectionMatrix * _viewMatrix;
 	glm::mat4 modelViewProjectionMatrix = _projectionMatrix * _viewMatrix * _modelMatrix;
 
 	glm::mat3 normalWorldMatrix = glm::transpose (glm::inverse (glm::mat3 (modelViewMatrix)));
@@ -105,6 +106,7 @@ void Pipeline::UpdateMatrices (Shader* shader)
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("viewMatrix"), 1, GL_FALSE, glm::value_ptr (_viewMatrix));
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelViewMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewMatrix));
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("projectionMatrix"), 1, GL_FALSE, glm::value_ptr (_projectionMatrix));
+	GL::UniformMatrix4fv (shader->GetUniformLocation ("viewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (viewProjectionMatrix));
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewProjectionMatrix));
 	GL::UniformMatrix3fv (shader->GetUniformLocation ("normalMatrix"), 1, GL_FALSE, glm::value_ptr (normalMatrix));
 	GL::UniformMatrix3fv (shader->GetUniformLocation ("normalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (normalWorldMatrix));
@@ -322,9 +324,9 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 		mat->diffuseColor.y, mat->diffuseColor.z, 1.0);
 	// glUniform4f (shader->GetUniformLocation ("MaterialAmbient"), mat->ambientColor.x,
 	// 	mat->ambientColor.y, mat->ambientColor.z, 1.0);
-	// glUniform4f (shader->GetUniformLocation ("MaterialSpecular"), mat->specularColor.x,
-	// 	mat->specularColor.y, mat->specularColor.z, 1.0);
-	// glUniform1f (shader->GetUniformLocation ("MaterialShininess"), mat->shininess);
+	 GL::Uniform4f (shader->GetUniformLocation ("MaterialSpecular"), mat->specularColor.x,
+	 	mat->specularColor.y, mat->specularColor.z, 1.0);
+	 GL::Uniform1f (shader->GetUniformLocation ("MaterialShininess"), mat->shininess);
 	// glUniform1f (shader->GetUniformLocation ("MaterialTransparency"), mat->transparency);
 
 	// Send maps to shader
@@ -350,14 +352,14 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 		GL::Uniform1i (shader->GetUniformLocation ("DiffuseMap"), 0);
 	}
 
-	// if (mat->specularTexture) {
-	// 	glActiveTexture (GL_TEXTURE0 + _textureCount);
-	// 	GL::BindTexture (GL_TEXTURE_2D, mat->specularTexture);
-	// 	glUniform1i (shader->GetUniformLocation ("SpecularMap"), _textureCount);
-	// 	++ _textureCount;
-	// } else {
-	// 	glUniform1i (shader->GetUniformLocation ("SpecularMap"), 0);
-	// }
+	 if (mat->specularTexture) {
+	 	GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
+	 	GL::BindTexture (GL_TEXTURE_2D, mat->specularTexture);
+	 	GL::Uniform1i (shader->GetUniformLocation ("SpecularMap"), _textureCount);
+	 	++ _textureCount;
+	 } else {
+	 	GL::Uniform1i (shader->GetUniformLocation ("SpecularMap"), 0);
+	 }
 
 	// if (mat->alphaTexture) {
 	// 	glActiveTexture (GL_TEXTURE0 + _textureCount);
