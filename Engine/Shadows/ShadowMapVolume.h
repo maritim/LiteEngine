@@ -12,10 +12,10 @@ public:
 	virtual ~ShadowMapVolume ();
 
 	virtual bool Init () = 0;
-	virtual void BindForShadowMapCatch () = 0;
+	virtual void BindForShadowMapCatch (std::size_t cascadedLevel = 0) = 0;
 	virtual void EndDrawing () = 0;
 
-	virtual void BindForLightPass() = 0;
+	virtual void BindForReading () = 0;
 	virtual void LockShader (int sceneLayers) = 0;
 };
 

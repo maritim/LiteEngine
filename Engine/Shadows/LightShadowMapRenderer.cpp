@@ -66,7 +66,7 @@ void LightShadowMapRenderer::RenderingPass (Scene* scene, Camera* camera, GBuffe
 	 * Bind drawing shadow map volume
 	*/
 
-	_volume->BindForLightPass ();
+	_volume->BindForReading ();
 
 	/*
 	 * Draw the volumetric light 

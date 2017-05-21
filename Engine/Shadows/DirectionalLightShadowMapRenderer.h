@@ -8,7 +8,8 @@
 class DirectionalLightShadowMapRenderer : public LightShadowMapRenderer
 {
 protected:
-	OrthographicCamera* _lightCamera;
+	OrthographicCamera** _lightCameras;
+	float* _shadowMapZEnd;
 
 public:
 	DirectionalLightShadowMapRenderer (Light* light);
@@ -17,8 +18,11 @@ protected:
 
 	std::vector<PipelineAttribute> GetCustomAttributes ();
 
-	void SendLightCamera(Camera* camera);
-	void UpdateLightCamera(Camera* camera);
+	void SendLightCamera (Camera* camera);
+	void UpdateCascadeLevelsLimits (Camera* camera);
+	void UpdateLightCameras (Camera* camera);
+
+	void RenderScene (Scene* scene, OrthographicCamera* lightCamera);
 };
 
 #endif

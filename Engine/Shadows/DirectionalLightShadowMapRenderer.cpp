@@ -18,7 +18,8 @@
 
 DirectionalLightShadowMapRenderer::DirectionalLightShadowMapRenderer (Light* light) :
 	LightShadowMapRenderer (light),
-	_lightCamera (new OrthographicCamera ())
+	_lightCameras (new OrthographicCamera* [CASCADED_SHADOW_MAP_LEVELS]),
+	_shadowMapZEnd (new float [CASCADED_SHADOW_MAP_LEVELS + 1])
 {
 	_shaderName = "SHADOW_MAP_DIRECTIONAL_LIGHT";
 
@@ -27,66 +28,43 @@ DirectionalLightShadowMapRenderer::DirectionalLightShadowMapRenderer (Light* lig
 		"Assets/Shaders/SHadowMap/deferredDirVolShadowMapLightFragment.glsl");
 
 	_volume = new ShadowMapDirectionalLightVolume ();
-	_volume->Init ();
-}
 
-Scene* mainScene = nullptr;
-
-void DirectionalLightShadowMapRenderer::ShadowMapRender (Scene* scene, Camera* camera)
-{
-	/*
-	 * Render scene entities to framebuffer at Deferred Rendering Stage
-	*/
-
-	mainScene = scene;
-
-	UpdateLightCamera (camera);
-	SendLightCamera (camera);
-
-	GL::Enable (GL_DEPTH_TEST);
-	GL::Enable (GL_BLEND);
-	GL::Disable (GL_CULL_FACE);
-
-	GL::BlendFunc (GL_ONE, GL_ZERO);
-
-	FrustumVolume* frustum = _lightCamera->GetFrustumVolume ();
-
-	for (std::size_t i=0;i<scene->GetObjectsCount ();i++) {
-		if (scene->GetObjectAt (i)->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
-			continue;
-		}
-
-		/*
-		 * Culling Check
-		*/
-
-		if (scene->GetObjectAt (i)->GetCollider () == nullptr) {
-			continue;
-		}
-
-		GeometricPrimitive* primitive = scene->GetObjectAt (i)->GetCollider ()->GetGeometricPrimitive ();
-		if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
-			continue;
-		}
-
-		/*
-		 * Lock shader based on scene object layer
-		*/
-
-		_volume->LockShader (scene->GetObjectAt (i)->GetLayers ());
-
-		/*
-		 * Render object on shadow map
-		*/
-
-		scene->GetObjectAt (i)->GetRenderer ()->Draw ();
+	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
+		_lightCameras [index] = new OrthographicCamera ();
 	}
 }
 
-void DirectionalLightShadowMapRenderer::SendLightCamera (Camera* viewCamera)
+void DirectionalLightShadowMapRenderer::ShadowMapRender (Scene* scene, Camera* camera)
 {
-	Pipeline::CreateProjection (_lightCamera->GetProjectionMatrix ());
-	Pipeline::SendCamera (_lightCamera);
+	UpdateCascadeLevelsLimits (camera);
+	UpdateLightCameras (camera);
+
+	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
+		_volume->BindForShadowMapCatch (index);
+
+		OrthographicCamera* lightCamera = _lightCameras [index];
+
+		SendLightCamera (lightCamera);
+		RenderScene (scene, lightCamera);
+	}
+}
+
+void DirectionalLightShadowMapRenderer::UpdateCascadeLevelsLimits (Camera* camera)
+{
+	/*
+	 * TODO: Calculate this at run time
+	*/
+
+	_shadowMapZEnd [0] = 0.92f;
+	_shadowMapZEnd [1] = 0.98f;
+	_shadowMapZEnd [2] = 0.995f;
+	_shadowMapZEnd [3] = 1.0f;
+}
+
+void DirectionalLightShadowMapRenderer::SendLightCamera (Camera* lightCamera)
+{
+	Pipeline::CreateProjection (lightCamera->GetProjectionMatrix ());
+	Pipeline::SendCamera (lightCamera);
 }
 
 /*
@@ -104,73 +82,152 @@ void DirectionalLightShadowMapRenderer::SendLightCamera (Camera* viewCamera)
  *    orthographic projection matrix for the shadow map.
 */
 
-void DirectionalLightShadowMapRenderer::UpdateLightCamera(Camera* viewCamera)
+void DirectionalLightShadowMapRenderer::UpdateLightCameras (Camera* viewCamera)
 {
 	const float LIGHT_CAMERA_OFFSET = 100.0f;
 
 	glm::vec3 lightDir = glm::normalize(_transform->GetPosition()) * -1.0f;
-	glm::quat lightDirQuat = glm::toQuat(glm::lookAt(glm::vec3 (0, 0, 0), lightDir, glm::vec3(0, 1, 0)));
-	glm::mat4 lightView = glm::translate (glm::mat4_cast (lightDirQuat), glm::vec3 ());
+	glm::quat lightDirQuat = glm::toQuat(glm::lookAt(glm::vec3 (0), lightDir, glm::vec3(0, 1, 0)));
+	glm::mat4 lightView = glm::translate (glm::mat4_cast (lightDirQuat), glm::vec3 (0));
 
 	glm::mat4 cameraView = glm::translate(glm::mat4_cast(viewCamera->GetRotation()), viewCamera->GetPosition() * -1.0f);
 	glm::mat4 cameraProjection = viewCamera->GetProjectionMatrix();
 	glm::mat4 invCameraProjView = glm::inverse(cameraProjection * cameraView);
 
-	glm::vec3 cuboidExtendsMin = glm::vec3(1, 1, 1) * std::numeric_limits<float>::max ();
-	glm::vec3 cuboidExtendsMax = glm::vec3(1, 1, 1) * -std::numeric_limits<float>::min ();
+	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
 
-	for (int i = -1; i <= 1; i += 2) {
-		for (int j = -1; j <= 1; j += 2) {
-			for (int k = -1; k <= 1; k += 2) {
-				glm::vec4 cuboidCorner = glm::vec4(i, j, k, 1.0f);
+		glm::vec3 cuboidExtendsMin = glm::vec3(std::numeric_limits<float>::max());
+		glm::vec3 cuboidExtendsMax = glm::vec3(-std::numeric_limits<float>::min());
 
-				cuboidCorner = invCameraProjView * cuboidCorner;
-				cuboidCorner /= cuboidCorner.w;
+		float zStart = index == 0 ? - 1 : _shadowMapZEnd [index - 1];
+		float zEnd = _shadowMapZEnd [index];
 
-				cuboidCorner = lightView * cuboidCorner;
+		for (int x = -1; x <= 1; x += 2) {
+			for (int y = -1; y <= 1; y += 2) {
+				for (int z = -1; z <= 1; z += 2) {
+					glm::vec4 cuboidCorner = glm::vec4(x, y, z == -1 ? zStart : zEnd, 1.0f);
 
-				cuboidExtendsMin.x = std::min(cuboidExtendsMin.x, cuboidCorner.x);
-				cuboidExtendsMin.y = std::min(cuboidExtendsMin.y, cuboidCorner.y);
-				cuboidExtendsMin.z = std::min(cuboidExtendsMin.z, cuboidCorner.z);
+					cuboidCorner = invCameraProjView * cuboidCorner;
+					cuboidCorner /= cuboidCorner.w;
 
-				cuboidExtendsMax.x = std::max(cuboidExtendsMax.x, cuboidCorner.x);
-				cuboidExtendsMax.y = std::max(cuboidExtendsMax.y, cuboidCorner.y);
-				cuboidExtendsMax.z = std::max(cuboidExtendsMax.z, cuboidCorner.z);
+					cuboidCorner = lightView * cuboidCorner;
+
+					cuboidExtendsMin.x = std::min(cuboidExtendsMin.x, cuboidCorner.x);
+					cuboidExtendsMin.y = std::min(cuboidExtendsMin.y, cuboidCorner.y);
+					cuboidExtendsMin.z = std::min(cuboidExtendsMin.z, cuboidCorner.z);
+
+					cuboidExtendsMax.x = std::max(cuboidExtendsMax.x, cuboidCorner.x);
+					cuboidExtendsMax.y = std::max(cuboidExtendsMax.y, cuboidCorner.y);
+					cuboidExtendsMax.z = std::max(cuboidExtendsMax.z, cuboidCorner.z);
+				}
 			}
 		}
+
+		_lightCameras [index]->SetRotation(lightDirQuat);
+
+		_lightCameras [index]->SetOrthographicInfo (
+			cuboidExtendsMin.x, cuboidExtendsMax.x,
+			cuboidExtendsMin.y, cuboidExtendsMax.y,
+			cuboidExtendsMin.z - LIGHT_CAMERA_OFFSET, cuboidExtendsMax.z + LIGHT_CAMERA_OFFSET
+		);
 	}
+}
 
-	_lightCamera->SetRotation(lightDirQuat);
+void DirectionalLightShadowMapRenderer::RenderScene (Scene* scene, OrthographicCamera* lightCamera)
+{
+	/*
+	 * Shadow map is a depth test
+	*/
 
-	_lightCamera->SetOrthographicInfo (
-		cuboidExtendsMin.x - LIGHT_CAMERA_OFFSET, cuboidExtendsMax.x + LIGHT_CAMERA_OFFSET,
-		cuboidExtendsMin.y - LIGHT_CAMERA_OFFSET, cuboidExtendsMax.y + LIGHT_CAMERA_OFFSET,
-		cuboidExtendsMin.z - LIGHT_CAMERA_OFFSET, cuboidExtendsMax.z + LIGHT_CAMERA_OFFSET
-	);
+	GL::Enable (GL_DEPTH_TEST);
+
+	/*
+	 * Doesn't really matter
+	*/
+
+	GL::Enable(GL_BLEND);
+	GL::BlendFunc(GL_ONE, GL_ZERO);
+
+	/*
+	 * Enable front face culling
+	*/
+
+	GL::Enable(GL_CULL_FACE);
+	GL::CullFace (GL_FRONT);
+
+	/*
+	 * Light camera
+	*/
+
+	FrustumVolume* frustum = lightCamera->GetFrustumVolume ();
+
+	/*
+	* Render scene entities to framebuffer at Deferred Rendering Stage
+	*/
+
+	for (std::size_t index=0; index<scene->GetObjectsCount (); index++) {
+		if (scene->GetObjectAt (index)->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
+			continue;
+		}
+
+		/*
+		 * Culling Check
+		*/
+
+		if (scene->GetObjectAt (index)->GetCollider () == nullptr) {
+			continue;
+		}
+
+		GeometricPrimitive* primitive = scene->GetObjectAt (index)->GetCollider ()->GetGeometricPrimitive ();
+		if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
+			continue;
+		}
+
+		/*
+		 * Lock shader based on scene object layer
+		*/
+
+		_volume->LockShader (scene->GetObjectAt (index)->GetLayers ());
+
+		/*
+		 * Render object on shadow map
+		*/
+
+		scene->GetObjectAt (index)->GetRenderer ()->Draw ();
+	}
 }
 
 std::vector<PipelineAttribute> DirectionalLightShadowMapRenderer::GetCustomAttributes ()
 {
 	std::vector<PipelineAttribute> attributes = LightShadowMapRenderer::GetCustomAttributes ();
 
-	PipelineAttribute shadowMap;
-	PipelineAttribute lightSpaceMatrix;
+	for (std::size_t index = 0; index<CASCADED_SHADOW_MAP_LEVELS; index++) {
 
-	shadowMap.type = PipelineAttribute::AttrType::ATTR_1I;
-	lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
+		PipelineAttribute shadowMap;
+		PipelineAttribute lightSpaceMatrix;
+		PipelineAttribute clipZLevel;
 
-	shadowMap.name = "shadowMap";
-	lightSpaceMatrix.name = "lightSpaceMatrix";
+		shadowMap.type = PipelineAttribute::AttrType::ATTR_1I;
+		lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
+		clipZLevel.type = PipelineAttribute::AttrType::ATTR_1F;
 
-	shadowMap.value.x = 4;
+		shadowMap.name = "shadowMaps[" + std::to_string (index) + "]";
+		lightSpaceMatrix.name = "lightSpaceMatrices[" + std::to_string (index) + "]";
+		clipZLevel.name = "clipZLevels[" + std::to_string (index) + "]";
 
-	glm::mat4 lightProjection = _lightCamera->GetProjectionMatrix ();
-	glm::mat4 lightView = glm::translate (glm::mat4_cast (_lightCamera->GetRotation ()), _lightCamera->GetPosition () * -1.0f);
+		shadowMap.value.x = 4.0f + index;
 
-	lightSpaceMatrix.matrix = lightProjection * lightView;
+		glm::mat4 lightProjection = _lightCameras [index]->GetProjectionMatrix ();
+		glm::mat4 lightView = glm::translate (glm::mat4_cast(_lightCameras [index]->GetRotation ()), _lightCameras [index]->GetPosition () * -1.0f);
 
-	attributes.push_back (shadowMap);
-	attributes.push_back (lightSpaceMatrix);
+		lightSpaceMatrix.matrix = lightProjection * lightView;
+
+		clipZLevel.value.x = _shadowMapZEnd [index];
+
+		attributes.push_back (shadowMap);
+		attributes.push_back (lightSpaceMatrix);
+		attributes.push_back (clipZLevel);
+	}
 
 	return attributes;
 }

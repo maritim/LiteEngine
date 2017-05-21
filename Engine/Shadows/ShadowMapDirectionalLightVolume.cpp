@@ -7,13 +7,11 @@
 #include "Renderer/Pipeline.h"
 #include "Core/Console/Console.h"
 
-#define SHADOW_MAP_RESOLUTION_WIDTH 2048		
-#define SHADOW_MAP_RESOLUTION_HEIGHT 2048
-
 ShadowMapDirectionalLightVolume::ShadowMapDirectionalLightVolume () :
 	_staticShaderName ("STATIC_SHADOW_MAP"),
 	_animationShaderName ("ANIMATION_SHADOW_MAP"),
-	_shadowMapIndex (0),
+	_shadowMapIndices (new GLuint [CASCADED_SHADOW_MAP_LEVELS]),
+	_shadowMapResolutions (new std::pair<GLuint, GLuint> [CASCADED_SHADOW_MAP_LEVELS]),
 	_frameBufferIndex (0)
 {
 	ShaderManager::Instance ()->AddShader (_staticShaderName,
@@ -24,12 +22,37 @@ ShadowMapDirectionalLightVolume::ShadowMapDirectionalLightVolume () :
 		"Assets/Shaders/ShadowMap/shadowMapVertexAnimation.glsl",
 		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
 
-	Init ();
+	if (!Init ()) {
+		Console::LogError ("It is not possible to continue the process. End now!");
+		exit (SHADOW_MAP_FBO_NOT_INIT);
+	}
 }
 
 ShadowMapDirectionalLightVolume::~ShadowMapDirectionalLightVolume ()
 {
+	/*
+	 * Detach current depth buffer from frame buffer object
+	*/
 
+	GL::FramebufferTexture2D (GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+
+	/*
+	 * Delete depth buffer textures
+	*/
+
+	GL::DeleteTextures (CASCADED_SHADOW_MAP_LEVELS, _shadowMapIndices);
+
+	/*
+	 * Delete frame buffer
+	*/
+
+	GL::DeleteFramebuffers (1, &_frameBufferIndex);
+
+	/*
+	 * Delete cascaded resolutions
+	*/
+
+	delete [] _shadowMapResolutions;
 }
 
 bool ShadowMapDirectionalLightVolume::Init ()
@@ -39,35 +62,46 @@ bool ShadowMapDirectionalLightVolume::Init ()
 	*/
 
 	GL::GenFramebuffers(1, &_frameBufferIndex);
-	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, _frameBufferIndex);
 
 	/*
-	 * Create shadow map texture 
+	 * Create shadow map cascaded textures 
 	*/
 
-	GL::GenTextures(1, &_shadowMapIndex);
-	GL::BindTexture(GL_TEXTURE_2D, _shadowMapIndex);
-	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-		SHADOW_MAP_RESOLUTION_WIDTH, SHADOW_MAP_RESOLUTION_HEIGHT, 
-		0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	GL::GenTextures(CASCADED_SHADOW_MAP_LEVELS, _shadowMapIndices);
 
-	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
+		GL::BindTexture(GL_TEXTURE_2D, _shadowMapIndices [index]);
 
-	GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-	GL::TexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+		_shadowMapResolutions [index].first = SHADOW_MAP_MAX_RESOLUTION_WIDTH;
+		_shadowMapResolutions [index].second = SHADOW_MAP_MAX_RESOLUTION_HEIGHT;
+
+		GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32,
+			_shadowMapResolutions [index].first, _shadowMapResolutions [index].second,
+			0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+		GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+		GL::TexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	}
 
 	/*
 	 * Attach depth buffer to frame buffer
 	*/
 
 	GL::BindFramebuffer(GL_FRAMEBUFFER, _frameBufferIndex);
-	GL::FramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowMapIndex, 0);
+	GL::FramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowMapIndices [0], 0);
+
+	/*
+	 * Disable writes to the color buffer
+	*/
+
 	GL::DrawBuffer(GL_NONE);
 	GL::ReadBuffer(GL_NONE);
-	GL::BindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	/*
 	 * Check that framebuffer is ok
@@ -78,7 +112,6 @@ bool ShadowMapDirectionalLightVolume::Init ()
 		return false;
 	}
 
-
 	/*
 	 * Restore default FBO
 	*/
@@ -88,12 +121,40 @@ bool ShadowMapDirectionalLightVolume::Init ()
 	return true;
 }
 
-void ShadowMapDirectionalLightVolume::BindForShadowMapCatch ()
+void ShadowMapDirectionalLightVolume::BindForShadowMapCatch (std::size_t cascadedLevel)
 {
-	GL::Viewport (0, 0, SHADOW_MAP_RESOLUTION_WIDTH, SHADOW_MAP_RESOLUTION_HEIGHT);
+	/*
+	 * Check if cascaded level excedes the maximum level
+	*/
+
+	if (cascadedLevel >= CASCADED_SHADOW_MAP_LEVELS) {
+		Console::LogWarning ("There is not level " + std::to_string (cascadedLevel) + " on directional shadow map");
+		return;
+	}
+
+	/*
+	 * Change resolution on viewport as shadow map size
+	*/
+
+	GL::Viewport (0, 0, _shadowMapResolutions [cascadedLevel].first, _shadowMapResolutions [cascadedLevel].second);
+
+	/*
+	 * Bind frame buffer
+	*/
+	
 	GL::BindFramebuffer(GL_FRAMEBUFFER, _frameBufferIndex);
 
-	GL::Clear(GL_DEPTH_BUFFER_BIT);
+	/*
+	 * Set depth component based on cascade level
+	*/
+
+	GL::FramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _shadowMapIndices [cascadedLevel], 0);
+
+	/*
+	 * Clear depth buffer
+	*/
+
+	GL::Clear (GL_DEPTH_BUFFER_BIT);
 }
 
 void ShadowMapDirectionalLightVolume::EndDrawing ()
@@ -112,23 +173,37 @@ void ShadowMapDirectionalLightVolume::EndDrawing ()
 	GL::Viewport(0, 0, windowWidth, windowHeight);
 }
 
-void ShadowMapDirectionalLightVolume::BindForLightPass ()
+void ShadowMapDirectionalLightVolume::BindForReading ()
 {
-	GL::ActiveTexture (GL_TEXTURE4);
+	/*
+	 * Bind every depth buffer for reading
+	*/
 
-	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-
-	GL::BindTexture (GL_TEXTURE_2D, _shadowMapIndex);
+	for (std::size_t index = 0;index < CASCADED_SHADOW_MAP_LEVELS;index ++) {
+		GL::ActiveTexture (GL_TEXTURE4 + index);
+		GL::BindTexture (GL_TEXTURE_2D, _shadowMapIndices [index]);
+	}
 }
 
 void ShadowMapDirectionalLightVolume::LockShader (int sceneLayers)
 {
+	/*
+	 * Unlock last shader
+	*/
+
 	Pipeline::UnlockShader ();
+
+	/*
+	 * Lock the shader for animations
+	*/
 
 	if (sceneLayers & SceneLayer::ANIMATION) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
 	}
+
+	/*
+	 * Lock general shader for not animated objects
+	*/
 
 	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
