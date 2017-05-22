@@ -3,8 +3,8 @@ LiteEngine
 
 Lite 3D Game Engine
 
-<img src="https://raw.githubusercontent.com/maritim/LiteEngine/gh-pages/Particles.png" alt="Particles" width="420px"/>
-<img src="https://raw.githubusercontent.com/maritim/LiteEngine/gh-pages/Animations.png" alt="Animations" width="420px"/>
+<img src="https://github.com/maritim/LiteEngine/blob/gh-pages/LiteEngine%20Screenshot%201.png" alt="Particles" width="720px"/>
+<img src="https://github.com/maritim/LiteEngine/blob/gh-pages/LiteEngine%20Screenshot%202.png" alt="Animations" width="720px"/>
 
 Project Health
 =================
