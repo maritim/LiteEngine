@@ -25,7 +25,7 @@ DirectionalLightShadowMapRenderer::DirectionalLightShadowMapRenderer (Light* lig
 
 	ShaderManager::Instance ()->AddShader (_shaderName,
 		"Assets/Shaders/ShadowMap/deferredDirVolShadowMapLightVertex.glsl",
-		"Assets/Shaders/SHadowMap/deferredDirVolShadowMapLightFragment.glsl");
+		"Assets/Shaders/ShadowMap/deferredDirVolShadowMapLightFragment.glsl");
 
 	_volume = new ShadowMapDirectionalLightVolume ();
 
