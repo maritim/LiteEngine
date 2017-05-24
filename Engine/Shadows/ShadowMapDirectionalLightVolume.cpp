@@ -31,6 +31,12 @@ ShadowMapDirectionalLightVolume::ShadowMapDirectionalLightVolume () :
 ShadowMapDirectionalLightVolume::~ShadowMapDirectionalLightVolume ()
 {
 	/*
+	 * Bind FBO
+	*/
+
+	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, _frameBufferIndex);
+
+	/*
 	 * Detach current depth buffer from frame buffer object
 	*/
 
@@ -47,6 +53,12 @@ ShadowMapDirectionalLightVolume::~ShadowMapDirectionalLightVolume ()
 	*/
 
 	GL::DeleteFramebuffers (1, &_frameBufferIndex);
+
+	/*
+	 * Restore default FBO
+	*/
+
+	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
 
 	/*
 	 * Delete cascaded resolutions

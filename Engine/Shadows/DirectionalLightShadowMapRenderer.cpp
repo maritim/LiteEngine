@@ -34,6 +34,16 @@ DirectionalLightShadowMapRenderer::DirectionalLightShadowMapRenderer (Light* lig
 	}
 }
 
+DirectionalLightShadowMapRenderer::~DirectionalLightShadowMapRenderer ()
+{
+	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
+		delete _lightCameras [index];
+	}
+
+	delete[] _lightCameras;
+	delete[] _shadowMapZEnd; 
+}
+
 void DirectionalLightShadowMapRenderer::ShadowMapRender (Scene* scene, Camera* camera)
 {
 	UpdateCascadeLevelsLimits (camera);

@@ -13,6 +13,7 @@ protected:
 
 public:
 	DirectionalLightShadowMapRenderer (Light* light);
+	~DirectionalLightShadowMapRenderer ();
 protected:
 	void ShadowMapRender (Scene* scene, Camera* camera);
 
