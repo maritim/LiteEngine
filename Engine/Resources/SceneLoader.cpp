@@ -89,11 +89,13 @@ void SceneLoader::ProcessGameObject (TiXmlElement* xmlElem, Scene* scene)
 	std::string name = xmlElem->Attribute ("name");
 	std::string instanceID = xmlElem->Attribute ("InstanceID");
 	std::string meshPath = xmlElem->Attribute ("meshpath");
+	std::string isActive = xmlElem->Attribute ("isActive");
 
 	GameObject* gameObject = new GameObject ();
 	gameObject->SetName (name);
 	// Need unsigned int here
 	gameObject->SetInstanceID (std::stoi (instanceID));
+	gameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
 	Model* mesh = Resources::LoadModel (meshPath);
 	gameObject->AttachMesh (mesh);
@@ -125,11 +127,13 @@ void SceneLoader::ProcessAnimationGameObject (TiXmlElement* xmlElem, Scene* scen
 	std::string name = xmlElem->Attribute ("name");
 	std::string instanceID = xmlElem->Attribute ("InstanceID");
 	std::string meshPath = xmlElem->Attribute ("meshpath");
+	std::string isActive = xmlElem->Attribute ("isActive");
 
 	AnimationGameObject* animGameObject = new AnimationGameObject ();
 	animGameObject->SetName (name);
 	// Need unsigned int here
 	animGameObject->SetInstanceID (std::stoi (instanceID));
+	animGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
 	Model* mesh = Resources::LoadAnimatedModel (meshPath);
 	animGameObject->AttachMesh (mesh);
@@ -161,11 +165,13 @@ void SceneLoader::ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene)
 	std::string name = xmlElem->Attribute ("name");
 	std::string instanceID = xmlElem->Attribute ("InstanceID");
 	std::string path = xmlElem->Attribute ("path");
+	std::string isActive = xmlElem->Attribute ("isActive");
 
 	ParticleSystem* partSystem = Resources::LoadParticleSystem (path);
 	partSystem->SetName (name);
 	// Need unsigned int here
 	partSystem->SetInstanceID (std::stoi (instanceID));
+	partSystem->SetActive (Extensions::StringExtend::ToBool (isActive));
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -191,10 +197,12 @@ void SceneLoader::ProcessLight (TiXmlElement* xmlElem, Scene* scene)
 	std::string name = xmlElem->Attribute ("name");
 	std::string instanceID = xmlElem->Attribute ("InstanceID");
 	std::string path = xmlElem->Attribute ("path");
+	std::string isActive = xmlElem->Attribute ("isActive");
 
 	Light* light = Resources::LoadLight (path);
 	light->SetName (name);
 	light->SetInstanceID (std::stoi (instanceID));
+	light->SetActive (Extensions::StringExtend::ToBool (isActive));
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 

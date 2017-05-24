@@ -9,7 +9,8 @@ SceneObject::SceneObject () :
 	_renderer (new Renderer (_transform)),
 	_rigidbody (new Rigidbody (_transform)),
 	_collider (nullptr),
-	_sceneLayers ((int) SceneLayer::STATIC)
+	_sceneLayers ((int) SceneLayer::STATIC),
+	_isActive (true)
 {
 
 }
@@ -61,6 +62,11 @@ std::size_t SceneObject::GetInstanceID () const
 	return _instanceID;
 }
 
+bool SceneObject::IsActive () const
+{
+	return _isActive;
+}
+
 void SceneObject::SetName (const std::string& name)
 {
 	_name = name;
@@ -69,6 +75,11 @@ void SceneObject::SetName (const std::string& name)
 void SceneObject::SetInstanceID (std::size_t instanceID)
 {
 	_instanceID = instanceID;
+}
+
+void SceneObject::SetActive (bool isActive)
+{
+	_isActive = isActive;
 }
 
 void SceneObject::OnAttachedToScene ()

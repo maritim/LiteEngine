@@ -20,15 +20,18 @@ protected:
 	Rigidbody* _rigidbody;
 	Collider* _collider;
 	int _sceneLayers;
+	bool _isActive;
 
 public:
 	SceneObject ();
 	
 	std::string GetName () const;
 	std::size_t GetInstanceID () const;
+	bool IsActive () const;
 
 	void SetName (const std::string& name);
 	void SetInstanceID (std::size_t instanceID);
+	void SetActive (bool isActive);
 
 	Transform* GetTransform () const;
 	Renderer* GetRenderer () const;
