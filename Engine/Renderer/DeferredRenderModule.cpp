@@ -109,12 +109,12 @@ void DeferredRenderModule::ForwardPass (Scene* scene)
 
 	std::vector<Renderer*> renderers;
 
-	for (std::size_t i=0;i<scene->GetObjectsCount ();i++) {
-		if (scene->GetObjectAt (i)->GetRenderer ()->GetStageType () != Renderer::StageType::FORWARD_STAGE) {
+	for (SceneObject* sceneObject : *scene) {
+		if (sceneObject->GetRenderer ()->GetStageType () != Renderer::StageType::FORWARD_STAGE) {
 			continue;
 		}
 
-		renderers.push_back (scene->GetObjectAt (i)->GetRenderer ());
+		renderers.push_back (sceneObject->GetRenderer ());
 	}
 
 	std::sort (renderers.begin (), renderers.end (), cmp);
@@ -173,8 +173,8 @@ void DeferredRenderModule::GeometryPass (Scene* scene, Camera* camera)
 
 	std::size_t drawnObjectsCount = 0;
 
-	for (std::size_t i=0;i<scene->GetObjectsCount ();i++) {
-		if (scene->GetObjectAt (i)->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
+	for (SceneObject* sceneObject : *scene) {
+		if (sceneObject->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
 			continue;
 		}
 
@@ -182,18 +182,18 @@ void DeferredRenderModule::GeometryPass (Scene* scene, Camera* camera)
 		 * Culling Check
 		*/
 
-		if (scene->GetObjectAt (i)->GetCollider () == nullptr) {
+		if (sceneObject->GetCollider () == nullptr) {
 			continue;
 		}
 
-		GeometricPrimitive* primitive = scene->GetObjectAt (i)->GetCollider ()->GetGeometricPrimitive ();
+		GeometricPrimitive* primitive = sceneObject->GetCollider ()->GetGeometricPrimitive ();
 		if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
 			continue;
 		}
 
 		drawnObjectsCount ++;
 
-		renderers.push_back (scene->GetObjectAt (i)->GetRenderer ());
+		renderers.push_back (sceneObject->GetRenderer ());
 	}
 
 	StatisticsManager::Instance ()->SetStatisticsObject ("DrawnObjectsCount", new DrawnObjectsCountStat (drawnObjectsCount));
@@ -227,6 +227,10 @@ void DeferredRenderModule::DirectionalLightPass (Scene* scene, Camera* camera)
 	for (std::size_t i=0;i<LightsManager::Instance ()->GetDirectionalLightsCount ();i++) {
 		VolumetricLight* volumetricLight = LightsManager::Instance ()->GetDirectionalLight (i);
 
+		if (!volumetricLight->IsActive ()) {
+			continue;
+		}
+
 		volumetricLight->GetLightRenderer ()->Draw (scene, camera, _frameBuffer);
 	}
 
@@ -238,6 +242,10 @@ void DeferredRenderModule::PointLightPass (Scene* scene, Camera* camera)
 {
 	for (std::size_t i=0;i<LightsManager::Instance ()->GetPointLightsCount ();i++) {
 		VolumetricLight* volumetricLight = LightsManager::Instance ()->GetPointLight (i);
+
+		if (!volumetricLight->IsActive ()) {
+			continue;
+		}
 
 		PointLightStencilPass (volumetricLight);
 		PointLightDrawPass (volumetricLight);

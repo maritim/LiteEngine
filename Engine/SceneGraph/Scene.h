@@ -9,8 +9,14 @@
 
 #include "Core/Intersections/AABBVolume.h"
 
+#include "SceneIterator.h"
+
+class SceneIterator;
+
 class Scene
 {
+	friend class SceneIterator;
+
 private:
 	std::vector<SceneObject*> _sceneObjects;
 protected:
@@ -33,11 +39,13 @@ public:
 	void AttachObject (SceneObject*);
 	void DetachObject (SceneObject*);
 
-	SceneObject* GetObjectAt (std::size_t index) const;
-	SceneObject* GetObject (const std::string& name) const;
+	SceneObject* GetObject (const std::string& name);
 
 	std::size_t GetObjectsCount () const;	
 	AABBVolume* GetBoundingBox () const;
+
+	SceneIterator begin ();
+	SceneIterator end ();
 
 	void Update ();
 private:

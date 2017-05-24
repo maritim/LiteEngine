@@ -23,8 +23,8 @@ void PhysicsSystem::Init (Scene* scene)
 
 void PhysicsSystem::UpdateScene ()
 {
-	for (std::size_t i=0;i<_currentScene->GetObjectsCount ();i++) {
-		Rigidbody* rigidbody = _currentScene->GetObjectAt (i)->GetRigidbody ();
+	for (SceneObject* sceneObject : *_currentScene) {
+		Rigidbody* rigidbody = sceneObject->GetRigidbody ();
 
 		rigidbody->Update ();
 	}

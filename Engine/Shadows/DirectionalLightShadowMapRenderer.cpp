@@ -175,8 +175,8 @@ void DirectionalLightShadowMapRenderer::RenderScene (Scene* scene, OrthographicC
 	* Render scene entities to framebuffer at Deferred Rendering Stage
 	*/
 
-	for (std::size_t index=0; index<scene->GetObjectsCount (); index++) {
-		if (scene->GetObjectAt (index)->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
+	for (SceneObject* sceneObject : *scene) {
+		if (sceneObject->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
 			continue;
 		}
 
@@ -184,11 +184,11 @@ void DirectionalLightShadowMapRenderer::RenderScene (Scene* scene, OrthographicC
 		 * Culling Check
 		*/
 
-		if (scene->GetObjectAt (index)->GetCollider () == nullptr) {
+		if (sceneObject->GetCollider () == nullptr) {
 			continue;
 		}
 
-		GeometricPrimitive* primitive = scene->GetObjectAt (index)->GetCollider ()->GetGeometricPrimitive ();
+		GeometricPrimitive* primitive = sceneObject->GetCollider ()->GetGeometricPrimitive ();
 		if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
 			continue;
 		}
@@ -197,13 +197,13 @@ void DirectionalLightShadowMapRenderer::RenderScene (Scene* scene, OrthographicC
 		 * Lock shader based on scene object layer
 		*/
 
-		_volume->LockShader (scene->GetObjectAt (index)->GetLayers ());
+		_volume->LockShader (sceneObject->GetLayers ());
 
 		/*
 		 * Render object on shadow map
 		*/
 
-		scene->GetObjectAt (index)->GetRenderer ()->Draw ();
+		sceneObject->GetRenderer ()->Draw ();
 	}
 }
 

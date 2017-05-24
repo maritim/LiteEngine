@@ -65,20 +65,11 @@ void Scene::DetachObject (SceneObject* object)
 	// TODO: Recalculate Bounding Box when detach object
 }
 
-SceneObject* Scene::GetObjectAt (std::size_t index) const
+SceneObject* Scene::GetObject (const std::string& name)
 {
-	if (index > _sceneObjects.size ()) {
-		return nullptr;
-	}
-
-	return _sceneObjects [index];
-}
-
-SceneObject* Scene::GetObject (const std::string& name) const
-{
-	for (SceneObject* object : _sceneObjects) {
-		if (object->GetName () == name) {
-			return object;
+	for (SceneObject* sceneObject : *this) {
+		if (sceneObject->GetName () == name) {
+			return sceneObject;
 		}
 	}
 
@@ -99,8 +90,8 @@ AABBVolume* Scene::GetBoundingBox () const
 
 void Scene::Update()
 {
-	for(std::size_t i=0;i<_sceneObjects.size();i++) {
-		_sceneObjects[i]->Update ();
+	for (SceneObject* sceneObject : *this) {
+		sceneObject->Update ();
 	}
 }
 
@@ -154,4 +145,14 @@ void Scene::UpdateBoundingBox (SceneObject* sceneObject)
 
 	DEBUG_LOG ("Min vertex: " + glm::to_string (volume->minVertex));
 	DEBUG_LOG ("Max vertex: " + glm::to_string (volume->maxVertex));
+}
+
+SceneIterator Scene::begin ()
+{
+	return SceneIterator (this, 0);
+}
+
+SceneIterator Scene::end ()
+{
+	return SceneIterator (this, _sceneObjects.size ());
 }

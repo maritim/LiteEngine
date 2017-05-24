@@ -101,12 +101,12 @@ void VoxelizationRenderModule::GeometryVoxelizationPass(Scene* scene)
 	 * Render geometry 
 	*/
 	
-	for (std::size_t i = 0; i<scene->GetObjectsCount(); i++) {
-		if (scene->GetObjectAt(i)->GetRenderer()->GetStageType() != Renderer::StageType::DEFERRED_STAGE) {
+	for (SceneObject* sceneObject : *scene) {
+		if (sceneObject->GetRenderer()->GetStageType() != Renderer::StageType::DEFERRED_STAGE) {
 			continue;
 		}
 
-		scene->GetObjectAt(i)->GetRenderer()->Draw();
+		sceneObject->GetRenderer()->Draw();
 	}
 }
 
