@@ -8,7 +8,7 @@
 			<Rotation />
 		</Transform>
 	</Camera> -->
-	<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Street Environment/Street environment_V01.obj" >
+	<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Street Environment/Street environment_V01.obj" isActive="true">
 		<Transform>
 			<Position y="-0.1"/>
 			<Rotation />
@@ -23,17 +23,7 @@
 			<Component name="FrameRate" />
 		</Components>
 	</GameObject>
- 	<!--<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Lara/Lara_Croft_default.dae" >
-		<Transform>
-			<Position y="-0.1" x="3" />
-			<Rotation x="80" />
-			<Scale />
-		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
-	</GameObject>-->
-	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Dragon/Dragon.dae" >
+	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Dragon/Dragon.dae" isActive="false" >
 		<Transform>
 			<Position y="-0.1" x="15" />
 			<Rotation x="-90"/>
@@ -44,19 +34,7 @@
 		</Rigidbody>
 	</AnimatedGameObject>	
 
-<!-- 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Soldier/Soldier.dae" >
-		<Transform>
-			<Position y="-0.1" x="9" />
-			<Rotation x=80 />
-			<Scale x=0.2 y=0.2 z=0.2 />
-		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
-	</AnimatedGameObject>	
- -->
-
-	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/Spider-Man.dae" >
+	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/Spider-Man.dae" isActive="true" >
 		<Transform>
 			<Position y="-0.1" x="9" />
 			<Rotation />
@@ -67,7 +45,7 @@
 		</Rigidbody>
 	</AnimatedGameObject>
 
-	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/walking.dae" >
+	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/walking.dae" isActive="true" >
 		<Transform>
 			<Position y="-0.1" x="6" />
 			<Rotation />
@@ -78,7 +56,7 @@
 		</Rigidbody>
 	</AnimatedGameObject>
 
-	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Chestie/chestie.dae" >
+	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Chestie/chestie.dae" isActive="true" >
 		<Transform>
 			<Position y="-0.1" x="12" />
 			<Rotation />
@@ -89,7 +67,7 @@
 		</Rigidbody>
 	</AnimatedGameObject>
 
-	<GameObject InstanceID="1" name="CowGirl" meshpath="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" >
+	<GameObject InstanceID="1" name="CowGirl" meshpath="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" isActive="true" >
 		<Transform>
 			<Position />
 			<Rotation />
@@ -99,7 +77,7 @@
 			<Gravity use="false" />
 		</Rigidbody>
 	</GameObject>
-	<GameObject InstanceID="2" name="FantasyGirl" meshpath="Assets/Models/Lightning/lightning_obj.obj" >
+	<GameObject InstanceID="2" name="FantasyGirl" meshpath="Assets/Models/Lightning/lightning_obj.obj" isActive="true" >
 		<Transform>
 			<Position x="-5" y="2" />
 			<Rotation />
@@ -109,7 +87,7 @@
 			<Gravity use="false" />
 		</Rigidbody>
 	</GameObject>	
-	<GameObject InstanceID="3" name="Cat" meshpath="Assets/Models/Cat/cat.obj" >
+	<GameObject InstanceID="3" name="Cat" meshpath="Assets/Models/Cat/cat.obj" isActive="true" >
 		<Transform>
 			<Position x="-10" />
 			<Rotation />
@@ -119,7 +97,7 @@
 			<Gravity use="false" />
 		</Rigidbody>
 	</GameObject>
-	<GameObject InstanceID="4" name="SpiderMan" meshpath="Assets/Models/Spider-Man/Spider-Man.obj" >
+	<GameObject InstanceID="4" name="SpiderMan" meshpath="Assets/Models/Spider-Man/Spider-Man.obj" isActive="true" >
 		<Transform>
 			<Position x="-15" />
 			<Rotation />
@@ -129,23 +107,24 @@
 			<Gravity use="false" />
 		</Rigidbody>
 	</GameObject>
-  <!--<Light InstanceID="40" name="Sun" path="Assets/Lights/PrototypeSceneSun.light">
-    <Transform>
-      <Position x="1" y="1" z="1" />
-    </Transform>
-  </Light>-->
-	<Light InstanceID="40" name="Sun" path="Assets/Lights/ShadowsSun.light">
+
+	<Light InstanceID="40" name="Sun" path="Assets/Lights/PrototypeSceneSun.light" isActive="false">
+		<Transform>
+			<Position x="1" y="1" z="1" />
+		</Transform>
+	</Light>
+	<Light InstanceID="40" name="Sun" path="Assets/Lights/ShadowsSun.light" isActive="true">
 		<Transform>
 			<Position x="0.5" y="1" z="1" />
 		</Transform>
 	</Light>
-	<!--<Light InstanceID="41" name="LightBulb" path="Assets/Lights/PrototypeScenePoint.light">
+	<Light InstanceID="41" name="LightBulb" path="Assets/Lights/PrototypeScenePoint.light" isActive="false">
 		<Transform>
 			<Position x="-1" y="-1" z="-1" />
 		</Transform>
-	</Light>-->
+	</Light>
 
-  	<!--<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" >
+	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" isActive="false" >
 		<Transform>
 			<Position x=-10 z=-0.5 />
 			<Rotation />
@@ -155,7 +134,7 @@
 			<Gravity use="false" />
 		</Rigidbody>
 	</ParticleSystem>
-	<ParticleSystem InstanceID="6" name="Smoke" path="Assets/ParticleSystem/Smoke/Smoke.psys" >
+	<ParticleSystem InstanceID="6" name="Smoke" path="Assets/ParticleSystem/Smoke/Smoke.psys" isActive="false" >
 		<Transform>
 			<Position x="10" />
 			<Rotation />
@@ -164,9 +143,9 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
-	</ParticleSystem>--> 
+	</ParticleSystem> 
 
- 	<!--<ParticleSystem InstanceID="7" name="Fireworks" path="Assets/ParticleSystem/Fireworks/Fireworks.psys" >
+ 	<ParticleSystem InstanceID="7" name="Fireworks" path="Assets/ParticleSystem/Fireworks/Fireworks.psys" isActive="false" >
 		<Transform>
 			<Position x="0" y="5" z="-5" />
 			<Rotation x="0" y="0" z="0" /> 
@@ -176,7 +155,7 @@
 			<Gravity use="false" />
 		</Rigidbody>
 	</ParticleSystem>
-  	<ParticleSystem InstanceID="8" name="Snow" path="Assets/ParticleSystem/Snow/Snow.psys" >
+  	<ParticleSystem InstanceID="8" name="Snow" path="Assets/ParticleSystem/Snow/Snow.psys" isActive="false" >
 		<Transform>
 			<Position y="20" z="-5" />
 			<Rotation />
@@ -185,8 +164,8 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
-	</ParticleSystem>--> 
-<!-- 	<ParticleSystem InstanceID="8" name="Rain" path="Assets/ParticleSystem/Rain/Rain.psys" >
+	</ParticleSystem> 
+	<ParticleSystem InstanceID="8" name="Rain" path="Assets/ParticleSystem/Rain/Rain.psys" isActive="false" >
 		<Transform>
 			<Position y="20" z="-5" />
 			<Rotation />
@@ -195,18 +174,8 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
-	</ParticleSystem> -->
-<!-- 	<ParticleSystem InstanceID="9" name="PigSnow" path="Assets/ParticleSystem/MeshPigs/Pigs.psys" >
-		<Transform>
-			<Position y="20" z="5" />
-			<Rotation />
-			<Scale />
-		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
-	</ParticleSystem> -->
-<!-- 	<ParticleSystem InstanceID="10" name="Tail" path="Assets/ParticleSystem/Tail/Tail.psys" >
+	</ParticleSystem>
+	<ParticleSystem InstanceID="10" name="Tail" path="Assets/ParticleSystem/Tail/Tail.psys" isActive="false" >
 		<Transform parent="CowGirl" >
 			<Position />
 			<Rotation />
@@ -215,5 +184,5 @@
 		<Rigidbody>
 			<Gravity use="false" />
 		</Rigidbody>
-	</ParticleSystem> -->
+	</ParticleSystem>
 </Scene>
