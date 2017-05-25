@@ -9,9 +9,9 @@ uniform mat4 modelViewProjectionMatrix;
 uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
 
-uniform vec4 MaterialDiffuse;
-uniform vec4 MaterialAmbient;
-uniform vec4 MaterialSpecular;
+uniform vec3 MaterialDiffuse;
+uniform vec3 MaterialAmbient;
+uniform vec3 MaterialSpecular;
 uniform float MaterialShininess;
 uniform float MaterialTransparency;
 
@@ -76,7 +76,7 @@ void main()
 
 		// Attenuation is 1.0 for Directional Lights
 		vec3 diffuseLighting = vec3 (directionalLights [index].diffuse) *
-			vec3 (MaterialDiffuse) * diffuseMap * dCont;
+			MaterialDiffuse * diffuseMap * dCont;
 
 		vec3 surface2view = normalize (cameraPosition - position);
 		vec3 reflection = reflect (-lightDirection, norm);
@@ -85,7 +85,7 @@ void main()
 		float sCont = pow (max (dot (surface2view, reflection), 0.0), MaterialShininess);
 
 		vec3 specular = vec3 (directionalLights [index].specular) * specularMap *
-			vec3 (MaterialSpecular) * sCont;
+			MaterialSpecular * sCont;
 
 		totalLighting = totalLighting + diffuseLighting + specular;
 	}

@@ -12,8 +12,8 @@ uniform mat4 modelViewProjectionMatrix;
 uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
 
-uniform vec4 MaterialDiffuse;
-uniform vec4 MaterialSpecular;
+uniform vec3 MaterialDiffuse;
+uniform vec3 MaterialSpecular;
 
 uniform float MaterialShininess;
 
@@ -34,8 +34,8 @@ void main()
 	 * Get color of all used texture maps
 	*/
 
-	vec3 diffuseMap = vec3 (MaterialDiffuse * texture2D (DiffuseMap, 	geom_texcoord.xy));
-	vec3 specularMap = vec3 (MaterialSpecular * texture2D (SpecularMap, geom_texcoord.xy));
+	vec3 diffuseMap = MaterialDiffuse * vec3 (texture2D (DiffuseMap, 	geom_texcoord.xy));
+	vec3 specularMap = MaterialSpecular * vec3 (texture2D (SpecularMap, geom_texcoord.xy));
 
 	/*
 	 * Renormalize normal vector

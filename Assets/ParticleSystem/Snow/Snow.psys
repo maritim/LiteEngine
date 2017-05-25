@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <ParticleSystem name="Snow" >
-	<CountRange min="0" max="50000"/>
-	<EmissionRate rate="1000" />
+	<CountRange min="0" max="5000"/>
+	<EmissionRate rate="250" />
 
 	<Emiter type="QUAD" width="49.0" depth="49.0" >
 		<Particle type="BILLBOARD">

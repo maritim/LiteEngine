@@ -9,9 +9,9 @@ uniform mat4 modelViewProjectionMatrix;
 uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
 
-uniform vec4 MaterialDiffuse;
-uniform vec4 MaterialAmbient;
-uniform vec4 MaterialSpecular;
+uniform vec3 MaterialDiffuse;
+uniform vec3 MaterialAmbient;
+uniform vec3 MaterialSpecular;
 uniform float MaterialShininess;
 uniform float MaterialTransparency;
 
