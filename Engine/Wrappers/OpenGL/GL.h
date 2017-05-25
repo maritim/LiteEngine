@@ -60,6 +60,7 @@ public:
 	 * Draw Calls
 	*/
 
+	static void DrawArrays(GLenum mode, GLint first, GLsizei count);
 	static void DrawElements (GLenum mode, GLsizei count, GLenum type, const void* indices);
 	static void DrawElementsInstanced (GLenum mode, GLsizei count, GLenum type, const void* indices, GLsizei primcount);
 

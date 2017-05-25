@@ -162,14 +162,7 @@ void VoxelizationRenderModule::VoxelRenderingRayTracePass()
 	 * Render fullscreen quad.	
 	*/
 
-	GL::EnableVertexAttribArray(0);
-
-	GL::Begin(GL_QUADS);
-		GL::VertexAttrib2f(0, -1.0f, -1.0f);
-		GL::VertexAttrib2f(0, 1.0f, -1.0f);
-		GL::VertexAttrib2f(0, 1.0f, 1.0f);
-		GL::VertexAttrib2f(0, -1.0f, 1.0f);
-	GL::End();
+	GL::DrawArrays (GL_POINTS, 0, 1);
 }
 
 /*

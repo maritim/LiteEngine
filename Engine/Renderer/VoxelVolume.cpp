@@ -158,7 +158,8 @@ void VoxelVolume::StartRayTracePass()
 
 	ShaderManager::Instance()->AddShader("VOXEL_RAY_TRACE_SHADER",
 		"Assets/Shaders/Voxelize/voxelRayTraceVertex.glsl",
-		"Assets/Shaders/Voxelize/voxelRayTraceFragment.glsl");
+		"Assets/Shaders/Voxelize/voxelRayTraceFragment.glsl",
+		"Assets/Shaders/Voxelize/voxelRayTraceGeometry.glsl");
 
 	/* 
 	 * Use voxel ray trace shader

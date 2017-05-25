@@ -1,6 +1,6 @@
 #version 330 core
 
-in vec2 vert_RayCoordinates;
+in vec2 geom_RayCoordinates;
 
 uniform vec3 cameraPosition;
 
@@ -60,8 +60,8 @@ void main ()
 	 * Compute ray's origin and direction from pixel coordinate.
 	*/
 
- 	vec4 screenSpaceRayCoords1 = vec4 (vert_RayCoordinates, -1.0, 1.0);
-	vec4 screenSpaceRayCoords2 = vec4 (vert_RayCoordinates, -0.5, 1.0);
+ 	vec4 screenSpaceRayCoords1 = vec4 (geom_RayCoordinates, -1.0, 1.0);
+	vec4 screenSpaceRayCoords2 = vec4 (geom_RayCoordinates, -0.5, 1.0);
  	vec4 worldRayCoords1 = inverseViewProjectionMatrix * screenSpaceRayCoords1;
 	vec4 worldRayCoords2 = inverseViewProjectionMatrix * screenSpaceRayCoords2;
  	worldRayCoords1 /= worldRayCoords1.w;

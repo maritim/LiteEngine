@@ -145,6 +145,13 @@ void GL::CullFace(GLenum mode)
  * Draw Calls
 */
 
+void GL::DrawArrays (GLenum mode, GLint first, GLsizei count)
+{
+	glDrawArrays (mode, first, count);
+
+	ErrorCheck ("glDrawArrays");
+}
+
 void GL::DrawElements (GLenum mode, GLsizei count, GLenum type, const void* indices)
 {
 	glDrawElements (mode, count, type, indices);
