@@ -319,6 +319,8 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 
 	Pipeline::UpdateMatrices (shader);
 
+	_textureCount = 0;
+
 	// Send basic material attributes to shader
 	GL::Uniform4f (shader->GetUniformLocation ("MaterialDiffuse"), mat->diffuseColor.x, 
 		mat->diffuseColor.y, mat->diffuseColor.z, 1.0);
