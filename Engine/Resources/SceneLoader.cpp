@@ -98,7 +98,6 @@ void SceneLoader::ProcessGameObject (TiXmlElement* xmlElem, Scene* scene)
 	gameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
 	Model* mesh = Resources::LoadModel (meshPath);
-	gameObject->AttachMesh (mesh);
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -119,6 +118,12 @@ void SceneLoader::ProcessGameObject (TiXmlElement* xmlElem, Scene* scene)
 		content = content->NextSiblingElement ();
 	}
 
+	/*
+	 * TODO: Change this from here.
+	*/
+
+	gameObject->AttachMesh (mesh);
+
 	scene->AttachObject (gameObject);
 }
 
@@ -136,7 +141,6 @@ void SceneLoader::ProcessAnimationGameObject (TiXmlElement* xmlElem, Scene* scen
 	animGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
 	Model* mesh = Resources::LoadAnimatedModel (meshPath);
-	animGameObject->AttachMesh (mesh);
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -156,6 +160,12 @@ void SceneLoader::ProcessAnimationGameObject (TiXmlElement* xmlElem, Scene* scen
 
 		content = content->NextSiblingElement ();
 	}
+
+	/*
+	 * TODO: Change this from here.
+	*/
+
+	animGameObject->AttachMesh (mesh);
 
 	scene->AttachObject (animGameObject);
 }
