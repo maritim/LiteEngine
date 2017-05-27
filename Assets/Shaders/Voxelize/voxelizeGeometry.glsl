@@ -97,6 +97,8 @@ vec4 GetScreenNormalizedPosition (vec4 position)
 	screenPos.y = GetInterpolatedComp (position.y, minPosition.y, maxPosition.y);
 	screenPos.z = GetInterpolatedComp (position.z, minPosition.z, maxPosition.z);
 
+	screenPos.xyz = (vec3 (screenPos) * vec3 (2.0)) - vec3 (1.0);
+
 	return screenPos;
 }
 
