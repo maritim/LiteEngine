@@ -9,6 +9,8 @@ uniform sampler3D volumeTexture;
 uniform vec3 minVertex;
 uniform vec3 maxVertex;
 uniform ivec3 volumeSize;
+uniform int volumeMipmapLevel;
+
 
 uniform mat4 inverseViewProjectionMatrix;
 
@@ -54,8 +56,25 @@ vec3 GetRayOriginInVolume (vec3 worldRayOrigin, ivec3 volumeSize)
 	return rayOriginInVolume;
 }
 
+ivec3 GetMipmapVolumeSize (ivec3 volumeSize, int mipmapLevel)
+{
+	ivec3 mipmapVolumeSize;
+
+	mipmapVolumeSize.x = volumeSize.x >> mipmapLevel;
+	mipmapVolumeSize.y = volumeSize.y >> mipmapLevel;
+	mipmapVolumeSize.z = volumeSize.z >> mipmapLevel;
+
+	return mipmapVolumeSize;
+}
+
 void main ()
 {
+	/*
+	 * Recalculate volume size based on mipmap level
+	*/
+
+	ivec3 mipmapVolumeSize = GetMipmapVolumeSize (volumeSize, volumeMipmapLevel);
+
     /*
 	 * Compute ray's origin and direction from pixel coordinate.
 	*/
@@ -71,7 +90,7 @@ void main ()
  	vec3 rayDir = worldRayCoords2.xyz - worldRayCoords1.xyz;
  	rayDir = normalize(rayDir);
 
- 	rayOrigin = GetRayOriginInVolume (rayOrigin, volumeSize);
+ 	rayOrigin = GetRayOriginInVolume (rayOrigin, mipmapVolumeSize);
 
     /*
 	 * Check for ray components being parallel to axes (i.e. values of 0).
@@ -86,7 +105,7 @@ void main ()
 	 * Perform AABB test with volume.
 	*/
 
- 	vec3 result = RayBoundingBoxTest (rayOrigin, rayDir, vec3 (0.0f), vec3 (volumeSize));
+ 	vec3 result = RayBoundingBoxTest (rayOrigin, rayDir, vec3 (0.0), vec3 (mipmapVolumeSize));
 
 	if (result.x == 0.0) {
 		discard;
@@ -102,7 +121,7 @@ void main ()
 	float tMax = result.z;
 
 	vec3 startPos = rayOrigin + rayDir * tMin;
-	vec3 voxelPos = max(vec3(0.0), min(volumeSize - vec3(1.0), floor(startPos)));
+	vec3 voxelPos = max(vec3(0.0), min(mipmapVolumeSize - vec3(1.0), floor(startPos)));
 
 	/*
 	 * Traverse through voxels until ray exits volume.
@@ -111,12 +130,12 @@ void main ()
  	// Calculate inverse of ray direction once.
  	vec3 invRayDir = 1.0 / rayDir;
 
-	while (all(greaterThanEqual(voxelPos, vec3(0.0))) && all(lessThan(voxelPos, volumeSize)))
+	while (all(greaterThanEqual(voxelPos, vec3(0.0))) && all(lessThan(voxelPos, mipmapVolumeSize)))
 	{
 		// Sample 3D texture at current position.
-		vec3 texCoords = voxelPos / volumeSize;
-		vec4 color = texture(volumeTexture, texCoords);
-		
+		vec3 texCoords = voxelPos / mipmapVolumeSize;
+		vec4 color = textureLod (volumeTexture, texCoords, volumeMipmapLevel);
+
 
 		// Exit loop if a single sample has an alpha value greater than 0.
 		if (color.a > 0.0) {

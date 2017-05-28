@@ -49,11 +49,17 @@ void VoxelVolume::Init(std::size_t volumeSize)
 	GL::BindTexture(GL_TEXTURE_3D, _volumeTexture);
 	GL::TexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, _volumeSize, _volumeSize, _volumeSize,
 		0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
 	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	GL::TexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
+
+	/*
+	 * Initialize mipmaps
+	*/
+
+	GL::GenerateMipmap (GL_TEXTURE_3D);
 
 	/*
 	 * Create an fbo for clearing the 3D texture.
@@ -177,6 +183,21 @@ void VoxelVolume::BindForRayTracePass()
 	UpdateVoxelRayTracePipelineAttributes();
 }
 
+void VoxelVolume::GenerateMipmaps ()
+{
+	/*
+	 * Bind 3D texture which keep voxel volume
+	*/
+
+	GL::BindTexture (GL_TEXTURE_3D, _volumeTexture);
+
+	/*
+	 * Generate mipmaps
+	*/
+
+	GL::GenerateMipmap (GL_TEXTURE_3D);
+}
+
 void VoxelVolume::UpdateVoxelizationPipelineAttributes ()
 {
 	std::vector<PipelineAttribute> attributes;
@@ -212,26 +233,31 @@ void VoxelVolume::UpdateVoxelRayTracePipelineAttributes()
 	PipelineAttribute minVertex;
 	PipelineAttribute maxVertex;
 	PipelineAttribute volumeSize;
+	PipelineAttribute volumeMipmapLevel;
 
 	volumeTexture.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
 	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
 	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
 	volumeSize.type = PipelineAttribute::AttrType::ATTR_3I;
+	volumeMipmapLevel.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	volumeTexture.name = "volumeTexture";
 	minVertex.name = "minVertex";
 	maxVertex.name = "maxVertex";
 	volumeSize.name = "volumeSize";
+	volumeMipmapLevel.name = "volumeMipmapLevel";
 
 	volumeTexture.value.x = (float) _volumeTexture;
 	minVertex.value = _minVertex;
 	maxVertex.value = _maxVertex;
 	volumeSize.value = glm::vec3 ((float) _volumeSize);
+	volumeMipmapLevel.value.x = 0;
 
 	attributes.push_back(volumeTexture);
 	attributes.push_back(minVertex);
 	attributes.push_back(maxVertex);
 	attributes.push_back(volumeSize);
+	attributes.push_back(volumeMipmapLevel);
 
 	Pipeline::SendCustomAttributes("VOXEL_RAY_TRACE_SHADER", attributes);
 }

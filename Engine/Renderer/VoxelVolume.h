@@ -21,6 +21,7 @@ public:
 
 	virtual void ClearVoxels();
 	virtual void UpdateBoundingBox (const glm::vec3& minVertex, const glm::vec3& maxVertex);
+	virtual void GenerateMipmaps ();
 
 	virtual void Init (std::size_t size);
 	virtual void StartVoxelizationPass ();

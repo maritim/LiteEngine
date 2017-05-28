@@ -108,6 +108,12 @@ void VoxelizationRenderModule::GeometryVoxelizationPass(Scene* scene)
 
 		sceneObject->GetRenderer()->Draw();
 	}
+
+	/*
+	 * Generate mipmaps
+	*/
+
+	_voxelVolume->GenerateMipmaps ();
 }
 
 void VoxelizationRenderModule::EndVoxelization()
