@@ -7,7 +7,7 @@
 
 #include "GBuffer.h"
 
-class DeferredRenderModule : public RenderModule
+class DeferredRenderModule : virtual public RenderModule
 {
 protected:
 	GBuffer* _frameBuffer;

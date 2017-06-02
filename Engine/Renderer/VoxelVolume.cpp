@@ -183,6 +183,16 @@ void VoxelVolume::BindForRayTracePass()
 	UpdateVoxelRayTracePipelineAttributes();
 }
 
+void VoxelVolume::StartConeTracePass ()
+{
+
+}
+
+void VoxelVolume::BindForConeTraceLightPass ()
+{
+
+}
+
 void VoxelVolume::GenerateMipmaps ()
 {
 	/*
@@ -260,6 +270,43 @@ void VoxelVolume::UpdateVoxelRayTracePipelineAttributes()
 	attributes.push_back(volumeMipmapLevel);
 
 	Pipeline::SendCustomAttributes("VOXEL_RAY_TRACE_SHADER", attributes);
+}
+
+std::vector<PipelineAttribute> VoxelVolume::GetVoxelConeTracePipelineAttributes ()
+{
+	std::vector<PipelineAttribute> attributes;
+
+	PipelineAttribute volumeTexture;
+	PipelineAttribute minVertex;
+	PipelineAttribute maxVertex;
+	PipelineAttribute volumeSize;
+	PipelineAttribute volumeMipmapLevel;
+
+	volumeTexture.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
+	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
+	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
+	volumeSize.type = PipelineAttribute::AttrType::ATTR_3I;
+	volumeMipmapLevel.type = PipelineAttribute::AttrType::ATTR_1I;
+
+	volumeTexture.name = "volumeTexture";
+	minVertex.name = "minVertex";
+	maxVertex.name = "maxVertex";
+	volumeSize.name = "volumeSize";
+	volumeMipmapLevel.name = "volumeMipmapLevel";
+
+	volumeTexture.value.x = (float) _volumeTexture;
+	minVertex.value = _minVertex;
+	maxVertex.value = _maxVertex;
+	volumeSize.value = glm::vec3 ((float) _volumeSize);
+	volumeMipmapLevel.value.x = 0;
+
+	attributes.push_back(volumeTexture);
+	attributes.push_back(minVertex);
+	attributes.push_back(maxVertex);
+	attributes.push_back(volumeSize);
+	attributes.push_back(volumeMipmapLevel);
+
+	return attributes;
 }
 
 void VoxelVolume::Clear()

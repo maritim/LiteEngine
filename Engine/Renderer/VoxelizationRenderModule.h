@@ -5,7 +5,7 @@
 
 #include "VoxelVolume.h"
 
-class VoxelizationRenderModule : public RenderModule
+class VoxelizationRenderModule : virtual public RenderModule
 {
 protected:
 	VoxelVolume* _voxelVolume;

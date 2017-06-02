@@ -21,7 +21,7 @@ LightRenderer::~LightRenderer ()
 	
 }
 
-void LightRenderer::Draw (Scene* scene, Camera* camera, GBuffer* gBuffer)
+void LightRenderer::Draw (Scene* scene, Camera* camera, GBuffer*, VoxelVolume*)
 {
 	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
 	Pipeline::SendCamera (camera);

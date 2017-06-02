@@ -3,6 +3,10 @@
 
 #include "Core/Interfaces/Object.h"
 
+#include <vector>
+
+#include "Renderer/PipelineAttribute.h"
+
 #include "Core/Math/glm/glm.hpp"
 
 class VoxelVolume : public Object
@@ -30,6 +34,11 @@ public:
 
 	virtual void StartRayTracePass ();
 	virtual void BindForRayTracePass ();
+
+	virtual void StartConeTracePass ();
+	virtual void BindForConeTraceLightPass ();
+
+	virtual std::vector<PipelineAttribute> GetVoxelConeTracePipelineAttributes ();
 protected:
 	virtual void Clear ();
 

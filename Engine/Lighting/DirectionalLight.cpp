@@ -6,6 +6,7 @@
 
 #include "Lighting/DirectionalLightRenderer.h"
 #include "Shadows/DirectionalLightShadowMapRenderer.h"
+#include "VoxelConeTrace/DirectionalLightVoxelConeTraceRenderer.h"
 
 DirectionalLight::DirectionalLight ()
 {
@@ -46,6 +47,17 @@ void DirectionalLight::ChangeShadowCasting (bool casting)
 		_lightRenderer = new DirectionalLightShadowMapRenderer (this);
 	} else {
 		_lightRenderer = new DirectionalLightRenderer (this);
+	}
+
+	SetVolume (Primitive::Instance ()->Create (Primitive::Type::QUAD));
+}
+
+void DirectionalLight::SetRenderMode (LightRenderMode lightMode)
+{
+	if (lightMode == LightRenderMode::VOXEL_CONE_TRACE) {
+		delete _lightRenderer;
+
+		_lightRenderer = new DirectionalLightVoxelConeTraceRenderer (this);
 	}
 
 	SetVolume (Primitive::Instance ()->Create (Primitive::Type::QUAD));

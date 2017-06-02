@@ -4,6 +4,7 @@
 
 #include "DeferredRenderModule.h"
 #include "VoxelizationRenderModule.h"
+#include "VoxelConeTraceRenderModule.h"
 
 /*
  * Singleton Part
@@ -15,6 +16,7 @@ RenderManager::RenderManager () :
 {
 	_renderModules.push_back (new DeferredRenderModule ());
 	_renderModules.push_back (new VoxelizationRenderModule ());
+	_renderModules.push_back (new VoxelConeTraceRenderModule ());
 
 	SetRenderMode (_currentRenderMode);
 }

@@ -30,7 +30,8 @@
 
 enum RenderMode {
 	RENDER_MODE_DEFERRED = 0,
-	RENDER_MODE_VOXELIZATION
+	RENDER_MODE_VOXELIZATION,
+	RENDER_MODE_VOXEL_CONE_TRACE
 };
 
 class RenderManager : public Singleton<RenderManager>
