@@ -14,9 +14,17 @@
 
 #include "Renderer/RenderManager.h"
 
+SceneObject* shadowsSun = nullptr;
+SceneObject* coneTracingSun = nullptr;
+
 void FlyCameraController::Start ()
 {
 	_pitch = _yaw = 0;
+
+	shadowsSun = SceneManager::Instance ()->Current ()->GetObject ("ShadowsSun");
+	coneTracingSun = SceneManager::Instance ()->Current ()->GetObject ("ConeTracingSun");
+
+	coneTracingSun->SetActive (false);
 
 	// Camera::Main ()->SetPosition (glm::vec3 (1200, 1300, 300));		
 }
@@ -104,6 +112,17 @@ void FlyCameraController::Update ()
 		}
 		else if (RenderManager::Instance ()->GetRenderMode () == RenderMode::RENDER_MODE_VOXELIZATION) {
 			RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_DEFERRED);
+		}
+	}
+
+	if (Input::GetKeyDown (InputKey::E)) {
+		if (RenderManager::Instance ()->GetRenderMode () == RenderMode::RENDER_MODE_DEFERRED) {
+			RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_VOXEL_CONE_TRACE);
+			shadowsSun->SetActive (false); coneTracingSun->SetActive (true);
+		}
+		else if (RenderManager::Instance ()->GetRenderMode () == RenderMode::RENDER_MODE_VOXEL_CONE_TRACE) {
+			RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_DEFERRED);
+			shadowsSun->SetActive (true); coneTracingSun->SetActive (false);
 		}
 	}
 }
