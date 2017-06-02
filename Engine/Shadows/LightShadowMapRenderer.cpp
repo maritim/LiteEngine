@@ -14,7 +14,7 @@ LightShadowMapRenderer::~LightShadowMapRenderer ()
 	delete _volume;
 }
 
-void LightShadowMapRenderer::Draw (Scene* scene, Camera* camera, GBuffer* gBuffer)
+void LightShadowMapRenderer::Draw (Scene* scene, Camera* camera, GBuffer* gBuffer, VoxelVolume* voxelVolume)
 {
 	/*
 	 * Shadow Pass
@@ -72,7 +72,7 @@ void LightShadowMapRenderer::RenderingPass (Scene* scene, Camera* camera, GBuffe
 	 * Draw the volumetric light 
 	*/
 
-	LightRenderer::Draw (scene, camera, nullptr);
+	LightRenderer::Draw (scene, camera, nullptr, nullptr);
 }
 
 void LightShadowMapRenderer::ShadowMapRender (Scene* scene, Camera* camera)

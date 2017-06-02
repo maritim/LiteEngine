@@ -14,7 +14,7 @@ public:
 	LightShadowMapRenderer (Light* light);
 	~LightShadowMapRenderer ();
 
-	void Draw (Scene* scene, Camera* camera, GBuffer* gBuffer);
+	void Draw (Scene* scene, Camera* camera, GBuffer* gBuffer, VoxelVolume* voxelVolume);
 protected:
 	virtual void ShadowMapPass (Scene* scene, Camera* camera);
 	virtual void RenderingPass (Scene* scene, Camera* camera, GBuffer* gBuffer);

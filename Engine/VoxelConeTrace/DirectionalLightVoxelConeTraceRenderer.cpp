@@ -30,7 +30,7 @@ void DirectionalLightVoxelConeTraceRenderer::Draw (Scene* scene, Camera* camera,
 	 * Draw the scene with shadows
 	*/
 
-	LightShadowMapRenderer::Draw (scene, camera, gBuffer);
+	LightShadowMapRenderer::Draw (scene, camera, gBuffer, voxelVolume);
 }
 
 std::vector<PipelineAttribute> DirectionalLightVoxelConeTraceRenderer::GetCustomAttributes ()
