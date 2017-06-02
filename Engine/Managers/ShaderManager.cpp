@@ -144,6 +144,12 @@ int ShaderManager::DeleteShader (const std::string& shaderName)
 
 	_shaderCollection.erase (shaderName);
 
+	/*
+	 * Delete shader from memory
+	*/
+
+	delete shader;
+
 	return 0;
 }
 
