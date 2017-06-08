@@ -283,5 +283,8 @@ void MaterialLibraryLoader::ProcessDefaultAttributes(std::ifstream &file, Materi
 		else if (fileType == "map_d") {
 			currentMaterial->alphaTexture = textureId;
 		}
+		else if (fileType == "map_bump") {
+			currentMaterial->bumpTexture = textureId;
+		}
 	}
 }

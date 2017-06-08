@@ -23,7 +23,7 @@ bool Window::Init (std::size_t width, std::size_t height, std::string title)
 	 * Create Window with SDL so MUST include SDL_WINDOW_OPENGL to use OpenGL
 	*/
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	
 	_window = SDL_CreateWindow (_title.c_str (), 0, 0, _width, _height, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE|SDL_WINDOW_SHOWN);

@@ -1,39 +1,26 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef SHADERI_H
+#define SHADERI_H
 
 #include "Core/Interfaces/Object.h"
 
 #include <string>
 #include <map>
 
+#include "Wrappers/OpenGL/GL.h"
+
 class Shader : public Object
 {
 protected:
 	std::string _name;
+	GLuint _program;
 	std::map<std::string, int> _uniforms;
-	std::string _vertexFilename;
-	std::string _geometryFilename;
-	std::string _fragmentFilename;
-	unsigned int _program;
-	unsigned int _vertexShader;
-	unsigned int _geometryShader;
-	unsigned int _fragmentShader;
 
 public:
-	Shader (const std::string& name, unsigned int program, 
-		unsigned int vertex, unsigned int fragment, unsigned int geometry = 0);
-	~Shader ();
+	Shader (const std::string& name, GLuint program);
+	virtual ~Shader ();
 
 	std::string GetName () const;
-
-	unsigned int GetProgram () const;
-	unsigned int GetVertexShader () const;
-	unsigned int GetGeometryShader () const;
-	unsigned int GetFragmentShader () const;
-
-	void SetVertexFilename (const std::string& name);
-	void SetGeometryFilename (const std::string& name);
-	void SetFragmentFilename (const std::string& name);
+	GLuint GetProgram () const;
 
 	int GetUniformLocation (const std::string& name);
 };

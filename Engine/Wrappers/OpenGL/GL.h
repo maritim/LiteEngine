@@ -166,6 +166,8 @@ public:
 	static void DetachShader(GLuint program, GLuint shader);
 	static GLint GetUniformLocation(GLuint program, const GLchar *name);
 
+	static void DispatchCompute(GLuint num_groups_x,GLuint num_groups_y,GLuint num_groups_z);
+
 	/*
 	 * Uniforms
 	*/

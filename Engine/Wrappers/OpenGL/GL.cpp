@@ -887,6 +887,13 @@ GLint GL::GetUniformLocation(GLuint program, const GLchar *name)
 	return uniformLocation;
 }
 
+void GL::DispatchCompute(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z)
+{
+	glDispatchCompute(num_groups_x, num_groups_y, num_groups_z);
+
+	ErrorCheck ("glDispatchCompute");
+}
+
 /*
  * Getters
 */

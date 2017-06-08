@@ -1,39 +1,55 @@
 #include "VoxelConeTraceRenderModule.h"
 
+#include <algorithm>
+
+#include "Core/Math/glm/gtx/quaternion.hpp"
+#include "Core/Math/glm/gtc/matrix_transform.hpp"
+#include "Core/Math/glm/gtc/quaternion.hpp"
+
 #include "Lighting/LightsManager.h"
+#include "Cameras/OrthographicCamera.h"
+
+#include "Pipeline.h"
+
+#include "Core/Intersections/Intersection.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
+#include "Core/Console/Console.h"
+
 #include "Debug/Profiler/Profiler.h"
 
-VoxelConeTraceRenderModule::VoxelConeTraceRenderModule ()
+#include "Settings/GeneralSettings.h"
+
+
+VoxelConeTraceRenderModule::VoxelConeTraceRenderModule () :
+	DeferredRenderModule (),
+	VoxelizationRenderModule ()
 {
 
 }
 
 VoxelConeTraceRenderModule::~VoxelConeTraceRenderModule ()
 {
-
+	delete _shadowMapVolume;
 }
 
 void VoxelConeTraceRenderModule::RenderScene (Scene* scene, Camera* camera)
 {
 	/*
-	 * Send Camera to Pipeline
-	*/
-
-	DeferredRenderModule::UpdateCamera (camera);
-
-	/*
 	 * Voxelize the scene
 	*/
 
-	static bool firstTime = true;
+	if (GeneralSettings::Instance ()->GetIntValue ("ContinousVoxelizationPass")) {
 
-	if (firstTime) {
-		VoxelizePass (scene);
-		firstTime = false;
+		VoxelizePass (scene, camera);
 	}
+
+	/*
+	* Send Camera to Pipeline
+	*/
+
+	DeferredRenderModule::UpdateCamera (camera);
 
 	/*
 	 * Deferred Rendering Pass
@@ -121,6 +137,8 @@ void VoxelConeTraceRenderModule::DirectionalLightPass (Scene* scene, Camera* cam
 		if (!volumetricLight->IsActive ()) {
 			continue;
 		}
+
+		_voxelVolume->BindForConeTraceLightPass ();
 
 		volumetricLight->GetLightRenderer ()->Draw (scene, camera, _frameBuffer, _voxelVolume);
 	}

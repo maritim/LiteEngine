@@ -5,6 +5,8 @@
 
 #include "Cameras/OrthographicCamera.h"
 
+#define CASCADED_SHADOW_MAP_LEVELS 4
+
 class DirectionalLightShadowMapRenderer : public LightShadowMapRenderer
 {
 protected:

@@ -9,6 +9,8 @@
 
 #include "Core/Math/glm/glm.hpp"
 
+#define MIP_MAP_LEVELS 6
+
 class VoxelVolume : public Object
 {
 protected:
@@ -25,12 +27,21 @@ public:
 
 	virtual void ClearVoxels();
 	virtual void UpdateBoundingBox (const glm::vec3& minVertex, const glm::vec3& maxVertex);
-	virtual void GenerateMipmaps ();
 
 	virtual void Init (std::size_t size);
 	virtual void StartVoxelizationPass ();
 	virtual void BindForVoxelizationPass ();
 	virtual void EndVoxelizationPass ();
+
+	virtual void StartVoxelMipmapPass ();
+	virtual void BindForMipmapPass ();
+	virtual void GenerateMipmaps ();
+	virtual void EndVoxelMipmapPass ();
+
+	virtual void StartVoxelRadianceInjectionPass ();
+	virtual void BindForRadianceInjectionPass ();
+	virtual void InjectRadiance ();
+	virtual void EndVoxelRadianceInjectionPass ();
 
 	virtual void StartRayTracePass ();
 	virtual void BindForRayTracePass ();
@@ -44,6 +55,10 @@ protected:
 
 	virtual void UpdateVoxelRayTracePipelineAttributes ();
 	virtual void UpdateVoxelizationPipelineAttributes ();
+	virtual void UpdateVoxelMipmapPipelineAttributes ();
+	virtual void UpdateVoxelRadianceInjectionPipelineAttributes ();
+
+	virtual std::vector<PipelineAttribute> GetVolumeAdditionalPipelineAttributes ();
 };
 
 #endif

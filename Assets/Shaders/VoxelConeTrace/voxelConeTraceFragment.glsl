@@ -98,27 +98,21 @@ int GetShadowCascadeLevel (float depth)
     }
 }
 
-float GetInterpolatedComp (float comp, float minValue, float maxValue, float domain)
+float GetInterpolatedComp (float comp, float minValue, float maxValue)
 {
-	return ((comp - minValue) / (maxValue - minValue)) * domain;
+	return ((comp - minValue) / (maxValue - minValue));
 }
 
-vec3 GetPositionInVolume (vec3 origin, ivec3 volumeSize)
+vec3 GetPositionInVolume (vec3 origin)
 {
 	vec3 positionInVolume;
 
-	positionInVolume.x = GetInterpolatedComp (origin.x, minVertex.x, maxVertex.x, volumeSize.x);
-	positionInVolume.y = GetInterpolatedComp (origin.y, minVertex.y, maxVertex.y, volumeSize.y);
-	positionInVolume.z = GetInterpolatedComp (origin.z, minVertex.z, maxVertex.z, volumeSize.z);
+	positionInVolume.x = GetInterpolatedComp (origin.x, minVertex.x, maxVertex.x);
+	positionInVolume.y = GetInterpolatedComp (origin.y, minVertex.y, maxVertex.y);
+	positionInVolume.z = GetInterpolatedComp (origin.z, minVertex.z, maxVertex.z);
 
 	return positionInVolume;
 }
-
-float VOXEL_SIZE = (1.0 / volumeSize.x);
-float MIPMAP_HARDCAP = 4;
-
-float OFFSET = 8 * VOXEL_SIZE;
-float STEP = VOXEL_SIZE;
 
 bool IsInsideVolume (const vec3 p) 
 {
@@ -127,52 +121,127 @@ bool IsInsideVolume (const vec3 p)
 		p.z < 1.0  && p.z >= 0.0);
 }
 
-// Traces a specular voxel cone.
-vec3 traceSpecularVoxelCone (vec3 from, vec3 direction, vec3 in_normal) 
+ivec2 GetInterpolationComp (float comp, float domain)
 {
-	direction = normalize(direction);
+	return ivec2 (floor (comp * domain), ceil (comp * domain));
+}
 
-	from += OFFSET * in_normal;
+//vec3 sampleVoxels (vec3 voxelPos, int mipmap)
+//{
+//	ivec3 voxelSizeMipmap = ivec3 (voxelSize.x >> mipmap, voxelSize.y >> mipmap, voxelSize.z >> mipmap);
+
+//	ivec2 xPos = GetInterpolationComp (voxelPos.x, voxelSize.x);
+//	ivec2 yPos = GetInterpolationComp (voxelPos.y, voxelSize.y);
+//	ivec2 zPos = GetInterpolationComp (voxelPos.z, voxelSize.z);
+
+//	vec3 distances = vec3 (
+//		(voxelPos.x - xPos.x) / (xPos.y - xPos.x),
+//		(voxelPos.y - yPos.x) / (yPos.y - yPos.x),
+//		(voxelPos.z - zPos.x) / (zPos.y - zPos.x)
+//	);
+
+
+//}
+
+float VOXEL_SIZE = ((maxVertex.x - minVertex.x) / volumeSize.x);
+float MIPMAP_HARDCAP = 5;
+
+float minVoxelDiameter = 1.0 / 512;
+float minVoxelDiameterInv = 512.0;
+
+// Returns a vector that is orthogonal to u.
+vec3 orthogonal(vec3 u){
+	u = normalize(u);
+	vec3 v = vec3(0.99146, 0.11664, 0.05832); // Pick any normalized vector.
+	return abs(dot(u, v)) > 0.99999f ? cross(u, vec3(0, 1, 0)) : cross(u, v);
+}
+
+// origin, dir, and maxDist are in texture space
+// dir should be normalized
+// coneRatio is the cone diameter to height ratio (2.0 for 90-degree cone)
+vec3 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
+{
+	vec3 samplePos = origin;
+	vec4 accum = vec4(0.0);
+
+	// the starting sample diameter
+	float minDiameter = minVoxelDiameter;
+
+	// push out the starting point to avoid self-intersection
+	float startDist = minDiameter * 20;
 	
-	float dist = OFFSET;
-
-	float MAX_DISTANCE = 100.0;
-
-	// Trace.
-	while (dist < MAX_DISTANCE){ 
-		vec3 lobePosition = from + dist * direction;
-
-		vec3 posInVolume = GetPositionInVolume (lobePosition, volumeSize);
-
-		if (!IsInsideVolume (posInVolume)) {
-			break;
-		}
+	float dist = startDist;
+	while (dist <= maxDist && accum.w < 1.0)
+	{
+		// ensure the sample diameter is no smaller than the min
+		// desired diameter for this cone (ensuring we always
+		// step at least minDiameter each iteration, even for tiny
+		// cones - otherwise lots of overlapped samples)
+		float sampleDiameter = max(minDiameter, coneRatio * dist);
 		
-		float level = log2(1 + dist / VOXEL_SIZE);
-
-		vec4 voxelColor = vec4 (1.0);// textureLod (volumeTexture, posInVolume, min(level, MIPMAP_HARDCAP));
-
-		if (voxelColor.a > 0) {
-			return voxelColor.rgb * 0.5;
-		}
-
-		dist += STEP * (1.0f + 0.125f * level);
+		// convert diameter to LOD
+		// for example:
+		// log2(1/256 * 256) = 0
+		// log2(1/128 * 256) = 1
+		// log2(1/64 * 256) = 2
+		float sampleLOD = log2(sampleDiameter * minVoxelDiameterInv);
+		
+		vec3 samplePos = origin + dir * dist;
+		
+		vec4 sampleValue = textureLod (volumeTexture, samplePos, min (sampleLOD, MIPMAP_HARDCAP));
+		
+		accum += vec4 (sampleValue.xyz, sampleValue.a > 0 ? 1 : 0);
+		
+		dist += sampleDiameter;
 	}
+	
+	// decompress color range to decode limited HDR
+	accum.xyz *= 2.0;
+	
+	return accum.xyz;
+}
 
-	return vec3 (0.0);
+// Calculates indirect diffuse light using voxel cone tracing.
+vec3 CalcIndirectDiffuseLight(vec3 in_position, vec3 in_normal)
+{
+	vec3 voxelPos = GetPositionInVolume (in_position);
+
+	vec3 tangent = normalize(orthogonal(in_normal));
+	vec3 bitangent = normalize(cross(tangent, in_normal));
+
+	vec3 iblDiffuse = vec3(0.0);
+
+	float iblConeRatio = 2;
+	float iblMaxDist = .3;
+	// this sample gets full weight (dot(normal, normal) == 1)
+	iblDiffuse += voxelTraceCone(voxelPos, in_normal, iblConeRatio, iblMaxDist).xyz;
+	// these samples get partial weight
+	iblDiffuse += .707 * voxelTraceCone(voxelPos, normalize(in_normal + tangent), iblConeRatio, iblMaxDist).xyz;
+	iblDiffuse += .707 * voxelTraceCone(voxelPos, normalize(in_normal - tangent), iblConeRatio, iblMaxDist).xyz;
+	iblDiffuse += .707 * voxelTraceCone(voxelPos, normalize(in_normal + bitangent), iblConeRatio, iblMaxDist).xyz;
+	iblDiffuse += .707 * voxelTraceCone(voxelPos, normalize(in_normal - bitangent), iblConeRatio, iblMaxDist).xyz;
+
+	// Return result.
+	return iblDiffuse;
 }
 
 // Calculates indirect specular light using voxel cone tracing.
 vec3 CalcIndirectSpecularLight (vec3 in_position, vec3 in_normal) 
 {
-	vec3 viewDirection = normalize (in_position - cameraPosition);
+	vec3 specularLight;
 
-	vec3 reflection = normalize(reflect(viewDirection, in_normal));
-	
-	return traceSpecularVoxelCone (in_position, reflection, in_normal);
+	vec3 eyeToFragment = normalize (in_position - cameraPosition);
+	vec3 reflectionDir = reflect (eyeToFragment, in_normal);
+		
+	vec3 reflectTraceOrigin = GetPositionInVolume (in_position);
+	float coneRatio = .2;
+	float maxDist = .3;
+	specularLight = voxelTraceCone (reflectTraceOrigin, reflectionDir, coneRatio, maxDist).xyz;
+
+	return specularLight;
 }
 
-vec3 CalcDirectLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
+vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse)
 {
 	// The position is also a direction for Directional Lights
 	vec3 lightDirection = normalize (lightPosition);
@@ -181,16 +250,31 @@ vec3 CalcDirectLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in
 	float dCont = max (dot (in_normal, lightDirection), 0.0);
 
 	// Attenuation is 1.0 for Directional Lights
-	vec3 diffuseColor = lightColor * in_diffuse * dCont;
+	vec3 diffuseColor = lightColor * dCont;
+
+	return diffuseColor;
+}
+
+vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, vec3 in_specular, float in_shininess)
+{
+	// The position is also a direction for Directional Lights
+	vec3 lightDirection = normalize (lightPosition);
 
 	vec3 surface2view = normalize (cameraPosition - in_position);
 	vec3 reflection = reflect (-lightDirection, in_normal);
 
 	// Specular contribution
-	float sCont = pow (max (dot (surface2view, reflection), 0.0), 1.0);
+	float sCont = pow (max (dot (surface2view, reflection), 0.0), 10.0);
 
-	vec3 specularColor = lightSpecularColor * in_diffuse * sCont;
+	vec3 indirectSpecularColor = CalcIndirectSpecularLight (in_position, in_normal);
 
+	vec3 specularColor = (lightSpecularColor + indirectSpecularColor) * sCont;
+
+	return indirectSpecularColor;
+}
+
+float CalcShadowContribution (vec3 in_position)
+{
 	// Calculate shadow level
 	vec4 clipPos = (viewProjectionMatrix * vec4 (in_position, 1.0));
 	float depth = clipPos.z / clipPos.w;
@@ -200,16 +284,23 @@ vec3 CalcDirectLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in
 	vec4 lightSpacePos = lightSpaceMatrices [shadowCascadedLevel] * vec4 (in_position, 1.0f);
 	float shadow = ShadowCalculation (lightSpacePos, shadowCascadedLevel);
 
-	vec3 multi = vec3 (0);
+	return shadow;
+}
 
-	// if (shadowCascadedLevel == 0)
-	// 	multi.r = 1;
-	// else if (shadowCascadedLevel == 1)
-	// 	multi.g = 1;
-	// else
-	// 	multi.b = 1;
+vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
+{
+	vec3 directDiffuseColor = CalcDirectDiffuseLight (in_position, in_normal, in_diffuse);
+	vec3 directSpecularColor = CalcDirectSpecularLight (in_position, in_normal, in_specular, in_shininess);
 
-	return multi + (1.0 - shadow) * (diffuseColor + specularColor);
+	float shadow = CalcShadowContribution (in_position);
+
+	directDiffuseColor = (1.0 - shadow) * (directDiffuseColor);
+
+	// Calculate indirect diffuse lighting
+	vec3 indirectDiffuseColor = CalcIndirectDiffuseLight (in_position, in_normal);
+
+	return (directDiffuseColor + indirectDiffuseColor) * in_diffuse
+		   + (directSpecularColor) * in_specular;
 }
 
 void main()
@@ -223,8 +314,5 @@ void main()
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcDirectLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
-	out_color += CalcIndirectSpecularLight (in_position, in_normal);
-
-	//out_color = texture2D (shadowMap, texCoord).xyz;// + vec3 (0.2, 0, 0);
+	out_color = CalcDirectionalLight (in_position, in_normal, in_diffuse, in_specular, in_shininess);
 } 

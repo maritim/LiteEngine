@@ -14,6 +14,7 @@ public:
 
 	virtual void RenderScene (Scene*, Camera*);
 protected:
+
 	void DeferredPass (Scene* scene, Camera* camera);
 
 	void LightPass (Scene* scene, Camera* camera);
