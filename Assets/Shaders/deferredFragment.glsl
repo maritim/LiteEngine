@@ -19,10 +19,13 @@ uniform float MaterialShininess;
 
 uniform sampler2D DiffuseMap;
 uniform sampler2D SpecularMap;
+uniform sampler2D AlphaMap;
 
 uniform vec3 cameraPosition;
 
 uniform vec3 sceneAmbient;
+
+const vec3 nullInAlphaMap = vec3 (0.0);
 
 in vec3 geom_position;
 in vec3 geom_normal; 
@@ -36,6 +39,15 @@ void main()
 
 	vec3 diffuseMap = MaterialDiffuse * vec3 (texture2D (DiffuseMap, 	geom_texcoord.xy));
 	vec3 specularMap = MaterialSpecular * vec3 (texture2D (SpecularMap, geom_texcoord.xy));
+	vec3 alphaMap = vec3 (texture2D (AlphaMap, geom_texcoord.xy));
+
+	/*
+	 * Check alpha texture
+	*/
+
+	if (alphaMap == nullInAlphaMap) {
+		discard;
+	}
 
 	/*
 	 * Renormalize normal vector

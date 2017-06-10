@@ -19,11 +19,14 @@ uniform float MaterialShininess;
 
 uniform sampler2D DiffuseMap;
 uniform sampler2D SpecularMap;
+uniform sampler2D AlphaMap;
 uniform sampler2D NormalMap;
 
 uniform vec3 cameraPosition;
 
 uniform vec3 sceneAmbient;
+
+const vec3 nullInAlphaMap = vec3 (0.0);
 
 in vec3 geom_position;
 in vec3 geom_normal;
@@ -38,24 +41,32 @@ void main()
 
 	vec3 diffuseMap = MaterialDiffuse * vec3 (texture2D (DiffuseMap, 	geom_texcoord.xy));
 	vec3 specularMap = MaterialSpecular * vec3 (texture2D (SpecularMap, geom_texcoord.xy));
+	vec3 alphaMap = vec3 (texture2D (AlphaMap, geom_texcoord.xy));
+	vec3 normalMap = vec3 (texture2D (NormalMap, geom_texcoord.xy));
+
+	/*
+	 * Check alpha texture
+	*/
+
+	if (alphaMap == nullInAlphaMap) {
+		discard;
+	}	
 
 	/*
 	 * Get normal from normal map into world space
 	*/ 
 
 	vec3 normal = normalize (geom_normal);
-	
-	vec3 tsNormal = texture2D (NormalMap, geom_texcoord.xy).xyz;
 
-	if (tsNormal != vec3 (1.0)) {
+	if (normalMap != vec3 (1.0)) {
 		
 		vec3 tangent = normalize (geom_tangent);
 		vec3 bitangent = normalize (cross (tangent, normal));
 
-		tsNormal = 2.0 * tsNormal - 1.0;
+		normalMap = 2.0 * normalMap - 1.0;
 		mat3 tnbMat = mat3 (tangent, bitangent, normal);
 
-		normal = normalize (tnbMat * tsNormal);
+		normal = normalize (tnbMat * normalMap);
 	} 
 
 	/*
