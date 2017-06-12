@@ -3,12 +3,12 @@
 #include <vector>
 #include <algorithm>
 
-#include "VoxelizationRenderPass.h"
-#include "DirectionalShadowMapRenderPass.h"
-#include "VoxelRadianceInjectionRenderPass.h"
-#include "VoxelMipmapRenderPass.h"
-#include "VoxelRayTraceRenderPass.h"
-#include "ForwardRenderPass.h"
+#include "RenderPasses/VoxelizationRenderPass.h"
+#include "RenderPasses/DirectionalShadowMapRenderPass.h"
+#include "RenderPasses/VoxelRadianceInjectionRenderPass.h"
+#include "RenderPasses/VoxelMipmapRenderPass.h"
+#include "RenderPasses/VoxelRayTraceRenderPass.h"
+#include "RenderPasses/ForwardRenderPass.h"
 
 void VoxelizationRenderModule::Init ()
 {

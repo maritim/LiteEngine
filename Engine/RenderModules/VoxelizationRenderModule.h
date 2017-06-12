@@ -1,11 +1,11 @@
 #ifndef VOXELIZATIONRENDERMODULE_H
 #define VOXELIZATIONRENDERMODULE_H
 
-#include "RenderModule.h"
+#include "Renderer/RenderModule.h"
 
 #include <vector>
 
-#include "RenderPassI.h"
+#include "Renderer/RenderPassI.h"
 
 class VoxelizationRenderModule : public RenderModule
 {
