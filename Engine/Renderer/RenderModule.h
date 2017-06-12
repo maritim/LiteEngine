@@ -3,15 +3,25 @@
 
 #include "Core/Interfaces/Object.h"
 
+#include <vector>
+
+#include "RenderPassI.h"
+
 #include "SceneGraph/Scene.h"
 #include "Systems/Camera/Camera.h"
 
 class RenderModule : public Object
 {
-public:
-	virtual ~RenderModule () = 0;
+protected:
+	std::vector<RenderPassI*> _renderPasses;
 
-	virtual void RenderScene (Scene*, Camera*) = 0;
+public:
+	virtual ~RenderModule ();
+
+	virtual void InitModule ();
+	virtual void RenderScene (Scene*, Camera*);
+protected:
+	virtual void Init () = 0;
 };
 
 #endif

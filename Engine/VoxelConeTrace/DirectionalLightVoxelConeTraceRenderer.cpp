@@ -4,7 +4,7 @@
 
 DirectionalLightVoxelConeTraceRenderer::DirectionalLightVoxelConeTraceRenderer (Light* light) :
 	DirectionalLightShadowMapRenderer (light),
-	_voxelVolume (nullptr)
+	_rvc (nullptr)
 {
 	_shaderName = "VOXEL_CONE_TRACE_SHADOW_MAP_DIRECTIONAL_LIGHT";
 
@@ -18,28 +18,38 @@ DirectionalLightVoxelConeTraceRenderer::~DirectionalLightVoxelConeTraceRenderer 
 	
 }
 
-void DirectionalLightVoxelConeTraceRenderer::Draw (Scene* scene, Camera* camera, GBuffer* gBuffer, VoxelVolume* voxelVolume)
+void DirectionalLightVoxelConeTraceRenderer::Draw (Scene* scene, Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
-	 * Keep voxel volume for later
+	 * Keep render volumes for later
 	*/
 
-	_voxelVolume = voxelVolume;
+	_rvc = rvc;
 
 	/*
 	 * Draw the scene with shadows
 	*/
 
-	LightShadowMapRenderer::Draw (scene, camera, gBuffer, voxelVolume);
+	LightShadowMapRenderer::Draw (scene, camera, rvc);
 }
 
 std::vector<PipelineAttribute> DirectionalLightVoxelConeTraceRenderer::GetCustomAttributes ()
 {
 	std::vector<PipelineAttribute> attributes = DirectionalLightShadowMapRenderer::GetCustomAttributes ();
 
-	std::vector<PipelineAttribute> voxelAttributes = _voxelVolume->GetVoxelConeTracePipelineAttributes ();
+	/*
+	 * Attach all volume attributes to pipeline
+	*/
 
-	attributes.insert (attributes.begin (), voxelAttributes.begin (), voxelAttributes.end ());
+	for (RenderVolumeI* renderVolume : *_rvc) {
+		std::vector<PipelineAttribute> volumeAttributes = renderVolume->GetCustomAttributes ();
+
+		attributes.insert (attributes.end (), volumeAttributes.begin (), volumeAttributes.end ());
+	}
+
+	//std::vector<PipelineAttribute> voxelAttributes = _voxelVolume->GetCustomAttributes ();
+
+	//attributes.insert (attributes.begin (), voxelAttributes.begin (), voxelAttributes.end ());
 
 	return attributes;
 }
