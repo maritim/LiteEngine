@@ -21,7 +21,7 @@ protected:
 	void ShadowMapGeometryPass (Scene* scene, Camera* lightCamera);
 	void EndShadowMapPass ();
 
-	Camera* GetLightCamera (Camera* camera);
+	Camera* GetLightCamera (Scene* scene, Camera* camera);
 };
 
 #endif

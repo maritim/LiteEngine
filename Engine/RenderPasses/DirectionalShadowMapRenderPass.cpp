@@ -45,7 +45,7 @@ RenderVolumeCollection* DirectionalShadowMapRenderPass::Execute (Scene* scene, C
 	* Calculate light camera for shadow map
 	*/
 
-	Camera* lightCamera = GetLightCamera (camera);
+	Camera* lightCamera = GetLightCamera (scene, camera);
 	_voxelShadowMapVolume->SetLightCamera (lightCamera);
 
 	/*
@@ -148,7 +148,7 @@ void DirectionalShadowMapRenderPass::EndShadowMapPass ()
 	_voxelShadowMapVolume->EndDrawing ();
 }
 
-Camera* DirectionalShadowMapRenderPass::GetLightCamera (Camera* viewCamera)
+Camera* DirectionalShadowMapRenderPass::GetLightCamera (Scene* scene, Camera* viewCamera)
 {
 	const float LIGHT_CAMERA_OFFSET = 50.0f;
 
@@ -173,22 +173,23 @@ Camera* DirectionalShadowMapRenderPass::GetLightCamera (Camera* viewCamera)
 	glm::quat lightDirQuat = glm::toQuat (glm::lookAt (glm::vec3 (0), lightDir, glm::vec3 (0, 1, 0)));
 	glm::mat4 lightView = glm::translate (glm::mat4_cast (lightDirQuat), glm::vec3 (0));
 
-	glm::mat4 cameraView = glm::translate (glm::mat4_cast (viewCamera->GetRotation ()), viewCamera->GetPosition () * -1.0f);
-	glm::mat4 cameraProjection = viewCamera->GetProjectionMatrix ();
-	glm::mat4 invCameraProjView = glm::inverse (cameraProjection * cameraView);
-
 	glm::vec3 cuboidExtendsMin = glm::vec3 (std::numeric_limits<float>::max ());
 	glm::vec3 cuboidExtendsMax = glm::vec3 (-std::numeric_limits<float>::min ());
 
+	AABBVolume* aabbVolume = scene->GetBoundingBox ();
+	AABBVolume::AABBVolumeInformation* bBox = aabbVolume->GetVolumeInformation ();
+
 	OrthographicCamera* lightCamera = new OrthographicCamera ();
 
-	for (int x = -1; x <= 1; x += 2) {
-		for (int y = -1; y <= 1; y += 2) {
-			for (int z = -1; z <= 1; z += 2) {
-				glm::vec4 cuboidCorner = glm::vec4 (x, y, z, 1.0f);
-
-				cuboidCorner = invCameraProjView * cuboidCorner;
-				cuboidCorner /= cuboidCorner.w;
+	for (int x = 0; x <= 1; x ++) {
+		for (int y = 0; y <= 1; y ++) {
+			for (int z = 0; z <= 1; z ++) {
+				glm::vec4 cuboidCorner = glm::vec4 (
+					x == 0 ? bBox->minVertex.x : bBox->maxVertex.x,
+					y == 0 ? bBox->minVertex.y : bBox->maxVertex.y,
+					z == 0 ? bBox->minVertex.z : bBox->maxVertex.z,
+					1.0f
+				);
 
 				cuboidCorner = lightView * cuboidCorner;
 
@@ -206,8 +207,8 @@ Camera* DirectionalShadowMapRenderPass::GetLightCamera (Camera* viewCamera)
 	lightCamera->SetRotation (lightDirQuat);
 
 	lightCamera->SetOrthographicInfo (
-		cuboidExtendsMin.x - LIGHT_CAMERA_OFFSET, cuboidExtendsMax.x + LIGHT_CAMERA_OFFSET,
-		cuboidExtendsMin.y - LIGHT_CAMERA_OFFSET, cuboidExtendsMax.y + LIGHT_CAMERA_OFFSET,
+		cuboidExtendsMin.x, cuboidExtendsMax.x,
+		cuboidExtendsMin.y, cuboidExtendsMax.y,
 		cuboidExtendsMin.z - LIGHT_CAMERA_OFFSET, cuboidExtendsMax.z + LIGHT_CAMERA_OFFSET
 	);
 
