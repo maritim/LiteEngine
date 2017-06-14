@@ -111,7 +111,7 @@ vec3 GetPositionInVolume (vec3 origin)
 	positionInVolume.y = GetInterpolatedComp (origin.y, minVertex.y, maxVertex.y);
 	positionInVolume.z = GetInterpolatedComp (origin.z, minVertex.z, maxVertex.z);
 
-	return positionInVolume;
+	return positionInVolume + vec3 (1.0 / volumeSize.x);
 }
 
 bool IsInsideVolume (const vec3 p) 
@@ -126,33 +126,16 @@ ivec2 GetInterpolationComp (float comp, float domain)
 	return ivec2 (floor (comp * domain), ceil (comp * domain));
 }
 
-//vec3 sampleVoxels (vec3 voxelPos, int mipmap)
-//{
-//	ivec3 voxelSizeMipmap = ivec3 (voxelSize.x >> mipmap, voxelSize.y >> mipmap, voxelSize.z >> mipmap);
-
-//	ivec2 xPos = GetInterpolationComp (voxelPos.x, voxelSize.x);
-//	ivec2 yPos = GetInterpolationComp (voxelPos.y, voxelSize.y);
-//	ivec2 zPos = GetInterpolationComp (voxelPos.z, voxelSize.z);
-
-//	vec3 distances = vec3 (
-//		(voxelPos.x - xPos.x) / (xPos.y - xPos.x),
-//		(voxelPos.y - yPos.x) / (yPos.y - yPos.x),
-//		(voxelPos.z - zPos.x) / (zPos.y - zPos.x)
-//	);
-
-
-//}
-
 float VOXEL_SIZE = ((maxVertex.x - minVertex.x) / volumeSize.x);
 float MIPMAP_HARDCAP = 5;
 
-float minVoxelDiameter = 1.0 / 512;
-float minVoxelDiameterInv = 512.0;
+float minVoxelDiameter = 1.0 / volumeSize.x;
+float minVoxelDiameterInv = volumeSize.x;
 
 // Returns a vector that is orthogonal to u.
 vec3 orthogonal(vec3 u){
 	u = normalize(u);
-	vec3 v = vec3(0.99146, 0.11664, 0.05832); // Pick any normalized vector.
+	vec3 v = vec3(1.0, 0.0, 0.0); // Pick any normalized vector.
 	return abs(dot(u, v)) > 0.99999f ? cross(u, vec3(0, 1, 0)) : cross(u, v);
 }
 
@@ -171,7 +154,7 @@ vec3 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
 	float startDist = minDiameter * 20;
 	
 	float dist = startDist;
-	while (dist <= maxDist && accum.w < 1.0)
+	while (dist <= maxDist && accum.a < 1.0)
 	{
 		// ensure the sample diameter is no smaller than the min
 		// desired diameter for this cone (ensuring we always
@@ -190,8 +173,9 @@ vec3 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
 		
 		vec4 sampleValue = textureLod (volumeTexture, samplePos, min (sampleLOD, MIPMAP_HARDCAP));
 		
-		accum += vec4 (sampleValue.xyz, sampleValue.a > 0 ? 1 : 0);
-		
+		accum.rgb += sampleValue.rgb * sampleValue.a;
+		accum.a += sampleValue.a;
+
 		dist += sampleDiameter;
 	}
 	

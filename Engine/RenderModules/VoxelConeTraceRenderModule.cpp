@@ -4,7 +4,7 @@
 #include "RenderPasses/DirectionalShadowMapRenderPass.h"
 #include "RenderPasses/VoxelRadianceInjectionRenderPass.h"
 #include "RenderPasses/VoxelMipmapRenderPass.h"
-#include "RenderPasses/VoxelRayTraceRenderPass.h"
+#include "RenderPasses/VoxelBorderRenderPass.h"
 #include "RenderPasses/DeferredGeometryRenderPass.h"
 #include "RenderPasses/VoxelConeTraceLightPass.h"
 #include "RenderPasses/DeferredSkyboxRenderPass.h"
@@ -20,8 +20,8 @@ void VoxelConeTraceRenderModule::Init ()
 	_renderPasses.push_back (new VoxelizationRenderPass ());
 	_renderPasses.push_back (new DirectionalShadowMapRenderPass ());
 	_renderPasses.push_back (new VoxelRadianceInjectionRenderPass ());
+	_renderPasses.push_back (new VoxelBorderRenderPass ());
 	_renderPasses.push_back (new VoxelMipmapRenderPass ());
-	_renderPasses.push_back (new VoxelRayTraceRenderPass ());	
 	_renderPasses.push_back (new DeferredGeometryRenderPass ());
 	_renderPasses.push_back (new VoxelConeTraceLightPass ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());

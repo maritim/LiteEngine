@@ -4,7 +4,6 @@ layout (local_size_x = 4, local_size_y = 4, local_size_z = 4) in;
 // Compute-based mipmapping inspired by 
 
 /*  Workgroup Size Stats
-
 1^3 167.00 ms
 2^3  21.23 ms
 4^3   3.77 ms
