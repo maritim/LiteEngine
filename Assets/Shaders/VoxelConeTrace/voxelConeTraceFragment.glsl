@@ -37,6 +37,8 @@ uniform float clipZLevels[CASCADED_SHADOW_MAP_LEVELS];
 
 uniform sampler3D volumeTexture;
 
+const float VOXEL_MIPMAP_COUNT = 6;
+
 uniform vec3 minVertex;
 uniform vec3 maxVertex;
 uniform ivec3 volumeSize;
@@ -98,6 +100,20 @@ int GetShadowCascadeLevel (float depth)
     }
 }
 
+float CalcShadowContribution (vec3 in_position)
+{
+	// Calculate shadow level
+	vec4 clipPos = (viewProjectionMatrix * vec4 (in_position, 1.0));
+	float depth = clipPos.z / clipPos.w;
+	int shadowCascadedLevel = GetShadowCascadeLevel (depth);
+
+	// Calculate shadow
+	vec4 lightSpacePos = lightSpaceMatrices [shadowCascadedLevel] * vec4 (in_position, 1.0f);
+	float shadow = ShadowCalculation (lightSpacePos, shadowCascadedLevel);
+
+	return shadow;
+}
+
 float GetInterpolatedComp (float comp, float minValue, float maxValue)
 {
 	return ((comp - minValue) / (maxValue - minValue));
@@ -114,47 +130,39 @@ vec3 GetPositionInVolume (vec3 origin)
 	return positionInVolume + vec3 (1.0 / volumeSize.x);
 }
 
-bool IsInsideVolume (const vec3 p) 
-{
-	return (p.x < 1 && p.x >= 0.0 &&
-		p.y < 1 && p.y >= 0.0 &&
-		p.z < 1.0  && p.z >= 0.0);
-}
-
-ivec2 GetInterpolationComp (float comp, float domain)
-{
-	return ivec2 (floor (comp * domain), ceil (comp * domain));
-}
-
-float VOXEL_SIZE = ((maxVertex.x - minVertex.x) / volumeSize.x);
-float MIPMAP_HARDCAP = 5;
-
 float minVoxelDiameter = 1.0 / volumeSize.x;
 float minVoxelDiameterInv = volumeSize.x;
 
-// Returns a vector that is orthogonal to u.
-vec3 orthogonal(vec3 u){
+/*
+ * Calculate  a vector that is orthogonal to u.
+*/
+
+vec3 Orthogonal(vec3 u)
+{
 	u = normalize(u);
-	vec3 v = vec3(1.0, 0.0, 0.0); // Pick any normalized vector.
-	return abs(dot(u, v)) > 0.99999f ? cross(u, vec3(0, 1, 0)) : cross(u, v);
+
+	vec3 v = vec3(0.0, 1.0, 0.0);
+
+	return abs(dot(u, v)) > 0.99 ? cross(u, vec3(0, 0, 1)) : cross(u, v);
 }
 
 // origin, dir, and maxDist are in texture space
 // dir should be normalized
 // coneRatio is the cone diameter to height ratio (2.0 for 90-degree cone)
-vec3 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
+vec4 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
 {
 	vec3 samplePos = origin;
-	vec4 accum = vec4(0.0);
+	vec3 accum = vec3(0.0);
+	float alpha = 0.0;
 
 	// the starting sample diameter
 	float minDiameter = minVoxelDiameter;
 
 	// push out the starting point to avoid self-intersection
-	float startDist = minDiameter * 20;
+	float startDist = minDiameter * 10;
 	
 	float dist = startDist;
-	while (dist <= maxDist && accum.a < 1.0)
+	while (dist <= maxDist && alpha < 1.0)
 	{
 		// ensure the sample diameter is no smaller than the min
 		// desired diameter for this cone (ensuring we always
@@ -171,18 +179,18 @@ vec3 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
 		
 		vec3 samplePos = origin + dir * dist;
 		
-		vec4 sampleValue = textureLod (volumeTexture, samplePos, min (sampleLOD, MIPMAP_HARDCAP));
+		vec4 sampleValue = textureLod (volumeTexture, samplePos, min (sampleLOD, VOXEL_MIPMAP_COUNT - 1.0));
 		
-		accum.rgb += sampleValue.rgb * sampleValue.a;
-		accum.a += sampleValue.a;
+		accum = accum + (1.0 - alpha) * sampleValue.a * sampleValue.rgb;
+		alpha = alpha + (1.0 - alpha) * sampleValue.a;
 
 		dist += sampleDiameter;
 	}
 	
 	// decompress color range to decode limited HDR
-	accum.xyz *= 2.0;
+	// accum *= 2.0;
 	
-	return accum.xyz;
+	return vec4 (accum, alpha);
 }
 
 // Calculates indirect diffuse light using voxel cone tracing.
@@ -190,15 +198,17 @@ vec3 CalcIndirectDiffuseLight(vec3 in_position, vec3 in_normal)
 {
 	vec3 voxelPos = GetPositionInVolume (in_position);
 
-	vec3 tangent = normalize(orthogonal(in_normal));
+	vec3 tangent = normalize(Orthogonal(in_normal));
 	vec3 bitangent = normalize(cross(tangent, in_normal));
 
 	vec3 iblDiffuse = vec3(0.0);
 
-	float iblConeRatio = 2;
+	float iblConeRatio = 1;
 	float iblMaxDist = .3;
+
 	// this sample gets full weight (dot(normal, normal) == 1)
 	iblDiffuse += voxelTraceCone(voxelPos, in_normal, iblConeRatio, iblMaxDist).xyz;
+
 	// these samples get partial weight
 	iblDiffuse += .707 * voxelTraceCone(voxelPos, normalize(in_normal + tangent), iblConeRatio, iblMaxDist).xyz;
 	iblDiffuse += .707 * voxelTraceCone(voxelPos, normalize(in_normal - tangent), iblConeRatio, iblMaxDist).xyz;
@@ -239,52 +249,81 @@ vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse)
 	return diffuseColor;
 }
 
-vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, vec3 in_specular, float in_shininess)
+float voxelTraceConeOcclusion(vec3 origin, vec3 dir, float coneRatio, float maxDist)
 {
-	// The position is also a direction for Directional Lights
-	vec3 lightDirection = normalize (lightPosition);
+	vec3 samplePos = origin;
+	float occlusion = 0.0;
+	float alpha = 0.0;
 
-	vec3 surface2view = normalize (cameraPosition - in_position);
-	vec3 reflection = reflect (-lightDirection, in_normal);
+	// the starting sample diameter
+	float minDiameter = minVoxelDiameter;
 
-	// Specular contribution
-	float sCont = pow (max (dot (surface2view, reflection), 0.0), 10.0);
+	// push out the starting point to avoid self-intersection
+	float startDist = minDiameter * 1.5;
+	
+	float dist = startDist;
+	while (dist <= maxDist && alpha < 1.0)
+	{
+		float sampleDiameter = max(minDiameter, coneRatio * dist);
+		
+		float sampleLOD = log2(sampleDiameter * minVoxelDiameterInv);
+		
+		vec3 samplePos = origin + dir * dist;
+		
+		vec4 sampleValue = textureLod (volumeTexture, samplePos, min (sampleLOD, VOXEL_MIPMAP_COUNT - 1.0));
 
-	vec3 indirectSpecularColor = CalcIndirectSpecularLight (in_position, in_normal);
+		occlusion += ((1.0 - alpha) * sampleValue.a) / (1.0 + 0.03 * sampleDiameter);
 
-	vec3 specularColor = (lightSpecularColor + indirectSpecularColor) * sCont;
+		alpha = alpha + (1.0 - alpha) * sampleValue.a;
 
-	return indirectSpecularColor;
+		dist += sampleDiameter;
+	}
+	
+	return occlusion;
 }
 
-float CalcShadowContribution (vec3 in_position)
+float CalcOcclusion (vec3 in_position, vec3 in_normal)
 {
-	// Calculate shadow level
-	vec4 clipPos = (viewProjectionMatrix * vec4 (in_position, 1.0));
-	float depth = clipPos.z / clipPos.w;
-	int shadowCascadedLevel = GetShadowCascadeLevel (depth);
+	vec3 voxelPos = GetPositionInVolume (in_position);
 
-	// Calculate shadow
-	vec4 lightSpacePos = lightSpaceMatrices [shadowCascadedLevel] * vec4 (in_position, 1.0f);
-	float shadow = ShadowCalculation (lightSpacePos, shadowCascadedLevel);
+	vec3 tangent = normalize(Orthogonal(in_normal));
+	vec3 bitangent = normalize(cross(in_normal, tangent));
 
-	return shadow;
+	float occlusion = 0.0;
+
+	float iblConeRatio = 0.2;
+	float iblMaxDist = .04;
+
+	// this sample gets full weight (dot(normal, normal) == 1)
+	occlusion += 1.0 - voxelTraceConeOcclusion(voxelPos, in_normal, iblConeRatio, iblMaxDist);
+
+	// these samples get partial weight
+	occlusion += 0.55 * (1.0 - voxelTraceConeOcclusion(voxelPos, normalize(in_normal + tangent), iblConeRatio, iblMaxDist));
+	occlusion += 0.55 * (1.0 - voxelTraceConeOcclusion(voxelPos, normalize(in_normal - tangent), iblConeRatio, iblMaxDist));
+	occlusion += 0.55 * (1.0 - voxelTraceConeOcclusion(voxelPos, normalize(in_normal + bitangent), iblConeRatio, iblMaxDist));
+	occlusion += 0.55 * (1.0 - voxelTraceConeOcclusion(voxelPos, normalize(in_normal - bitangent), iblConeRatio, iblMaxDist));
+
+	// Return result.
+	return occlusion / 3.2;
 }
 
 vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
 {
 	vec3 directDiffuseColor = CalcDirectDiffuseLight (in_position, in_normal, in_diffuse);
-	vec3 directSpecularColor = CalcDirectSpecularLight (in_position, in_normal, in_specular, in_shininess);
 
 	float shadow = CalcShadowContribution (in_position);
 
 	directDiffuseColor = (1.0 - shadow) * (directDiffuseColor);
 
-	// Calculate indirect diffuse lighting
 	vec3 indirectDiffuseColor = CalcIndirectDiffuseLight (in_position, in_normal);
+	vec3 indirectSpecularColor = CalcIndirectSpecularLight (in_position, in_normal);
 
+	// float ambientOcclusion = CalcOcclusion (in_position, in_normal);
+
+	// return vec3 (ambientOcclusion);
+	// return indirectSpecularColor;
 	return (directDiffuseColor + indirectDiffuseColor) * in_diffuse
-		   + (directSpecularColor) * in_specular;
+		   + (indirectSpecularColor) * in_specular;
 }
 
 void main()

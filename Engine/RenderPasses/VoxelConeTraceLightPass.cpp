@@ -45,7 +45,6 @@ void VoxelConeTraceLightPass::DirectionalLightPass (Scene* scene, Camera* camera
 	GL::BlendFunc (GL_ONE, GL_ZERO);
 
 	VoxelVolume* voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
-	GBuffer* frameBuffer = (GBuffer*) rvc->GetRenderVolume ("GBuffer");
 
 	for (std::size_t i = 0; i<LightsManager::Instance ()->GetDirectionalLightsCount (); i++) {
 		VolumetricLight* volumetricLight = LightsManager::Instance ()->GetDirectionalLight (i);
