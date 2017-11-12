@@ -21,6 +21,7 @@
 			<Component name="FlyCameraController" />
       <!--<Component name="StatisticsView" />-->
 			<Component name="FrameRate" />
+			<!--<Component name="ShadowController" />-->
 		</Components>
 	</GameObject>
 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Dragon/Dragon.dae" isActive="false" >
@@ -108,17 +109,22 @@
 		</Rigidbody>
 	</GameObject>
 
-	<Light InstanceID="40" name="Sun" path="Assets/Lights/PrototypeSceneSun.light" isActive="false">
+	<Light InstanceID="41" name="DeferredSun" path="Assets/Lights/PrototypeSceneSun.light" isActive="false">
 		<Transform>
 			<Position x="1" y="1" z="1" />
 		</Transform>
 	</Light>
-	<Light InstanceID="40" name="Sun" path="Assets/Lights/ShadowsSun.light" isActive="true">
+	<Light InstanceID="42" name="ConeTracingSun" path="Assets/Lights/VoxelConeTraceSun.light" isActive="true">
 		<Transform>
 			<Position x="0.5" y="1" z="1" />
 		</Transform>
 	</Light>
-	<Light InstanceID="41" name="LightBulb" path="Assets/Lights/PrototypeScenePoint.light" isActive="false">
+	<Light InstanceID="40" name="ShadowsSun" path="Assets/Lights/ShadowsSun.light" isActive="true">
+		<Transform>
+			<Position x="0.5" y="1" z="1" />
+		</Transform>
+	</Light>
+	<Light InstanceID="43" name="LightBulb" path="Assets/Lights/PrototypeScenePoint.light" isActive="false">
 		<Transform>
 			<Position x="-1" y="-1" z="-1" />
 		</Transform>

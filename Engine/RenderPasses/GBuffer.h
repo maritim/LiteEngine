@@ -4,7 +4,9 @@
 #include <GL/glew.h>
 #include <cstddef>
 
-class GBuffer
+#include "Renderer/RenderVolumeI.h"
+
+class GBuffer : public RenderVolumeI
 {
 public:
     enum GBUFFER_TEXTURE_TYPE {
@@ -33,6 +35,10 @@ public:
     void BindForStencilPass();
     void BindForLightPass();
     void BindForFinalPass();
+
+	void BindForReading ();
+	void BindForWriting ();
+	std::vector<PipelineAttribute> GetCustomAttributes ();
 }; 
 
 #endif

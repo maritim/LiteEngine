@@ -4,6 +4,7 @@
 
 #include "SceneNodes/GameObject.h"
 #include "SceneNodes/AnimationGameObject.h"
+#include "SceneNodes/NormalMapGameObject.h"
 #include "VisualEffects/ParticleSystem/ParticleSystem.h"
 #include "Mesh/Model.h"
 #include "Skybox/Skybox.h"
@@ -62,6 +63,9 @@ Scene* SceneLoader::Load (const std::string& filename)
 		}
 		else if (name == "AnimatedGameObject") {
 			ProcessAnimationGameObject (content, scene);
+		}
+		else if (name == "NormalMapGameObject") {
+			ProcessNormalMapGameObject (content, scene);
 		}
 		else if (name == "ParticleSystem") {
 			ProcessParticleSystem (content, scene);
@@ -168,6 +172,51 @@ void SceneLoader::ProcessAnimationGameObject (TiXmlElement* xmlElem, Scene* scen
 	animGameObject->AttachMesh (mesh);
 
 	scene->AttachObject (animGameObject);
+}
+
+
+
+void SceneLoader::ProcessNormalMapGameObject (TiXmlElement* xmlElem, Scene* scene)
+{
+	std::string name = xmlElem->Attribute ("name");
+	std::string instanceID = xmlElem->Attribute ("InstanceID");
+	std::string meshPath = xmlElem->Attribute ("meshpath");
+	std::string isActive = xmlElem->Attribute ("isActive");
+
+	NormalMapGameObject* normalMapGameObject = new NormalMapGameObject ();
+	normalMapGameObject->SetName (name);
+	// Need unsigned int here
+	normalMapGameObject->SetInstanceID (std::stoi (instanceID));
+	normalMapGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
+
+	Model* mesh = Resources::LoadModel (meshPath);
+
+	TiXmlElement* content = xmlElem->FirstChildElement ();
+
+	while (content)
+	{
+		std::string name = content->Value ();
+
+		if (name == "Transform") {
+			ProcessTransform (content, scene, normalMapGameObject);
+		}
+		else if (name == "Rigidbody") {
+			ProcessRigidbody (content, normalMapGameObject);
+		}
+		else if (name == "Components") {
+			ProcessComponents (content, normalMapGameObject);
+		}
+
+		content = content->NextSiblingElement ();
+	}
+
+	/*
+	* TODO: Change this from here.
+	*/
+
+	normalMapGameObject->AttachMesh (mesh);
+
+	scene->AttachObject (normalMapGameObject);
 }
 
 void SceneLoader::ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene)

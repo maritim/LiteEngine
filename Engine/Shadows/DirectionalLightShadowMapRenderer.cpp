@@ -16,6 +16,8 @@
 #include "Wrappers/OpenGL/GL.h"
 #include "Renderer/Pipeline.h"
 
+#include "Core/Console/Console.h"
+
 DirectionalLightShadowMapRenderer::DirectionalLightShadowMapRenderer (Light* light) :
 	LightShadowMapRenderer (light),
 	_lightCameras (new OrthographicCamera* [CASCADED_SHADOW_MAP_LEVELS]),
@@ -28,6 +30,12 @@ DirectionalLightShadowMapRenderer::DirectionalLightShadowMapRenderer (Light* lig
 		"Assets/Shaders/ShadowMap/deferredDirVolShadowMapLightFragment.glsl");
 
 	_volume = new ShadowMapDirectionalLightVolume ();
+
+	if (!_volume->Init (CASCADED_SHADOW_MAP_LEVELS)) {
+		Console::LogError (std::string () + "Shadow map cannot be initialized!" +
+			" It is not possible to continue the process. End now!");
+		exit (SHADOW_MAP_FBO_NOT_INIT);
+	}
 
 	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
 		_lightCameras [index] = new OrthographicCamera ();

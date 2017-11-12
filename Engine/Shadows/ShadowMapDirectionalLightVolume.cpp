@@ -10,8 +10,8 @@
 ShadowMapDirectionalLightVolume::ShadowMapDirectionalLightVolume () :
 	_staticShaderName ("STATIC_SHADOW_MAP"),
 	_animationShaderName ("ANIMATION_SHADOW_MAP"),
-	_shadowMapIndices (new GLuint [CASCADED_SHADOW_MAP_LEVELS]),
-	_shadowMapResolutions (new std::pair<GLuint, GLuint> [CASCADED_SHADOW_MAP_LEVELS]),
+	_shadowMapIndices (nullptr),
+	_shadowMapResolutions (nullptr),
 	_frameBufferIndex (0)
 {
 	ShaderManager::Instance ()->AddShader (_staticShaderName,
@@ -21,11 +21,6 @@ ShadowMapDirectionalLightVolume::ShadowMapDirectionalLightVolume () :
 	ShaderManager::Instance ()->AddShader (_animationShaderName,
 		"Assets/Shaders/ShadowMap/shadowMapVertexAnimation.glsl",
 		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
-
-	if (!Init ()) {
-		Console::LogError ("It is not possible to continue the process. End now!");
-		exit (SHADOW_MAP_FBO_NOT_INIT);
-	}
 }
 
 ShadowMapDirectionalLightVolume::~ShadowMapDirectionalLightVolume ()
@@ -46,7 +41,7 @@ ShadowMapDirectionalLightVolume::~ShadowMapDirectionalLightVolume ()
 	 * Delete depth buffer textures
 	*/
 
-	GL::DeleteTextures (CASCADED_SHADOW_MAP_LEVELS, _shadowMapIndices);
+	GL::DeleteTextures (_cascadedLevels, _shadowMapIndices);
 
 	/*
 	 * Delete frame buffer
@@ -67,8 +62,21 @@ ShadowMapDirectionalLightVolume::~ShadowMapDirectionalLightVolume ()
 	delete [] _shadowMapResolutions;
 }
 
-bool ShadowMapDirectionalLightVolume::Init ()
+bool ShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels)
 {
+	/*
+	 * Initialize cascaded levels
+	*/
+
+	_cascadedLevels = cascadedLevels;
+
+	/*
+	 * Allocate memory for cascaded levels
+	*/
+
+	_shadowMapIndices = new GLuint [_cascadedLevels];
+	_shadowMapResolutions = new std::pair<GLuint, GLuint> [_cascadedLevels];
+
 	/*
 	* Create Frame Buffer
 	*/
@@ -79,9 +87,9 @@ bool ShadowMapDirectionalLightVolume::Init ()
 	 * Create shadow map cascaded textures 
 	*/
 
-	GL::GenTextures(CASCADED_SHADOW_MAP_LEVELS, _shadowMapIndices);
+	GL::GenTextures (_cascadedLevels, _shadowMapIndices);
 
-	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
+	for (std::size_t index = 0; index < _cascadedLevels; index++) {
 		GL::BindTexture(GL_TEXTURE_2D, _shadowMapIndices [index]);
 
 		_shadowMapResolutions [index].first = SHADOW_MAP_MAX_RESOLUTION_WIDTH;
@@ -139,7 +147,7 @@ void ShadowMapDirectionalLightVolume::BindForShadowMapCatch (std::size_t cascade
 	 * Check if cascaded level excedes the maximum level
 	*/
 
-	if (cascadedLevel >= CASCADED_SHADOW_MAP_LEVELS) {
+	if (cascadedLevel >= _cascadedLevels) {
 		Console::LogWarning ("There is not level " + std::to_string (cascadedLevel) + " on directional shadow map");
 		return;
 	}
@@ -191,7 +199,7 @@ void ShadowMapDirectionalLightVolume::BindForReading ()
 	 * Bind every depth buffer for reading
 	*/
 
-	for (std::size_t index = 0;index < CASCADED_SHADOW_MAP_LEVELS;index ++) {
+	for (std::size_t index = 0;index < _cascadedLevels;index ++) {
 		GL::ActiveTexture (GL_TEXTURE4 + index);
 		GL::BindTexture (GL_TEXTURE_2D, _shadowMapIndices [index]);
 	}

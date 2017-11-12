@@ -184,4 +184,26 @@ void GBuffer::BindForFinalPass()
 	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	GL::BindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
 	GL::ReadBuffer(GL_COLOR_ATTACHMENT4);
-} 
+}
+
+void GBuffer::BindForReading ()
+{
+	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, m_fbo);
+
+	GL::DrawBuffer (GL_COLOR_ATTACHMENT4);
+
+	for (unsigned int i = 0; i < ARRAY_SIZE_IN_ELEMENTS (m_textures); i++) {
+		GL::ActiveTexture (GL_TEXTURE0 + i);
+		GL::BindTexture (GL_TEXTURE_2D, m_textures [GBUFFER_TEXTURE_TYPE_POSITION + i]);
+	}
+}
+
+void GBuffer::BindForWriting ()
+{
+
+}
+
+std::vector<PipelineAttribute> GBuffer::GetCustomAttributes ()
+{
+	return std::vector<PipelineAttribute> ();
+}

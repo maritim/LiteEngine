@@ -15,7 +15,7 @@ newmtl leaf
 	map_Ka textures\sponza_thorn_diff.jpg
 	map_Kd textures\sponza_thorn_diff.jpg
 	map_Ks textures\sponza_thorn_spec.jpg
-#	map_bump textures\sponza_thorn_dds.jpg
+	map_bump textures\sponza_thorn_ddn.png
 	map_d textures\sponza_thorn_mask.jpg
 
 newmtl vase_round
@@ -32,7 +32,7 @@ newmtl vase_round
 	map_Ka textures\vase_round.jpg
 	map_Kd textures\vase_round.jpg
 	map_Ks textures\vase_round_spec.jpg
-#	map_bump textures\vase_round_ddn.png
+	map_bump textures\vase_round_ddn.png
 
 newmtl Material__57
 	Ns 10.0000
@@ -63,7 +63,7 @@ newmtl Material__298
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\background.jpg
 	map_Kd textures\background.jpg
-#	map_bump textures\background_ddn.png
+	map_bump textures\background_ddn.png
 
 newmtl 16___Default
 	Ns 10.0000
@@ -94,7 +94,7 @@ newmtl bricks
 	map_Ka textures\spnza_bricks_a_diff.jpg
 	map_Kd textures\spnza_bricks_a_diff.jpg
 	map_Ks textures\spnza_bricks_a_spec.jpg
-#	map_bump textures\spnza_bricks_a_ddn.png
+	map_bump textures\spnza_bricks_a_ddn.png
 
 newmtl arch
 	Ns 10.0000
@@ -110,7 +110,7 @@ newmtl arch
 	map_Ka textures\sponza_arch_diff.jpg
 	map_Kd textures\sponza_arch_diff.jpg
 	map_Ks textures\sponza_arch_spec.jpg
-#	map_bump textures\sponza_arch_ddn.png
+	map_bump textures\sponza_arch_ddn.png
 
 newmtl ceiling
 	Ns 10.0000
@@ -121,7 +121,7 @@ newmtl ceiling
 	illum 2
 	Ka 0.5880 0.5880 0.5880
 	Kd 0.5880 0.5880 0.5880
-	Ks 0.0000 0.0000 0.0000
+	Ks 0.5880 0.5880 0.5880
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\sponza_ceiling_a_diff.jpg
 	map_Kd textures\sponza_ceiling_a_diff.jpg
@@ -136,12 +136,12 @@ newmtl column_a
 	illum 2
 	Ka 0.5880 0.5880 0.5880
 	Kd 0.5880 0.5880 0.5880
-	Ks 0.0000 0.0000 0.0000
+	Ks 0.5880 0.5880 0.5880
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\sponza_column_a_diff.jpg
 	map_Kd textures\sponza_column_a_diff.jpg
 	map_Ks textures\sponza_column_a_spec.jpg
-#	map_bump textures\sponza_column_a_ddn.png
+	map_bump textures\sponza_column_a_ddn.png
 
 newmtl floor
 	Ns 10.0000
@@ -152,7 +152,7 @@ newmtl floor
 	illum 2
 	Ka 0.5880 0.5880 0.5880
 	Kd 0.5880 0.5880 0.5880
-	Ks 0.0000 0.0000 0.0000
+	Ks 0.5880 0.5880 0.5880
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\sponza_floor_a_diff.jpg
 	map_Kd textures\sponza_floor_a_diff.jpg
@@ -167,12 +167,12 @@ newmtl column_c
 	illum 2
 	Ka 0.5880 0.5880 0.5880
 	Kd 0.5880 0.5880 0.5880
-	Ks 0.0000 0.0000 0.0000
+	Ks 0.5880 0.5880 0.5880
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\sponza_column_c_diff.jpg
 	map_Kd textures\sponza_column_c_diff.jpg
 	map_Ks textures\sponza_column_c_spec.jpg
-#	map_bump textures\sponza_column_c_ddn.png
+	map_bump textures\sponza_column_c_ddn.png
 
 newmtl details
 	Ns 10.0000
@@ -198,12 +198,12 @@ newmtl column_b
 	illum 2
 	Ka 0.5880 0.5880 0.5880
 	Kd 0.5880 0.5880 0.5880
-	Ks 0.0000 0.0000 0.0000
+	Ks 0.5880 0.5880 0.5880
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\sponza_column_b_diff.jpg
 	map_Kd textures\sponza_column_b_diff.jpg
 	map_Ks textures\sponza_column_b_spec.jpg
-#	map_bump textures\sponza_column_b_ddn.png
+	map_bump textures\sponza_column_b_ddn.png
 
 newmtl Material__47
 	Ns 10.0000
@@ -332,7 +332,7 @@ newmtl chain
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\chain_texture.jpg
 	map_Kd textures\chain_texture.jpg
-#	map_bump textures\chain_texture_ddn.png
+	map_bump textures\chain_texture_ddn.png
 	map_d textures\chain_texture_mask.jpg
 
 newmtl vase_hanging
@@ -362,7 +362,7 @@ newmtl vase
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\vase_dif.jpg
 	map_Kd textures\vase_dif.jpg
-#	map_bump textures\vase_ddn.png
+	map_bump textures\vase_ddn.png
 
 newmtl Material__25
 	Ns 10.0000
@@ -377,7 +377,7 @@ newmtl Material__25
 	Ke 0.0000 0.0000 0.0000
 	map_Ka textures\lion.jpg
 	map_Kd textures\lion.jpg
-#	map_bump textures\lion_ddn.png
+	map_bump textures\lion_ddn.png
 
 newmtl roof
 	Ns 10.0000

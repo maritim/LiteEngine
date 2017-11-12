@@ -12,6 +12,7 @@ ShaderManager::ShaderManager ()
 {
 	//AddShader ("DEFAULT", "Assets/Shaders/defaultVertex.glsl", "Assets/Shaders/defaultFragment.glsl");	
 	AddShader ("DEFAULT", "Assets/Shaders/deferredVertex.glsl", "Assets/Shaders/deferredFragment.glsl", "Assets/Shaders/deferredGeometry.glsl");
+	AddShader ("DEFAULT_NORMAL_MAP", "Assets/Shaders/deferredNormalMapVertex.glsl", "Assets/Shaders/deferredNormalMapFragment.glsl", "Assets/Shaders/deferredNormalMapGeometry.glsl");
 	AddShader ("DEFAULT_ANIMATED", "Assets/Shaders/deferredVertexAnimation.glsl", "Assets/Shaders/deferredFragment.glsl", "Assets/Shaders/deferredGeometry.glsl");
 }
 
@@ -77,7 +78,7 @@ unsigned int ShaderManager::LoadShader (const std::string& source, unsigned int 
 	return id;
 }
 
-int ShaderManager::AddShader (const std::string& shaderName,
+GLuint ShaderManager::AddShader (const std::string& shaderName,
 	const std::string& vertexFile, const std::string& fragmentFile,
 	const std::string& geometryFile)
 {
@@ -90,25 +91,25 @@ int ShaderManager::AddShader (const std::string& shaderName,
 		return it->second->GetProgram ();
 	}
 
-	unsigned int program = GL::CreateProgram ();
+	GLuint program = GL::CreateProgram ();
 
 	/*
 	 * Load, compile and attach vertex shader
 	*/
 
-	unsigned int vertex = BuildShaderFile (program, GL_VERTEX_SHADER, vertexFile);
+	GLuint vertex = BuildShaderFile (program, GL_VERTEX_SHADER, vertexFile);
 
 	/*
 	 * Load, compile and attach fragment shader
 	*/
 
-	unsigned int fragment = BuildShaderFile (program, GL_FRAGMENT_SHADER, fragmentFile);
+	GLuint fragment = BuildShaderFile (program, GL_FRAGMENT_SHADER, fragmentFile);
 
 	/*
 	 * Load, compile and attach geometry shader if exists
 	*/
 
-	unsigned int geometry = 0;
+	GLuint geometry = 0;
 
 	if (geometryFile != "") {
 		geometry = BuildShaderFile (program, GL_GEOMETRY_SHADER, geometryFile);
@@ -116,7 +117,7 @@ int ShaderManager::AddShader (const std::string& shaderName,
 
 	GL::LinkProgram (program);
 
-	Shader* shader = new Shader (shaderName, program, vertex, fragment, geometry);
+	DrawingShader* shader = new DrawingShader (shaderName, program, vertex, fragment, geometry);
 	shader->SetVertexFilename (vertexFile);
 	shader->SetFragmentFilename (fragmentFile);
 	shader->SetGeometryFilename (geometryFile);
@@ -126,23 +127,58 @@ int ShaderManager::AddShader (const std::string& shaderName,
 	return program; 
 }
 
+GLuint ShaderManager::AddComputeShader (const std::string& shaderName, const std::string& computeFile)
+{
+	/*
+	* Return the program if already exists
+	*/
+
+	auto it = _shaderCollection.find(shaderName);
+	if (it != _shaderCollection.end()) {
+		return it->second->GetProgram();
+	}
+
+	GLuint program = GL::CreateProgram();
+
+	/*
+	* Load, compile and attach vertex shader
+	*/
+
+	GLuint compute = BuildShaderFile (program, GL_COMPUTE_SHADER, computeFile);
+
+	GL::LinkProgram(program);
+
+	ComputeShader* shader = new ComputeShader (shaderName, program, compute);
+	shader->SetComputeFilename(computeFile);
+
+	_shaderCollection[shaderName] = (Shader*) shader;
+
+	return program;
+}
+
 int ShaderManager::DeleteShader (const std::string& shaderName)
 {
 	if (_shaderCollection.find (shaderName) == _shaderCollection.end ()) {
 		return 1;
 	}
 
+	/*
+	 * Find shader
+	*/
+
 	Shader* shader = _shaderCollection [shaderName];
 
-	GL::DetachShader (shader->GetProgram (), shader->GetVertexShader ());
-	GL::DetachShader (shader->GetProgram (), shader->GetFragmentShader ());
-
-	GL::DeleteShader (shader->GetVertexShader ());
-	GL::DeleteShader (shader->GetFragmentShader ());
-
-	GL::DeleteProgram (shader->GetProgram ());
+	/*
+	 * Remove shader from managed collection
+	*/
 
 	_shaderCollection.erase (shaderName);
+
+	/*
+	 * Delete shader
+	*/
+
+	delete shader;
 
 	/*
 	 * Delete shader from memory
@@ -155,13 +191,13 @@ int ShaderManager::DeleteShader (const std::string& shaderName)
 
 Shader* ShaderManager::GetShader (const std::string& shaderName)
 {
-	std::map<std::string, Shader*>::iterator it = _shaderCollection.find (shaderName);
+	auto iterrator = _shaderCollection.find (shaderName);
 
-	if (it == _shaderCollection.end ()) {
+	if (iterrator == _shaderCollection.end ()) {
 		return nullptr;
 	}
 
-	return it->second;
+	return iterrator->second;
 }
 
 void ShaderManager::Clear()

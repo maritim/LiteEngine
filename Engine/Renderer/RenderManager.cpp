@@ -2,8 +2,9 @@
 
 #include "Pipeline.h"
 
-#include "DeferredRenderModule.h"
-#include "VoxelizationRenderModule.h"
+#include "RenderModules/DeferredRenderModule.h"
+#include "RenderModules/VoxelizationRenderModule.h"
+#include "RenderModules/VoxelConeTraceRenderModule.h"
 
 /*
  * Singleton Part
@@ -15,6 +16,11 @@ RenderManager::RenderManager () :
 {
 	_renderModules.push_back (new DeferredRenderModule ());
 	_renderModules.push_back (new VoxelizationRenderModule ());
+	_renderModules.push_back (new VoxelConeTraceRenderModule ());
+
+	for (auto renderModule : _renderModules) {
+		renderModule->InitModule ();
+	}
 
 	SetRenderMode (_currentRenderMode);
 }

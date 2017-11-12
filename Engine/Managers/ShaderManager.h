@@ -7,6 +7,8 @@
 #include <map>
 
 #include "Shader/Shader.h"
+#include "Shader/DrawingShader.h"
+#include "Shader/ComputeShader.h"
 
 class ShaderManager : public Singleton<ShaderManager>
 {
@@ -16,11 +18,15 @@ private:
 	std::map<std::string, Shader*> _shaderCollection;
 
 public:
-	int AddShader (const std::string& shaderName,
+	GLuint AddShader (const std::string& shaderName,
 		const std::string& vertexFile, const std::string& fragmentFile, 
 		const std::string& geometryFile = "");
+	GLuint AddComputeShader (const std::string& shaderName,
+		const std::string& computeFile);
 	int DeleteShader (const std::string& shaderName);
+
 	Shader* GetShader (const std::string& shaderName);
+
 	void Clear();
 
 private:

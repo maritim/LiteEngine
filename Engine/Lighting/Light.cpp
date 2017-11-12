@@ -42,3 +42,8 @@ void Light::SetShadowCasting (bool castShadows)
 {
 	_castShadows = castShadows;
 }
+
+void Light::SetRenderMode (LightRenderMode lightMode)
+{
+	
+}

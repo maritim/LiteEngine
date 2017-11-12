@@ -15,8 +15,8 @@ out vec2 geom_texcoord;
 out mat3 geom_swizzleMatrixInv;
 out vec4 geom_BBox;
 
-uniform vec3 minPosition;
-uniform vec3 maxPosition;
+uniform vec3 minVertex;
+uniform vec3 maxVertex;
 
 uniform ivec3 volumeSize;
 
@@ -93,9 +93,9 @@ vec4 GetScreenNormalizedPosition (vec4 position)
 {
 	vec4 screenPos = vec4 (1.0);
 
-	screenPos.x = GetInterpolatedComp (position.x, minPosition.x, maxPosition.x);
-	screenPos.y = GetInterpolatedComp (position.y, minPosition.y, maxPosition.y);
-	screenPos.z = GetInterpolatedComp (position.z, minPosition.z, maxPosition.z);
+	screenPos.x = GetInterpolatedComp (position.x, minVertex.x, maxVertex.x);
+	screenPos.y = GetInterpolatedComp (position.y, minVertex.y, maxVertex.y);
+	screenPos.z = GetInterpolatedComp (position.z, minVertex.z, maxVertex.z);
 
 	screenPos.xyz = (vec3 (screenPos) * vec3 (2.0)) - vec3 (1.0);
 

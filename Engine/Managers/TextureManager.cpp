@@ -7,6 +7,8 @@
 #include "Resources/Resources.h"
 #include "Wrappers/OpenGL/GL.h"
 
+#include "Utils/Extensions/MathExtend.h"
+
 TextureManager::TextureManager ()
 {
 	std::string defaultTexture = "Assets/Textures/AmbientDefault.png";	
@@ -126,6 +128,17 @@ void TextureManager::LoadInGPU (Texture* texture)
 	else if (texture->GetMipmapFilter () == TEXTURE_MIPMAP_FILTER::MIPMAP_BILINEAR) {
 		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);		
+	}
+	else if (texture->GetMipmapFilter () == TEXTURE_MIPMAP_FILTER::MIPMAP_ANISOTROPIC) {
+		GLfloat maxAnisotropy;
+		GL::GetFloatv (GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+
+		maxAnisotropy = Extensions::MathExtend::Clamp (maxAnisotropy, 0.0f, 8.0f);
+		GL::TexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
+	} 
+	else if (texture->GetMipmapFilter () == TEXTURE_MIPMAP_FILTER::MIPMAP_NONE) {
+		GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}
 
 	/*

@@ -14,7 +14,7 @@ Texture::Texture(const std::string& name) :
 	_internalFormat (0),
 	_pixelFormat (TEXTURE_PIXEL_FORMAT::FORMAT_RGBA8),
 	_wrapMode (TEXTURE_WRAP_MODE::WRAP_REPEAT),
-	_mipmapFilter (TEXTURE_MIPMAP_FILTER::MIPMAP_BILINEAR),
+	_mipmapFilter (TEXTURE_MIPMAP_FILTER::MIPMAP_ANISOTROPIC),
 	_compressionType (TEXTURE_COMPRESSION_TYPE::COMPRESS_NONE),
 	_isDirty (false)
 {

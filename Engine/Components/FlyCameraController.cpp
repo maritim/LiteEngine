@@ -7,12 +7,9 @@
 #include "Systems/Input/Input.h"
 #include "Systems/Time/Time.h"
 
-#include "Managers/SceneManager.h"
 #include "Resources/Resources.h"
 
 #include "Utils/Extensions/MathExtend.h"
-
-#include "Renderer/RenderManager.h"
 
 void FlyCameraController::Start ()
 {
@@ -96,14 +93,5 @@ void FlyCameraController::Update ()
 		Camera::Main ()->SetRotation (glm::quat ());
 		Camera::Main ()->Rotate (_pitch, glm::vec3 (0.0f, 1.0f, 0.0f));
 		Camera::Main ()->Rotate (_yaw, glm::vec3(1.0f, 0.0f, 0.0f));
-	}
-
-	if (Input::GetKeyDown (InputKey::Q)) {
-		if (RenderManager::Instance ()->GetRenderMode () == RenderMode::RENDER_MODE_DEFERRED) {
-			RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_VOXELIZATION);
-		}
-		else if (RenderManager::Instance ()->GetRenderMode () == RenderMode::RENDER_MODE_VOXELIZATION) {
-			RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_DEFERRED);
-		}
 	}
 }

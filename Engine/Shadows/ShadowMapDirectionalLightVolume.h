@@ -7,8 +7,6 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
-#define CASCADED_SHADOW_MAP_LEVELS 4
-
 #define SHADOW_MAP_MAX_RESOLUTION_WIDTH 1024		
 #define SHADOW_MAP_MAX_RESOLUTION_HEIGHT 1024
 
@@ -20,6 +18,8 @@ protected:
 	std::string _staticShaderName;
 	std::string _animationShaderName;
 
+	std::size_t _cascadedLevels;
+
 	GLuint* _shadowMapIndices;
 	std::pair<GLuint, GLuint>* _shadowMapResolutions;
 	GLuint _frameBufferIndex;
@@ -28,7 +28,7 @@ public:
 	ShadowMapDirectionalLightVolume ();
 	~ShadowMapDirectionalLightVolume ();
 
-	bool Init ();
+	bool Init (std::size_t cascadedLevels);
 	void BindForShadowMapCatch (std::size_t cascadedLevel);
 	void EndDrawing ();
 
