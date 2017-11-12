@@ -16,7 +16,7 @@ uniform sampler3D volumeTexture;
 
 layout(binding = 0, rgba8) uniform writeonly image3D dstImageMip;
 
-vec4[8] fetchTexels(int dir, ivec3 pos) {
+vec4[8] fetchTexels(ivec3 pos) {
   return vec4[8] (texelFetch(volumeTexture, pos + ivec3(1, 1, 1), SrcMipLevel),  // 0
                   texelFetch(volumeTexture, pos + ivec3(1, 1, 0), SrcMipLevel),  // 1
                   texelFetch(volumeTexture, pos + ivec3(1, 0, 1), SrcMipLevel),  // 2
@@ -36,19 +36,19 @@ void main()
 		ivec3 dstPos = ivec3(gl_GlobalInvocationID);
 		ivec3 srcPos = dstPos * 2;
   
-		vec4 values[8] = fetchTexels(0, srcPos);
+		vec4 values[8] = fetchTexels(srcPos);
 
 		vec3 finalColor = vec3 (0);
 		float contributionCount = 0;
+		float alpha = 0.0;
 
 		for (int i=0; i<8; i++) {
 			vec3 contribution = values [i].a == 0 ? vec3 (0) : vec3 (1);
 
 			finalColor += values [i].rgb * contribution;
 			contributionCount += contribution.x; 
+			alpha += values [i].a;
 		}
-
-		float alpha = contributionCount > 0 ? 1.0 : 0.0;
 
 		imageStore(dstImageMip, dstPos, vec4(finalColor / contributionCount, alpha));
 	}

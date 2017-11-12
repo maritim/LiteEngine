@@ -1,15 +1,25 @@
 #version 430
 layout (local_size_x = 4, local_size_y = 4, local_size_z = 4) in;
 
-// Compute-based mipmapping inspired by 
+/*
+ * Input volume texture and volume properites
+*/
 
 uniform sampler3D volumeTexture;
 uniform vec3 minVertex;
 uniform vec3 maxVertex;
 uniform ivec3 volumeSize;
 
+/*
+ * Input shadow map volume and light space properties
+*/
+
 uniform sampler2D shadowMap;
 uniform mat4 lightSpaceMatrix;
+
+/*
+ * Output voxel volume
+*/
 
 layout(binding = 0, rgba8) uniform writeonly image3D voxelVolume;
 
@@ -29,26 +39,47 @@ vec3 GetVoxelPosInWorld (vec3 voxelPos)
 	return worldPos;
 }
 
-bool IsInShadow (vec4 lightSpacePos)
+/*
+ * Shadow Calculation
+ * Thanks to: https://learnopengl.com/#!Advanced-Lighting/Shadows/Shadow-Mapping
+*/
+
+bool IsInShadow (vec3 worldPos)
 {
-    // perform perspective divide
+	/*
+	 * Transform into light space
+	*/
+
+	vec4 lightSpacePos = lightSpaceMatrix * vec4 (worldPos, 1.0);	
+
+    /*
+     * Perform perspective divide
+    */
+
     vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
 
 	if(projCoords.z > 1.0)
         return false;
 
-    // Transform to [0,1] range
+    /*
+     * Transform to [0,1] range
+    */
+
     projCoords = projCoords * 0.5 + 0.5;
     
-    // Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    /*
+     * Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    */
+
     float closestDepth = texture (shadowMap, projCoords.xy).r; 
 
-    // Get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;
-    
-	float bias = 0.002;
+    /*
+     * Get depth of current fragment from light's perspective
+    */
 
-    return currentDepth - bias > closestDepth;	
+    float currentDepth = projCoords.z;
+
+    return currentDepth > closestDepth;	
 }
 
 void main() 
@@ -57,7 +88,15 @@ void main()
 		&& gl_GlobalInvocationID.y < volumeSize.y
 		&& gl_GlobalInvocationID.z < volumeSize.z) {
 
+		/*
+		 * Get voxel position in 3D texture
+		*/
+
 		ivec3 voxelPos = ivec3(gl_GlobalInvocationID);
+
+		/*
+		 * Extract voxel color
+		*/
 
 		vec4 voxelColor = texelFetch(volumeTexture, voxelPos, 0);
 
@@ -65,13 +104,24 @@ void main()
 			return;
 		}
 
-		vec3 voxelWorldPos = GetVoxelPosInWorld (vec3 (voxelPos));
+		/*
+		 * Compute voxel position in world space
+		*/
 
-		vec4 lightSpacePos = lightSpaceMatrix * vec4 (voxelWorldPos, 1.0f);	
+		vec3 voxelWorldPos = GetVoxelPosInWorld (vec3 (voxelPos));
 		
-		if (!IsInShadow (lightSpacePos)) {
+		/*
+		 * Do nothing is the voxel is not in the shadow
+		*/
+
+		if (!IsInShadow (voxelWorldPos)) {
+			// imageStore
 			return;
 		}
+
+		/*
+		 * Store shadow color into voxel
+		*/
 
 		vec3 shadowColor = vec3 (0.0);
 

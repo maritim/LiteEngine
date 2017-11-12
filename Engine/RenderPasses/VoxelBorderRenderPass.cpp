@@ -51,37 +51,29 @@ void VoxelBorderRenderPass::StartVoxelBordering ()
 
 void VoxelBorderRenderPass::BorderVoxelVolume (RenderVolumeCollection* rvc)
 {
-	//std::size_t dstMipRes = GeneralSettings::Instance ()->GetIntValue ("VoxelVolumeSize");
+	std::size_t dstMipRes = 512;
 	Shader* computeShader = ShaderManager::Instance ()->GetShader ("VOXEL_BORDER_PASS_COMPUTE_SHADER");
 
 	VoxelVolume* voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
 
 	voxelVolume->BindForReading ();
 
-	//for (int mipLevel = 0; mipLevel < MIPMAP_LEVELS; mipLevel++) {
+	for (int mipLevel = 0; mipLevel < MIPMAP_LEVELS; mipLevel++) {
 
-		//Pipeline::SendCustomAttributes ("VOXEL_BORDER_PASS_COMPUTE_SHADER",
-		//	rvc->GetRenderVolume ("VoxelVolume")->GetCustomAttributes ());
+		Pipeline::SendCustomAttributes ("VOXEL_BORDER_PASS_COMPUTE_SHADER",
+			rvc->GetRenderVolume ("VoxelVolume")->GetCustomAttributes ());
 
-		//GL::Uniform1i (computeShader->GetUniformLocation ("SrcMipLevel"), mipLevel);
-		//GL::Uniform1i (computeShader->GetUniformLocation ("DstMipRes"), dstMipRes);
+		GL::Uniform1i (computeShader->GetUniformLocation ("SrcMipLevel"), mipLevel);
+		GL::Uniform1i (computeShader->GetUniformLocation ("DstMipRes"), dstMipRes);
 
-		//voxelVolume->BindForWriting (mipLevel);
+		voxelVolume->BindForWriting (mipLevel);
 
-		//int numWorkGroups = glm::ceil (dstMipRes / 4.0);
-		//GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);
+		int numWorkGroups = glm::ceil (dstMipRes / 4.0);
+		GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);
 
-		//GL::MemoryBarrier (GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-		//dstMipRes >>= 1;
-	//}
-
-	Pipeline::SendCustomAttributes ("VOXEL_BORDER_PASS_COMPUTE_SHADER",
-		rvc->GetRenderVolume ("VoxelVolume")->GetCustomAttributes ());
-
-	voxelVolume->BindForWriting (0);
-
-	int numWorkGroups = glm::ceil (GeneralSettings::Instance ()->GetIntValue ("VoxelVolumeSize") / 4.0);
-	GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);
+		GL::MemoryBarrier (GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+		dstMipRes >>= 1;
+	}
 }
 
 void VoxelBorderRenderPass::EndVoxelBordering ()
