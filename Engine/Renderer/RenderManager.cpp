@@ -5,6 +5,7 @@
 #include "RenderModules/DeferredRenderModule.h"
 #include "RenderModules/VoxelizationRenderModule.h"
 #include "RenderModules/VoxelConeTraceRenderModule.h"
+#include "RenderModules/ReflectiveShadowMapRenderModule.h"
 
 /*
  * Singleton Part
@@ -12,11 +13,12 @@
 
 RenderManager::RenderManager () :
 	_currentRenderModule (nullptr),
-	_currentRenderMode (RENDER_MODE_DEFERRED)
+	_currentRenderMode (RENDER_MODE_REFLECTIVE_SHADOW_MAP)
 {
 	_renderModules.push_back (new DeferredRenderModule ());
 	_renderModules.push_back (new VoxelizationRenderModule ());
 	_renderModules.push_back (new VoxelConeTraceRenderModule ());
+	_renderModules.push_back (new ReflectiveShadowMapRenderModule ());
 
 	for (auto renderModule : _renderModules) {
 		renderModule->InitModule ();
