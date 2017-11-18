@@ -40,13 +40,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -135,10 +135,7 @@
     <ClCompile Include="Components\FlyCameraController.cpp" />
     <ClCompile Include="Components\FPSCameraController.cpp" />
     <ClCompile Include="Components\FrameRate.cpp" />
-    <ClCompile Include="Components\RenderModulesController.cpp" />
-    <ClCompile Include="Components\ShadowController.cpp" />
     <ClCompile Include="Components\StatisticsView.cpp" />
-    <ClCompile Include="Components\VoxelTestComponent.cpp" />
     <ClCompile Include="Core\Console\Console.cpp" />
     <ClCompile Include="Core\Interfaces\Object.cpp" />
     <ClCompile Include="Core\Intersections\AABBVolume.cpp" />
@@ -203,20 +200,20 @@
     <ClCompile Include="Mesh\PolygonGroup.cpp" />
     <ClCompile Include="Mesh\VertexBoneInfo.cpp" />
     <ClCompile Include="Modules\SDLModule.cpp" />
+    <ClCompile Include="RenderModules\DeferredRenderModule.cpp" />
     <ClCompile Include="RenderPasses\DeferredBlitRenderPass.cpp" />
     <ClCompile Include="RenderPasses\DeferredLightRenderPass.cpp" />
-    <ClCompile Include="RenderModules\DeferredRenderModule.cpp" />
     <ClCompile Include="RenderPasses\DeferredGeometryRenderPass.cpp" />
     <ClCompile Include="RenderPasses\DirectionalShadowMapRenderPass.cpp" />
     <ClCompile Include="RenderPasses\ForwardRenderPass.cpp" />
     <ClCompile Include="RenderPasses\GBuffer.cpp" />
     <ClCompile Include="Renderer\Pipeline.cpp" />
-    <ClCompile Include="Renderer\PipelineAttribute.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\RenderManager.cpp" />
     <ClCompile Include="Renderer\RenderPassI.cpp" />
     <ClCompile Include="Renderer\RenderVolumeCollection.cpp" />
     <ClCompile Include="RenderPasses\DeferredSkyboxRenderPass.cpp" />
+    <ClCompile Include="RenderPasses\VoxelBorderRenderPass.cpp" />
     <ClCompile Include="RenderPasses\VoxelConeTraceLightPass.cpp" />
     <ClCompile Include="RenderModules\VoxelConeTraceRenderModule.cpp" />
     <ClCompile Include="RenderModules\VoxelizationRenderModule.cpp" />
@@ -331,10 +328,7 @@
     <ClInclude Include="Components\FlyCameraController.h" />
     <ClInclude Include="Components\FPSCameraController.h" />
     <ClInclude Include="Components\FrameRate.h" />
-    <ClInclude Include="Components\RenderModulesController.h" />
-    <ClInclude Include="Components\ShadowController.h" />
     <ClInclude Include="Components\StatisticsView.h" />
-    <ClInclude Include="Components\VoxelTestComponent.h" />
     <ClInclude Include="Core\Console\Console.h" />
     <ClInclude Include="Core\Interfaces\Object.h" />
     <ClInclude Include="Core\Intersections\AABBVolume.h" />
@@ -559,6 +553,7 @@
     <ClInclude Include="Renderer\RenderVolumeCollection.h" />
     <ClInclude Include="Renderer\RenderVolumeI.h" />
     <ClInclude Include="RenderPasses\DeferredSkyboxRenderPass.h" />
+    <ClInclude Include="RenderPasses\VoxelBorderRenderPass.h" />
     <ClInclude Include="RenderPasses\VoxelConeTraceLightPass.h" />
     <ClInclude Include="RenderModules\VoxelConeTraceRenderModule.h" />
     <ClInclude Include="RenderPasses\VoxelizationRenderPass.h" />
