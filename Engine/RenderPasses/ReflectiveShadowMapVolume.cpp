@@ -46,10 +46,10 @@ std::vector<PipelineAttribute> ReflectiveShadowMapVolume::GetCustomAttributes ()
 	reflectiveShadowMapFlux.type = PipelineAttribute::AttrType::ATTR_1I;
 	lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
 
-	reflectiveShadowMapDepth.name = "shadowMap";
-	reflectiveShadowMapPos.name = "reflectiveShadowMapPos";
-	reflectiveShadowMapNormal.name = "reflectiveShadowMapNormal";
-	reflectiveShadowMapFlux.name = "reflectiveShadowMapFlux";
+	reflectiveShadowMapDepth.name = "reflectiveShadowMap";
+	reflectiveShadowMapPos.name = "reflectiveShadowMapPosMap";
+	reflectiveShadowMapNormal.name = "reflectiveShadowMapNormalMap";
+	reflectiveShadowMapFlux.name = "reflectiveShadowMapFluxMap";
 	lightSpaceMatrix.name = "lightSpaceMatrix";
 
 	reflectiveShadowMapDepth.value.x = 4;

@@ -12,8 +12,8 @@ ReflectiveShadowMapDirectionalLightVolume::ReflectiveShadowMapDirectionalLightVo
 	_shadowMapResolutions (nullptr)
 {
 	ShaderManager::Instance ()->AddShader (_staticShaderName,
-		"Assets/Shaders/ReflectiveShadowMap/shadowMapVertex.glsl",
-		"Assets/Shaders/ReflectiveShadowMap/shadowMapFragment.glsl");
+		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapVertex.glsl",
+		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapFragment.glsl");
 
 	ShaderManager::Instance ()->AddShader (_animationShaderName,
 		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapVertexAnimation.glsl",

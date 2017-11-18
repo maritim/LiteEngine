@@ -60,7 +60,7 @@ RenderVolumeCollection* ReflectiveDirectionalShadowMapAccumulationPass::Execute 
 
 	EndShadowMapPass ();
 
-	return rvc->Insert ("ShadowMapVolume", _reflectiveShadowMapVolume);
+	return rvc->Insert ("ReflectiveShadowMapVolume", _reflectiveShadowMapVolume);
 }
 
 void ReflectiveDirectionalShadowMapAccumulationPass::StartShadowMapPass ()
