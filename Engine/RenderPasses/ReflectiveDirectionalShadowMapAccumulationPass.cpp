@@ -95,13 +95,6 @@ void ReflectiveDirectionalShadowMapAccumulationPass::ShadowMapGeometryPass (Scen
 	GL::BlendFunc (GL_ONE, GL_ZERO);
 
 	/*
-	* Enable front face culling
-	*/
-
-	GL::Enable (GL_CULL_FACE);
-	GL::CullFace (GL_FRONT);
-
-	/*
 	* Light camera
 	*/
 

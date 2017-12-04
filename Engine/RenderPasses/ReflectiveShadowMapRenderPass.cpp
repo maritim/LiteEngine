@@ -71,12 +71,6 @@ void ReflectiveShadowMapRenderPass::ReflectiveShadowMapTestPass (Camera* camera,
 		rvc->GetRenderVolume ("ReflectiveShadowMapVolume")->GetCustomAttributes ());
 
 	/*
-	 * Disable face culling
-	*/
-
-	GL::Disable (GL_CULL_FACE);
-
-	/*
 	 * Clear framebuffer
 	*/
 
