@@ -1,5 +1,7 @@
 #include "MultipleRenderTargetsVolume.h"
 
+#include <vector>
+
 #include "Wrappers/OpenGL/GL.h"
 
 #include "Core/Console/Console.h"
@@ -26,14 +28,14 @@ MultipleRenderTargetsVolume::~MultipleRenderTargetsVolume ()
 	 * Union all used textures in a single array
 	*/
 
-	GLuint usedTextures [m_texturesCount + 2];
+	std::vector<GLuint> usedTextures;
 
 	for (std::size_t index = 0; index < m_texturesCount; index ++) {
-		usedTextures [index] = m_textures [index];
+		usedTextures.push_back (m_textures [index]);
 	}
 
-	usedTextures [m_texturesCount - 2] = m_finalTexture;
-	usedTextures [m_texturesCount - 1] = m_depthTexture;
+	usedTextures.push_back (m_finalTexture);
+	usedTextures.push_back (m_depthTexture);
 
 	/*
 	 * Detach textures from color attachments in FBO
@@ -53,7 +55,7 @@ MultipleRenderTargetsVolume::~MultipleRenderTargetsVolume ()
 	 * Delete all textures
 	*/
 
-	GL::DeleteTextures (ARRAY_SIZE_IN_ELEMENTS(usedTextures), usedTextures);
+	GL::DeleteTextures (usedTextures.size(), usedTextures.data());
 
 	/*
 	 * Delete frame buffer
@@ -230,12 +232,12 @@ void MultipleRenderTargetsVolume::BindForWriting ()
 	 * Enable all color attachments correspunding with color textures
 	*/
 
-	GLenum DrawBuffers [m_texturesCount];
-	for (std::size_t index = 0; index < ARRAY_SIZE_IN_ELEMENTS(DrawBuffers); index ++) {
-		DrawBuffers [index] = (GLenum)(GL_COLOR_ATTACHMENT0 + index);
+	std::vector<GLenum> DrawBuffers;
+	for (std::size_t index = 0; index < m_texturesCount; index ++) {
+		DrawBuffers.push_back ((GLenum)(GL_COLOR_ATTACHMENT0 + index));
 	}
 
-	GL::DrawBuffers(ARRAY_SIZE_IN_ELEMENTS(DrawBuffers), DrawBuffers);
+	GL::DrawBuffers(DrawBuffers.size (), DrawBuffers.data ());
 }
 
 std::vector<PipelineAttribute> MultipleRenderTargetsVolume::GetCustomAttributes ()

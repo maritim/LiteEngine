@@ -40,13 +40,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -135,10 +135,7 @@
     <ClCompile Include="Components\FlyCameraController.cpp" />
     <ClCompile Include="Components\FPSCameraController.cpp" />
     <ClCompile Include="Components\FrameRate.cpp" />
-    <ClCompile Include="Components\RenderModulesController.cpp" />
-    <ClCompile Include="Components\ShadowController.cpp" />
     <ClCompile Include="Components\StatisticsView.cpp" />
-    <ClCompile Include="Components\VoxelTestComponent.cpp" />
     <ClCompile Include="Core\Console\Console.cpp" />
     <ClCompile Include="Core\Interfaces\Object.cpp" />
     <ClCompile Include="Core\Intersections\AABBVolume.cpp" />
@@ -203,6 +200,7 @@
     <ClCompile Include="Mesh\PolygonGroup.cpp" />
     <ClCompile Include="Mesh\VertexBoneInfo.cpp" />
     <ClCompile Include="Modules\SDLModule.cpp" />
+    <ClCompile Include="RenderModules\ReflectiveShadowMapRenderModule.cpp" />
     <ClCompile Include="RenderPasses\DeferredBlitRenderPass.cpp" />
     <ClCompile Include="RenderPasses\DeferredLightRenderPass.cpp" />
     <ClCompile Include="RenderModules\DeferredRenderModule.cpp" />
@@ -211,12 +209,17 @@
     <ClCompile Include="RenderPasses\ForwardRenderPass.cpp" />
     <ClCompile Include="RenderPasses\GBuffer.cpp" />
     <ClCompile Include="Renderer\Pipeline.cpp" />
-    <ClCompile Include="Renderer\PipelineAttribute.cpp" />
     <ClCompile Include="Renderer\Renderer.cpp" />
     <ClCompile Include="Renderer\RenderManager.cpp" />
     <ClCompile Include="Renderer\RenderPassI.cpp" />
     <ClCompile Include="Renderer\RenderVolumeCollection.cpp" />
     <ClCompile Include="RenderPasses\DeferredSkyboxRenderPass.cpp" />
+    <ClCompile Include="RenderPasses\MultipleRenderTargetsVolume.cpp" />
+    <ClCompile Include="RenderPasses\ReflectiveDirectionalShadowMapAccumulationPass.cpp" />
+    <ClCompile Include="RenderPasses\ReflectiveShadowMapBuffer.cpp" />
+    <ClCompile Include="RenderPasses\ReflectiveShadowMapRenderPass.cpp" />
+    <ClCompile Include="RenderPasses\ReflectiveShadowMapVolume.cpp" />
+    <ClCompile Include="RenderPasses\VoxelBorderRenderPass.cpp" />
     <ClCompile Include="RenderPasses\VoxelConeTraceLightPass.cpp" />
     <ClCompile Include="RenderModules\VoxelConeTraceRenderModule.cpp" />
     <ClCompile Include="RenderModules\VoxelizationRenderModule.cpp" />
@@ -261,6 +264,7 @@
     <ClCompile Include="Shader\Shader.cpp" />
     <ClCompile Include="Shadows\DirectionalLightShadowMapRenderer.cpp" />
     <ClCompile Include="Shadows\LightShadowMapRenderer.cpp" />
+    <ClCompile Include="Shadows\ReflectiveShadowMapDirectionalLightVolume.cpp" />
     <ClCompile Include="Shadows\ShadowMapDirectionalLightVolume.cpp" />
     <ClCompile Include="Shadows\ShadowMapVolume.cpp" />
     <ClCompile Include="Skybox\Skybox.cpp" />
@@ -331,10 +335,7 @@
     <ClInclude Include="Components\FlyCameraController.h" />
     <ClInclude Include="Components\FPSCameraController.h" />
     <ClInclude Include="Components\FrameRate.h" />
-    <ClInclude Include="Components\RenderModulesController.h" />
-    <ClInclude Include="Components\ShadowController.h" />
     <ClInclude Include="Components\StatisticsView.h" />
-    <ClInclude Include="Components\VoxelTestComponent.h" />
     <ClInclude Include="Core\Console\Console.h" />
     <ClInclude Include="Core\Interfaces\Object.h" />
     <ClInclude Include="Core\Intersections\AABBVolume.h" />
@@ -544,6 +545,7 @@
     <ClInclude Include="Modules\SDLModule.h" />
     <ClInclude Include="Renderer\Buffer.h" />
     <ClInclude Include="Renderer\BufferAttribute.h" />
+    <ClInclude Include="RenderModules\ReflectiveShadowMapRenderModule.h" />
     <ClInclude Include="RenderPasses\DeferredBlitRenderPass.h" />
     <ClInclude Include="RenderPasses\DeferredLightRenderPass.h" />
     <ClInclude Include="RenderModules\DeferredRenderModule.h" />
@@ -559,6 +561,12 @@
     <ClInclude Include="Renderer\RenderVolumeCollection.h" />
     <ClInclude Include="Renderer\RenderVolumeI.h" />
     <ClInclude Include="RenderPasses\DeferredSkyboxRenderPass.h" />
+    <ClInclude Include="RenderPasses\MultipleRenderTargetsVolume.h" />
+    <ClInclude Include="RenderPasses\ReflectiveDirectionalShadowMapAccumulationPass.h" />
+    <ClInclude Include="RenderPasses\ReflectiveShadowMapBuffer.h" />
+    <ClInclude Include="RenderPasses\ReflectiveShadowMapRenderPass.h" />
+    <ClInclude Include="RenderPasses\ReflectiveShadowMapVolume.h" />
+    <ClInclude Include="RenderPasses\VoxelBorderRenderPass.h" />
     <ClInclude Include="RenderPasses\VoxelConeTraceLightPass.h" />
     <ClInclude Include="RenderModules\VoxelConeTraceRenderModule.h" />
     <ClInclude Include="RenderPasses\VoxelizationRenderPass.h" />
@@ -605,6 +613,7 @@
     <ClInclude Include="Shader\DrawingShader.h" />
     <ClInclude Include="Shadows\DirectionalLightShadowMapRenderer.h" />
     <ClInclude Include="Shadows\LightShadowMapRenderer.h" />
+    <ClInclude Include="Shadows\ReflectiveShadowMapDirectionalLightVolume.h" />
     <ClInclude Include="Shadows\ShadowMapDirectionalLightVolume.h" />
     <ClInclude Include="Shadows\ShadowMapVolume.h" />
     <ClInclude Include="Skybox\Skybox.h" />
