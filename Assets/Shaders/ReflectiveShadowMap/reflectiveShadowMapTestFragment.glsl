@@ -30,33 +30,30 @@ int CalcCadran ()
 
 vec3 CalcColor (int cadran)
 {
-	vec2 normalizedScreenPos = vec2 (
-		(geom_ScreenCoordinates.x + 1.0) / 2.0, 
-		(geom_ScreenCoordinates.y + 1.0) / 2.0
-	);
-
-	return texture2D (reflectiveShadowMap, normalizedScreenPos).xyz;
+	vec2 normalizedScreenPos = geom_ScreenCoordinates;
 
 	if (cadran == 1) {
-		return texture2D (reflectiveShadowMap, normalizedScreenPos).xyz;
+		normalizedScreenPos.x = 1 + normalizedScreenPos.x;
+		normalizedScreenPos.y = 1 + normalizedScreenPos.y;
+		return texture (reflectiveShadowMap, normalizedScreenPos).xyz;
 	}
 
 	if (cadran == 2) {
-		return texture2D (reflectiveShadowMapPosMap, normalizedScreenPos).xyz;
+		normalizedScreenPos.x = 1 + normalizedScreenPos.x;
+		return texture (reflectiveShadowMapPosMap, normalizedScreenPos).xyz;
 	}
 
 	if (cadran == 3) {
-		return texture2D (reflectiveShadowMapNormalMap, normalizedScreenPos).xyz;
+		normalizedScreenPos.y = 1 + normalizedScreenPos.y;
+		return texture (reflectiveShadowMapNormalMap, normalizedScreenPos).xyz;
 	}
 
 	if (cadran == 4) {
-		return texture2D (reflectiveShadowMapFluxMap, normalizedScreenPos).xyz;
+		return texture (reflectiveShadowMapFluxMap, normalizedScreenPos).xyz;
 	}
 }
 
 void main()
 {
 	out_color = CalcColor (CalcCadran ());
-
-	// out_color = vec3 (1.0, 0.0, 0.0);
 } 

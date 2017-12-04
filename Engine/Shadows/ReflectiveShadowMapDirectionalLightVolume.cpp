@@ -99,7 +99,7 @@ void ReflectiveShadowMapDirectionalLightVolume::BindForShadowMapCatch (std::size
 	 * Bind reflective shadow map buffer
 	*/
 	
-	_shadowMapBuffers [cascadedLevel]->StartFrame ();
+	_shadowMapBuffers [cascadedLevel]->BindForWriting ();
 }
 
 void ReflectiveShadowMapDirectionalLightVolume::EndDrawing ()

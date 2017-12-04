@@ -82,6 +82,12 @@ void ReflectiveDirectionalShadowMapAccumulationPass::ShadowMapGeometryPass (Scen
 	Pipeline::SendCamera (lightCamera);
 
 	/*
+	 * Clear framebuffer
+	*/
+
+	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	/*
 	* Shadow map is a depth test
 	*/
 
@@ -166,23 +172,22 @@ Camera* ReflectiveDirectionalShadowMapAccumulationPass::GetLightCamera (Scene* s
 	glm::quat lightDirQuat = glm::toQuat (glm::lookAt (glm::vec3 (0), lightDir, glm::vec3 (0, 1, 0)));
 	glm::mat4 lightView = glm::translate (glm::mat4_cast (lightDirQuat), glm::vec3 (0));
 
-	glm::vec3 cuboidExtendsMin = glm::vec3 (std::numeric_limits<float>::max ());
-	glm::vec3 cuboidExtendsMax = glm::vec3 (-std::numeric_limits<float>::min ());
-
-	AABBVolume* aabbVolume = scene->GetBoundingBox ();
-	AABBVolume::AABBVolumeInformation* bBox = aabbVolume->GetVolumeInformation ();
+	glm::mat4 cameraView = glm::translate (glm::mat4_cast (viewCamera->GetRotation ()), viewCamera->GetPosition () * -1.0f);
+	glm::mat4 cameraProjection = viewCamera->GetProjectionMatrix ();
+	glm::mat4 invCameraProjView = glm::inverse (cameraProjection * cameraView);
 
 	OrthographicCamera* lightCamera = new OrthographicCamera ();
 
-	for (int x = 0; x <= 1; x ++) {
-		for (int y = 0; y <= 1; y ++) {
+	glm::vec3 cuboidExtendsMin = glm::vec3 (std::numeric_limits<float>::max ());
+	glm::vec3 cuboidExtendsMax = glm::vec3 (-std::numeric_limits<float>::min ());
+
+	for (int x = -1; x <= 1; x += 2) {
+		for (int y = -1; y <= 1; y += 2) {
 			for (int z = 0; z <= 1; z ++) {
-				glm::vec4 cuboidCorner = glm::vec4 (
-					x == 0 ? bBox->minVertex.x : bBox->maxVertex.x,
-					y == 0 ? bBox->minVertex.y : bBox->maxVertex.y,
-					z == 0 ? bBox->minVertex.z : bBox->maxVertex.z,
-					1.0f
-				);
+				glm::vec4 cuboidCorner = glm::vec4 (x, y, z, 1.0f);
+
+				cuboidCorner = invCameraProjView * cuboidCorner;
+				cuboidCorner /= cuboidCorner.w;
 
 				cuboidCorner = lightView * cuboidCorner;
 
@@ -202,7 +207,7 @@ Camera* ReflectiveDirectionalShadowMapAccumulationPass::GetLightCamera (Scene* s
 	lightCamera->SetOrthographicInfo (
 		cuboidExtendsMin.x, cuboidExtendsMax.x,
 		cuboidExtendsMin.y, cuboidExtendsMax.y,
-		cuboidExtendsMin.z - LIGHT_CAMERA_OFFSET, cuboidExtendsMax.z + LIGHT_CAMERA_OFFSET
+		cuboidExtendsMin.z, cuboidExtendsMax.z + LIGHT_CAMERA_OFFSET
 	);
 
 	return lightCamera;

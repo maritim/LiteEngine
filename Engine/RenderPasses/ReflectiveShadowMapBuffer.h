@@ -7,6 +7,7 @@ class ReflectiveShadowMapBuffer : public MultipleRenderTargetsVolume
 {
 protected:
     enum RSMBUFFER_TEXTURE_TYPE {
+		RSMBUFFER_TEXTURE_TYPE_DEPTH,
         RSMBUFFER_TEXTURE_TYPE_POSITION,
         RSMBUFFER_TEXTURE_TYPE_NORMAL,
         RSMBUFFER_TEXTURE_TYPE_FLUX,
