@@ -63,7 +63,7 @@ void GameEngine::InitOpenGL ()
 {
 	// GL::Viewport(0, 0, 10, 10);
 
-	GL::ClearColor( 0.5f, 0.5f, 1.0f, 1.0f );
+	GL::ClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 	GL::ClearDepth( 1.0f );
 	// GL::Hint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
