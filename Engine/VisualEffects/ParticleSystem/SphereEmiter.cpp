@@ -48,9 +48,9 @@ glm::vec3 SphereEmiter::GetParticlePosition ()
 {
 	glm::vec3 position;
 
-	float azimuthal = Random::Instance ().RangeF ((float) -M_PI, (float) M_PI);
-	float polar = acos (2 * Random::Instance ().RangeF (0, 1) - 1);
-	float radial = _radius * cbrt (Random::Instance ().RangeF (0, 1));
+	float azimuthal = Random::Instance ()->RangeF ((float) -M_PI, (float) M_PI);
+	float polar = acos (2 * Random::Instance ()->RangeF (0, 1) - 1);
+	float radial = _radius * cbrt (Random::Instance ()->RangeF (0, 1));
 
 	position.x = radial * cos (azimuthal) * sin (polar);
 	position.y = radial * sin (azimuthal) * sin (polar);

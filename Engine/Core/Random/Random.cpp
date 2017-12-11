@@ -10,11 +10,9 @@ Random::Random ()
 	srand ((unsigned int) time (NULL));
 }
 
-Random& Random::Instance ()
+Random::~Random ()
 {
-	static Random random;
 
-	return random;
 }
 
 int Random::Next () const
