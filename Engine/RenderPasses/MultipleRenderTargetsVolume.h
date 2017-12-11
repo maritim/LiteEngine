@@ -19,7 +19,7 @@ public:
 	MultipleRenderTargetsVolume (std::size_t numTextures); 
 	virtual ~MultipleRenderTargetsVolume ();
 
-	bool Init(std::size_t screenWidth, std::size_t screenHeight);
+	virtual bool Init(std::size_t screenWidth, std::size_t screenHeight);
 	bool Clear ();
 
 	void StartFrame();

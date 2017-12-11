@@ -504,9 +504,6 @@
     <ClCompile Include="SceneGraph\SceneIterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Settings\GeneralSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -606,7 +603,16 @@
     <ClCompile Include="Shadows\ReflectiveShadowMapDirectionalLightVolume.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RenderPasses\ReflectiveShadowMapRenderPass.cpp">
+    <ClCompile Include="Illumination\VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Illumination\ReflectiveShadowMap\DirectionalLightReflectiveShadowMapRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPasses\ReflectiveShadowMapSamplesVolume.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPasses\ReflectiveShadowMapSamplesGenerationPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1553,9 +1559,6 @@
     <ClInclude Include="SceneGraph\SceneIterator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Settings\GeneralSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1658,7 +1661,16 @@
     <ClInclude Include="Shadows\ReflectiveShadowMapDirectionalLightVolume.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RenderPasses\ReflectiveShadowMapRenderPass.h">
+    <ClInclude Include="Illumination\VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Illumination\ReflectiveShadowMap\DirectionalLightReflectiveShadowMapRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPasses\ReflectiveShadowMapSamplesVolume.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPasses\ReflectiveShadowMapSamplesGenerationPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

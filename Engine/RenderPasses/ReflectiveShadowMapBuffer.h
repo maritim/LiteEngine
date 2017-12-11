@@ -16,6 +16,8 @@ protected:
 
 public:
 	ReflectiveShadowMapBuffer ();
+	
+	bool Init(std::size_t screenWidth, std::size_t screenHeight);
 
 	void BindForReading ();
 };

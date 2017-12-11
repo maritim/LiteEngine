@@ -102,6 +102,9 @@ void LightLoader::ProcessRenderMode (TiXmlElement* xmlElem, Light* light)
 		else if (typeS == "VOXEL_CONE_TRACE") {
 			light->SetRenderMode (LightRenderMode::VOXEL_CONE_TRACE);
 		}
+		else if (typeS == "REFLECTIVE_SHADOW_MAP") {
+			light->SetRenderMode (LightRenderMode::REFLECTIVE_SHADOW_MAP);
+		}
 	}
 }
 

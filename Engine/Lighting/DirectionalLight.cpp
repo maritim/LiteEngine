@@ -6,7 +6,8 @@
 
 #include "Lighting/DirectionalLightRenderer.h"
 #include "Shadows/DirectionalLightShadowMapRenderer.h"
-#include "VoxelConeTrace/DirectionalLightVoxelConeTraceRenderer.h"
+#include "Illumination/VoxelConeTrace/DirectionalLightVoxelConeTraceRenderer.h"
+#include "Illumination/ReflectiveShadowMap/DirectionalLightReflectiveShadowMapRenderer.h"
 
 DirectionalLight::DirectionalLight ()
 {
@@ -58,6 +59,12 @@ void DirectionalLight::SetRenderMode (LightRenderMode lightMode)
 		delete _lightRenderer;
 
 		_lightRenderer = new DirectionalLightVoxelConeTraceRenderer (this);
+	}
+
+	if (lightMode == LightRenderMode::REFLECTIVE_SHADOW_MAP) {
+		delete _lightRenderer;
+
+		_lightRenderer = new DirectionalLightReflectiveShadowMapRenderer (this);
 	}
 
 	SetVolume (Primitive::Instance ()->Create (Primitive::Type::QUAD));

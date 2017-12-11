@@ -168,6 +168,7 @@
     <ClCompile Include="Fonts\BitmapFontPage.cpp" />
     <ClCompile Include="Fonts\Font.cpp" />
     <ClCompile Include="Fonts\FontChar.cpp" />
+    <ClCompile Include="Illumination\ReflectiveShadowMap\DirectionalLightReflectiveShadowMapRenderer.cpp" />
     <ClCompile Include="Lighting\DirectionalLight.cpp" />
     <ClCompile Include="Lighting\DirectionalLightRenderer.cpp" />
     <ClCompile Include="Lighting\Light.cpp" />
@@ -217,7 +218,8 @@
     <ClCompile Include="RenderPasses\MultipleRenderTargetsVolume.cpp" />
     <ClCompile Include="RenderPasses\ReflectiveDirectionalShadowMapAccumulationPass.cpp" />
     <ClCompile Include="RenderPasses\ReflectiveShadowMapBuffer.cpp" />
-    <ClCompile Include="RenderPasses\ReflectiveShadowMapRenderPass.cpp" />
+    <ClCompile Include="RenderPasses\ReflectiveShadowMapSamplesGenerationPass.cpp" />
+    <ClCompile Include="RenderPasses\ReflectiveShadowMapSamplesVolume.cpp" />
     <ClCompile Include="RenderPasses\ReflectiveShadowMapVolume.cpp" />
     <ClCompile Include="RenderPasses\VoxelBorderRenderPass.cpp" />
     <ClCompile Include="RenderPasses\VoxelConeTraceLightPass.cpp" />
@@ -324,7 +326,7 @@
     <ClCompile Include="VisualEffects\ParticleSystem\PrimitiveEmiter.cpp" />
     <ClCompile Include="VisualEffects\ParticleSystem\QuadEmiter.cpp" />
     <ClCompile Include="VisualEffects\ParticleSystem\SphereEmiter.cpp" />
-    <ClCompile Include="VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.cpp" />
+    <ClCompile Include="Illumination\VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.cpp" />
     <ClCompile Include="Wrappers\OpenGL\GL.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -511,6 +513,7 @@
     <ClInclude Include="Fonts\BitmapFontPage.h" />
     <ClInclude Include="Fonts\Font.h" />
     <ClInclude Include="Fonts\FontChar.h" />
+    <ClInclude Include="Illumination\ReflectiveShadowMap\DirectionalLightReflectiveShadowMapRenderer.h" />
     <ClInclude Include="Lighting\DirectionalLight.h" />
     <ClInclude Include="Lighting\DirectionalLightRenderer.h" />
     <ClInclude Include="Lighting\Light.h" />
@@ -564,7 +567,8 @@
     <ClInclude Include="RenderPasses\MultipleRenderTargetsVolume.h" />
     <ClInclude Include="RenderPasses\ReflectiveDirectionalShadowMapAccumulationPass.h" />
     <ClInclude Include="RenderPasses\ReflectiveShadowMapBuffer.h" />
-    <ClInclude Include="RenderPasses\ReflectiveShadowMapRenderPass.h" />
+    <ClInclude Include="RenderPasses\ReflectiveShadowMapSamplesGenerationPass.h" />
+    <ClInclude Include="RenderPasses\ReflectiveShadowMapSamplesVolume.h" />
     <ClInclude Include="RenderPasses\ReflectiveShadowMapVolume.h" />
     <ClInclude Include="RenderPasses\VoxelBorderRenderPass.h" />
     <ClInclude Include="RenderPasses\VoxelConeTraceLightPass.h" />
@@ -676,7 +680,7 @@
     <ClInclude Include="VisualEffects\ParticleSystem\PrimitiveEmiter.h" />
     <ClInclude Include="VisualEffects\ParticleSystem\QuadEmiter.h" />
     <ClInclude Include="VisualEffects\ParticleSystem\SphereEmiter.h" />
-    <ClInclude Include="VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.h" />
+    <ClInclude Include="Illumination\VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.h" />
     <ClInclude Include="Wrappers\OpenGL\GL.h" />
   </ItemGroup>
   <ItemGroup>

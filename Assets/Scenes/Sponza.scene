@@ -18,20 +18,26 @@
 		</Components>
 	</NormalMapGameObject>
 
-	<Light InstanceID="41" name="ShadowsSun" path="Assets/Lights/ShadowsSun.light" isActive="true">
+	<Light InstanceID="41" name="ShadowsSun" path="Assets/Lights/ShadowsSun.light" isActive="false">
 		<Transform>
       <Position x="0" y="3" z="0.6" />
     </Transform>
 	</Light>
-  <Light InstanceID="43" name="ConeTracingSun" path="Assets/Lights/VoxelConeTraceSun.light" isActive="true">
+  <Light InstanceID="43" name="ConeTracingSun" path="Assets/Lights/VoxelConeTraceSun.light" isActive="false">
     <Transform>
       <Position x="0" y="3" z="0.6" />
     </Transform>
   </Light>
-	<Light InstanceID="40" name="Sun" path="Assets/Lights/PrototypeSceneSun.light" isActive="true">
+	<Light InstanceID="40" name="Sun" path="Assets/Lights/PrototypeSceneSun.light" isActive="false">
 		<Transform>
       <Position x="0" y="3" z="0.6" />
 		</Transform>
 	</Light>
+  <Light InstanceID="42" name="Sun" path="Assets/Lights/ReflectiveShadowMapSun.light" isActive="true">
+		<Transform>
+      <Position x="0" y="1.5" z="0.6" />
+		</Transform>
+	</Light>
+
 
 </Scene>

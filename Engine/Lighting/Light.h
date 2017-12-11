@@ -8,7 +8,8 @@
 enum LightRenderMode 
 {
 	DEFERRED = 0,
-	VOXEL_CONE_TRACE
+	VOXEL_CONE_TRACE,
+	REFLECTIVE_SHADOW_MAP
 };
 
 /*
