@@ -82,6 +82,12 @@ void ReflectiveDirectionalShadowMapAccumulationPass::ShadowMapGeometryPass (Scen
 	Pipeline::SendCamera (lightCamera);
 
 	/*
+	 * Clear framebuffer
+	*/
+
+	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	/*
 	* Shadow map is a depth test
 	*/
 
@@ -93,13 +99,6 @@ void ReflectiveDirectionalShadowMapAccumulationPass::ShadowMapGeometryPass (Scen
 
 	GL::Enable (GL_BLEND);
 	GL::BlendFunc (GL_ONE, GL_ZERO);
-
-	/*
-	* Enable front face culling
-	*/
-
-	GL::Enable (GL_CULL_FACE);
-	GL::CullFace (GL_FRONT);
 
 	/*
 	* Light camera
@@ -169,22 +168,22 @@ Camera* ReflectiveDirectionalShadowMapAccumulationPass::GetLightCamera (Scene* s
 
 	Transform* lightTransform = dirLight->GetTransform ();
 
-	glm::vec3 lightDir = glm::normalize (lightTransform->GetPosition ()) * -1.0f;
-	glm::quat lightDirQuat = glm::toQuat (glm::lookAt (glm::vec3 (0), lightDir, glm::vec3 (0, 1, 0)));
-	glm::mat4 lightView = glm::translate (glm::mat4_cast (lightDirQuat), glm::vec3 (0));
+	glm::vec3 lightDir = glm::normalize(lightTransform->GetPosition()) * -1.0f;
+	glm::quat lightDirQuat = glm::toQuat(glm::lookAt(glm::vec3(0), lightDir, glm::vec3(0, 1, 0)));
+	glm::mat4 lightView = glm::translate(glm::mat4_cast(lightDirQuat), glm::vec3(0));
 
-	glm::vec3 cuboidExtendsMin = glm::vec3 (std::numeric_limits<float>::max ());
-	glm::vec3 cuboidExtendsMax = glm::vec3 (-std::numeric_limits<float>::min ());
+	glm::vec3 cuboidExtendsMin = glm::vec3(std::numeric_limits<float>::max());
+	glm::vec3 cuboidExtendsMax = glm::vec3(-std::numeric_limits<float>::min());
 
-	AABBVolume* aabbVolume = scene->GetBoundingBox ();
-	AABBVolume::AABBVolumeInformation* bBox = aabbVolume->GetVolumeInformation ();
+	AABBVolume* aabbVolume = scene->GetBoundingBox();
+	AABBVolume::AABBVolumeInformation* bBox = aabbVolume->GetVolumeInformation();
 
-	OrthographicCamera* lightCamera = new OrthographicCamera ();
+	OrthographicCamera* lightCamera = new OrthographicCamera();
 
-	for (int x = 0; x <= 1; x ++) {
-		for (int y = 0; y <= 1; y ++) {
-			for (int z = 0; z <= 1; z ++) {
-				glm::vec4 cuboidCorner = glm::vec4 (
+	for (int x = 0; x <= 1; x++) {
+		for (int y = 0; y <= 1; y++) {
+			for (int z = 0; z <= 1; z++) {
+				glm::vec4 cuboidCorner = glm::vec4(
 					x == 0 ? bBox->minVertex.x : bBox->maxVertex.x,
 					y == 0 ? bBox->minVertex.y : bBox->maxVertex.y,
 					z == 0 ? bBox->minVertex.z : bBox->maxVertex.z,
@@ -193,13 +192,13 @@ Camera* ReflectiveDirectionalShadowMapAccumulationPass::GetLightCamera (Scene* s
 
 				cuboidCorner = lightView * cuboidCorner;
 
-				cuboidExtendsMin.x = std::min (cuboidExtendsMin.x, cuboidCorner.x);
-				cuboidExtendsMin.y = std::min (cuboidExtendsMin.y, cuboidCorner.y);
-				cuboidExtendsMin.z = std::min (cuboidExtendsMin.z, cuboidCorner.z);
+				cuboidExtendsMin.x = std::min(cuboidExtendsMin.x, cuboidCorner.x);
+				cuboidExtendsMin.y = std::min(cuboidExtendsMin.y, cuboidCorner.y);
+				cuboidExtendsMin.z = std::min(cuboidExtendsMin.z, cuboidCorner.z);
 
-				cuboidExtendsMax.x = std::max (cuboidExtendsMax.x, cuboidCorner.x);
-				cuboidExtendsMax.y = std::max (cuboidExtendsMax.y, cuboidCorner.y);
-				cuboidExtendsMax.z = std::max (cuboidExtendsMax.z, cuboidCorner.z);
+				cuboidExtendsMax.x = std::max(cuboidExtendsMax.x, cuboidCorner.x);
+				cuboidExtendsMax.y = std::max(cuboidExtendsMax.y, cuboidCorner.y);
+				cuboidExtendsMax.z = std::max(cuboidExtendsMax.z, cuboidCorner.z);
 			}
 		}
 	}

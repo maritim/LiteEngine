@@ -26,8 +26,8 @@ glm::vec3 QuadEmiter::GetParticlePosition ()
 {
 	glm::vec3 position;
 
-	position.x = Random::Instance ().RangeF (-_width / 2, _width / 2);
-	position.z = Random::Instance ().RangeF (-_depth / 2, _depth / 2);
+	position.x = Random::Instance ()->RangeF (-_width / 2, _width / 2);
+	position.z = Random::Instance ()->RangeF (-_depth / 2, _depth / 2);
 
 	// Calculate by rotation
 	glm::quat rotQuat = this->GetTransform ()->GetRotation ();

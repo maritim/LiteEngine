@@ -101,8 +101,8 @@ glm::vec3 Emiter::GetParticleDirection (glm::vec3 source)
 	// Pick direction (see this -> http://mathworld.wolfram.com/DiskPointPicking.html)
 
 	glm::vec3 destPoint;
-	float angle = Random::Instance ().RangeF (0, 2 * M_PI);
-	float radius = sqrt (Random::Instance ().RangeF (0, 1));
+	float angle = Random::Instance ()->RangeF (0, 2 * M_PI);
+	float radius = sqrt (Random::Instance ()->RangeF (0, 1));
 	
 	destPoint.x = _emissionShape.second * radius * cos (angle);
 	destPoint.y = _emissionShape.first;

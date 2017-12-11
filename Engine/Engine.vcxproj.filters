@@ -504,16 +504,7 @@
     <ClCompile Include="SceneGraph\SceneIterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Components\VoxelTestComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Settings\GeneralSettings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer\PipelineAttribute.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shader\ComputeShader.cpp">
@@ -529,12 +520,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SceneNodes\NormalMapGameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Components\ShadowController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Components\RenderModulesController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RenderPasses\DeferredBlitRenderPass.cpp">
@@ -595,6 +580,39 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderer\RenderVolumeCollection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderModules\ReflectiveShadowMapRenderModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPasses\MultipleRenderTargetsVolume.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPasses\ReflectiveDirectionalShadowMapAccumulationPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPasses\ReflectiveShadowMapBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPasses\ReflectiveShadowMapVolume.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPasses\VoxelBorderRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shadows\ReflectiveShadowMapDirectionalLightVolume.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Illumination\VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Illumination\ReflectiveShadowMap\DirectionalLightReflectiveShadowMapRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPasses\ReflectiveShadowMapSamplesVolume.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderPasses\ReflectiveShadowMapSamplesGenerationPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1541,12 +1559,6 @@
     <ClInclude Include="SceneGraph\SceneIterator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Components\VoxelTestComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Settings\GeneralSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1563,12 +1575,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SceneNodes\NormalMapGameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\ShadowController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\RenderModulesController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RenderPasses\DeferredBlitRenderPass.h">
@@ -1632,6 +1638,39 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\RenderVolumeI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderModules\ReflectiveShadowMapRenderModule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPasses\MultipleRenderTargetsVolume.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPasses\ReflectiveDirectionalShadowMapAccumulationPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPasses\ReflectiveShadowMapBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPasses\ReflectiveShadowMapVolume.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPasses\VoxelBorderRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shadows\ReflectiveShadowMapDirectionalLightVolume.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Illumination\VoxelConeTrace\DirectionalLightVoxelConeTraceRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Illumination\ReflectiveShadowMap\DirectionalLightReflectiveShadowMapRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPasses\ReflectiveShadowMapSamplesVolume.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPasses\ReflectiveShadowMapSamplesGenerationPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

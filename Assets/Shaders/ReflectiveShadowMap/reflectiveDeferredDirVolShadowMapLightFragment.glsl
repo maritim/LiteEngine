@@ -35,6 +35,19 @@ uniform mat4 lightSpaceMatrices[CASCADED_SHADOW_MAP_LEVELS];
 
 uniform float clipZLevels[CASCADED_SHADOW_MAP_LEVELS];
 
+uniform sampler2D rsmShadowMap;
+uniform sampler2D rsmPositionMap;
+uniform sampler2D rsmNormalMap;
+uniform sampler2D rsmFluxMap;
+
+uniform mat4 rsmLightSpaceMatrix;
+
+uniform int rsmSamplesCount;
+
+uniform vec2 rsmSample[200];
+
+const float rsmIntensity = 1.0f;
+
 vec2 CalcTexCoord()
 {
 	return gl_FragCoord.xy / screenSize;
@@ -91,25 +104,8 @@ int GetShadowCascadeLevel (float depth)
     }
 }
 
-vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
+float CalcShadowContribution (vec3 in_position)
 {
-	// The position is also a direction for Directional Lights
-	vec3 lightDirection = normalize (lightPosition);
-
-	// Diffuse contribution
-	float dCont = max (dot (in_normal, lightDirection), 0.0);
-
-	// Attenuation is 1.0 for Directional Lights
-	vec3 diffuseColor = lightColor * in_diffuse * dCont;
-
-	vec3 surface2view = normalize (cameraPosition - in_position);
-	vec3 reflection = reflect (-lightDirection, in_normal);
-
-	// Specular contribution
-	float sCont = pow (max (dot (surface2view, reflection), 0.0), 1.0);
-
-	vec3 specularColor = lightSpecularColor * in_diffuse * sCont;
-
 	// Calculate shadow level
 	vec4 clipPos = (viewProjectionMatrix * vec4 (in_position, 1.0));
 	float depth = clipPos.z / clipPos.w;
@@ -119,16 +115,86 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	vec4 lightSpacePos = lightSpaceMatrices [shadowCascadedLevel] * vec4 (in_position, 1.0f);
 	float shadow = ShadowCalculation (lightSpacePos, shadowCascadedLevel);
 
-	vec3 multi = vec3 (0);
+	return shadow;
+}
 
-	//if (shadowCascadedLevel == 0)
-	//	multi.r = 1;
-	//else if (shadowCascadedLevel == 1)
-	//	multi.g = 1;
-	//else
-	//	multi.b = 1;
+vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal)
+{
+	// The position is also a direction for Directional Lights
+	vec3 lightDirection = normalize (lightPosition);
 
-	return multi + (1.0 - shadow) * (diffuseColor + specularColor);
+	// Diffuse contribution
+	float dCont = max (dot (in_normal, lightDirection), 0.0);
+
+	// Attenuation is 1.0 for Directional Lights
+	vec3 diffuseColor = lightColor * dCont;
+
+	return diffuseColor;
+}
+
+//vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
+//{
+//	vec3 surface2view = normalize (cameraPosition - in_position);
+//	vec3 reflection = reflect (-lightDirection, in_normal);
+
+//	// Specular contribution
+//	float sCont = pow (max (dot (surface2view, reflection), 0.0), 1.0);
+
+//	vec3 specularColor = lightSpecularColor * sCont;
+
+//	return specularColor;
+//}
+
+/*
+ * Indirect Illumination Calculation
+ * Thanks to: http://ericpolman.com/reflective-shadow-maps-part-2-the-implementation/
+*/
+
+vec3 CalcIndirectDiffuseLight (vec3 worldSpacePos, vec3 worldSpaceNormal)
+{
+	vec3 indirectColor = vec3 (0.0);
+	float rMax = 0.07f;
+
+	vec4 lightSpacePos = rsmLightSpaceMatrix * vec4 (worldSpacePos, 1.0);
+	vec3 rsmProjCoords = lightSpacePos.xyz / lightSpacePos.w;
+
+	rsmProjCoords = rsmProjCoords * 0.5 + 0.5;
+
+	for (int index = 0; index < rsmSamplesCount; index ++) {
+		vec2 rnd = rsmSample [index];
+
+		vec2 coords = rsmProjCoords.xy + rnd * rMax;
+
+		vec3 rsmWorldSpacePos = texture2D (rsmPositionMap, coords).xyz;
+		vec3 rsmWorldSpaceNormal = texture2D (rsmNormalMap, coords).xyz;
+		vec3 rsmFlux = texture2D (rsmFluxMap, coords).xyz;
+
+		vec3 result = rsmFlux *
+			((max (0.0, dot (rsmWorldSpaceNormal, worldSpacePos - rsmWorldSpacePos))
+				* max (0.0, dot (worldSpaceNormal, rsmWorldSpacePos - worldSpacePos)))
+			/ pow (length (worldSpacePos - rsmWorldSpacePos), 4.0));
+
+		float dist = length (rnd);
+
+		result = result * dist * dist;
+
+		indirectColor += result;
+	}
+
+	return indirectColor * rsmIntensity;
+}
+
+vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
+{
+	vec3 directDiffuseColor = CalcDirectDiffuseLight (in_position, in_normal);
+
+	float shadow = CalcShadowContribution (in_position);
+
+	directDiffuseColor = (1.0 - shadow) * (directDiffuseColor);
+
+	vec3 indirectDiffuseColor = CalcIndirectDiffuseLight (in_position, in_normal);
+
+	return (directDiffuseColor + indirectDiffuseColor) * in_diffuse;
 }
 
 void main()
@@ -143,6 +209,4 @@ void main()
 	in_normal = normalize(in_normal);
 
 	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
-
-	//out_color = texture2D (shadowMap, texCoord).xyz;// + vec3 (0.2, 0, 0);
 } 

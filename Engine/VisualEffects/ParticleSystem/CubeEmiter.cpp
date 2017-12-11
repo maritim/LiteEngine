@@ -20,9 +20,9 @@ glm::vec3 CubeEmiter::GetParticlePosition ()
 {
 	glm::vec3 position;
 
-	position.x = Random::Instance ().RangeF (-_width / 2, _width / 2);
-	position.y = Random::Instance ().RangeF (-_height / 2, _height / 2);
-	position.z = Random::Instance ().RangeF (-_depth / 2, _depth / 2);
+	position.x = Random::Instance ()->RangeF (-_width / 2, _width / 2);
+	position.y = Random::Instance ()->RangeF (-_height / 2, _height / 2);
+	position.z = Random::Instance ()->RangeF (-_depth / 2, _depth / 2);
 
 	// Calculate by rotation
 	glm::quat rotQuat = this->GetTransform ()->GetRotation ();

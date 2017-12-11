@@ -26,8 +26,8 @@ glm::vec3 CircleEmiter::GetParticlePosition ()
 {
 	glm::vec3 position;
 
-	float radius = sqrt (Random::Instance ().RangeF (0, 1.0f));
-	float angle = Random::Instance ().RangeF (0, 2 * M_PI);
+	float radius = sqrt (Random::Instance ()->RangeF (0, 1.0f));
+	float angle = Random::Instance ()->RangeF (0, 2 * M_PI);
 
 	position.x = _radius * radius * cos (angle);
 	position.z = _radius * radius * sin (angle);

@@ -10,9 +10,9 @@ PrimitiveEmiter::PrimitiveEmiter () :
 
 Particle* PrimitiveEmiter::GetParticle ()
 {
-	unsigned int lifetime = Random::Instance ().RangeI (_lifetime.first, _lifetime.second);
-	float speed = Random::Instance ().RangeF (_speed.first, _speed.second);
-	float scale = Random::Instance ().RangeF (_scale.first, _scale.second);
+	unsigned int lifetime = Random::Instance ()->RangeI (_lifetime.first, _lifetime.second);
+	float speed = Random::Instance ()->RangeF (_speed.first, _speed.second);
+	float scale = Random::Instance ()->RangeF (_scale.first, _scale.second);
 
 	glm::vec3 position = this->GetParticlePosition ();
 	glm::vec3 direction = this->GetParticleDirection (position);

@@ -46,16 +46,16 @@ std::vector<PipelineAttribute> ReflectiveShadowMapVolume::GetCustomAttributes ()
 	reflectiveShadowMapFlux.type = PipelineAttribute::AttrType::ATTR_1I;
 	lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
 
-	reflectiveShadowMapDepth.name = "reflectiveShadowMap";
-	reflectiveShadowMapPos.name = "reflectiveShadowMapPosMap";
-	reflectiveShadowMapNormal.name = "reflectiveShadowMapNormalMap";
-	reflectiveShadowMapFlux.name = "reflectiveShadowMapFluxMap";
-	lightSpaceMatrix.name = "lightSpaceMatrix";
+	reflectiveShadowMapDepth.name = "rsmShadowMap";
+	reflectiveShadowMapPos.name = "rsmPositionMap";
+	reflectiveShadowMapNormal.name = "rsmNormalMap";
+	reflectiveShadowMapFlux.name = "rsmFluxMap";
+	lightSpaceMatrix.name = "rsmLightSpaceMatrix";
 
-	reflectiveShadowMapDepth.value.x = 4;
-	reflectiveShadowMapPos.value.x = 5;
-	reflectiveShadowMapNormal.value.x = 6;
-	reflectiveShadowMapFlux.value.x = 7;
+	reflectiveShadowMapDepth.value.x = 8;
+	reflectiveShadowMapPos.value.x = 9;
+	reflectiveShadowMapNormal.value.x = 10;
+	reflectiveShadowMapFlux.value.x = 11;
 
 	glm::mat4 lightProjection = _camera->GetProjectionMatrix ();
 	glm::mat4 lightView = glm::translate (glm::mat4_cast (_camera->GetRotation ()), _camera->GetPosition () * -1.0f);

@@ -3,11 +3,13 @@
 
 // TODO: Improve this
 
-class Random
-{
-public:
-	static Random& Instance ();
+#include "Core/Singleton/Singleton.h"
 
+class Random : public Singleton<Random>
+{
+	friend Singleton<Random>;
+
+public:
 	int Next () const;
 	int RangeI (int a, int b) const;
 	float RangeF (float a, float b) const;
@@ -15,6 +17,9 @@ public:
 	void SetSeed (unsigned int seed);
 private:
 	Random ();
+	~Random ();
+	Random (const Random& other);
+	Random& operator= (const Random&);
 };
 
 #endif
