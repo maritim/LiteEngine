@@ -46,6 +46,7 @@ DIRS := ./Engine/Core/Interfaces/ \
 		./Engine/Core/Parsers/XML/TinyXml/ \
 		./Engine/Core/Intersections/ \
 		./Engine/Core/ \
+		./Engine/Illumination/*/ \
 		./Engine/Wrappers/*/ \
 		./Engine/VisualEffects/*/ \
 		./Engine/Systems/*/ \
