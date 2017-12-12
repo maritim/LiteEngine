@@ -13,7 +13,7 @@
 
 RenderManager::RenderManager () :
 	_currentRenderModule (nullptr),
-	_currentRenderMode (RENDER_MODE_REFLECTIVE_SHADOW_MAP)
+	_currentRenderMode (RENDER_MODE_DEFERRED)
 {
 	_renderModules.push_back (new DeferredRenderModule ());
 	_renderModules.push_back (new VoxelizationRenderModule ());

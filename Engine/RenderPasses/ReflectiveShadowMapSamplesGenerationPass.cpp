@@ -10,7 +10,7 @@ ReflectiveShadowMapSamplesGenerationPass::ReflectiveShadowMapSamplesGenerationPa
 
 void ReflectiveShadowMapSamplesGenerationPass::Init ()
 {
-	if (!_reflectiveShadowMapSamplesVolume->Init(100)) {
+	if (!_reflectiveShadowMapSamplesVolume->Init(50)) {
 		Console::LogError("Reflective shadow map samples cannot be initialized! It is not possible to continue the process. End now!");
 		exit(REFLECTIVE_SHADOW_MAP_SAMPLES_NOT_INIT);
 	}
