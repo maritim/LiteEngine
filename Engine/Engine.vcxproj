@@ -228,7 +228,7 @@
     <ClCompile Include="RenderPasses\VoxelizationRenderPass.cpp" />
     <ClCompile Include="RenderPasses\VoxelMipmapRenderPass.cpp" />
     <ClCompile Include="RenderPasses\VoxelRadianceInjectionRenderPass.cpp" />
-    <ClCompile Include="RenderPasses\VoxelRayReaceRenderPass.cpp" />
+    <ClCompile Include="RenderPasses\VoxelRayTraceRenderPass.cpp" />
     <ClCompile Include="RenderPasses\VoxelShadowMapVolume.cpp" />
     <ClCompile Include="RenderPasses\VoxelVolume.cpp" />
     <ClCompile Include="Renderer\RenderModule.cpp" />

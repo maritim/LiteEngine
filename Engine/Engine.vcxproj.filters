@@ -615,6 +615,9 @@
     <ClCompile Include="RenderPasses\ReflectiveShadowMapSamplesGenerationPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RenderPasses\VoxelRayTraceRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Arguments\Argument.h">
