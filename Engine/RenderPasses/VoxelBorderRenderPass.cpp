@@ -6,8 +6,6 @@
 
 #include "VoxelVolume.h"
 
-#include "Settings/GeneralSettings.h"
-
 VoxelBorderRenderPass::~VoxelBorderRenderPass ()
 {
 

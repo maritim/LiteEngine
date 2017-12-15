@@ -2,8 +2,6 @@
 
 #include "Renderer/Pipeline.h"
 
-#include "Settings/GeneralSettings.h"
-
 VoxelVolume::VoxelVolume() :
 	_volumeTexture(0),
 	_volumeFbo(0),
@@ -99,7 +97,7 @@ std::vector<PipelineAttribute> VoxelVolume::GetCustomAttributes ()
 	minVertex.value = _minVertex;
 	maxVertex.value = _maxVertex;
 	volumeSize.value = glm::vec3 ((float) _volumeSize);
-	volumeMipmapLevel.value.x = GeneralSettings::Instance ()->GetIntValue ("VoxelVolumeMipmapLevel");
+	volumeMipmapLevel.value.x = 6;
 
 	attributes.push_back (volumeTexture);
 	attributes.push_back (minVertex);
