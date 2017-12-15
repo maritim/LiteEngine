@@ -64,7 +64,7 @@ void VoxelMipmapRenderPass::GenerateMipmaps (RenderVolumeCollection* rvc)
 
 		voxelVolume->BindForWriting (mipLevel + 1);
 
-		int numWorkGroups = glm::ceil (dstMipRes / 4.0);
+		int numWorkGroups = (int) std::ceil (dstMipRes / 4.0);
 		GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);
 
 		GL::MemoryBarrier (GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);

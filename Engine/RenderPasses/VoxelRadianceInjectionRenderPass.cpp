@@ -73,7 +73,7 @@ void VoxelRadianceInjectionRenderPass::RadianceInjectPass (RenderVolumeCollectio
 	 * Inject radiance
 	*/
 
-	int numWorkGroups = glm::ceil (512.0f / 4.0f);
+	int numWorkGroups = (int) std::ceil (512.0f / 4.0f);
 	GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);
 }
 
