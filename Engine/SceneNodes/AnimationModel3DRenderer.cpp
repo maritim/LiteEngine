@@ -80,22 +80,22 @@ BufferObject AnimationModel3DRenderer::ProcessPolygonGroup (Model* model, Polygo
 		for(std::size_t j=0;j<polygon->VertexCount();j++) {
 			AnimatedVertexData vertexData;
 
-			glm::vec3* position = animModel->GetVertex (polygon->GetVertex(j));
-			vertexData.position[0] = position->x;
-			vertexData.position[1] = position->y;
-			vertexData.position[2] = position->z;
+			glm::vec3 position = animModel->GetVertex (polygon->GetVertex(j));
+			vertexData.position[0] = position.x;
+			vertexData.position[1] = position.y;
+			vertexData.position[2] = position.z;
 
 			if (polygon->HaveNormals ()) {
-				glm::vec3* normal = animModel->GetNormal (polygon->GetNormal(j));
-				vertexData.normal[0] = normal->x;
-				vertexData.normal[1] = normal->y;
-				vertexData.normal[2] = normal->z;
+				glm::vec3 normal = animModel->GetNormal (polygon->GetNormal(j));
+				vertexData.normal[0] = normal.x;
+				vertexData.normal[1] = normal.y;
+				vertexData.normal[2] = normal.z;
 			}
 
 			if (animModel->HaveUV()) {
-				glm::vec3* texcoord = animModel->GetTexcoord (polygon->GetTexcoord(j));
-				vertexData.texcoord[0] = texcoord->x;
-				vertexData.texcoord[1] = texcoord->y;
+				glm::vec2 texcoord = animModel->GetTexcoord (polygon->GetTexcoord(j));
+				vertexData.texcoord[0] = texcoord.x;
+				vertexData.texcoord[1] = texcoord.y;
 			}
 
 			VertexBoneInfo* vertexBoneInfo = animModel->GetVertexBoneInfo (polygon->GetVertex (j));

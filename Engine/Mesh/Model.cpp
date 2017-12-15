@@ -7,6 +7,10 @@
 
 #include "Core/Math/glm/detail/func_geometric.hpp"
 
+#include "Utils/Extensions/VectorExtend.h"
+
+#include "Core/Console/Console.h"
+
 Model::Model() :
 	_haveUV (false),
 	_name (""),
@@ -23,24 +27,12 @@ Model::Model(const Model& other) :
 	_haveUV (other._haveUV),
 	_name (other._name),
 	_mtllib (other._mtllib),
-	_vertices (),
+	_vertices (other._vertices),
 	_objectModels (),
-	_normals (),
-	_texcoords (),
+	_normals (other._normals),
+	_texcoords (other._texcoords),
 	_boundingBox (nullptr)
 {
-	for (std::size_t i=0;i<other._vertices.size();i++) {
-		_vertices.push_back (new glm::vec3 (*other._vertices [i]));
-	}
-
-	for (std::size_t i=0;i<other._normals.size();i++) {
-		_normals.push_back (new glm::vec3 (*other._normals [i]));
-	}
-
-	for (std::size_t i=0;i<other._texcoords.size();i++) {
-		_texcoords.push_back (new glm::vec3 (*other._texcoords [i]));
-	}
-
 	for (std::size_t i=0;i<other._objectModels.size();i++) {
 		_objectModels.push_back (new ObjectModel (*other._objectModels [i]));
 	}
@@ -48,46 +40,26 @@ Model::Model(const Model& other) :
 
 Model::~Model()
 {
-	for (std::size_t i=0;i<_vertices.size();i++) {
-		delete _vertices[i];
-	}
-	_vertices.clear();
-	_vertices.shrink_to_fit ();
-
-	for (std::size_t i=0;i<_normals.size();i++) {
-		delete _normals[i];
-	}
-	_normals.clear();
-	_normals.shrink_to_fit ();
-
-	for (std::size_t i=0;i<_texcoords.size();i++) {
-		delete _texcoords[i];
-	}
-	_texcoords.clear();
-	_texcoords.shrink_to_fit ();
-
 	for (std::size_t i=0;i<_objectModels.size();i++) {
 		delete _objectModels[i];
 	}
-	_objectModels.clear();
-	_objectModels.shrink_to_fit ();
 
 	if (_boundingBox != nullptr) {
 		delete _boundingBox;
 	}
 }
 
-void Model::AddVertex (glm::vec3* vertex) 
+void Model::AddVertex (glm::vec3 vertex) 
 {
 	_vertices.push_back (vertex);
 }
 
-void Model::AddNormal (glm::vec3* normal)
+void Model::AddNormal (glm::vec3 normal)
 {
 	_normals.push_back (normal);
 }
 
-void Model::AddTexcoord (glm::vec3* texcoord)
+void Model::AddTexcoord (glm::vec2 texcoord)
 {
 	_texcoords.push_back (texcoord);
 
@@ -109,9 +81,8 @@ void Model::SetMaterialLibrary (std::string mtllibName)
 	_mtllib = mtllibName;
 }
 
-void Model::SetVertex (glm::vec3* vertex, std::size_t position)
+void Model::SetVertex (const glm::vec3& vertex, std::size_t position)
 {
-	delete _vertices [position];
 	_vertices [position] = vertex;
 }
 
@@ -122,12 +93,6 @@ bool Model::HaveUV (void) const {
 // Deprecated for the moment (26.12.2015)
 void Model::Release()
 {
-	for (std::size_t i=0;i<_vertices.size();i++) {
-		delete _vertices[i];
-		delete _normals[i];
-		delete _texcoords[i];
-	}
-
 	for (std::size_t i=0;i<_objectModels.size();i++)  {
 		delete _objectModels[i];
 	}
@@ -153,28 +118,40 @@ std::size_t Model::ObjectsCount (void) const
 	return _objectModels.size ();
 }
 
-glm::vec3* Model::GetVertex (std::size_t position) const 
+glm::vec3 Model::GetVertex (std::size_t position) const 
 {
 	if (position >= _vertices.size()) {
-		return nullptr;
+		Console::LogWarning ("Vertex index exceed vertices count. \
+			You are searching for " + std::to_string (position) + " and the size is " +
+			std::to_string (_vertices.size ()));
+
+		return glm::vec3 ();
 	}
 
 	return _vertices [position];
 }
 
-glm::vec3* Model::GetNormal (std::size_t position) const 
+glm::vec3 Model::GetNormal (std::size_t position) const 
 {
 	if (position >= _normals.size()) {
-		return NULL;
+		Console::LogWarning ("Normal index exceed normals count. \
+			You are searching for " + std::to_string (position) + " and the size is " +
+			std::to_string (_normals.size ()));
+
+		return glm::vec3 ();
 	}
 
 	return _normals [position];
 }
 
-glm::vec3* Model::GetTexcoord (std::size_t position) const 
+glm::vec2 Model::GetTexcoord (std::size_t position) const 
 {
 	if (position >= _texcoords.size()) {
-		return NULL;
+		Console::LogWarning ("Texcoord index exceed texcoords count. \
+			You are searching for " + std::to_string (position) + " and the size is " +
+			std::to_string (_normals.size ()));
+
+		return glm::vec2 ();
 	}
 
 	return _texcoords [position];
@@ -242,7 +219,7 @@ void Model::GenerateMissingNormals()
 				Polygon* poly = polyGroup->GetPolygon (j);
 
 				if (poly->VertexCount () > 0 && !poly->HaveNormals ()) {
-					glm::vec3* normal = CalculateNormal (poly);
+					glm::vec3 normal = CalculateNormal (poly);
 
 					_normals.push_back (normal);
 
@@ -275,7 +252,7 @@ void Model::GenerateSmoothNormals ()
 					std::size_t vertex = poly->GetVertex (l);
 					std::size_t normal = poly->GetNormal (l);
 
-					_smoothNormals [vertex] += *(_normals [normal]);
+					_smoothNormals [vertex] += _normals [normal];
 					_smoothNormalsCount [vertex] ++;
 
 					poly->SetNormal ((int) vertex, l);
@@ -289,15 +266,18 @@ void Model::GenerateSmoothNormals ()
 		_smoothNormals [i] = glm::normalize (_smoothNormals [i]);
 	}
 
-	for (std::size_t i=0;i<_normals.size ();i++) {
-		delete _normals [i];
-	}
 	_normals.clear ();
 	_normals.shrink_to_fit ();
 
-	for (std::size_t i=0;i<_smoothNormals.size ();i++) {
-		_normals.push_back ( new glm::vec3(_smoothNormals [i]));
-	}
+	/*
+	 * Copy all smooth normals to default normals container
+	*/
+
+	_normals = _smoothNormals;
+
+	/*
+	 * Release smooth normals memory
+	*/
 
 	_smoothNormals.clear ();
 	_smoothNormals.shrink_to_fit ();
@@ -412,42 +392,15 @@ void Model::GenerateSmoothNormals ()
 // 	delete[] usedNormals;
 // }
 
-// TODO: Reimplement this
-glm::vec3* Model::CalculateNormal (Polygon* polygon)
+glm::vec3 Model::CalculateNormal (Polygon* polygon)
 {
-/* 
-	Set Vector U to (Triangle.p2 minus Triangle.p1)
-	Set Vector V to (Triangle.p3 minus Triangle.p1)
- 
-	Set Normal.x to (multiply U.y by V.z) minus (multiply U.z by V.y)
-	Set Normal.y to (multiply U.z by V.x) minus (multiply U.x by V.z)
-	Set Normal.z to (multiply U.x by V.y) minus (multiply U.y by V.x)
- 
-	Returning Normal
-*/ 
+	glm::vec3 normal = Extensions::VectorExtend::Cross(
+		_vertices [polygon->GetVertex (0)],
+		_vertices [polygon->GetVertex (1)],
+		_vertices [polygon->GetVertex (2)]
+	);
 
-	glm::vec3 *first = _vertices[polygon->GetVertex(0)];
-	glm::vec3 *second = _vertices[polygon->GetVertex(1)];
-	glm::vec3 *third = _vertices[polygon->GetVertex(2)];
-
-	glm::vec3 U = (*second) - (*first);
-	glm::vec3 V = (*third) - (*first);
-
-	glm::vec3 * normal = new glm::vec3();
-
-	normal->x = (U.y * V.z) - (U.z * V.y);
-	normal->y = (U.z * V.x) - (U.x * V.z);
-	normal->z = (U.x * V.y) - (U.y * V.x);
-
-	// Normalize the normal
-
-	float val = sqrt (normal->x * normal->x  + normal->y * normal->y + normal->z * normal->z);
-
-	normal->x /= val;
-	normal->y /= val;
-	normal->z /= val;
-
-	return normal;
+	return glm::normalize (normal);
 }
 
 BoundingBox* Model::CalculateBoundingBox ()
@@ -464,16 +417,16 @@ BoundingBox* Model::CalculateBoundingBox ()
 				Polygon* poly = polyGroup->GetPolygon (j);
 
 				for (std::size_t k=0;k<poly->VertexCount ();k++) {
-					glm::vec3* vertex = _vertices [poly->GetVertex (k)];
+					glm::vec3 vertex = _vertices [poly->GetVertex (k)];
 
-					boundingBox->xmin = std::min (boundingBox->xmin, vertex->x);
-					boundingBox->xmax = std::max (boundingBox->xmax, vertex->x);
+					boundingBox->xmin = std::min (boundingBox->xmin, vertex.x);
+					boundingBox->xmax = std::max (boundingBox->xmax, vertex.x);
 
-					boundingBox->ymin = std::min (boundingBox->ymin, vertex->y);
-					boundingBox->ymax = std::max (boundingBox->ymax, vertex->y);
+					boundingBox->ymin = std::min (boundingBox->ymin, vertex.y);
+					boundingBox->ymax = std::max (boundingBox->ymax, vertex.y);
 
-					boundingBox->zmin = std::min (boundingBox->zmin, vertex->z);
-					boundingBox->zmax = std::max (boundingBox->zmax, vertex->z);
+					boundingBox->zmin = std::min (boundingBox->zmin, vertex.z);
+					boundingBox->zmax = std::max (boundingBox->zmax, vertex.z);
 				}
 			}
 		}

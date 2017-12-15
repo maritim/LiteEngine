@@ -11,6 +11,8 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
+#include "Utils/Extensions/VectorExtend.h"
+
 NormalMapVertexData::NormalMapVertexData () : VertexData ()
 {
 	for (std::size_t i = 0; i < 3; i++) {
@@ -55,16 +57,16 @@ BufferObject NormalMapModel3DRenderer::ProcessPolygonGroup (Model* model, Polygo
 		for (std::size_t j = 0; j<polygon->VertexCount (); j++) {
 			NormalMapVertexData vertexData;
 
-			glm::vec3* position = model->GetVertex (polygon->GetVertex (j));
-			vertexData.position [0] = position->x;
-			vertexData.position [1] = position->y;
-			vertexData.position [2] = position->z;
+			glm::vec3 position = model->GetVertex (polygon->GetVertex (j));
+			vertexData.position [0] = position.x;
+			vertexData.position [1] = position.y;
+			vertexData.position [2] = position.z;
 
 			if (polygon->HaveNormals ()) {
-				glm::vec3* normal = model->GetNormal (polygon->GetNormal (j));
-				vertexData.normal [0] = normal->x;
-				vertexData.normal [1] = normal->y;
-				vertexData.normal [2] = normal->z;
+				glm::vec3 normal = model->GetNormal (polygon->GetNormal (j));
+				vertexData.normal [0] = normal.x;
+				vertexData.normal [1] = normal.y;
+				vertexData.normal [2] = normal.z;
 			}
 
 			//glm::vec3 normal = CalculateNormal (model, polygon);
@@ -73,9 +75,9 @@ BufferObject NormalMapModel3DRenderer::ProcessPolygonGroup (Model* model, Polygo
 			//vertexData.normal [2] = normal.z;
 
 			if (model->HaveUV ()) {
-				glm::vec3* texcoord = model->GetTexcoord (polygon->GetTexcoord (j));
-				vertexData.texcoord [0] = texcoord->x;
-				vertexData.texcoord [1] = texcoord->y;
+				glm::vec2 texcoord = model->GetTexcoord (polygon->GetTexcoord (j));
+				vertexData.texcoord [0] = texcoord.x;
+				vertexData.texcoord [1] = texcoord.y;
 			}
 
 			if (model->HaveUV ()) {
@@ -142,30 +144,21 @@ BufferObject NormalMapModel3DRenderer::BindVertexData (const std::vector<NormalM
 	return bufferObject;
 }
 
-glm:: vec3 NormalMapModel3DRenderer::CalculateNormal (Model* model, Polygon* polygon)
+glm::vec3 NormalMapModel3DRenderer::CalculateNormal (Model* model, Polygon* polygon)
 {
-	glm::vec3 *first = model->GetVertex (polygon->GetVertex (0));
-	glm::vec3 *second = model->GetVertex (polygon->GetVertex (1));
-	glm::vec3 *third = model->GetVertex (polygon->GetVertex (2));
-
-	glm::vec3 U = (*second) - (*first);
-	glm::vec3 V = (*third) - (*first);
-
-	glm::vec3 normal = glm::vec3 ();
-
-	normal.x = (U.y * V.z) - (U.z * V.y);
-	normal.y = (U.z * V.x) - (U.x * V.z);
-	normal.z = (U.x * V.y) - (U.y * V.x);
-
-	// Normalize the normal
+	glm::vec3 normal = Extensions::VectorExtend::Cross(
+		model->GetVertex (polygon->GetVertex (0)),
+		model->GetVertex (polygon->GetVertex (1)),
+		model->GetVertex (polygon->GetVertex (2))
+	);
 
 	return glm::normalize (normal);
 }
 
 /*
-* Thanks to: http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
-*
-* Calculate vertex tangent based on explanation from the link above;
+ * Thanks to: http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
+ *
+ * Calculate vertex tangent based on explanation from the link above;
 */
 
 glm::vec3 NormalMapModel3DRenderer::CalculateTangent (Model* model, Polygon* poly)
@@ -179,51 +172,51 @@ glm::vec3 NormalMapModel3DRenderer::CalculateTangent (Model* model, Polygon* pol
 	}
 
 	/*
-	* Get vertices
+	 * Get vertices
 	*/
 
-	glm::vec3* v0 = model->GetVertex(poly->GetVertex (0));
-	glm::vec3* v1 = model->GetVertex(poly->GetVertex (1));
-	glm::vec3* v2 = model->GetVertex(poly->GetVertex (2));
+	glm::vec3 v0 = model->GetVertex(poly->GetVertex (0));
+	glm::vec3 v1 = model->GetVertex(poly->GetVertex (1));
+	glm::vec3 v2 = model->GetVertex(poly->GetVertex (2));
 
 	/*
-	* Get texcoords
+	 * Get texcoords
 	*/
 
-	glm::vec3* uv0 = model->GetTexcoord(poly->GetTexcoord (0));
-	glm::vec3* uv1 = model->GetTexcoord (poly->GetTexcoord (1));
-	glm::vec3* uv2 = model->GetTexcoord (poly->GetTexcoord (2));
+	glm::vec2 uv0 = model->GetTexcoord(poly->GetTexcoord (0));
+	glm::vec2 uv1 = model->GetTexcoord (poly->GetTexcoord (1));
+	glm::vec2 uv2 = model->GetTexcoord (poly->GetTexcoord (2));
 
 	/*
-	* Edges of the triangle : postion delta
+	 * Edges of the triangle : postion delta
 	*/
 
-	glm::vec3 deltaPos1 = (*v1) - (*v0);
-	glm::vec3 deltaPos2 = (*v2) - (*v0);
+	glm::vec3 deltaPos1 = v1 - v0;
+	glm::vec3 deltaPos2 = v2 - v0;
 
 	/*
-	* UV delta
+	 * UV delta
 	*/
 
-	glm::vec3 deltaUV1 = (*uv1) - (*uv0);
-	glm::vec3 deltaUV2 = (*uv2) - (*uv0);
+	glm::vec2 deltaUV1 = uv1 - uv0;
+	glm::vec2 deltaUV2 = uv2 - uv0;
 
 	/*
-	* "Here is the algorithm : if we note deltaPos1 and deltaPos2 two edges of
-	* our triangle, and deltaUV1 and deltaUV2 the corresponding differences in
-	* UVs, we can express our problem with the following equation :
-	*
-	* deltaPos1 = deltaUV1.x * T + deltaUV1.y * B
-	* deltaPos2 = deltaUV2.x * T + deltaUV2.y * B
-	*
-	* Just solve this system for T and B, and you have your vectors !
+	 * "Here is the algorithm : if we note deltaPos1 and deltaPos2 two edges of
+	 * our triangle, and deltaUV1 and deltaUV2 the corresponding differences in
+	 * UVs, we can express our problem with the following equation :
+	 *
+	 * deltaPos1 = deltaUV1.x * T + deltaUV1.y * B
+	 * deltaPos2 = deltaUV2.x * T + deltaUV2.y * B
+	 *
+	 * Just solve this system for T and B, and you have your vectors !
 	*/
 
 	float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
 	glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
 
 	/*
-	* Return the tangent
+	 * Return the tangent
 	*/
 
 	return glm::normalize (tangent);

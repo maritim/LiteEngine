@@ -45,8 +45,8 @@ glm::vec3 MeshEmiter::GetParticlePosition ()
 
 	MeshSample sample = _meshSamples [pos];
 
-	glm::vec3 position = (*sample.a) + (*sample.b - *sample.a) * glm::vec3 (t, t, t) +
-		(*sample.c - *sample.a) * glm::vec3 (1.0f - t, 1.0f - t, 1.0f - t);
+	glm::vec3 position = sample.a + (sample.b - sample.a) * glm::vec3 (t, t, t) +
+		(sample.c - sample.a) * glm::vec3 (1.0f - t, 1.0f - t, 1.0f - t);
 
 	position += _transform->GetPosition ();
 

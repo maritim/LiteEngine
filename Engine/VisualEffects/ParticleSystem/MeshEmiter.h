@@ -12,9 +12,9 @@
 class MeshSample
 {
 public:
-	glm::vec3* a;
-	glm::vec3* b;
-	glm::vec3* c;
+	glm::vec3 a;
+	glm::vec3 b;
+	glm::vec3 c;
 };
 
 class MeshEmiter : public PrimitiveEmiter

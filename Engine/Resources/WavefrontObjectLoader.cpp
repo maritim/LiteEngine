@@ -128,7 +128,7 @@ void WavefrontObjectLoader::ReadVertex(std::ifstream& file, Model* model)
 	float x, y, z;
 	file >> x >> y >> z;
 
-	model->AddVertex ( new glm::vec3 (x, y, z));
+	model->AddVertex (glm::vec3 (x, y, z));
 }
 
 void WavefrontObjectLoader::ReadNormal(std::ifstream& file, Model* model)
@@ -136,7 +136,7 @@ void WavefrontObjectLoader::ReadNormal(std::ifstream& file, Model* model)
 	float x, y, z;
 	file >> x >> y >> z;
 
-	model->AddNormal ( new glm::vec3 (x, y, z));	
+	model->AddNormal (glm::vec3 (x, y, z));	
 }
 
 void WavefrontObjectLoader::ReadTexcoord(std::ifstream& file, Model* model)
@@ -145,7 +145,7 @@ void WavefrontObjectLoader::ReadTexcoord(std::ifstream& file, Model* model)
 	file >> x >> y;
 	file.ignore (std::numeric_limits<std::streamsize>::max(), '\n');
 
-	model->AddTexcoord ( new glm::vec3 (x, 1.0f-y, 0.0f));
+	model->AddTexcoord (glm::vec2 (x, 1.0f - y));
 }
 
 void WavefrontObjectLoader::ReadCurrentMtlName(std::ifstream& file, std::string& mtlName)

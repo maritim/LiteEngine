@@ -307,6 +307,7 @@
     <ClCompile Include="Utils\Curves\PennerEasing\Sine.cpp" />
     <ClCompile Include="Utils\Extensions\MathExtend.cpp" />
     <ClCompile Include="Utils\Extensions\StringExtend.cpp" />
+    <ClCompile Include="Utils\Extensions\VectorExtend.cpp" />
     <ClCompile Include="Utils\Files\FileSystem.cpp" />
     <ClCompile Include="Utils\Primitives\Primitive.cpp" />
     <ClCompile Include="Utils\Triangulation\Triangulation.cpp" />
@@ -660,6 +661,7 @@
     <ClInclude Include="Utils\Curves\PennerEasing\Sine.h" />
     <ClInclude Include="Utils\Extensions\MathExtend.h" />
     <ClInclude Include="Utils\Extensions\StringExtend.h" />
+    <ClInclude Include="Utils\Extensions\VectorExtend.h" />
     <ClInclude Include="Utils\Files\FileSystem.h" />
     <ClInclude Include="Utils\Primitives\Primitive.h" />
     <ClInclude Include="Utils\Triangulation\Triangulation.h" />

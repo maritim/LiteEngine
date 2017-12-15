@@ -25,10 +25,10 @@ protected:
 	std::string _mtllib;
 
 	// Make this more flexible
-	std::vector<glm::vec3*> _vertices;
+	std::vector<glm::vec3> _vertices;
 	std::vector<ObjectModel*> _objectModels;
-	std::vector<glm::vec3*> _normals;
-	std::vector<glm::vec3*> _texcoords;
+	std::vector<glm::vec3> _normals;
+	std::vector<glm::vec2> _texcoords;
 
 	// Used for normal smoothing
 	std::vector<glm::vec3> _smoothNormals;
@@ -42,9 +42,9 @@ public:
 	void Release();					
 	bool HaveUV () const;
 
-	void AddNormal (glm::vec3* normal);
-	void AddVertex (glm::vec3* vertex);
-	void AddTexcoord (glm::vec3* texcoord);
+	void AddNormal (glm::vec3 normal);
+	void AddVertex (glm::vec3 vertex);
+	void AddTexcoord (glm::vec2 texcoord);
 	void AddObjectModel (ObjectModel* object);
 
 	void SetName (std::string modelName);
@@ -58,15 +58,15 @@ public:
 	std::string GetName () const;
 	std::string GetMaterialLibrary () const;
 
-	glm::vec3* GetVertex (std::size_t position) const;
-	glm::vec3* GetNormal (std::size_t position) const;
-	glm::vec3* GetTexcoord (std::size_t position) const;
+	glm::vec3 GetVertex (std::size_t position) const;
+	glm::vec3 GetNormal (std::size_t position) const;
+	glm::vec2 GetTexcoord (std::size_t position) const;
 	ObjectModel* GetObject (std::size_t position) const;
 	ObjectModel* GetObject (std::string objectName) const;
 
 	BoundingBox* GetBoundingBox ();
 
-	void SetVertex (glm::vec3* vertex, std::size_t position);
+	void SetVertex (const glm::vec3& vertex, std::size_t position);
 	void ClearObjects ();
 
 	void GenerateMissingNormals ();
@@ -76,7 +76,7 @@ public:
 	~Model();
 
 protected:
-	glm::vec3* CalculateNormal(Polygon* poly);
+	glm::vec3 CalculateNormal(Polygon* poly);
 
 	BoundingBox* CalculateBoundingBox ();
 };

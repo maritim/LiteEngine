@@ -76,11 +76,11 @@ void GenericObjectModelLoader::ProcessVertices (Model* model, aiMesh* assimpMesh
 {
 	for (std::size_t i=0;i<assimpMesh->mNumVertices;i++)
 	{
-		glm::vec3* vertex = new glm::vec3 ();
+		glm::vec3 vertex = glm::vec3 ();
 
-		vertex->x = (float) assimpMesh->mVertices [i].x;
-		vertex->y = (float) assimpMesh->mVertices [i].y;
-		vertex->z = (float) assimpMesh->mVertices [i].z;
+		vertex.x = (float) assimpMesh->mVertices [i].x;
+		vertex.y = (float) assimpMesh->mVertices [i].y;
+		vertex.z = (float) assimpMesh->mVertices [i].z;
 
 		model->AddVertex (vertex);
 	}
@@ -90,11 +90,11 @@ void GenericObjectModelLoader::ProcessNormals (Model* model, aiMesh* assimpMesh)
 {
 	for (std::size_t i=0;i<assimpMesh->mNumVertices;i++)
 	{
-		glm::vec3* normal = new glm::vec3 ();
+		glm::vec3 normal = glm::vec3 ();
 
-		normal->x = (float) assimpMesh->mNormals [i].x;
-		normal->y = (float) assimpMesh->mNormals [i].y;
-		normal->z = (float) assimpMesh->mNormals [i].z;
+		normal.x = (float) assimpMesh->mNormals [i].x;
+		normal.y = (float) assimpMesh->mNormals [i].y;
+		normal.z = (float) assimpMesh->mNormals [i].z;
 
 		model->AddNormal (normal);
 	}
@@ -108,10 +108,10 @@ void GenericObjectModelLoader::ProcessTexcoords (Model* model, aiMesh* assimpMes
 
 	for (std::size_t i=0;i<assimpMesh->mNumVertices;i++)
 	{
-		glm::vec3* texcoord = new glm::vec3 ();
+		glm::vec2 texcoord = glm::vec2 ();
 
-		texcoord->x = (float) assimpMesh->mTextureCoords [0][i].x;
-		texcoord->y = (float) assimpMesh->mTextureCoords [0][i].y;
+		texcoord.x = (float) assimpMesh->mTextureCoords [0][i].x;
+		texcoord.y = (float) assimpMesh->mTextureCoords [0][i].y;
 
 		model->AddTexcoord (texcoord);
 	}	
