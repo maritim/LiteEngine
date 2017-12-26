@@ -1,15 +1,10 @@
 #include "Skybox.h"
 
-#include <string>
-#include <vector>
-
 #include "Utils/Primitives/Primitive.h"
 
 #include "SkyboxRenderer.h"
 
 #include "Wrappers/OpenGL/GL.h"
-
-Skybox* Skybox::_currentSkybox (NULL);
 
 Skybox::Skybox () :
     _cubemap (NULL),
@@ -31,36 +26,6 @@ Skybox::~Skybox ()
     GL::DeleteTextures(1,texture);
 
     delete _renderer;
-}
-
-void Skybox::Set (Skybox* skybox)
-{
-    delete _currentSkybox;
-
-    _currentSkybox = skybox;
-}
-
-void Skybox::Render ()
-{
-    if (_currentSkybox == nullptr) {
-        return;
-    }
-
-    _currentSkybox->GetRenderer ()->Draw ();
-}
-
-void Skybox::Clear ()
-{
-    if (!_currentSkybox) {
-        return ;
-    }
-
-    delete _currentSkybox;
-}
-
-CubeMap* Skybox::GetCurrentCubeMap ()
-{
-    return _currentSkybox->GetCubeMap ();
 }
 
 void Skybox::SetCubeMap (CubeMap* cubemap)

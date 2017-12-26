@@ -33,7 +33,7 @@ public:
 	void SetName (const std::string& name);
 	std::string GetName () const;
 
-	void SetSkybox (Skybox* sky);
+	void SetSkybox (Skybox* skybox);
 	Skybox* GetSkybox () const;
 
 	void AttachObject (SceneObject*);

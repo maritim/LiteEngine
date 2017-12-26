@@ -13,6 +13,7 @@
 Scene::Scene () :
 	_sceneObjects (),
 	_name (""),
+	_skybox (nullptr),
 	_boundingBox (new AABBVolume (new AABBVolume::AABBVolumeInformation ()))
 {
 
@@ -20,14 +21,12 @@ Scene::Scene () :
 
 void Scene::Init ()
 {
-	Skybox::Set (_skybox);
-
 	PhysicsSystem::Instance ().Init (this);
 }
 
-void Scene::SetSkybox (Skybox *sky)
+void Scene::SetSkybox (Skybox *skybox)
 {
-	_skybox = sky;
+	_skybox = skybox;
 }
 
 Skybox* Scene::GetSkybox () const

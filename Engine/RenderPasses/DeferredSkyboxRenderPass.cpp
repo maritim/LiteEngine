@@ -20,12 +20,12 @@ RenderVolumeCollection* DeferredSkyboxRenderPass::Execute (Scene* scene, Camera*
 	 * Render skybox
 	*/
 
-	SkyboxPass (camera);
+	SkyboxPass (scene, camera);
 
 	return rvc;
 }
 
-void DeferredSkyboxRenderPass::SkyboxPass (Camera* camera)
+void DeferredSkyboxRenderPass::SkyboxPass (Scene* scene, Camera* camera)
 {
 	GL::Enable (GL_STENCIL_TEST);
 	GL::StencilFunc (GL_EQUAL, 0, 0xFF);
@@ -34,7 +34,19 @@ void DeferredSkyboxRenderPass::SkyboxPass (Camera* camera)
 	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
 	Pipeline::SendCamera (camera);
 
-	Skybox::Render ();
+	/*
+	 * Get scene's skybox
+	*/
+
+	Skybox* sceneSkybox = scene->GetSkybox ();
+
+	/*
+	 * Check if there is an actual skybox attached
+	*/
+
+	if (sceneSkybox != nullptr) {
+		sceneSkybox->GetRenderer ()->Draw ();
+	}
 
 	GL::Disable (GL_STENCIL_TEST);
 }

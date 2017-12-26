@@ -11,7 +11,7 @@ public:
 	virtual void Init ();
 	virtual RenderVolumeCollection* Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc);
 protected:
-	void SkyboxPass (Camera* camera);
+	void SkyboxPass (Scene* scene, Camera* camera);
 };
 
 #endif

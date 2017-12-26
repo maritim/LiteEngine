@@ -1,10 +1,7 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include <string>
-
 #include "Texture/CubeMap.h"
-#include "Mesh/Model.h"
 
 #include "SceneNodes/GameObject.h"
 #include "Utils/Color/Color.h"
@@ -22,17 +19,9 @@ private:
 	float _brightness;
 	float _angularVelocity;
 
-	static Skybox* _currentSkybox;
-
 public:
 	Skybox ();
 	~Skybox ();
-
-	static void Set (Skybox* skybox);
-	static void Render ();
-
-	static std::string DefaultShaderName ();
-	static CubeMap* GetCurrentCubeMap ();
 
 	void SetCubeMap (CubeMap* cubeMap);
 	CubeMap* GetCubeMap () const;
@@ -45,8 +34,6 @@ public:
 
 	void SetAngularVelocity (float velocity);
 	float GetAngularVelocity () const;
-private:
-	static void Clear ();
 };
 
 #endif

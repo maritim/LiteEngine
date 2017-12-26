@@ -7,7 +7,6 @@
 #include "Material/Material.h"
 #include "Managers/ShaderManager.h"
 #include "Managers/TextureManager.h"
-#include "Skybox/Skybox.h"
 
 #include "PipelineAttribute.h"
 
@@ -404,10 +403,7 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 			GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
 
 			unsigned int textureID = 0;
-			if (mat->attributes [k].values.x == 0) {
-				textureID = Skybox::GetCurrentCubeMap ()->GetGPUIndex ();
-			}
-			else if (mat->attributes [k].values.x == 1) {
+			if (mat->attributes [k].values.x == 1) {
 				textureID = (unsigned int)mat->attributes [k].values.y;
 			}
 

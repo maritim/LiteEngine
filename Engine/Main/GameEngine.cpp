@@ -8,8 +8,6 @@
 #include "Managers/ShaderManager.h"
 #include "Managers/SceneManager.h"
 
-#include "Skybox/Skybox.h"
-
 #include "Arguments/ArgumentsAnalyzer.h"
 
 #include "Core/Console/Console.h"
