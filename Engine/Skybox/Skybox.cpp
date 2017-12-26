@@ -3,16 +3,9 @@
 #include <string>
 #include <vector>
 
-#include "Managers/ShaderManager.h"
-#include "SceneGraph/Transform.h"
-
-#include "Resources/Resources.h"
+#include "Utils/Primitives/Primitive.h"
 
 #include "SkyboxRenderer.h"
-
-#include "Mesh/Model.h"
-
-#include "Utils/Primitives/Primitive.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
@@ -25,7 +18,11 @@ Skybox::Skybox () :
     _angularVelocity (0.0)
 {
     delete _renderer;
-    _renderer = new SkyboxRenderer (_cubemap, &_tintColor, &_brightness, "Skybox");
+    _renderer = new SkyboxRenderer (this);
+
+    Model* cube = Primitive::Instance ()->Create (Primitive::Type::CUBE);
+    AttachMesh (cube);
+    delete cube;
 }
 
 Skybox::~Skybox ()
@@ -34,16 +31,6 @@ Skybox::~Skybox ()
     GL::DeleteTextures(1,texture);
 
     delete _renderer;
-}
-
-void Skybox::Init ()
-{
-    const std::string defaultShader[] = {"Skybox", 
-        "Assets/Shaders/skyboxVertex.glsl", 
-        "Assets/Shaders/skyboxFragment.glsl"
-    } ;
-
-    ShaderManager::Instance ()->AddShader (defaultShader [0], defaultShader [1], defaultShader [2]);
 }
 
 void Skybox::Set (Skybox* skybox)
@@ -55,11 +42,11 @@ void Skybox::Set (Skybox* skybox)
 
 void Skybox::Render ()
 {
-	if (_currentSkybox == NULL) {
-        return ;
+    if (_currentSkybox == nullptr) {
+        return;
     }
 
-   _currentSkybox->GetRenderer ()->Draw ();
+    _currentSkybox->GetRenderer ()->Draw ();
 }
 
 void Skybox::Clear ()

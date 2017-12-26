@@ -28,9 +28,9 @@ public:
 	Skybox ();
 	~Skybox ();
 
-	static void Init ();
 	static void Set (Skybox* skybox);
 	static void Render ();
+
 	static std::string DefaultShaderName ();
 	static CubeMap* GetCurrentCubeMap ();
 

@@ -44,8 +44,6 @@ void GameEngine::Init ()
 
 	Input::Init ();
 
-	Skybox::Init ();
-
 	InitScene ();
 }
 

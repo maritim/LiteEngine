@@ -3,26 +3,21 @@
 #include <string>
 #include <vector>
 
-#include "Utils/Primitives/Primitive.h"
 #include "Renderer/Pipeline.h"
 #include "Renderer/PipelineAttribute.h"
-#include "Mesh/Model.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
 #include "Managers/ShaderManager.h"
-#include "Shader/Shader.h"
 
-SkyboxRenderer::SkyboxRenderer (CubeMap*& map, Color* tint, float *bt, std::string shn) :
+SkyboxRenderer::SkyboxRenderer (Skybox* skybox) :
 	Model3DRenderer (NULL),
-	_cubeMap (map),
-	_tintColor (tint),
-	_brightness (bt),
-	_shaderName (shn)
+	_shaderName ("SKYBOX"),
+	_skybox (skybox)
 {
-	Model* cube = Primitive::Instance ()->Create (Primitive::Type::CUBE);
-	Attach (cube);
-	delete cube;
+	ShaderManager::Instance ()->AddShader (_shaderName,
+		"Assets/Shaders/Skybox/skyboxVertex.glsl",
+		"Assets/Shaders/Skybox/skyboxFragment.glsl");
 }
 
 void SkyboxRenderer::Draw ()
@@ -74,9 +69,9 @@ void SkyboxRenderer::ManageCustomAttributes ()
 	uniformTintColor.name = "tintColor";
 	uniformBrightness.name = "brightness";
 
-	uniformCubeMap.value.x = (float) _cubeMap->GetGPUIndex ();
-	uniformTintColor.value = _tintColor->ToVector3 ();
-	uniformBrightness.value.x = *_brightness;
+	uniformCubeMap.value.x = (float) _skybox->GetCubeMap ()->GetGPUIndex ();
+	uniformTintColor.value = _skybox->GetTintColor ().ToVector3 ();
+	uniformBrightness.value.x = _skybox->GetBrightness ();
 
 	attributes.push_back (uniformCubeMap);
 	attributes.push_back (uniformTintColor);

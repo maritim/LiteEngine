@@ -5,19 +5,16 @@
 
 #include <string>
 
-#include "Texture/CubeMap.h"
-#include "Utils/Color/Color.h"
+#include "Skybox/Skybox.h"
 
 class SkyboxRenderer : public Model3DRenderer
 {
 private:
-	CubeMap*& _cubeMap;
-	Color* _tintColor;
-	float* _brightness;
 	std::string _shaderName;
+	Skybox* _skybox;
 
 public:
-	SkyboxRenderer (CubeMap*& map, Color* tint, float* bt, std::string shn);
+	SkyboxRenderer (Skybox*);
 
 	virtual void Draw ();
 protected:
