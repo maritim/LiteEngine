@@ -53,6 +53,8 @@ TODOS
 
 # Visual Studio
 *.db
+*.idb
+*.pdb
 *.opendb
 *.cfg
 *.user
