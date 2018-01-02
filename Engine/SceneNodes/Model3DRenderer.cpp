@@ -44,8 +44,6 @@ void Model3DRenderer::Attach (Model* model)
 
 void Model3DRenderer::Draw ()
 {
-	GL::DepthMask (GL_TRUE);
-
 	Pipeline::SetObjectTransform (_transform);
 
 	for (std::size_t i=0;i<_drawableObjects.size ();i++) {

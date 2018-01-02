@@ -3,8 +3,6 @@
 
 #include "Core/Interfaces/Object.h"
 
-#include <vector>
-
 #include "RenderVolumeCollection.h"
 
 #include "SceneGraph/Scene.h"
@@ -16,7 +14,7 @@ public:
 	virtual ~RenderPassI () = 0;
 
 	virtual void Init () = 0;
-	virtual RenderVolumeCollection* Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc) = 0;
+	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc) = 0;
 };
 
 #endif

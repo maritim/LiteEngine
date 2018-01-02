@@ -3,13 +3,11 @@
 
 #include "ShadowMapVolume.h"
 
-#include <string>
-
 #include "Wrappers/OpenGL/GL.h"
 
 #include "RenderPasses/ReflectiveShadowMapBuffer.h"
 
-#define REFLECTIVE_SHADOW_MAP_MAX_RESOLUTION_WIDTH 512		
+#define REFLECTIVE_SHADOW_MAP_MAX_RESOLUTION_WIDTH 512
 #define REFLECTIVE_SHADOW_MAP_MAX_RESOLUTION_HEIGHT 512
 
 #define REFLECTIVE_SHADOW_MAP_FBO_NOT_INIT 350
@@ -17,9 +15,6 @@
 class ReflectiveShadowMapDirectionalLightVolume : public ShadowMapVolume
 {
 protected:
-	std::string _staticShaderName;
-	std::string _animationShaderName;
-
 	std::size_t _cascadedLevels;
 
 	ReflectiveShadowMapBuffer** _shadowMapBuffers;
@@ -34,7 +29,6 @@ public:
 	void EndDrawing ();
 
 	void BindForReading ();
-	void LockShader (int sceneLayers);
 };
 
 #endif

@@ -5,6 +5,8 @@
 #include "Systems/Window/Window.h"
 #include "Systems/Input/Input.h"
 
+#include "Managers/ShaderManager.h"
+
 #include "Core/Intersections/Intersection.h"
 
 #include "Renderer/Pipeline.h"
@@ -15,7 +17,14 @@
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/DrawnObjectsCountStat.h"
 
+#include "Core/Console/Console.h"
+
+#include "SceneNodes/SceneLayer.h"
+
 DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
+	_shaderName ("DEFERRED_GEOMETRY"),
+	_normalMapShaderName ("NORMAL_MAP_DEFERRED_GEOMETRY"),
+	_animationShaderName ("ANIMATION_DEFERRED_GEOMETRY"),
 	_frameBuffer (new GBuffer ())
 {
 
@@ -28,10 +37,46 @@ DeferredGeometryRenderPass::~DeferredGeometryRenderPass ()
 
 void DeferredGeometryRenderPass::Init ()
 {
-	_frameBuffer->Init (Window::GetWidth (), Window::GetHeight ());
+	/*
+	 * Shader for not animated objects
+	*/
+
+	ShaderManager::Instance ()->AddShader (_shaderName,
+		"Assets/Shaders/deferredVertex.glsl",
+		"Assets/Shaders/deferredFragment.glsl",
+		"Assets/Shaders/deferredGeometry.glsl");
+
+	/*
+	 * Shader for not animated normal mapped objects
+	*/
+
+	ShaderManager::Instance ()->AddShader (_normalMapShaderName,
+		"Assets/Shaders/deferredNormalMapVertex.glsl",
+		"Assets/Shaders/deferredNormalMapFragment.glsl",
+		"Assets/Shaders/deferredNormalMapGeometry.glsl");
+
+	/*
+	 * Shader for animations
+	*/
+
+	ShaderManager::Instance ()->AddShader (_animationShaderName,
+		"Assets/Shaders/deferredVertexAnimation.glsl",
+		"Assets/Shaders/deferredFragment.glsl",
+		"Assets/Shaders/deferredGeometry.glsl");
+
+	/*
+	 * Initialize GBuffer volume
+	*/
+
+	if (!_frameBuffer->Init (Window::GetWidth (), Window::GetHeight ())) {
+		Console::LogError (std::string () +
+			"Geometry buffer for deferred rendering cannot be initialized!" +
+			" It is not possible to continue the process. End now!");
+		exit (GBUFFER_FBO_NOT_INIT);
+	}
 }
 
-RenderVolumeCollection* DeferredGeometryRenderPass::Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	* Send Camera to Pipeline
@@ -77,15 +122,18 @@ void DeferredGeometryRenderPass::PrepareDrawing ()
 	_frameBuffer->StartFrame ();
 }
 
-bool cmp (Renderer* a, Renderer* b) {
-	return a->GetPriority () < b->GetPriority ();
-}
-
-void DeferredGeometryRenderPass::GeometryPass (Scene* scene, Camera* camera)
+void DeferredGeometryRenderPass::GeometryPass (const Scene* scene, const Camera* camera)
 {
 	_frameBuffer->BindForGeomPass ();
 
 	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	/*
+	 * Set Depth Buffer
+	*/
+
+	GL::Enable (GL_DEPTH_TEST);
+	GL::DepthMask (GL_TRUE);
 
 	/*
 	* Set Stencil Buffer to know where something is drawn in GBuffer
@@ -102,6 +150,12 @@ void DeferredGeometryRenderPass::GeometryPass (Scene* scene, Camera* camera)
 
 	GL::Enable (GL_CULL_FACE);
 	GL::CullFace (GL_BACK);
+
+	/*
+	 * Enable Blending
+	*/
+
+	GL::Enable (GL_BLEND);
 
 	/*
 	* Render scene entities to framebuffer at Deferred Rendering Stage
@@ -133,16 +187,20 @@ void DeferredGeometryRenderPass::GeometryPass (Scene* scene, Camera* camera)
 
 		drawnObjectsCount++;
 
-		renderers.push_back (sceneObject->GetRenderer ());
+		/*
+		 * Lock shader according to object layers
+		*/
+
+		LockShader (sceneObject->GetLayers ());
+
+		/*
+		 * Draw object on geometry buffer
+		*/
+
+		sceneObject->GetRenderer ()->Draw ();
 	}
 
 	StatisticsManager::Instance ()->SetStatisticsObject ("DrawnObjectsCount", new DrawnObjectsCountStat (drawnObjectsCount));
-
-	std::sort (renderers.begin (), renderers.end (), cmp);
-
-	for (Renderer* renderer : renderers) {
-		renderer->Draw ();
-	}
 
 	/*
 	* Disable Stecil Test for further rendering
@@ -151,13 +209,46 @@ void DeferredGeometryRenderPass::GeometryPass (Scene* scene, Camera* camera)
 	GL::Disable (GL_STENCIL_TEST);
 }
 
+void DeferredGeometryRenderPass::LockShader (int sceneLayers)
+{
+	/*
+	 * Unlock last shader
+	*/
+
+	Pipeline::UnlockShader ();
+
+	/*
+	 * Lock the shader for animations
+	*/
+
+	if (sceneLayers & SceneLayer::ANIMATION) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+	}
+
+	/*
+	 * Lock the shader for not animated normal mapped objects
+	*/
+
+	if ((sceneLayers & SceneLayer::NORMAL_MAP) && (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC))) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_normalMapShaderName));
+	}
+
+	/*
+	 * Lock general shader for not animated objects
+	*/
+
+	if ((sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) && !(sceneLayers & SceneLayer::NORMAL_MAP)) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
+	}
+}
+
 /*
 * TODO: Move this part somewhere else because it belongs to another
 * abstraction layer. This class only work with objects rendering, not
 * pipeline's job
 */
 
-void DeferredGeometryRenderPass::UpdateCamera (Camera* camera)
+void DeferredGeometryRenderPass::UpdateCamera (const Camera* camera)
 {
 	// Create Projection
 	Pipeline::CreateProjection (camera);

@@ -37,9 +37,6 @@ Object* LightLoader::Load (const std::string& filename)
 		else if (name == "Shadows") {
 			ProcessShadows (content, light);
 		}
-		else if (name == "RenderMode") {
-			ProcessRenderMode (content, light);
-		}
 
 		content = content->NextSiblingElement ();
 	}
@@ -86,25 +83,6 @@ void LightLoader::ProcessShadows (TiXmlElement* xmlElem, Light* light)
 
 	if (casting) {
 		light->SetShadowCasting (Extensions::StringExtend::ToBool (casting));
-	}
-}
-
-void LightLoader::ProcessRenderMode (TiXmlElement* xmlElem, Light* light)
-{
-	const char* type = xmlElem->Attribute ("type");
-
-	if (type) {
-		std::string typeS = type;
-
-		if (typeS == "DEFERRED") {
-			light->SetRenderMode (LightRenderMode::DEFERRED);
-		}
-		else if (typeS == "VOXEL_CONE_TRACE") {
-			light->SetRenderMode (LightRenderMode::VOXEL_CONE_TRACE);
-		}
-		else if (typeS == "REFLECTIVE_SHADOW_MAP") {
-			light->SetRenderMode (LightRenderMode::REFLECTIVE_SHADOW_MAP);
-		}
 	}
 }
 

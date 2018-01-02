@@ -45,7 +45,7 @@ void VoxelizationRenderPass::Init ()
 		"Assets/Shaders/Voxelize/voxelizeGeometry.glsl");
 }
 
-RenderVolumeCollection* VoxelizationRenderPass::Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelizationRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	* Voxelization start
@@ -97,7 +97,7 @@ void VoxelizationRenderPass::StartVoxelization ()
 	Pipeline::LockShader (ShaderManager::Instance ()->GetShader ("VOXELIZATION_PASS_SHADER"));
 }
 
-void VoxelizationRenderPass::GeometryVoxelizationPass (Scene* scene)
+void VoxelizationRenderPass::GeometryVoxelizationPass (const Scene* scene)
 {
 	/*
 	* Update voxel volume based on scene bounding box
@@ -152,7 +152,7 @@ void VoxelizationRenderPass::EndVoxelization ()
 	Pipeline::UnlockShader ();
 }
 
-void VoxelizationRenderPass::UpdateVoxelVolumeBoundingBox (Scene* scene)
+void VoxelizationRenderPass::UpdateVoxelVolumeBoundingBox (const Scene* scene)
 {
 	AABBVolume* boundingBox = scene->GetBoundingBox ();
 	AABBVolume::AABBVolumeInformation* volume = boundingBox->GetVolumeInformation ();

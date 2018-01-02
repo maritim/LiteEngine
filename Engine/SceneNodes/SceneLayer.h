@@ -4,7 +4,8 @@
 enum SceneLayer {
 	STATIC = 1,
 	DYNAMIC = 2,
-	ANIMATION = 4
+	ANIMATION = 4,
+	NORMAL_MAP = 8
 };
 
 #endif

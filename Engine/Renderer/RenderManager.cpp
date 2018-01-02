@@ -15,6 +15,20 @@ RenderManager::RenderManager () :
 	_currentRenderModule (nullptr),
 	_currentRenderMode (RENDER_MODE_DEFERRED)
 {
+
+}
+
+RenderManager::~RenderManager ()
+{
+	Clear ();
+}
+
+/*
+ * Render Part
+*/
+
+void RenderManager::Init ()
+{
 	_renderModules.push_back (new DeferredRenderModule ());
 	_renderModules.push_back (new VoxelizationRenderModule ());
 	_renderModules.push_back (new VoxelConeTraceRenderModule ());
@@ -27,15 +41,6 @@ RenderManager::RenderManager () :
 	SetRenderMode (_currentRenderMode);
 }
 
-RenderManager::~RenderManager ()
-{
-	Clear ();
-}
-
-/*
- * Render Part
-*/
-
 void RenderManager::SetRenderMode (RenderMode renderMode)
 {
 	_currentRenderMode = renderMode;
@@ -47,7 +52,7 @@ RenderMode RenderManager::GetRenderMode () const
 	return _currentRenderMode;
 }
 
-void RenderManager::RenderScene (Scene* scene, Camera* camera)
+void RenderManager::RenderScene (const Scene* scene, const Camera* camera)
 {
 	_currentRenderModule->RenderScene (scene, camera);
 }

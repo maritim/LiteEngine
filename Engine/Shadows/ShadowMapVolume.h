@@ -1,11 +1,9 @@
 #ifndef SHADOWMAPVOLUME_H
 #define SHADOWMAPVOLUME_H
 
-#include "Core/Interfaces/Object.h"
+#include "Renderer/RenderVolumeI.h"
 
-#include "SceneNodes/SceneLayer.h"
-
-class ShadowMapVolume : public Object
+class ShadowMapVolume : public RenderVolumeI
 {
 public:
 	ShadowMapVolume ();	
@@ -16,7 +14,7 @@ public:
 	virtual void EndDrawing () = 0;
 
 	virtual void BindForReading () = 0;
-	virtual void LockShader (int sceneLayers) = 0;
+	virtual std::vector<PipelineAttribute> GetCustomAttributes () = 0;
 };
 
 #endif

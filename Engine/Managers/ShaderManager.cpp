@@ -10,10 +10,7 @@
 
 ShaderManager::ShaderManager ()
 {
-	//AddShader ("DEFAULT", "Assets/Shaders/defaultVertex.glsl", "Assets/Shaders/defaultFragment.glsl");	
-	AddShader ("DEFAULT", "Assets/Shaders/deferredVertex.glsl", "Assets/Shaders/deferredFragment.glsl", "Assets/Shaders/deferredGeometry.glsl");
-	AddShader ("DEFAULT_NORMAL_MAP", "Assets/Shaders/deferredNormalMapVertex.glsl", "Assets/Shaders/deferredNormalMapFragment.glsl", "Assets/Shaders/deferredNormalMapGeometry.glsl");
-	AddShader ("DEFAULT_ANIMATED", "Assets/Shaders/deferredVertexAnimation.glsl", "Assets/Shaders/deferredFragment.glsl", "Assets/Shaders/deferredGeometry.glsl");
+
 }
 
 ShaderManager::~ShaderManager ()

@@ -8,6 +8,8 @@
 class DirectionalShadowMapRenderPass : public RenderPassI
 {
 protected:
+	std::string _staticShaderName;
+	std::string _animationShaderName;
 	VoxelShadowMapVolume* _voxelShadowMapVolume;
 
 public:
@@ -15,13 +17,15 @@ public:
 	virtual ~DirectionalShadowMapRenderPass ();
 
 	void Init ();
-	RenderVolumeCollection* Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc);
+	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
 protected:
 	void StartShadowMapPass ();
-	void ShadowMapGeometryPass (Scene* scene, Camera* lightCamera);
+	void ShadowMapGeometryPass (const Scene* scene, Camera* lightCamera);
 	void EndShadowMapPass ();
 
-	Camera* GetLightCamera (Scene* scene, Camera* camera);
+	Camera* GetLightCamera (const Scene* scene, const Camera* camera);
+
+	void LockShader (int sceneLayers);
 };
 
 #endif

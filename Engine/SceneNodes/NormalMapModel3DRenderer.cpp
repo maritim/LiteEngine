@@ -22,8 +22,6 @@ NormalMapVertexData::NormalMapVertexData () : VertexData ()
 
 void NormalMapModel3DRenderer::Draw ()
 {
-	GL::DepthMask (GL_TRUE);
-
 	Pipeline::SetObjectTransform (_transform);
 
 	for (std::size_t i = 0; i<_drawableObjects.size (); i++) {
@@ -35,7 +33,7 @@ void NormalMapModel3DRenderer::Draw ()
 
 		GL::BlendFunc (mat->blending.first, mat->blending.second);
 
-		Pipeline::SendMaterial (mat, ShaderManager::Instance ()->GetShader ("DEFAULT_NORMAL_MAP"));
+		Pipeline::SendMaterial (mat);
 
 		//bind pe containerul de stare de geometrie (vertex array object)
 		GL::BindVertexArray (_drawableObjects [i].VAO_INDEX);

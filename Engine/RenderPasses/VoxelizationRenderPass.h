@@ -15,13 +15,13 @@ public:
 	~VoxelizationRenderPass ();
 
 	void Init ();
-	RenderVolumeCollection* Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc);
+	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
 protected:
 	void StartVoxelization ();
-	void GeometryVoxelizationPass (Scene* scene);
+	void GeometryVoxelizationPass (const Scene* scene);
 	void EndVoxelization ();
 
-	void UpdateVoxelVolumeBoundingBox (Scene*);
+	void UpdateVoxelVolumeBoundingBox (const Scene*);
 };
 
 #endif

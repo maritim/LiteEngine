@@ -15,7 +15,7 @@ void VoxelRadianceInjectionRenderPass::Init ()
 		"Assets/Shaders/Voxelize/voxelRadianceInjectionCompute.glsl");
 }
 
-RenderVolumeCollection* VoxelRadianceInjectionRenderPass::Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelRadianceInjectionRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	* Start radiance injecting pass

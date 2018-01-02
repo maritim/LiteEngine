@@ -9,7 +9,6 @@ public:
 	DirectionalLight ();
 
 	void SetShadowCasting (bool casting);
-	void SetRenderMode (LightRenderMode lightMode);
 
 	void Update ();
 

@@ -9,9 +9,9 @@ public:
 	virtual ~ForwardRenderPass ();
 
 	virtual void Init ();
-	virtual RenderVolumeCollection* Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc);
+	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
 protected:
-	void ForwardPass (Scene*);
+	void ForwardPass (const Scene*);
 };
 
 #endif

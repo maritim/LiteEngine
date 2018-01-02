@@ -6,7 +6,7 @@
 
 #include "Systems/Camera/Camera.h"
 
-class ReflectiveShadowMapVolume : public RenderVolumeI, public ReflectiveShadowMapDirectionalLightVolume
+class ReflectiveShadowMapVolume : public ReflectiveShadowMapDirectionalLightVolume
 {
 protected:
 	Camera* _camera;

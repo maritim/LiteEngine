@@ -17,7 +17,7 @@ void VoxelMipmapRenderPass::Init ()
 		"Assets/Shaders/Voxelize/voxelMipmapCompute.glsl");
 }
 
-RenderVolumeCollection* VoxelMipmapRenderPass::Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelMipmapRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	* Start mipmapping pass

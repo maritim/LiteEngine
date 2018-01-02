@@ -3,11 +3,16 @@
 
 #include "Renderer/RenderPassI.h"
 
+#include <string>
+
 #include "GBuffer.h"
 
 class DeferredGeometryRenderPass : public RenderPassI
 {
 protected:
+	std::string _shaderName;
+	std::string _normalMapShaderName;
+	std::string _animationShaderName;
 	GBuffer* _frameBuffer;
 
 public:
@@ -15,13 +20,15 @@ public:
 	virtual ~DeferredGeometryRenderPass ();
 
 	virtual void Init ();
-	virtual RenderVolumeCollection* Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc);
+	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
 protected:
-	void UpdateCamera (Camera* camera);
+	void UpdateCamera (const Camera* camera);
 	void UpdateGBuffer ();
 
 	void PrepareDrawing ();
-	void GeometryPass (Scene* scene, Camera* camera);
+	void GeometryPass (const Scene* scene, const Camera* camera);
+
+	void LockShader (int sceneLayers);
 };
 
 #endif

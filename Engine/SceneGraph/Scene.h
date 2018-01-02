@@ -44,8 +44,8 @@ public:
 	std::size_t GetObjectsCount () const;	
 	AABBVolume* GetBoundingBox () const;
 
-	SceneIterator begin ();
-	SceneIterator end ();
+	SceneIterator begin () const;
+	SceneIterator end () const;
 
 	void Update ();
 private:

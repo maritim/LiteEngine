@@ -32,11 +32,11 @@ public:
 	static void LockShader (Shader* shader);
 	static void UnlockShader ();
 
-	static void CreateProjection (Camera* camera);
+	static void CreateProjection (const Camera* camera);
 	static void CreateProjection (glm::mat4 projectionMatrix);
 
 	static void SetObjectTransform (Transform *transform);
-	static void SendCamera (Camera* camera);
+	static void SendCamera (const Camera* camera);
 
 	static void UpdateMatrices (Shader* shader);
 	static void SendLights (Shader* shader);

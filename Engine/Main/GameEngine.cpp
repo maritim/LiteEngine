@@ -7,6 +7,7 @@
 
 #include "Managers/ShaderManager.h"
 #include "Managers/SceneManager.h"
+#include "Renderer/RenderManager.h"
 
 #include "Arguments/ArgumentsAnalyzer.h"
 
@@ -42,6 +43,7 @@ void GameEngine::Init ()
 
 	Input::Init ();
 
+	InitRenderer ();
 	InitScene ();
 }
 
@@ -49,6 +51,7 @@ void GameEngine::Clear ()
 {
 	ShaderManager::Instance()->Clear();
 	SceneManager::Instance()->Clear();
+	RenderManager::Instance()->Clear();
 
 	Window::Close ();
 
@@ -87,6 +90,19 @@ void GameEngine::InitOpenGL ()
 	} else {
 		Console::LogError ("OpenGL 4.5 not supported");
 	}
+}
+
+void GameEngine::InitRenderer ()
+{
+	RenderManager::Instance ()->Init ();
+
+	Argument* arg = ArgumentsAnalyzer::Instance ()->GetArgument ("rendermode");
+
+	if (arg == nullptr) {
+		return;
+	}
+
+	RenderManager::Instance ()->SetRenderMode ((RenderMode) std::stoi (arg->GetArgs () [0]));
 }
 
 void GameEngine::InitScene ()

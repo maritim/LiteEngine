@@ -6,7 +6,7 @@
 
 #include "Systems/Camera/Camera.h"
 
-class VoxelShadowMapVolume : public RenderVolumeI, public ShadowMapDirectionalLightVolume
+class VoxelShadowMapVolume : public ShadowMapDirectionalLightVolume
 {
 protected:
 	Camera* _camera;

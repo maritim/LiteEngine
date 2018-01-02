@@ -18,13 +18,13 @@ class LightRenderer : public Model3DRenderer
 {
 protected:
 	Light* _light;
-	std::string _shaderName;
+	RenderVolumeCollection* _rvc;
 
 public:
 	LightRenderer (Light* light);
 	virtual ~LightRenderer ();
 
-	virtual void Draw (Scene*, Camera*, RenderVolumeCollection* rvc = nullptr);
+	virtual void Draw (const Scene*, const Camera*, RenderVolumeCollection* rvc = nullptr);
 protected:
 	virtual std::vector<PipelineAttribute> GetCustomAttributes ();
 };

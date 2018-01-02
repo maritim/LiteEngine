@@ -1,11 +1,11 @@
 #ifndef REFLECTIVESHADOWMAPSAMPLESGENERATIONPASS_H
 #define REFLECTIVESHADOWMAPSAMPLESGENERATIONPASS_H
 
-#include "Renderer/RenderPassI.h"
+#include "VolumetricLightContainerRenderSubPassI.h"
 
 #include "ReflectiveShadowMapSamplesVolume.h"
 
-class ReflectiveShadowMapSamplesGenerationPass : public RenderPassI
+class ReflectiveShadowMapSamplesGenerationPass : public VolumetricLightContainerRenderSubPassI
 {
 protected:
 	ReflectiveShadowMapSamplesVolume* _reflectiveShadowMapSamplesVolume;
@@ -14,7 +14,9 @@ public:
 	ReflectiveShadowMapSamplesGenerationPass ();
 
 	virtual void Init();
-	virtual RenderVolumeCollection* Execute(Scene* scene, Camera* camera, RenderVolumeCollection* rvc);
+	virtual RenderVolumeCollection* Execute(const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+
+	virtual bool IsAvailable (const VolumetricLight*) const;
 };
 
 #endif

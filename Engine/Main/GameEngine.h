@@ -8,6 +8,7 @@ public:
 	static void Clear ();
 private:
 	static void InitOpenGL ();
+	static void InitRenderer ();
 	static void InitScene ();
 };
 

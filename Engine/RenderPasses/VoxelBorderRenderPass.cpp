@@ -17,7 +17,7 @@ void VoxelBorderRenderPass::Init ()
 		"Assets/Shaders/Voxelize/voxelBorderCompute.glsl");
 }
 
-RenderVolumeCollection* VoxelBorderRenderPass::Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelBorderRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	* Start mipmapping pass

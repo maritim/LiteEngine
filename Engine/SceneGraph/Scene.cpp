@@ -146,12 +146,12 @@ void Scene::UpdateBoundingBox (SceneObject* sceneObject)
 	DEBUG_LOG ("Max vertex: " + glm::to_string (volume->maxVertex));
 }
 
-SceneIterator Scene::begin ()
+SceneIterator Scene::begin () const
 {
 	return SceneIterator (this, 0);
 }
 
-SceneIterator Scene::end ()
+SceneIterator Scene::end () const
 {
 	return SceneIterator (this, _sceneObjects.size ());
 }

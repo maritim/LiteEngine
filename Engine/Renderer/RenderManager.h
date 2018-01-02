@@ -45,10 +45,12 @@ private:
 	std::vector<RenderModule*> _renderModules;
 
 public:
+	void Init ();
+
 	void SetRenderMode (RenderMode);
 	RenderMode GetRenderMode () const;
 
-	void RenderScene (Scene* scene, Camera* camera);
+	void RenderScene (const Scene* scene, const Camera* camera);
 
 	void Clear ();
 private:

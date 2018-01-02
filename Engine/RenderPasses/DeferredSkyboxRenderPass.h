@@ -9,9 +9,9 @@ public:
 	virtual ~DeferredSkyboxRenderPass ();
 
 	virtual void Init ();
-	virtual RenderVolumeCollection* Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc);
+	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
 protected:
-	void SkyboxPass (Scene* scene, Camera* camera);
+	void SkyboxPass (const Scene* scene, const Camera* camera);
 };
 
 #endif

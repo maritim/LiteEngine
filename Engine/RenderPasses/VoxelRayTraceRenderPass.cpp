@@ -23,7 +23,7 @@ void VoxelRayTraceRenderPass::Init ()
 		"Assets/Shaders/Voxelize/voxelRayTraceGeometry.glsl");
 }
 
-RenderVolumeCollection* VoxelRayTraceRenderPass::Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelRayTraceRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	* Start Ray Trace Pass
@@ -49,7 +49,7 @@ void VoxelRayTraceRenderPass::StartRayTrace ()
 	Pipeline::SetShader (ShaderManager::Instance ()->GetShader ("VOXEL_RAY_TRACE_PASS_SHADER"));
 }
 
-void VoxelRayTraceRenderPass::VoxelRenderingRayTracePass (Camera* camera, RenderVolumeCollection* rvc)
+void VoxelRayTraceRenderPass::VoxelRenderingRayTracePass (const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Bind voxel volume for reading

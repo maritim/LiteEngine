@@ -17,7 +17,7 @@ protected:
 
 public:
 	RenderVolumeCollection* Insert (const std::string& name, RenderVolumeI* volume);
-	RenderVolumeI* GetRenderVolume (const std::string& name);
+	RenderVolumeI* GetRenderVolume (const std::string& name) const;
 
 	RenderVolumeCollectionIterator begin ();
 	RenderVolumeCollectionIterator end ();

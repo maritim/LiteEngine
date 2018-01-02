@@ -36,7 +36,6 @@ public:
 	void SetColor (const Color& color);
 	void SetSpecularColor (const Color& specularColor);
 	virtual void SetShadowCasting (bool castShadows);
-	virtual void SetRenderMode (LightRenderMode renderMode);
 
 	virtual void Update () = 0;
 };

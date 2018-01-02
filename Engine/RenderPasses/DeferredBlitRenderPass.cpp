@@ -16,7 +16,7 @@ void DeferredBlitRenderPass::Init ()
 
 }
 
-RenderVolumeCollection* DeferredBlitRenderPass::Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* DeferredBlitRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Get frame buffer from render volume collection

@@ -3,6 +3,8 @@
 
 #include "RenderPasses/MultipleRenderTargetsVolume.h"
 
+#define GBUFFER_FBO_NOT_INIT 300
+
 class GBuffer : public MultipleRenderTargetsVolume
 {
 public:
@@ -19,7 +21,8 @@ public:
 
     void BindForGeomPass();
     void BindForStencilPass();
-    void BindForLightPass();
+
+    std::vector<PipelineAttribute> GetCustomAttributes ();
 }; 
 
 #endif

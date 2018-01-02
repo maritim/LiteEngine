@@ -1,23 +1,14 @@
 #include "ReflectiveShadowMapDirectionalLightVolume.h"
 
-#include "Managers/ShaderManager.h"
 #include "Systems/Window/Window.h"
 #include "Renderer/Pipeline.h"
 #include "Core/Console/Console.h"
 
 ReflectiveShadowMapDirectionalLightVolume::ReflectiveShadowMapDirectionalLightVolume () :
-	_staticShaderName ("STATIC_REFLECTIVE_SHADOW_MAP"),
-	_animationShaderName ("ANIMATION_REFLECTIVE_SHADOW_MAP"),
 	_shadowMapBuffers (nullptr),
 	_shadowMapResolutions (nullptr)
 {
-	ShaderManager::Instance ()->AddShader (_staticShaderName,
-		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapVertex.glsl",
-		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapFragment.glsl");
 
-	ShaderManager::Instance ()->AddShader (_animationShaderName,
-		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapVertexAnimation.glsl",
-		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapFragment.glsl");
 }
 
 ReflectiveShadowMapDirectionalLightVolume::~ReflectiveShadowMapDirectionalLightVolume ()
@@ -126,29 +117,4 @@ void ReflectiveShadowMapDirectionalLightVolume::BindForReading ()
 	*/
 
 	_shadowMapBuffers [0]->BindForReading ();
-}
-
-void ReflectiveShadowMapDirectionalLightVolume::LockShader (int sceneLayers)
-{
-	/*
-	 * Unlock last shader
-	*/
-
-	Pipeline::UnlockShader ();
-
-	/*
-	 * Lock the shader for animations
-	*/
-
-	if (sceneLayers & SceneLayer::ANIMATION) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
-	}
-
-	/*
-	 * Lock general shader for not animated objects
-	*/
-
-	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
-	}
 }

@@ -14,7 +14,7 @@ void DeferredSkyboxRenderPass::Init ()
 
 }
 
-RenderVolumeCollection* DeferredSkyboxRenderPass::Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* DeferredSkyboxRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Render skybox
@@ -25,7 +25,7 @@ RenderVolumeCollection* DeferredSkyboxRenderPass::Execute (Scene* scene, Camera*
 	return rvc;
 }
 
-void DeferredSkyboxRenderPass::SkyboxPass (Scene* scene, Camera* camera)
+void DeferredSkyboxRenderPass::SkyboxPass (const Scene* scene, const Camera* camera)
 {
 	GL::Enable (GL_STENCIL_TEST);
 	GL::StencilFunc (GL_EQUAL, 0, 0xFF);

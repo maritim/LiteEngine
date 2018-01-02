@@ -14,7 +14,7 @@ class SceneIterator : public Object
 
 private:
 	std::size_t _currentPos;
-	Scene* _scene;
+	const Scene* _scene;
 
 public:
 	~SceneIterator ();
@@ -23,7 +23,7 @@ public:
 	bool operator != (const SceneIterator& other);
 	SceneObject* operator* ();
 private:
-	SceneIterator (Scene* scene, std::size_t startPos);
+	SceneIterator (const Scene* scene, std::size_t startPos);
 };
 
 #endif

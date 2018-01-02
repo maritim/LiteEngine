@@ -49,7 +49,7 @@ void Pipeline::UnlockShader ()
 	_lockedShader = nullptr;
 }
 
-void Pipeline::CreateProjection (Camera* camera)
+void Pipeline::CreateProjection (const Camera* camera)
 {
 	CreateProjection (camera->GetProjectionMatrix ());
 }
@@ -59,7 +59,7 @@ void Pipeline::CreateProjection (glm::mat4 projectionMatrix)
 	_projectionMatrix = projectionMatrix;
 }
 
-void Pipeline::SendCamera (Camera* camera)
+void Pipeline::SendCamera (const Camera* camera)
 {
 	_cameraPosition = camera->GetPosition ();
 	_viewMatrix = glm::mat4_cast (camera->GetRotation ());
@@ -304,10 +304,6 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 {
 	if (shader == nullptr) {
 		shader = ShaderManager::Instance ()->GetShader (mat->shaderName);
-	}
-
-	if (shader == nullptr) {
-		shader = ShaderManager::Instance ()->GetShader ("DEFAULT");
 	}
 
 	SetShader (shader);

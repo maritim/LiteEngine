@@ -8,19 +8,13 @@
 #include "Core/Console/Console.h"
 
 ShadowMapDirectionalLightVolume::ShadowMapDirectionalLightVolume () :
-	_staticShaderName ("STATIC_SHADOW_MAP"),
-	_animationShaderName ("ANIMATION_SHADOW_MAP"),
 	_shadowMapIndices (nullptr),
 	_shadowMapResolutions (nullptr),
-	_frameBufferIndex (0)
+	_frameBufferIndex (0),
+	_lightCameras (nullptr),
+	_shadowMapZEnd (nullptr)
 {
-	ShaderManager::Instance ()->AddShader (_staticShaderName,
-		"Assets/Shaders/ShadowMap/shadowMapVertex.glsl",
-		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
 
-	ShaderManager::Instance ()->AddShader (_animationShaderName,
-		"Assets/Shaders/ShadowMap/shadowMapVertexAnimation.glsl",
-		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
 }
 
 ShadowMapDirectionalLightVolume::~ShadowMapDirectionalLightVolume ()
@@ -60,6 +54,22 @@ ShadowMapDirectionalLightVolume::~ShadowMapDirectionalLightVolume ()
 	*/
 
 	delete [] _shadowMapResolutions;
+
+	/*
+	 * Delete light cameras
+	*/
+
+	for (std::size_t index = 0; index < _cascadedLevels; index++) {
+		delete _lightCameras [index];
+	}
+
+	delete[] _lightCameras;
+
+	/*
+	 * Delete depth limits
+	*/
+
+	delete[] _shadowMapZEnd;
 }
 
 bool ShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels)
@@ -76,6 +86,8 @@ bool ShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels)
 
 	_shadowMapIndices = new GLuint [_cascadedLevels];
 	_shadowMapResolutions = new std::pair<GLuint, GLuint> [_cascadedLevels];
+	_lightCameras = new Camera* [_cascadedLevels] { nullptr };
+	_shadowMapZEnd = new float [_cascadedLevels + 1];
 
 	/*
 	* Create Frame Buffer
@@ -205,27 +217,108 @@ void ShadowMapDirectionalLightVolume::BindForReading ()
 	}
 }
 
-void ShadowMapDirectionalLightVolume::LockShader (int sceneLayers)
+void ShadowMapDirectionalLightVolume::BindForWriting ()
 {
 	/*
-	 * Unlock last shader
+	 * Nothing to do
 	*/
+}
 
-	Pipeline::UnlockShader ();
+std::vector<PipelineAttribute> ShadowMapDirectionalLightVolume::GetCustomAttributes ()
+{
+	std::vector<PipelineAttribute> attributes;
 
+	for (std::size_t index = 0; index<_cascadedLevels; index++) {
+
+		PipelineAttribute shadowMap;
+		PipelineAttribute lightSpaceMatrix;
+		PipelineAttribute clipZLevel;
+
+		shadowMap.type = PipelineAttribute::AttrType::ATTR_1I;
+		lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
+		clipZLevel.type = PipelineAttribute::AttrType::ATTR_1F;
+
+		shadowMap.name = "shadowMaps[" + std::to_string (index) + "]";
+		lightSpaceMatrix.name = "lightSpaceMatrices[" + std::to_string (index) + "]";
+		clipZLevel.name = "clipZLevels[" + std::to_string (index) + "]";
+
+		shadowMap.value.x = 4.0f + index;
+
+		glm::mat4 lightProjection = _lightCameras [index]->GetProjectionMatrix ();
+		glm::mat4 lightView = glm::translate (glm::mat4_cast(_lightCameras [index]->GetRotation ()), _lightCameras [index]->GetPosition () * -1.0f);
+
+		lightSpaceMatrix.matrix = lightProjection * lightView;
+
+		clipZLevel.value.x = _shadowMapZEnd [index];
+
+		attributes.push_back (shadowMap);
+		attributes.push_back (lightSpaceMatrix);
+		attributes.push_back (clipZLevel);
+	}
+
+	return attributes;
+}
+
+void ShadowMapDirectionalLightVolume::SetLightCamera (std::size_t cascadedLevel, Camera* camera)
+{
 	/*
-	 * Lock the shader for animations
+	 * Check if cascaded level excedes the maximum level
 	*/
 
-	if (sceneLayers & SceneLayer::ANIMATION) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+	if (cascadedLevel >= _cascadedLevels) {
+		Console::LogWarning ("There is not level " + std::to_string (cascadedLevel) + " on directional shadow map");
+		return;
 	}
 
 	/*
-	 * Lock general shader for not animated objects
+	 * Configure light camera
 	*/
 
-	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+	_lightCameras [cascadedLevel] = camera;
+}
+
+void ShadowMapDirectionalLightVolume::SetCameraLimit (std::size_t cascadedLevel, float zLimit)
+{
+	/*
+	 * Check if cascaded level excedes the maximum level
+	*/
+
+	if (cascadedLevel >= _cascadedLevels) {
+		Console::LogWarning ("There is not level " + std::to_string (cascadedLevel) + " on directional shadow map");
+		return;
 	}
+
+	/*
+	 * Configure camera limit
+	*/
+
+	_shadowMapZEnd [cascadedLevel] = zLimit;
+}
+
+Camera* ShadowMapDirectionalLightVolume::GetLightCamera (std::size_t cascadedLevel)
+{
+	/*
+	 * Check if cascaded level excedes the maximum level
+	*/
+
+	if (cascadedLevel >= _cascadedLevels) {
+		Console::LogWarning ("There is not level " + std::to_string (cascadedLevel) + " on directional shadow map");
+		return nullptr;
+	}
+
+	return _lightCameras [cascadedLevel];
+}
+
+float ShadowMapDirectionalLightVolume::GetCameraLimit (std::size_t cascadedLevel)
+{
+	/*
+	 * Check if cascaded level excedes the maximum level
+	*/
+
+	if (cascadedLevel >= _cascadedLevels) {
+		Console::LogWarning ("There is not level " + std::to_string (cascadedLevel) + " on directional shadow map");
+		return 0.0f;
+	}
+
+	return _shadowMapZEnd [cascadedLevel];
 }

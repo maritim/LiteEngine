@@ -7,7 +7,7 @@ RenderVolumeCollection* RenderVolumeCollection::Insert (const std::string& name,
 	return this;
 }
 
-RenderVolumeI* RenderVolumeCollection::GetRenderVolume (const std::string& name)
+RenderVolumeI* RenderVolumeCollection::GetRenderVolume (const std::string& name) const
 {
 	auto it = _renderVolumes.find (name);
 

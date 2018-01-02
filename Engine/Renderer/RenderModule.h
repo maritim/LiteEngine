@@ -19,7 +19,7 @@ public:
 	virtual ~RenderModule ();
 
 	virtual void InitModule ();
-	virtual void RenderScene (Scene*, Camera*);
+	virtual void RenderScene (const Scene*, const Camera*);
 protected:
 	virtual void Init () = 0;
 };

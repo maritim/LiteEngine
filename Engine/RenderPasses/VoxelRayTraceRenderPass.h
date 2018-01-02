@@ -9,10 +9,10 @@ public:
 	virtual ~VoxelRayTraceRenderPass ();
 
 	virtual void Init ();
-	virtual RenderVolumeCollection* Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc);
+	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
 protected:
 	void StartRayTrace ();
-	void VoxelRenderingRayTracePass (Camera*, RenderVolumeCollection*);
+	void VoxelRenderingRayTracePass (const Camera*, RenderVolumeCollection*);
 };
 
 #endif

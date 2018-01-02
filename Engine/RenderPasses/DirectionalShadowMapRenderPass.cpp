@@ -5,6 +5,7 @@
 #include "Core/Math/glm/gtx/quaternion.hpp"
 #include "Core/Math/glm/gtc/quaternion.hpp"
 
+#include "Managers/ShaderManager.h"
 #include "Lighting/LightsManager.h"
 #include "Cameras/OrthographicCamera.h"
 
@@ -14,7 +15,11 @@
 
 #include "Core/Console/Console.h"
 
+#include "SceneNodes/SceneLayer.h"
+
 DirectionalShadowMapRenderPass::DirectionalShadowMapRenderPass () :
+	_staticShaderName ("STATIC_SHADOW_MAP"),
+	_animationShaderName ("ANIMATION_SHADOW_MAP"),
 	_voxelShadowMapVolume (new VoxelShadowMapVolume ())
 {
 
@@ -27,13 +32,33 @@ DirectionalShadowMapRenderPass::~DirectionalShadowMapRenderPass ()
 
 void DirectionalShadowMapRenderPass::Init ()
 {
+	/*
+	 * Shader for static objects
+	*/
+
+	ShaderManager::Instance ()->AddShader (_staticShaderName,
+		"Assets/Shaders/ShadowMap/shadowMapVertex.glsl",
+		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
+
+	/*
+	 * Shader for animated objects
+	*/
+
+	ShaderManager::Instance ()->AddShader (_animationShaderName,
+		"Assets/Shaders/ShadowMap/shadowMapVertexAnimation.glsl",
+		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
+
+	/*
+	 * Initialize shadow map volume
+	*/
+
 	if (!_voxelShadowMapVolume->Init (1)) {
 		Console::LogError ("Shadow map cannot be initialized! It is not possible to continue the process. End now!");
 		exit (SHADOW_MAP_FBO_NOT_INIT);
 	}
 }
 
-RenderVolumeCollection* DirectionalShadowMapRenderPass::Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* DirectionalShadowMapRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	* Start shadow map drawing process
@@ -72,7 +97,7 @@ void DirectionalShadowMapRenderPass::StartShadowMapPass ()
 	_voxelShadowMapVolume->BindForWriting ();
 }
 
-void DirectionalShadowMapRenderPass::ShadowMapGeometryPass (Scene* scene, Camera* lightCamera)
+void DirectionalShadowMapRenderPass::ShadowMapGeometryPass (const Scene* scene, Camera* lightCamera)
 {
 	/*
 	* Send light camera
@@ -86,6 +111,7 @@ void DirectionalShadowMapRenderPass::ShadowMapGeometryPass (Scene* scene, Camera
 	*/
 
 	GL::Enable (GL_DEPTH_TEST);
+	GL::DepthMask (GL_TRUE);
 
 	/*
 	* Doesn't really matter
@@ -133,7 +159,7 @@ void DirectionalShadowMapRenderPass::ShadowMapGeometryPass (Scene* scene, Camera
 		* Lock shader based on scene object layer
 		*/
 
-		_voxelShadowMapVolume->LockShader (sceneObject->GetLayers ());
+		LockShader (sceneObject->GetLayers ());
 
 		/*
 		* Render object on shadow map
@@ -148,7 +174,7 @@ void DirectionalShadowMapRenderPass::EndShadowMapPass ()
 	_voxelShadowMapVolume->EndDrawing ();
 }
 
-Camera* DirectionalShadowMapRenderPass::GetLightCamera (Scene* scene, Camera* viewCamera)
+Camera* DirectionalShadowMapRenderPass::GetLightCamera (const Scene* scene, const Camera* viewCamera)
 {
 	const float LIGHT_CAMERA_OFFSET = 50.0f;
 
@@ -215,3 +241,27 @@ Camera* DirectionalShadowMapRenderPass::GetLightCamera (Scene* scene, Camera* vi
 	return lightCamera;
 }
 
+void DirectionalShadowMapRenderPass::LockShader (int sceneLayers)
+{
+	/*
+	 * Unlock last shader
+	*/
+
+	Pipeline::UnlockShader ();
+
+	/*
+	 * Lock the shader for animations
+	*/
+
+	if (sceneLayers & SceneLayer::ANIMATION) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+	}
+
+	/*
+	 * Lock general shader for not animated objects
+	*/
+
+	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+	}
+}

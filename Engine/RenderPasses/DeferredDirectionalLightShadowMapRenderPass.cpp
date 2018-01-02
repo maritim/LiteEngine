@@ -1,35 +1,53 @@
-﻿#include "DirectionalLightShadowMapRenderer.h"
-
-#include <algorithm>
-#include <limits>
+#include "DeferredDirectionalLightShadowMapRenderPass.h"
 
 #include "Core/Math/glm/gtx/quaternion.hpp"
 #include "Core/Math/glm/gtc/matrix_transform.hpp"
 #include "Core/Math/glm/gtc/quaternion.hpp"
 
-#include "ShadowMapDirectionalLightVolume.h"
-
 #include "Managers/ShaderManager.h"
 
 #include "Core/Intersections/Intersection.h"
 
-#include "Wrappers/OpenGL/GL.h"
 #include "Renderer/Pipeline.h"
 
 #include "Core/Console/Console.h"
 
-DirectionalLightShadowMapRenderer::DirectionalLightShadowMapRenderer (Light* light) :
-	LightShadowMapRenderer (light),
-	_lightCameras (new OrthographicCamera* [CASCADED_SHADOW_MAP_LEVELS]),
-	_shadowMapZEnd (new float [CASCADED_SHADOW_MAP_LEVELS + 1])
+#include "SceneNodes/SceneLayer.h"
+
+DeferredDirectionalLightShadowMapRenderPass::DeferredDirectionalLightShadowMapRenderPass () :
+	_staticShaderName ("STATIC_SHADOW_MAP"),
+	_animationShaderName ("ANIMATION_SHADOW_MAP"),
+	_volume (new ShadowMapDirectionalLightVolume ())
 {
-	_shaderName = "SHADOW_MAP_DIRECTIONAL_LIGHT";
 
-	ShaderManager::Instance ()->AddShader (_shaderName,
-		"Assets/Shaders/ShadowMap/deferredDirVolShadowMapLightVertex.glsl",
-		"Assets/Shaders/ShadowMap/deferredDirVolShadowMapLightFragment.glsl");
+}
 
-	_volume = new ShadowMapDirectionalLightVolume ();
+DeferredDirectionalLightShadowMapRenderPass::~DeferredDirectionalLightShadowMapRenderPass ()
+{
+
+}
+
+void DeferredDirectionalLightShadowMapRenderPass::Init ()
+{
+	/*
+	 * Shader for animated objects
+	*/
+
+	ShaderManager::Instance ()->AddShader (_staticShaderName,
+		"Assets/Shaders/ShadowMap/shadowMapVertex.glsl",
+		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
+
+	/*
+	 * Shader for animated objects
+	*/
+
+	ShaderManager::Instance ()->AddShader (_animationShaderName,
+		"Assets/Shaders/ShadowMap/shadowMapVertexAnimation.glsl",
+		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
+
+	/*
+	 * Initialize shadow map volume
+	*/
 
 	if (!_volume->Init (CASCADED_SHADOW_MAP_LEVELS)) {
 		Console::LogError (std::string () + "Shadow map cannot be initialized!" +
@@ -37,49 +55,80 @@ DirectionalLightShadowMapRenderer::DirectionalLightShadowMapRenderer (Light* lig
 		exit (SHADOW_MAP_FBO_NOT_INIT);
 	}
 
-	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
-		_lightCameras [index] = new OrthographicCamera ();
+	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index ++) {
+		_volume->SetLightCamera (index, new OrthographicCamera ());
 	}
 }
 
-DirectionalLightShadowMapRenderer::~DirectionalLightShadowMapRenderer ()
+RenderVolumeCollection* DeferredDirectionalLightShadowMapRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
-	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
-		delete _lightCameras [index];
-	}
+	/*
+	 * Get volumetric light from render volume collection
+	*/
 
-	delete[] _lightCameras;
-	delete[] _shadowMapZEnd; 
+	VolumetricLight* volumetricLight = GetVolumetricLight (rvc);
+
+	/*
+	 * Draw shadow map
+	*/
+
+	ShadowMapPass (scene, camera, volumetricLight);
+
+	/*
+	 * End drawing
+	*/
+
+	EndShadowMapPass ();
+
+	return rvc->Insert ("ShadowMapDirectionalLightVolume", _volume);
 }
 
-void DirectionalLightShadowMapRenderer::ShadowMapRender (Scene* scene, Camera* camera)
+bool DeferredDirectionalLightShadowMapRenderPass::IsAvailable (const VolumetricLight* volumetricLight) const
+{
+	/*
+	 * Execute shadow map sub pass only if light is casting shadows
+	*/
+
+	return volumetricLight->IsCastingShadows ();
+}
+
+void DeferredDirectionalLightShadowMapRenderPass::ShadowMapPass (const Scene* scene, const Camera* camera, VolumetricLight* volumetricLight)
 {
 	UpdateCascadeLevelsLimits (camera);
-	UpdateLightCameras (camera);
+	UpdateLightCameras (camera, volumetricLight);
 
 	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
 		_volume->BindForShadowMapCatch (index);
 
-		OrthographicCamera* lightCamera = _lightCameras [index];
+		OrthographicCamera* lightCamera = (OrthographicCamera*) _volume->GetLightCamera (index);
 
 		SendLightCamera (lightCamera);
 		RenderScene (scene, lightCamera);
 	}
 }
 
-void DirectionalLightShadowMapRenderer::UpdateCascadeLevelsLimits (Camera* camera)
+void DeferredDirectionalLightShadowMapRenderPass::EndShadowMapPass ()
+{
+	/*
+	 * End shadow map pass
+	*/
+
+	_volume->EndDrawing ();	
+}
+
+void DeferredDirectionalLightShadowMapRenderPass::UpdateCascadeLevelsLimits (const Camera* camera)
 {
 	/*
 	 * TODO: Calculate this at run time
 	*/
 
-	_shadowMapZEnd [0] = 0.92f;
-	_shadowMapZEnd [1] = 0.98f;
-	_shadowMapZEnd [2] = 0.995f;
-	_shadowMapZEnd [3] = 1.0f;
+	_volume->SetCameraLimit (0, 0.92f);
+	_volume->SetCameraLimit (1, 0.98f);
+	_volume->SetCameraLimit (2, 0.995f);
+	_volume->SetCameraLimit (3, 1.0f);
 }
 
-void DirectionalLightShadowMapRenderer::SendLightCamera (Camera* lightCamera)
+void DeferredDirectionalLightShadowMapRenderPass::SendLightCamera (Camera* lightCamera)
 {
 	Pipeline::CreateProjection (lightCamera->GetProjectionMatrix ());
 	Pipeline::SendCamera (lightCamera);
@@ -100,11 +149,13 @@ void DirectionalLightShadowMapRenderer::SendLightCamera (Camera* lightCamera)
  *    orthographic projection matrix for the shadow map.
 */
 
-void DirectionalLightShadowMapRenderer::UpdateLightCameras (Camera* viewCamera)
+void DeferredDirectionalLightShadowMapRenderPass::UpdateLightCameras (const Camera* viewCamera, VolumetricLight* volumetricLight)
 {
 	const float LIGHT_CAMERA_OFFSET = 100.0f;
 
-	glm::vec3 lightDir = glm::normalize(_transform->GetPosition()) * -1.0f;
+	Transform* lightTransform = volumetricLight->GetTransform ();
+
+	glm::vec3 lightDir = glm::normalize(lightTransform->GetPosition()) * -1.0f;
 	glm::quat lightDirQuat = glm::toQuat(glm::lookAt(glm::vec3 (0), lightDir, glm::vec3(0, 1, 0)));
 	glm::mat4 lightView = glm::translate (glm::mat4_cast (lightDirQuat), glm::vec3 (0));
 
@@ -114,11 +165,13 @@ void DirectionalLightShadowMapRenderer::UpdateLightCameras (Camera* viewCamera)
 
 	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
 
+		OrthographicCamera* lightCamera = (OrthographicCamera*)_volume->GetLightCamera (index);
+
 		glm::vec3 cuboidExtendsMin = glm::vec3(std::numeric_limits<float>::max());
 		glm::vec3 cuboidExtendsMax = glm::vec3(-std::numeric_limits<float>::min());
 
-		float zStart = index == 0 ? - 1 : _shadowMapZEnd [index - 1];
-		float zEnd = _shadowMapZEnd [index];
+		float zStart = index == 0 ? - 1 : _volume->GetCameraLimit (index - 1);
+		float zEnd = _volume->GetCameraLimit (index);
 
 		for (int x = -1; x <= 1; x += 2) {
 			for (int y = -1; y <= 1; y += 2) {
@@ -141,9 +194,9 @@ void DirectionalLightShadowMapRenderer::UpdateLightCameras (Camera* viewCamera)
 			}
 		}
 
-		_lightCameras [index]->SetRotation(lightDirQuat);
+		lightCamera->SetRotation(lightDirQuat);
 
-		_lightCameras [index]->SetOrthographicInfo (
+		lightCamera->SetOrthographicInfo (
 			cuboidExtendsMin.x, cuboidExtendsMax.x,
 			cuboidExtendsMin.y, cuboidExtendsMax.y,
 			cuboidExtendsMin.z - LIGHT_CAMERA_OFFSET, cuboidExtendsMax.z + LIGHT_CAMERA_OFFSET
@@ -151,13 +204,14 @@ void DirectionalLightShadowMapRenderer::UpdateLightCameras (Camera* viewCamera)
 	}
 }
 
-void DirectionalLightShadowMapRenderer::RenderScene (Scene* scene, OrthographicCamera* lightCamera)
+void DeferredDirectionalLightShadowMapRenderPass::RenderScene (const Scene* scene, OrthographicCamera* lightCamera)
 {
 	/*
 	 * Shadow map is a depth test
 	*/
 
 	GL::Enable (GL_DEPTH_TEST);
+	GL::DepthMask (GL_TRUE);
 
 	/*
 	 * Doesn't really matter
@@ -205,7 +259,7 @@ void DirectionalLightShadowMapRenderer::RenderScene (Scene* scene, OrthographicC
 		 * Lock shader based on scene object layer
 		*/
 
-		_volume->LockShader (sceneObject->GetLayers ());
+		LockShader (sceneObject->GetLayers ());
 
 		/*
 		 * Render object on shadow map
@@ -215,37 +269,27 @@ void DirectionalLightShadowMapRenderer::RenderScene (Scene* scene, OrthographicC
 	}
 }
 
-std::vector<PipelineAttribute> DirectionalLightShadowMapRenderer::GetCustomAttributes ()
+void DeferredDirectionalLightShadowMapRenderPass::LockShader (int sceneLayers)
 {
-	std::vector<PipelineAttribute> attributes = LightShadowMapRenderer::GetCustomAttributes ();
+	/*
+	 * Unlock last shader
+	*/
 
-	for (std::size_t index = 0; index<CASCADED_SHADOW_MAP_LEVELS; index++) {
+	Pipeline::UnlockShader ();
 
-		PipelineAttribute shadowMap;
-		PipelineAttribute lightSpaceMatrix;
-		PipelineAttribute clipZLevel;
+	/*
+	 * Lock the shader for animations
+	*/
 
-		shadowMap.type = PipelineAttribute::AttrType::ATTR_1I;
-		lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
-		clipZLevel.type = PipelineAttribute::AttrType::ATTR_1F;
-
-		shadowMap.name = "shadowMaps[" + std::to_string (index) + "]";
-		lightSpaceMatrix.name = "lightSpaceMatrices[" + std::to_string (index) + "]";
-		clipZLevel.name = "clipZLevels[" + std::to_string (index) + "]";
-
-		shadowMap.value.x = 4.0f + index;
-
-		glm::mat4 lightProjection = _lightCameras [index]->GetProjectionMatrix ();
-		glm::mat4 lightView = glm::translate (glm::mat4_cast(_lightCameras [index]->GetRotation ()), _lightCameras [index]->GetPosition () * -1.0f);
-
-		lightSpaceMatrix.matrix = lightProjection * lightView;
-
-		clipZLevel.value.x = _shadowMapZEnd [index];
-
-		attributes.push_back (shadowMap);
-		attributes.push_back (lightSpaceMatrix);
-		attributes.push_back (clipZLevel);
+	if (sceneLayers & SceneLayer::ANIMATION) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
 	}
 
-	return attributes;
+	/*
+	 * Lock general shader for not animated objects
+	*/
+
+	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+	}
 }

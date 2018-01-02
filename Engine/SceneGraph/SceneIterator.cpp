@@ -1,9 +1,10 @@
 #include "SceneIterator.h"
 
-SceneIterator::SceneIterator (Scene* scene, std::size_t startPos)
+SceneIterator::SceneIterator (const Scene* scene, std::size_t startPos) :
+	_currentPos (startPos),
+	_scene (scene)
 {
-	_scene = scene;
-	_currentPos = startPos;
+
 }
 
 SceneIterator::~SceneIterator ()

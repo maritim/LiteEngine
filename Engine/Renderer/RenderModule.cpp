@@ -28,7 +28,7 @@ void RenderModule::InitModule ()
 	}
 }
 
-void RenderModule::RenderScene (Scene* scene, Camera* camera)
+void RenderModule::RenderScene (const Scene* scene, const Camera* camera)
 {
 	/*
 	 * Initialize a render volume collection

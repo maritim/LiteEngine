@@ -6,6 +6,7 @@
 #include "Core/Math/glm/gtc/quaternion.hpp"
 
 #include "Lighting/LightsManager.h"
+#include "Managers/ShaderManager.h"
 #include "Cameras/OrthographicCamera.h"
 
 #include "Renderer/Pipeline.h"
@@ -14,7 +15,11 @@
 
 #include "Core/Console/Console.h"
 
+#include "SceneNodes/SceneLayer.h"
+
 ReflectiveDirectionalShadowMapAccumulationPass::ReflectiveDirectionalShadowMapAccumulationPass () :
+	_staticShaderName ("STATIC_REFLECTIVE_SHADOW_MAP"),
+	_animationShaderName ("ANIMATION_REFLECTIVE_SHADOW_MAP"),
 	_reflectiveShadowMapVolume (new ReflectiveShadowMapVolume ())
 {
 
@@ -27,13 +32,34 @@ ReflectiveDirectionalShadowMapAccumulationPass::~ReflectiveDirectionalShadowMapA
 
 void ReflectiveDirectionalShadowMapAccumulationPass::Init ()
 {
+	/*
+	 * Shader for static objects
+	*/
+
+	ShaderManager::Instance ()->AddShader (_staticShaderName,
+		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapVertex.glsl",
+		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapFragment.glsl");
+
+	/*
+	 * Shader for animated objects
+	*/
+
+	ShaderManager::Instance ()->AddShader (_animationShaderName,
+		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapVertexAnimation.glsl",
+		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapFragment.glsl");
+
+	/*
+	 * Initialize reflective shadow map volume
+	*/
+
 	if (!_reflectiveShadowMapVolume->Init (1)) {
-		Console::LogError ("Reflective shadow map cannot be initialized! It is not possible to continue the process. End now!");
+		Console::LogError (std::string () + "Reflective shadow map cannot be initialized!" +
+			"It is not possible to continue the process. End now!");
 		exit (REFLECTIVE_SHADOW_MAP_FBO_NOT_INIT);
 	}
 }
 
-RenderVolumeCollection* ReflectiveDirectionalShadowMapAccumulationPass::Execute (Scene* scene, Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* ReflectiveDirectionalShadowMapAccumulationPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	* Start shadow map drawing process
@@ -63,6 +89,15 @@ RenderVolumeCollection* ReflectiveDirectionalShadowMapAccumulationPass::Execute 
 	return rvc->Insert ("ReflectiveShadowMapVolume", _reflectiveShadowMapVolume);
 }
 
+bool ReflectiveDirectionalShadowMapAccumulationPass::IsAvailable (const VolumetricLight* volumetricLight) const
+{
+	/*
+	 * Execute reflective shadow map accumulation sub pass only if light is casting shadows
+	*/
+
+	return volumetricLight->IsCastingShadows ();
+}
+
 void ReflectiveDirectionalShadowMapAccumulationPass::StartShadowMapPass ()
 {
 	/*
@@ -72,7 +107,7 @@ void ReflectiveDirectionalShadowMapAccumulationPass::StartShadowMapPass ()
 	_reflectiveShadowMapVolume->BindForWriting ();
 }
 
-void ReflectiveDirectionalShadowMapAccumulationPass::ShadowMapGeometryPass (Scene* scene, Camera* lightCamera)
+void ReflectiveDirectionalShadowMapAccumulationPass::ShadowMapGeometryPass (const Scene* scene, const Camera* lightCamera)
 {
 	/*
 	* Send light camera
@@ -92,6 +127,7 @@ void ReflectiveDirectionalShadowMapAccumulationPass::ShadowMapGeometryPass (Scen
 	*/
 
 	GL::Enable (GL_DEPTH_TEST);
+	GL::DepthMask (GL_TRUE);
 
 	/*
 	* Doesn't really matter
@@ -129,10 +165,10 @@ void ReflectiveDirectionalShadowMapAccumulationPass::ShadowMapGeometryPass (Scen
 		}
 
 		/*
-		* Lock shader based on scene object layer
+		* Lock shader based on scene object layers
 		*/
 
-		_reflectiveShadowMapVolume->LockShader (sceneObject->GetLayers ());
+		LockShader (sceneObject->GetLayers ());
 
 		/*
 		* Render object on shadow map
@@ -147,7 +183,7 @@ void ReflectiveDirectionalShadowMapAccumulationPass::EndShadowMapPass ()
 	_reflectiveShadowMapVolume->EndDrawing ();
 }
 
-Camera* ReflectiveDirectionalShadowMapAccumulationPass::GetLightCamera (Scene* scene, Camera* viewCamera)
+Camera* ReflectiveDirectionalShadowMapAccumulationPass::GetLightCamera (const Scene* scene, const Camera* viewCamera)
 {
 	const float LIGHT_CAMERA_OFFSET = 50.0f;
 
@@ -214,3 +250,27 @@ Camera* ReflectiveDirectionalShadowMapAccumulationPass::GetLightCamera (Scene* s
 	return lightCamera;
 }
 
+void ReflectiveDirectionalShadowMapAccumulationPass::LockShader (int sceneLayers)
+{
+	/*
+	 * Unlock last shader
+	*/
+
+	Pipeline::UnlockShader ();
+
+	/*
+	 * Lock the shader for animations
+	*/
+
+	if (sceneLayers & SceneLayer::ANIMATION) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+	}
+
+	/*
+	 * Lock general shader for not animated objects
+	*/
+
+	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+	}
+}

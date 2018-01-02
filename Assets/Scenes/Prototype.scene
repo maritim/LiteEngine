@@ -109,14 +109,9 @@
 		</Rigidbody>
 	</GameObject>
 
-	<Light InstanceID="41" name="DeferredSun" path="Assets/Lights/PrototypeSceneSun.light" isActive="false">
+	<Light InstanceID="41" name="Sun" path="Assets/Lights/PrototypeSceneSun.light" isActive="false">
 		<Transform>
 			<Position x="1" y="1" z="1" />
-		</Transform>
-	</Light>
-	<Light InstanceID="42" name="ConeTracingSun" path="Assets/Lights/VoxelConeTraceSun.light" isActive="false">
-		<Transform>
-			<Position x="0.5" y="1" z="1" />
 		</Transform>
 	</Light>
 	<Light InstanceID="40" name="ShadowsSun" path="Assets/Lights/ShadowsSun.light" isActive="true">
