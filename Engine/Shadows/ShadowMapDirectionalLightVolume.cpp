@@ -86,8 +86,16 @@ bool ShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels)
 
 	_shadowMapIndices = new GLuint [_cascadedLevels];
 	_shadowMapResolutions = new std::pair<GLuint, GLuint> [_cascadedLevels];
-	_lightCameras = new Camera* [_cascadedLevels] { nullptr };
+	_lightCameras = new Camera* [_cascadedLevels];
 	_shadowMapZEnd = new float [_cascadedLevels + 1];
+
+	/*
+	 * Initialize light cameras
+	*/
+
+	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
+		_lightCameras [index] = nullptr;
+	}
 
 	/*
 	* Create Frame Buffer
