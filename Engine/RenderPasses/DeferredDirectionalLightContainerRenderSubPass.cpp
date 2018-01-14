@@ -1,17 +1,17 @@
-#include "DeferredDirectionalVolumetricLightRenderPass.h"
+#include "DeferredDirectionalLightContainerRenderSubPass.h"
 
 #include "Managers/ShaderManager.h"
 
 #include "Renderer/Pipeline.h"
 
-DeferredDirectionalVolumetricLightRenderPass::DeferredDirectionalVolumetricLightRenderPass () :
+DeferredDirectionalLightContainerRenderSubPass::DeferredDirectionalLightContainerRenderSubPass () :
 	_shaderName ("DIRECTIONAL_LIGHT"),
 	_shadowShaderName ("SHADOW_MAP_DIRECTIONAL_LIGHT")
 {
 
 }
 
-void DeferredDirectionalVolumetricLightRenderPass::Init ()
+void DeferredDirectionalLightContainerRenderSubPass::Init ()
 {
 	/*
 	 * Shader for general directional light with no shadow casting
@@ -30,7 +30,7 @@ void DeferredDirectionalVolumetricLightRenderPass::Init ()
 		"Assets/Shaders/ShadowMap/deferredDirVolShadowMapLightFragment.glsl");
 }
 
-void DeferredDirectionalVolumetricLightRenderPass::LockShader (const VolumetricLight* volumetricLight)
+void DeferredDirectionalLightContainerRenderSubPass::LockShader (const VolumetricLight* volumetricLight)
 {
 	/*
 	 * Unlock last shader

@@ -1,12 +1,12 @@
-#ifndef DIRECTIONALVOLUMETRICLIGHTRENDERPASS_H
-#define DIRECTIONALVOLUMETRICLIGHTRENDERPASS_H
+#ifndef DIRECTIONALVOLUMETRICLIGHTRENDERCONTAINERSUBPASS_H
+#define DIRECTIONALVOLUMETRICLIGHTRENDERCONTAINERSUBPASS_H
 
-#include "VolumetricLightContainerRenderSubPassI.h"
+#include "RenderPasses/VolumetricLightContainerRenderSubPassI.h"
 
-class DirectionalVolumetricLightRenderPass : public VolumetricLightContainerRenderSubPassI
+class DirectionalVolumetricLightContainerRenderSubPass : public VolumetricLightContainerRenderSubPassI
 {
 public:
-	~DirectionalVolumetricLightRenderPass ();
+	~DirectionalVolumetricLightContainerRenderSubPass ();
 
 	RenderVolumeCollection* Execute (const Scene*, const Camera*, RenderVolumeCollection* );
 protected:

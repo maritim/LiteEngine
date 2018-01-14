@@ -85,7 +85,7 @@ RenderVolumeCollection* DirectionalShadowMapRenderPass::Execute (const Scene* sc
 
 	EndShadowMapPass ();
 
-	return rvc->Insert ("ShadowMapVolume", _voxelShadowMapVolume);
+	return rvc->Insert ("ShadowMapDirectionalLightVolume", _voxelShadowMapVolume);
 }
 
 void DirectionalShadowMapRenderPass::StartShadowMapPass ()
@@ -180,12 +180,12 @@ Camera* DirectionalShadowMapRenderPass::GetLightCamera (const Scene* scene, cons
 
 	Light* dirLight = nullptr;
 
-	for (std::size_t lightIndex = 0; lightIndex < LightsManager::Instance ()->GetDirectionalLightsCount (); lightIndex++) {
-		dirLight = LightsManager::Instance ()->GetDirectionalLight (lightIndex);
-
-		if (dirLight->IsActive ()) {
-			break;
+	for_each_type (DirectionalLight*, directionalLight, *LightsManager::Instance ()) {
+		if (!directionalLight->IsActive ()) {
+			continue;
 		}
+
+		dirLight = directionalLight;
 	}
 
 	if (dirLight == nullptr) {

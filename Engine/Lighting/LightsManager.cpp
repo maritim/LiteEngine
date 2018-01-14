@@ -1,11 +1,9 @@
 #include "LightsManager.h"
 
-#include <vector>
-#include <string>
 #include <algorithm>
 
 LightsManager::LightsManager () :
-	_ambientLight (glm::vec3 (1.0))
+	_ambientLight (Color::White)
 {
 
 }
@@ -15,12 +13,12 @@ LightsManager::~LightsManager ()
 
 }
 
-void LightsManager::SetAmbientColorLight (glm::vec3 color)
+void LightsManager::SetAmbientColorLight (Color color)
 {
 	_ambientLight = color;
 }
 
-glm::vec3 LightsManager::GetAmbientColorLight ()
+Color LightsManager::GetAmbientColorLight () const
 {
 	return _ambientLight;
 }
@@ -73,44 +71,17 @@ void LightsManager::RemoveSpotLight (SpotLight* light)
 	_spotLights.erase (it);
 }
 
-DirectionalLight* LightsManager::GetDirectionalLight (std::size_t index)
-{
-	if (index >= _directionalLights.size()) {
-		return nullptr;
-	}
-
-	return _directionalLights [index];
-}
-
-PointLight* LightsManager::GetPointLight (std::size_t index)
-{
-	if (index >= _pointLights.size ()) {
-		return nullptr;
-	}
-
-	return _pointLights [index];
-}
-
-SpotLight* LightsManager::GetSpotLight (std::size_t index)
-{
-	if (index >= _spotLights.size ()) {
-		return nullptr;
-	}
-
-	return _spotLights [index];
-}
-
-std::size_t LightsManager::GetDirectionalLightsCount ()
+std::size_t LightsManager::GetDirectionalLightsCount () const
 {
 	return _directionalLights.size ();
 }
 
-std::size_t LightsManager::GetPointLightsCount ()
+std::size_t LightsManager::GetPointLightsCount () const
 {
 	return _pointLights.size ();
 }
 
-std::size_t LightsManager::GetSpotLightsCount ()
+std::size_t LightsManager::GetSpotLightsCount () const
 {
 	return _spotLights.size ();
 }

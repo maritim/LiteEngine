@@ -2,7 +2,7 @@
 #define VOXELSHADOWMAPVOLUME_H
 
 #include "Renderer/RenderVolumeI.h"
-#include "Shadows/ShadowMapDirectionalLightVolume.h"
+#include "RenderPasses/ShadowMapDirectionalLightVolume.h"
 
 #include "Systems/Camera/Camera.h"
 

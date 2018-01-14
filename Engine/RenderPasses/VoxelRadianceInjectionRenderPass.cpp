@@ -45,11 +45,28 @@ void VoxelRadianceInjectionRenderPass::StartRadianceInjectionPass ()
 
 void VoxelRadianceInjectionRenderPass::RadianceInjectPass (RenderVolumeCollection* rvc)
 {
+
+	/*
+	 * Bind all render volumes
+	*/
+
+	// for (RenderVolumeI* renderVolume : *rvc) {
+	// 	renderVolume->BindForReading ();
+	// }
+
+	/*
+	 * Send custom attributes of render volumes to pipeline
+	*/
+
+	// for (RenderVolumeI* renderVolume : *rvc) {
+	// 	Pipeline::SendCustomAttributes ("", renderVolume->GetCustomAttributes ());
+	// }
+	
 	/*
 	 * Bind render volumes for reading
 	*/
 
-	rvc->GetRenderVolume ("ShadowMapVolume")->BindForReading ();
+	rvc->GetRenderVolume ("ShadowMapDirectionalLightVolume")->BindForReading ();
 
 	rvc->GetRenderVolume ("VoxelVolume")->BindForReading ();
 
@@ -58,7 +75,7 @@ void VoxelRadianceInjectionRenderPass::RadianceInjectPass (RenderVolumeCollectio
 	*/
 
 	Pipeline::SendCustomAttributes ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER",
-		rvc->GetRenderVolume ("ShadowMapVolume")->GetCustomAttributes ());
+		rvc->GetRenderVolume ("ShadowMapDirectionalLightVolume")->GetCustomAttributes ());
 
 	Pipeline::SendCustomAttributes ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER",
 		rvc->GetRenderVolume ("VoxelVolume")->GetCustomAttributes ());

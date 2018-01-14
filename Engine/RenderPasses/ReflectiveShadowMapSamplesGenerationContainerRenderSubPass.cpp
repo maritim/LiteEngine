@@ -1,14 +1,14 @@
-#include "ReflectiveShadowMapSamplesGenerationPass.h"
+#include "ReflectiveShadowMapSamplesGenerationContainerRenderSubPass.h"
 
 #include "Core/Console/Console.h"
 
-ReflectiveShadowMapSamplesGenerationPass::ReflectiveShadowMapSamplesGenerationPass ()
+ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::ReflectiveShadowMapSamplesGenerationContainerRenderSubPass ()
 	: _reflectiveShadowMapSamplesVolume (new ReflectiveShadowMapSamplesVolume ())
 {
 
 }
 
-void ReflectiveShadowMapSamplesGenerationPass::Init ()
+void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Init ()
 {
 	if (!_reflectiveShadowMapSamplesVolume->Init(50)) {
 		Console::LogError(std::string () + "Reflective shadow map samples cannot be initialized! " +
@@ -17,12 +17,12 @@ void ReflectiveShadowMapSamplesGenerationPass::Init ()
 	}
 }
 
-RenderVolumeCollection* ReflectiveShadowMapSamplesGenerationPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	return rvc->Insert ("ReflectiveShadowMapSamplesVolume", _reflectiveShadowMapSamplesVolume);
 }
 
-bool ReflectiveShadowMapSamplesGenerationPass::IsAvailable (const VolumetricLight* volumetricLight) const
+bool ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::IsAvailable (const VolumetricLight* volumetricLight) const
 {
 	/*
 	 * Always execute reflective shadow map accumulation sub pass

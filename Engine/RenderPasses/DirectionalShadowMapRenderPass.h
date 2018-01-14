@@ -3,7 +3,7 @@
 
 #include "Renderer/RenderPassI.h"
 
-#include "VoxelShadowMapVolume.h"
+#include "RenderPasses/VoxelShadowMapVolume.h"
 
 class DirectionalShadowMapRenderPass : public RenderPassI
 {

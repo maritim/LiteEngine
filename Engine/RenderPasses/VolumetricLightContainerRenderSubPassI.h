@@ -1,11 +1,11 @@
 #ifndef DEFERREDVOLUMETRICLIGHTRENDERPASS_H
 #define DEFERREDVOLUMETRICLIGHTRENDERPASS_H
 
-#include "RenderContainerSubPassI.h"
+#include "Container/ContainerRenderSubPassI.h"
 
 #include "Lighting/VolumetricLight.h"
 
-class VolumetricLightContainerRenderSubPassI : public RenderContainerSubPassI
+class VolumetricLightContainerRenderSubPassI : public ContainerRenderSubPassI
 {
 protected:
 	VolumetricLight* GetVolumetricLight (const RenderVolumeCollection* rvc) const;

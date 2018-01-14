@@ -18,7 +18,7 @@ void VoxelizationRenderModule::Init ()
 	_renderPasses.push_back (new DirectionalShadowMapRenderPass ());
 	_renderPasses.push_back (new VoxelRadianceInjectionRenderPass ());
 	_renderPasses.push_back (new VoxelMipmapRenderPass ());
-	_renderPasses.push_back (new VoxelBorderRenderPass ());
+	// _renderPasses.push_back (new VoxelBorderRenderPass ());
 	_renderPasses.push_back (new VoxelRayTraceRenderPass ());
 	_renderPasses.push_back (new ForwardRenderPass ());
 }

@@ -1,9 +1,9 @@
-#ifndef DEFERREDDIRECTIONLIGHTSHADOWMAPRENDERPASS_H
-#define DEFERREDDIRECTIONLIGHTSHADOWMAPRENDERPASS_H
+#ifndef DIRECTIONALLIGHTSHADOWMAPCONTAINERRENDERSUBPASS_H
+#define DIRECTIONALLIGHTSHADOWMAPCONTAINERRENDERSUBPASS_H
 
-#include "VolumetricLightContainerRenderSubPassI.h"
+#include "RenderPasses/VolumetricLightContainerRenderSubPassI.h"
 
-#include "Shadows/ShadowMapDirectionalLightVolume.h"
+#include "RenderPasses/ShadowMapDirectionalLightVolume.h"
 
 #include "Systems/Camera/Camera.h"
 #include "Cameras/OrthographicCamera.h"
@@ -12,7 +12,7 @@
 //TODO: Change this from here
 #define CASCADED_SHADOW_MAP_LEVELS 4
 
-class DeferredDirectionalLightShadowMapRenderPass : public VolumetricLightContainerRenderSubPassI
+class DirectionalLightShadowMapContainerRenderSubPass : public VolumetricLightContainerRenderSubPassI
 {
 protected:
 	std::string _staticShaderName;
@@ -20,8 +20,8 @@ protected:
 	ShadowMapDirectionalLightVolume* _volume;
 
 public:
-	DeferredDirectionalLightShadowMapRenderPass ();
-	~DeferredDirectionalLightShadowMapRenderPass ();
+	DirectionalLightShadowMapContainerRenderSubPass ();
+	~DirectionalLightShadowMapContainerRenderSubPass ();
 
 	virtual void Init ();
 	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);

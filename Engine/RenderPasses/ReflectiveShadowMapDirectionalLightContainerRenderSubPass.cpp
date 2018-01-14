@@ -1,16 +1,16 @@
-#include "ReflectiveShadowMapDirectionalVolumetricLightRenderPass.h"
+#include "ReflectiveShadowMapDirectionalLightContainerRenderSubPass.h"
 
 #include "Managers/ShaderManager.h"
 
 #include "Renderer/Pipeline.h"
 
-ReflectiveShadowMapDirectionalVolumetricLightRenderPass::ReflectiveShadowMapDirectionalVolumetricLightRenderPass () :
+ReflectiveShadowMapDirectionalLightContainerRenderSubPass::ReflectiveShadowMapDirectionalLightContainerRenderSubPass () :
 	_shadowShaderName ("REFLECTIVE_SHADOW_MAP_DIRECTIONAL_LIGHT")
 {
 
 }
 
-void ReflectiveShadowMapDirectionalVolumetricLightRenderPass::Init ()
+void ReflectiveShadowMapDirectionalLightContainerRenderSubPass::Init ()
 {
 	/*
 	 * Shader for directional light with shadow casting
@@ -21,7 +21,7 @@ void ReflectiveShadowMapDirectionalVolumetricLightRenderPass::Init ()
 		"Assets/Shaders/ReflectiveShadowMap/reflectiveDeferredDirVolShadowMapLightFragment.glsl");
 }
 
-void ReflectiveShadowMapDirectionalVolumetricLightRenderPass::LockShader (const VolumetricLight* volumetricLight)
+void ReflectiveShadowMapDirectionalLightContainerRenderSubPass::LockShader (const VolumetricLight* volumetricLight)
 {
 	/*
 	 * Unlock last shader

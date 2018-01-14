@@ -1,13 +1,13 @@
-#include "DirectionalVolumetricLightRenderPass.h"
+#include "DirectionalVolumetricLightContainerRenderSubPass.h"
 
 #include "Renderer/Pipeline.h"
 
-DirectionalVolumetricLightRenderPass::~DirectionalVolumetricLightRenderPass ()
+DirectionalVolumetricLightContainerRenderSubPass::~DirectionalVolumetricLightContainerRenderSubPass ()
 {
 
 }
 
-RenderVolumeCollection* DirectionalVolumetricLightRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* DirectionalVolumetricLightContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Bind all render volumes
@@ -32,7 +32,7 @@ RenderVolumeCollection* DirectionalVolumetricLightRenderPass::Execute (const Sce
 	return rvc;
 }
 
-bool DirectionalVolumetricLightRenderPass::IsAvailable (const VolumetricLight*) const
+bool DirectionalVolumetricLightContainerRenderSubPass::IsAvailable (const VolumetricLight*) const
 {
 	/*
 	 * Always execute directional volumetric light render sub pass
@@ -41,7 +41,7 @@ bool DirectionalVolumetricLightRenderPass::IsAvailable (const VolumetricLight*) 
 	return true;
 }
 
-void DirectionalVolumetricLightRenderPass::DirectionalLightPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+void DirectionalVolumetricLightContainerRenderSubPass::DirectionalLightPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Get volumetric light from render volume collection
@@ -75,7 +75,7 @@ void DirectionalVolumetricLightRenderPass::DirectionalLightPass (const Scene* sc
 	volumetricLight->GetLightRenderer ()->Draw (scene, camera, rvc);
 }
 
-void DirectionalVolumetricLightRenderPass::EndDirectionalLightPass ()
+void DirectionalVolumetricLightContainerRenderSubPass::EndDirectionalLightPass ()
 {
 	/*
 	 * Unlock current locked shader for further rendering

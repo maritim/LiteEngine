@@ -2,7 +2,7 @@
 
 #include "Pipeline.h"
 
-#include "RenderModules/DeferredRenderModule.h"
+#include "RenderModules/DirectLightingRenderModule.h"
 #include "RenderModules/VoxelizationRenderModule.h"
 #include "RenderModules/VoxelConeTraceRenderModule.h"
 #include "RenderModules/ReflectiveShadowMapRenderModule.h"
@@ -13,7 +13,7 @@
 
 RenderManager::RenderManager () :
 	_currentRenderModule (nullptr),
-	_currentRenderMode (RENDER_MODE_DEFERRED)
+	_currentRenderMode (RENDER_MODE_DIRECT_LIGHTING)
 {
 
 }
@@ -29,7 +29,7 @@ RenderManager::~RenderManager ()
 
 void RenderManager::Init ()
 {
-	_renderModules.push_back (new DeferredRenderModule ());
+	_renderModules.push_back (new DirectLightingRenderModule ());
 	_renderModules.push_back (new VoxelizationRenderModule ());
 	_renderModules.push_back (new VoxelConeTraceRenderModule ());
 	_renderModules.push_back (new ReflectiveShadowMapRenderModule ());

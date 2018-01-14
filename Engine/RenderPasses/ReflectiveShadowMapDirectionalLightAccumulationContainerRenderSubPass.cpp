@@ -1,4 +1,4 @@
-#include "ReflectiveDirectionalShadowMapAccumulationPass.h"
+#include "ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass.h"
 
 #include <algorithm>
 
@@ -17,7 +17,7 @@
 
 #include "SceneNodes/SceneLayer.h"
 
-ReflectiveDirectionalShadowMapAccumulationPass::ReflectiveDirectionalShadowMapAccumulationPass () :
+ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass () :
 	_staticShaderName ("STATIC_REFLECTIVE_SHADOW_MAP"),
 	_animationShaderName ("ANIMATION_REFLECTIVE_SHADOW_MAP"),
 	_reflectiveShadowMapVolume (new ReflectiveShadowMapVolume ())
@@ -25,12 +25,12 @@ ReflectiveDirectionalShadowMapAccumulationPass::ReflectiveDirectionalShadowMapAc
 
 }
 
-ReflectiveDirectionalShadowMapAccumulationPass::~ReflectiveDirectionalShadowMapAccumulationPass ()
+ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::~ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass ()
 {
 	delete _reflectiveShadowMapVolume;
 }
 
-void ReflectiveDirectionalShadowMapAccumulationPass::Init ()
+void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Init ()
 {
 	/*
 	 * Shader for static objects
@@ -59,7 +59,7 @@ void ReflectiveDirectionalShadowMapAccumulationPass::Init ()
 	}
 }
 
-RenderVolumeCollection* ReflectiveDirectionalShadowMapAccumulationPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	* Start shadow map drawing process
@@ -89,7 +89,7 @@ RenderVolumeCollection* ReflectiveDirectionalShadowMapAccumulationPass::Execute 
 	return rvc->Insert ("ReflectiveShadowMapVolume", _reflectiveShadowMapVolume);
 }
 
-bool ReflectiveDirectionalShadowMapAccumulationPass::IsAvailable (const VolumetricLight* volumetricLight) const
+bool ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::IsAvailable (const VolumetricLight* volumetricLight) const
 {
 	/*
 	 * Execute reflective shadow map accumulation sub pass only if light is casting shadows
@@ -98,7 +98,7 @@ bool ReflectiveDirectionalShadowMapAccumulationPass::IsAvailable (const Volumetr
 	return volumetricLight->IsCastingShadows ();
 }
 
-void ReflectiveDirectionalShadowMapAccumulationPass::StartShadowMapPass ()
+void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::StartShadowMapPass ()
 {
 	/*
 	* Bind shadow map volume for writing
@@ -107,7 +107,7 @@ void ReflectiveDirectionalShadowMapAccumulationPass::StartShadowMapPass ()
 	_reflectiveShadowMapVolume->BindForWriting ();
 }
 
-void ReflectiveDirectionalShadowMapAccumulationPass::ShadowMapGeometryPass (const Scene* scene, const Camera* lightCamera)
+void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::ShadowMapGeometryPass (const Scene* scene, const Camera* lightCamera)
 {
 	/*
 	* Send light camera
@@ -178,23 +178,23 @@ void ReflectiveDirectionalShadowMapAccumulationPass::ShadowMapGeometryPass (cons
 	}
 }
 
-void ReflectiveDirectionalShadowMapAccumulationPass::EndShadowMapPass ()
+void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::EndShadowMapPass ()
 {
 	_reflectiveShadowMapVolume->EndDrawing ();
 }
 
-Camera* ReflectiveDirectionalShadowMapAccumulationPass::GetLightCamera (const Scene* scene, const Camera* viewCamera)
+Camera* ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::GetLightCamera (const Scene* scene, const Camera* viewCamera)
 {
 	const float LIGHT_CAMERA_OFFSET = 50.0f;
 
 	Light* dirLight = nullptr;
 
-	for (std::size_t lightIndex = 0; lightIndex < LightsManager::Instance ()->GetDirectionalLightsCount (); lightIndex++) {
-		dirLight = LightsManager::Instance ()->GetDirectionalLight (lightIndex);
-
-		if (dirLight->IsActive ()) {
-			break;
+	for_each_type (DirectionalLight*, directionalLight, *LightsManager::Instance ()) {
+		if (!directionalLight->IsActive ()) {
+			continue;
 		}
+
+		dirLight = directionalLight;
 	}
 
 	if (dirLight == nullptr) {
@@ -250,7 +250,7 @@ Camera* ReflectiveDirectionalShadowMapAccumulationPass::GetLightCamera (const Sc
 	return lightCamera;
 }
 
-void ReflectiveDirectionalShadowMapAccumulationPass::LockShader (int sceneLayers)
+void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::LockShader (int sceneLayers)
 {
 	/*
 	 * Unlock last shader

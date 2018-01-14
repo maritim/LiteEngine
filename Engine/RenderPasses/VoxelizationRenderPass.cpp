@@ -10,6 +10,8 @@
 
 #include "Core/Console/Console.h"
 
+#include "SceneNodes/SceneLayer.h"
+
 /*
  * TODO: Move this to settings
 */
@@ -17,6 +19,8 @@
 #define VOLUME_DIMENSTIONS 512
 
 VoxelizationRenderPass::VoxelizationRenderPass () :
+	_staticShaderName ("VOXELIZATION_PASS_STATIC_SHADER"),
+	_animationShaderName ("VOXELIZATION_PASS_ANIMATION_SHADER"),
 	_voxelVolume (new VoxelVolume ())
 {
 
@@ -36,11 +40,20 @@ void VoxelizationRenderPass::Init ()
 	_voxelVolume->Init (VOLUME_DIMENSTIONS);
 
 	/*
-	* Voxelization shader init
+	 * Shader for static objects
 	*/
 
-	ShaderManager::Instance ()->AddShader ("VOXELIZATION_PASS_SHADER",
+	ShaderManager::Instance ()->AddShader (_staticShaderName,
 		"Assets/Shaders/Voxelize/voxelizeVertex.glsl",
+		"Assets/Shaders/Voxelize/voxelizeFragment.glsl",
+		"Assets/Shaders/Voxelize/voxelizeGeometry.glsl");
+
+	/*
+	 * Shader for animated objects
+	*/
+
+	ShaderManager::Instance ()->AddShader (_animationShaderName,
+		"Assets/Shaders/Voxelize/voxelizeAnimationVertex.glsl",
 		"Assets/Shaders/Voxelize/voxelizeFragment.glsl",
 		"Assets/Shaders/Voxelize/voxelizeGeometry.glsl");
 }
@@ -89,12 +102,6 @@ void VoxelizationRenderPass::StartVoxelization ()
 	GL::ColorMask (GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	GL::DepthMask (GL_FALSE);
 	GL::Viewport (0, 0, VOLUME_DIMENSTIONS, VOLUME_DIMENSTIONS);
-
-	/*
-	* Lock voxelization shader for geomtry rendering
-	*/
-
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader ("VOXELIZATION_PASS_SHADER"));
 }
 
 void VoxelizationRenderPass::GeometryVoxelizationPass (const Scene* scene)
@@ -112,13 +119,6 @@ void VoxelizationRenderPass::GeometryVoxelizationPass (const Scene* scene)
 	_voxelVolume->BindForWriting ();
 
 	/*
-	 * Send voxel volume attributes to pipeline
-	*/
-
-	Pipeline::SendCustomAttributes ("VOXELIZATION_PASS_SHADER", 
-		_voxelVolume->GetCustomAttributes ());
-
-	/*
 	* Render geometry
 	*/
 
@@ -126,6 +126,22 @@ void VoxelizationRenderPass::GeometryVoxelizationPass (const Scene* scene)
 		if (sceneObject->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
 			continue;
 		}
+
+		/*
+		 * Lock voxelization shader for geomtry rendering
+		*/
+
+		LockShader (sceneObject->GetLayers ());
+
+		/*
+		 * Send voxel volume attributes to pipeline
+		*/
+
+		Pipeline::SendCustomAttributes ("", _voxelVolume->GetCustomAttributes ());
+
+		/*
+		 * Voxelize object
+		*/
 
 		sceneObject->GetRenderer ()->Draw ();
 	}
@@ -150,6 +166,31 @@ void VoxelizationRenderPass::EndVoxelization ()
 	*/
 
 	Pipeline::UnlockShader ();
+}
+
+void VoxelizationRenderPass::LockShader (int sceneLayers)
+{
+	/*
+	 * Unlock last shader
+	*/
+
+	Pipeline::UnlockShader ();
+
+	/*
+	 * Lock the shader for animations
+	*/
+
+	if (sceneLayers & SceneLayer::ANIMATION) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+	}
+
+	/*
+	 * Lock general shader for not animated objects
+	*/
+
+	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+	}
 }
 
 void VoxelizationRenderPass::UpdateVoxelVolumeBoundingBox (const Scene* scene)

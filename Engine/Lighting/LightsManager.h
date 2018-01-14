@@ -5,12 +5,11 @@
 
 #include <vector>
 
-#include "Core/Math/glm/vec3.hpp"
-
-#include "Light.h"
 #include "DirectionalLight.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+
+#include "Utils/Color/Color.h"
 
 class LightsManager : public Singleton<LightsManager>
 {
@@ -21,27 +20,25 @@ private:
 	std::vector<PointLight*> _pointLights;
 	std::vector<SpotLight*> _spotLights;
 
-	glm::vec3 _ambientLight;
+	Color _ambientLight;
 	
 public:
-	void SetAmbientColorLight (glm::vec3 ambientLight);
-	glm::vec3 GetAmbientColorLight ();
+	void SetAmbientColorLight (Color ambientLight);
+	Color GetAmbientColorLight () const;
 
 	void AddDirectionalLight (DirectionalLight* light);
 	void AddPointLight (PointLight* light);
 	void AddSpotLight (SpotLight* light);
 
-	DirectionalLight* GetDirectionalLight (std::size_t index);
-	PointLight* GetPointLight (std::size_t index);
-	SpotLight* GetSpotLight (std::size_t index);
-
 	void RemoveDirectionalLight (DirectionalLight* light);
 	void RemovePointLight (PointLight* light);
 	void RemoveSpotLight (SpotLight* light);
 
-	std::size_t GetDirectionalLightsCount ();
-	std::size_t GetPointLightsCount ();
-	std::size_t GetSpotLightsCount ();
+	std::size_t GetDirectionalLightsCount () const;
+	std::size_t GetPointLightsCount () const;
+	std::size_t GetSpotLightsCount () const;
+
+	MULTIPLE_CONTAINER_TEMPLATE
 
 private:
 	LightsManager ();
@@ -49,5 +46,9 @@ private:
 	LightsManager (const LightsManager& other);
 	LightsManager& operator= (const LightsManager& other);
 };
+
+MULTIPLE_CONTAINER_SPECIALIZATION (DirectionalLight*, LightsManager, _directionalLights);
+MULTIPLE_CONTAINER_SPECIALIZATION (PointLight*, LightsManager, _pointLights);
+MULTIPLE_CONTAINER_SPECIALIZATION (SpotLight*, LightsManager, _spotLights);
 
 #endif

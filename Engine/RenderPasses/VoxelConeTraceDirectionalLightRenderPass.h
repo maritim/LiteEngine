@@ -1,12 +1,21 @@
-#ifndef VOXELCONETRACEDIRETIONALLIGHTRENDERPASS_H
-#define VOXELCONETRACEDIRETIONALLIGHTRENDERPASS_H
+#ifndef VOXELCONETRACEDIRECTIONALLIGHTRENDERPASS_H
+#define VOXELCONETRACEDIRECTIONALLIGHTRENDERPASS_H
 
-#include "DirectionalLightRenderPassI.h"
+#include "RenderPasses/DirectionalVolumetricLightContainerRenderSubPass.h"
 
-class VoxelConeTraceDirectionalLightRenderPass : public DirectionalLightRenderPassI
+#include <string>
+
+class VoxelConeTraceDirectionalLightRenderPass : public DirectionalVolumetricLightContainerRenderSubPass
 {
 protected:
-	void InitContainer ();
+	std::string _shadowShaderName;
+
+public:
+	VoxelConeTraceDirectionalLightRenderPass ();
+
+	void Init ();
+protected:
+	void LockShader (const VolumetricLight*);
 };
 
 #endif

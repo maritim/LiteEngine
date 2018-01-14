@@ -2,7 +2,7 @@
 #define RELECTIVESHADOWMAPVOLUME_H
 
 #include "Renderer/RenderVolumeI.h"
-#include "Shadows/ReflectiveShadowMapDirectionalLightVolume.h"
+#include "RenderPasses/ReflectiveShadowMapDirectionalLightVolume.h"
 
 #include "Systems/Camera/Camera.h"
 

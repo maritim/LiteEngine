@@ -1,9 +1,9 @@
-#ifndef RENDERCONTAINERSUBPASSI_H
-#define RENDERCONTAINERSUBPASSI_H
+#ifndef CONTAINERRENDERSUBPASS_H
+#define CONTAINERRENDERSUBPASS_H
 
 #include "Renderer/RenderPassI.h"
 
-class RenderContainerSubPassI : public RenderPassI
+class ContainerRenderSubPassI : public RenderPassI
 {
 public:
 	virtual bool IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const = 0;

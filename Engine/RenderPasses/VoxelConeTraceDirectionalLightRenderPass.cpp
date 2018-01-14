@@ -1,10 +1,37 @@
 #include "VoxelConeTraceDirectionalLightRenderPass.h"
 
-#include "DeferredDirectionalLightShadowMapRenderPass.h"
-#include "DeferredDirectionalVolumetricLightRenderPass.h"
+#include "Managers/ShaderManager.h"
 
-void VoxelConeTraceDirectionalLightRenderPass::InitContainer ()
+#include "Renderer/Pipeline.h"
+
+VoxelConeTraceDirectionalLightRenderPass::VoxelConeTraceDirectionalLightRenderPass () :
+	_shadowShaderName ("VOXEL_CONE_TRACE_SHADOW_MAP_DIRECTIONAL_LIGHT")
 {
-	_renderSubPasses.push_back (new DeferredDirectionalLightShadowMapRenderPass ());
-	_renderSubPasses.push_back (new DeferredDirectionalVolumetricLightRenderPass ());
+
+}
+
+void VoxelConeTraceDirectionalLightRenderPass::Init ()
+{
+	/*
+	 * Shader for general directional light with no shadow casting
+	*/
+
+	ShaderManager::Instance ()->AddShader (_shadowShaderName,
+		"Assets/Shaders/VoxelConeTrace/voxelConeTraceVertex.glsl",
+		"Assets/Shaders/VoxelConeTrace/voxelConeTraceFragment.glsl");
+}
+
+void VoxelConeTraceDirectionalLightRenderPass::LockShader (const VolumetricLight* volumetricLight)
+{
+	/*
+	 * Unlock last shader
+	*/
+
+	Pipeline::UnlockShader ();
+
+	/*
+	 * Lock shader for shadow directional light
+	*/
+
+	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shadowShaderName));
 }

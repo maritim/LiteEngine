@@ -3,11 +3,15 @@
 
 #include "Renderer/RenderPassI.h"
 
+#include <string>
+
 #include "VoxelVolume.h"
 
 class VoxelizationRenderPass : public RenderPassI
 {
 protected:
+	std::string _staticShaderName;
+	std::string _animationShaderName;
 	VoxelVolume* _voxelVolume;
 
 public:
@@ -20,6 +24,8 @@ protected:
 	void StartVoxelization ();
 	void GeometryVoxelizationPass (const Scene* scene);
 	void EndVoxelization ();
+
+	void LockShader (int sceneLayers);
 
 	void UpdateVoxelVolumeBoundingBox (const Scene*);
 };

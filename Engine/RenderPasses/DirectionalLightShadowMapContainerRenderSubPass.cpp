@@ -1,4 +1,4 @@
-#include "DeferredDirectionalLightShadowMapRenderPass.h"
+#include "DirectionalLightShadowMapContainerRenderSubPass.h"
 
 #include "Core/Math/glm/gtx/quaternion.hpp"
 #include "Core/Math/glm/gtc/matrix_transform.hpp"
@@ -14,7 +14,7 @@
 
 #include "SceneNodes/SceneLayer.h"
 
-DeferredDirectionalLightShadowMapRenderPass::DeferredDirectionalLightShadowMapRenderPass () :
+DirectionalLightShadowMapContainerRenderSubPass::DirectionalLightShadowMapContainerRenderSubPass () :
 	_staticShaderName ("STATIC_SHADOW_MAP"),
 	_animationShaderName ("ANIMATION_SHADOW_MAP"),
 	_volume (new ShadowMapDirectionalLightVolume ())
@@ -22,12 +22,12 @@ DeferredDirectionalLightShadowMapRenderPass::DeferredDirectionalLightShadowMapRe
 
 }
 
-DeferredDirectionalLightShadowMapRenderPass::~DeferredDirectionalLightShadowMapRenderPass ()
+DirectionalLightShadowMapContainerRenderSubPass::~DirectionalLightShadowMapContainerRenderSubPass ()
 {
 
 }
 
-void DeferredDirectionalLightShadowMapRenderPass::Init ()
+void DirectionalLightShadowMapContainerRenderSubPass::Init ()
 {
 	/*
 	 * Shader for animated objects
@@ -60,7 +60,7 @@ void DeferredDirectionalLightShadowMapRenderPass::Init ()
 	}
 }
 
-RenderVolumeCollection* DeferredDirectionalLightShadowMapRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* DirectionalLightShadowMapContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Get volumetric light from render volume collection
@@ -83,7 +83,7 @@ RenderVolumeCollection* DeferredDirectionalLightShadowMapRenderPass::Execute (co
 	return rvc->Insert ("ShadowMapDirectionalLightVolume", _volume);
 }
 
-bool DeferredDirectionalLightShadowMapRenderPass::IsAvailable (const VolumetricLight* volumetricLight) const
+bool DirectionalLightShadowMapContainerRenderSubPass::IsAvailable (const VolumetricLight* volumetricLight) const
 {
 	/*
 	 * Execute shadow map sub pass only if light is casting shadows
@@ -92,7 +92,7 @@ bool DeferredDirectionalLightShadowMapRenderPass::IsAvailable (const VolumetricL
 	return volumetricLight->IsCastingShadows ();
 }
 
-void DeferredDirectionalLightShadowMapRenderPass::ShadowMapPass (const Scene* scene, const Camera* camera, VolumetricLight* volumetricLight)
+void DirectionalLightShadowMapContainerRenderSubPass::ShadowMapPass (const Scene* scene, const Camera* camera, VolumetricLight* volumetricLight)
 {
 	UpdateCascadeLevelsLimits (camera);
 	UpdateLightCameras (camera, volumetricLight);
@@ -107,7 +107,7 @@ void DeferredDirectionalLightShadowMapRenderPass::ShadowMapPass (const Scene* sc
 	}
 }
 
-void DeferredDirectionalLightShadowMapRenderPass::EndShadowMapPass ()
+void DirectionalLightShadowMapContainerRenderSubPass::EndShadowMapPass ()
 {
 	/*
 	 * End shadow map pass
@@ -116,7 +116,7 @@ void DeferredDirectionalLightShadowMapRenderPass::EndShadowMapPass ()
 	_volume->EndDrawing ();	
 }
 
-void DeferredDirectionalLightShadowMapRenderPass::UpdateCascadeLevelsLimits (const Camera* camera)
+void DirectionalLightShadowMapContainerRenderSubPass::UpdateCascadeLevelsLimits (const Camera* camera)
 {
 	/*
 	 * TODO: Calculate this at run time
@@ -128,7 +128,7 @@ void DeferredDirectionalLightShadowMapRenderPass::UpdateCascadeLevelsLimits (con
 	_volume->SetCameraLimit (3, 1.0f);
 }
 
-void DeferredDirectionalLightShadowMapRenderPass::SendLightCamera (Camera* lightCamera)
+void DirectionalLightShadowMapContainerRenderSubPass::SendLightCamera (Camera* lightCamera)
 {
 	Pipeline::CreateProjection (lightCamera->GetProjectionMatrix ());
 	Pipeline::SendCamera (lightCamera);
@@ -149,7 +149,7 @@ void DeferredDirectionalLightShadowMapRenderPass::SendLightCamera (Camera* light
  *    orthographic projection matrix for the shadow map.
 */
 
-void DeferredDirectionalLightShadowMapRenderPass::UpdateLightCameras (const Camera* viewCamera, VolumetricLight* volumetricLight)
+void DirectionalLightShadowMapContainerRenderSubPass::UpdateLightCameras (const Camera* viewCamera, VolumetricLight* volumetricLight)
 {
 	const float LIGHT_CAMERA_OFFSET = 100.0f;
 
@@ -204,7 +204,7 @@ void DeferredDirectionalLightShadowMapRenderPass::UpdateLightCameras (const Came
 	}
 }
 
-void DeferredDirectionalLightShadowMapRenderPass::RenderScene (const Scene* scene, OrthographicCamera* lightCamera)
+void DirectionalLightShadowMapContainerRenderSubPass::RenderScene (const Scene* scene, OrthographicCamera* lightCamera)
 {
 	/*
 	 * Shadow map is a depth test
@@ -269,7 +269,7 @@ void DeferredDirectionalLightShadowMapRenderPass::RenderScene (const Scene* scen
 	}
 }
 
-void DeferredDirectionalLightShadowMapRenderPass::LockShader (int sceneLayers)
+void DirectionalLightShadowMapContainerRenderSubPass::LockShader (int sceneLayers)
 {
 	/*
 	 * Unlock last shader

@@ -1,13 +1,24 @@
-#include "RenderContainerPassI.h"
+#include "ContainerRenderPass.h"
 
-RenderContainerPassI::RenderContainerPassI () :
-	_renderSubPasses ()
+ContainerRenderPassBuilder* ContainerRenderPass::_builder (new ContainerRenderPassBuilder ());
+
+ContainerRenderPass::ContainerRenderPass (
+	const std::vector<ContainerRenderSubPassI*>& renderSubPasses,
+	ContainerRenderVolumeCollectionI* renderVolumeCollection) :
+	_renderSubPasses (renderSubPasses),
+	_renderVolumeCollection (renderVolumeCollection)
 {
 
 }
 
-RenderContainerPassI::~RenderContainerPassI ()
+ContainerRenderPass::~ContainerRenderPass ()
 {
+	/*
+	 * Free memory of container volume
+	*/
+
+	delete _renderVolumeCollection;
+
 	/*
 	 * Free memory of all sub passes
 	*/
@@ -17,14 +28,8 @@ RenderContainerPassI::~RenderContainerPassI ()
 	}
 }
 
-void RenderContainerPassI::Init ()
+void ContainerRenderPass::Init ()
 {
-	/*
-	 * Container will be initialized by specialization
-	*/
-
-	InitContainer ();
-
 	/*
 	 * Iterate over every sub pass and initialize it
 	*/
@@ -34,16 +39,22 @@ void RenderContainerPassI::Init ()
 	}
 }
 
-RenderVolumeCollection* RenderContainerPassI::Execute (const Scene* scene, 
+RenderVolumeCollection* ContainerRenderPass::Execute (const Scene* scene, 
 	const Camera* camera, RenderVolumeCollection* rvc)
 {
 	RenderVolumeI* volume = nullptr;
 
 	/*
+	 * Reset render container volume
+	*/
+
+	_renderVolumeCollection->Reset ();
+
+	/*
 	 * Iterate every render volume provided by specialization
 	*/
 
-	while ((volume = NextVolume ()) != nullptr) {
+	while ((volume = _renderVolumeCollection->GetNextVolume ()) != nullptr) {
 
 		/*
 		 * Execute all sub passes using provided volume
@@ -55,13 +66,18 @@ RenderVolumeCollection* RenderContainerPassI::Execute (const Scene* scene,
 	return rvc;
 }
 
-RenderVolumeCollection* RenderContainerPassI::IterateOverSubPasses (
+ContainerRenderPassBuilder& ContainerRenderPass::Builder ()
+{
+	return *_builder;
+}
+
+RenderVolumeCollection* ContainerRenderPass::IterateOverSubPasses (
 	RenderVolumeI* volume, const Scene* scene, const Camera* camera,
 	RenderVolumeCollection* rvc)
 {
 	/*
 	 * Insert volume in render volume collection
-	 * In this way it could be obtain at execution step
+	 * In this way it could be obtained at pass execution
 	*/
 
 	rvc->Insert ("SubpassVolume", volume);

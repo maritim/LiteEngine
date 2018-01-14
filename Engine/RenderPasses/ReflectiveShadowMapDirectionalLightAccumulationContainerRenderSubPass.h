@@ -1,13 +1,13 @@
-#ifndef REFLECTIVEDIRECTIONALSHADOWMAPACCUMULATIONPASS_H
-#define REFLECTIVEDIRECTIONALSHADOWMAPACCUMULATIONPASS_H
+#ifndef REFLECTIVESHADOWMAPDIRECTIONALLIGHTACCUMULATIONCONTAINERRENDERSUBPASS_H
+#define REFLECTIVESHADOWMAPDIRECTIONALLIGHTACCUMULATIONCONTAINERRENDERSUBPASS_H
 
-#include "VolumetricLightContainerRenderSubPassI.h"
+#include "RenderPasses/VolumetricLightContainerRenderSubPassI.h"
 
 #include <string>
 
 #include "ReflectiveShadowMapVolume.h"
 
-class ReflectiveDirectionalShadowMapAccumulationPass : public VolumetricLightContainerRenderSubPassI
+class ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass : public VolumetricLightContainerRenderSubPassI
 {
 protected:
 	std::string _staticShaderName;
@@ -15,8 +15,8 @@ protected:
 	ReflectiveShadowMapVolume* _reflectiveShadowMapVolume;
 
 public:
-	ReflectiveDirectionalShadowMapAccumulationPass ();
-	virtual ~ReflectiveDirectionalShadowMapAccumulationPass ();
+	ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass ();
+	virtual ~ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass ();
 
 	void Init ();
 	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);

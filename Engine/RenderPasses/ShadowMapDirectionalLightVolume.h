@@ -1,7 +1,7 @@
 #ifndef SHADOWMAPDIRECTIONALLIGHTVOLUME_H
 #define SHADOWMAPDIRECTIONALLIGHTVOLUME_H
 
-#include "ShadowMapVolume.h"
+#include "RenderPasses/ShadowMapVolume.h"
 
 #include "Systems/Camera/Camera.h"
 
