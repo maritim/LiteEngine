@@ -265,12 +265,8 @@ void ParticleSystemLoader::ProcessMeshMaterial (TiXmlElement* xmlElem, Model* me
 
 	MaterialManager::Instance ().AddMaterial (mat);
 
-	for (std::size_t i=0;i<mesh->ObjectsCount ();i++) {
-		ObjectModel* objModel = mesh->GetObject (i);
-
-		for (std::size_t j=0;j<objModel->GetPolygonCount ();j++) {
-			PolygonGroup* polyGroup = objModel->GetPolygonGroup (j);
-
+	for_each_type (ObjectModel*, objModel, *mesh) {
+		for (PolygonGroup* polyGroup : *objModel) {
 			polyGroup->SetMaterialName (mat->name);
 		}
 	}

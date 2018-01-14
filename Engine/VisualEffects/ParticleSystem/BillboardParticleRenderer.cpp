@@ -85,12 +85,8 @@ std::vector<PipelineAttribute> BillboardParticleRenderer::GetUniformAttributes (
 
 void BillboardParticleRenderer::Attach (Model* model)
 {
-	for (std::size_t i=0;i<model->ObjectsCount ();i++) {
-		ObjectModel* objModel = model->GetObject (i);
-
-		for (std::size_t j=0;j<objModel->GetPolygonCount ();j++) {
-			PolygonGroup* polyGroup = objModel->GetPolygonGroup (j);
-
+	for_each_type (ObjectModel*, objModel, *model) {
+		for (PolygonGroup* polyGroup : *objModel) {
 			_matName = polyGroup->GetMaterialName ();
 		}
 	}

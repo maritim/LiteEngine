@@ -1,31 +1,34 @@
 #ifndef OBJECTMODEL_H
 #define OBJECTMODEL_H
 
+#include "Core/Interfaces/Object.h"
+
 #include <string>
 #include <vector>
 
 #include "PolygonGroup.h"
 
-class ObjectModel
+class ObjectModel : public Object
 {
 private:
 	std::string _name;
 	std::vector<PolygonGroup*> _polygonGroups;
+
 public:
-	ObjectModel(std::string name);
+	ObjectModel (const std::string& name);
 	ObjectModel (const ObjectModel& other);
-	~ObjectModel();
+	~ObjectModel ();
 
-	void AddPolygonGroup(PolygonGroup* polygonGroup);
+	void AddPolygonGroup (PolygonGroup* polygonGroup);
 
-	PolygonGroup* GetPolygonGroup(std::size_t index) const;
-	std::size_t GetPolygonCount() const;
-
-	std::string GetName() const;
+	std::string GetName () const;
 	
-	void SetName(std::string name);
+	void SetName (const std::string& name);
 
-	void Clear();
+	std::vector<PolygonGroup*>::iterator begin ();
+	std::vector<PolygonGroup*>::iterator end ();
+
+	void Clear ();
 };
 
 #endif

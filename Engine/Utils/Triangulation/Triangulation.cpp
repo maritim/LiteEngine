@@ -4,14 +4,10 @@
 
 void Triangulation::ConvexTriangulation (Model* model) 
 {
-	for (std::size_t i=0;i<model->ObjectsCount ();i++) {
-		ObjectModel* objModel = model->GetObject (i);
-
+	for_each_type (ObjectModel*, objModel, *model) {
 		std::vector<PolygonGroup*> polyGroups;
 
-		for (std::size_t j=0;j<objModel->GetPolygonCount ();j++) {
-			PolygonGroup* polyGroup = objModel->GetPolygonGroup (j);
-
+		for (PolygonGroup* polyGroup : *objModel) {
 			PolygonGroup* newPolyGroup = ConvexTriangulation (polyGroup);
 
 			polyGroups.push_back (newPolyGroup);
@@ -19,8 +15,8 @@ void Triangulation::ConvexTriangulation (Model* model)
 
 		objModel->Clear ();
 
-		for (std::size_t j=0;j<polyGroups.size ();j++) {
-			objModel->AddPolygonGroup (polyGroups [j]);
+		for (PolygonGroup* polyGroup : polyGroups) {
+			objModel->AddPolygonGroup (polyGroup);
 		}
 	}
 }
@@ -59,13 +55,11 @@ PolygonGroup* Triangulation::ConvexTriangulation (PolygonGroup* polyGroup)
 	PolygonGroup* resultPolyGroup = new PolygonGroup (polyGroup->GetName ());
 	resultPolyGroup->SetMaterialName (polyGroup->GetMaterialName ());
 
-	for (std::size_t i=0;i<polyGroup->GetPolygonCount ();i++) {
-		Polygon* poly = polyGroup->GetPolygon (i);
+	for (Polygon* poly : *polyGroup) {
+		std::vector<Polygon*> newPolygons = ConvexTriangulation (poly);
 
-		std::vector<Polygon*> newPoly = ConvexTriangulation (poly);
-
-		for (std::size_t j=0;j<newPoly.size ();j++) {
-			resultPolyGroup->AddPolygon (newPoly [j]);
+		for (Polygon* newPoly : newPolygons) {
+			resultPolyGroup->AddPolygon (newPoly);
 		}
 	}
 

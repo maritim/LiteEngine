@@ -13,21 +13,21 @@ private:
 	std::string _matName;
 	std::vector<Polygon*> _polygons;
 public:
-	PolygonGroup(std::string name);
+	PolygonGroup (std::string name);
 	PolygonGroup (const PolygonGroup& other);
-	~PolygonGroup();
+	~PolygonGroup ();
 
-	std::string GetName() const;
-	std::string GetMaterialName() const;
+	std::string GetName () const;
+	std::string GetMaterialName () const;
 
-	void SetName(std::string name);
-	void SetMaterialName(std::string matName);
+	void SetName (const std::string& name);
+	void SetMaterialName (const std::string& matName);
 
-	Polygon* GetPolygon(std::size_t index) const;
-	std::size_t GetPolygonCount() const;
+	std::vector<Polygon*>::iterator begin ();
+	std::vector<Polygon*>::iterator end ();
 
-	void AddPolygon(Polygon* polygon);
-	void Clear();
+	void AddPolygon (Polygon* polygon);
+	void Clear ();
 };
 
 #endif

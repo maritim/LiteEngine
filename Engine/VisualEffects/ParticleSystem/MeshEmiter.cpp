@@ -23,9 +23,7 @@
 MeshEmiter::MeshEmiter (Model* mesh) :
 	_mesh (mesh)
 {
-	for (std::size_t i=0;i<mesh->ObjectsCount ();i++) {
-		ObjectModel* objModel = mesh->GetObject (i);
-
+	for_each_type (ObjectModel*, objModel, *mesh) {
 		ProcessObjectModel (mesh, objModel);
 	}
 }
@@ -55,18 +53,14 @@ glm::vec3 MeshEmiter::GetParticlePosition ()
 
 void MeshEmiter::ProcessObjectModel (Model* mesh, ObjectModel* objModel)
 {
-	for (std::size_t i=0;i<objModel->GetPolygonCount ();i++) {
-		PolygonGroup* polyGroup = objModel->GetPolygonGroup (i);
-
+	for (PolygonGroup* polyGroup : *objModel) {
 		ProcessPolygonGroup (mesh, polyGroup);
 	}
 }
 
 void MeshEmiter::ProcessPolygonGroup (Model* mesh, PolygonGroup* polyGroup)
 {
-	for (std::size_t i=0;i<polyGroup->GetPolygonCount ();i++) {
-		Polygon* polygon = polyGroup->GetPolygon (i);
-
+	for (Polygon* polygon : *polyGroup) {
 		MeshSample sample;
 		sample.a = mesh->GetVertex (polygon->GetVertex (0));
 		sample.b = mesh->GetVertex (polygon->GetVertex (1));

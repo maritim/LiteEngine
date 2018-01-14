@@ -49,9 +49,9 @@ BufferObject NormalMapModel3DRenderer::ProcessPolygonGroup (Model* model, Polygo
 	std::vector<NormalMapVertexData> vertexBuffer;
 	std::vector<unsigned int> indexBuffer;
 
-	for (std::size_t i = 0; i<polyGroup->GetPolygonCount (); i++) {
-		Polygon* polygon = polyGroup->GetPolygon (i);
+	std::size_t polygonIndex = 0;
 
+	for (Polygon* polygon : *polyGroup) {
 		for (std::size_t j = 0; j<polygon->VertexCount (); j++) {
 			NormalMapVertexData vertexData;
 
@@ -89,9 +89,11 @@ BufferObject NormalMapModel3DRenderer::ProcessPolygonGroup (Model* model, Polygo
 			vertexBuffer.push_back (vertexData);
 		}
 
-		indexBuffer.push_back (3 * (unsigned int) i);
-		indexBuffer.push_back (3 * (unsigned int) i + 1);
-		indexBuffer.push_back (3 * (unsigned int) i + 2);
+		indexBuffer.push_back (3 * (unsigned int) polygonIndex);
+		indexBuffer.push_back (3 * (unsigned int) polygonIndex + 1);
+		indexBuffer.push_back (3 * (unsigned int) polygonIndex + 2);
+
+		++ polygonIndex;
 	}
 
 	BufferObject bufObj = BindVertexData (vertexBuffer, indexBuffer);

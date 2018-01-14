@@ -1,11 +1,8 @@
 #include "PolygonGroup.h"
 
-#include <string>
-#include <vector>
-
 PolygonGroup::PolygonGroup(std::string name) :
 	_name (name),
-	_matName ()	// Maybe change here with global default material
+	_matName ()
 {
 
 }
@@ -24,49 +21,46 @@ void PolygonGroup::AddPolygon (Polygon* polygon)
 	_polygons.push_back (polygon);
 }
 
-std::string PolygonGroup::GetName() const
+std::string PolygonGroup::GetName () const
 {
 	return _name;
 }
 
-void PolygonGroup::SetName(std::string name)
-{
-	_name = name;
-}
-
-std::string PolygonGroup::GetMaterialName() const
+std::string PolygonGroup::GetMaterialName () const
 {
 	return _matName;
 }
 
-void PolygonGroup::SetMaterialName(std::string materialName)
+void PolygonGroup::SetName (const std::string& name)
+{
+	_name = name;
+}
+
+void PolygonGroup::SetMaterialName (const std::string& materialName)
 {
 	_matName = materialName;
 }
 
-Polygon* PolygonGroup::GetPolygon(std::size_t index) const
+std::vector<Polygon*>::iterator PolygonGroup::begin ()
 {
-	if (index >= _polygons.size()) {
-		return NULL;
-	}
-	return _polygons [index];
+	return _polygons.begin ();
 }
 
-std::size_t PolygonGroup::GetPolygonCount() const
+std::vector<Polygon*>::iterator PolygonGroup::end ()
 {
-	return _polygons.size();
+	return _polygons.end ();
 }
 
 void PolygonGroup::Clear ()
 {
-	for (std::size_t i=0;i<_polygons.size();i++) {
-		delete _polygons[i];
+	for (std::size_t i=0;i<_polygons.size ();i++) {
+		delete _polygons [i];
 	}
 	_polygons.clear ();
 	_polygons.shrink_to_fit ();
 }
 
-PolygonGroup::~PolygonGroup()
+PolygonGroup::~PolygonGroup ()
 {
 	Clear ();
 }

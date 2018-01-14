@@ -262,32 +262,26 @@ void WavefrontObjectLoader::ReadFace(std::ifstream& file, Model* model, PolygonG
 // -2 = position before and go on), This will normalize the positions
 void WavefrontObjectLoader::IndexNormalization (Model* model)
 {
-	for (std::size_t i=0;i<model->ObjectsCount ();i++) {
-		ObjectModel* object = model->GetObject (i);
-
-		for (std::size_t j=0;j<object->GetPolygonCount ();j++) {
-			PolygonGroup* polyGroup = object->GetPolygonGroup (j);
-
-			for (std::size_t k=0;k<polyGroup->GetPolygonCount ();k++) {
-				Polygon* poly = polyGroup->GetPolygon (k);
-
-				for (std::size_t l=0;l<poly->VertexCount ();l++) {
-					int verPos = poly->GetVertex (l);
+	for_each_type (ObjectModel*, objModel, *model) {
+		for (PolygonGroup* polyGroup : *objModel) {
+			for (Polygon* polygon : *polyGroup) {
+				for (std::size_t l=0;l<polygon->VertexCount ();l++) {
+					int verPos = polygon->GetVertex (l);
 					if (verPos < 0) {
-						poly->SetVertex ((int) model->VertexCount () + verPos + 1, l);
+						polygon->SetVertex ((int) model->VertexCount () + verPos + 1, l);
 					}
 
-					if (poly->HaveNormals ()) {
-						int norPos = poly->GetNormal (l);
+					if (polygon->HaveNormals ()) {
+						int norPos = polygon->GetNormal (l);
 						if (norPos < 0) {
-							poly->SetNormal ((int) model->NormalsCount () + norPos + 1, l);
+							polygon->SetNormal ((int) model->NormalsCount () + norPos + 1, l);
 						}
 					}
 
-					if (poly->HaveUV ()) {
-						int texPos = poly->GetTexcoord (l);
+					if (polygon->HaveUV ()) {
+						int texPos = polygon->GetTexcoord (l);
 						if (texPos < 0) {
-							poly->SetTexcoord ((int) model->TexcoordsCount () + texPos + 1, l);
+							polygon->SetTexcoord ((int) model->TexcoordsCount () + texPos + 1, l);
 						}
 					}
 				}

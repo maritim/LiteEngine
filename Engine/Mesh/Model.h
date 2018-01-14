@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "Core/Math/glm/vec3.hpp"
+#include "Core/Iteration/MultipleContainer.h"
 
 #include "BoundingBox.h"
 
@@ -39,16 +40,16 @@ protected:
 public: 
 	Model();			
 	Model(const Model& other);
-	void Release();					
+	void Release ();
 	bool HaveUV () const;
 
-	void AddNormal (glm::vec3 normal);
-	void AddVertex (glm::vec3 vertex);
-	void AddTexcoord (glm::vec2 texcoord);
+	void AddNormal (const glm::vec3& normal);
+	void AddVertex (const glm::vec3& vertex);
+	void AddTexcoord (const glm::vec2& texcoord);
 	void AddObjectModel (ObjectModel* object);
 
-	void SetName (std::string modelName);
-	void SetMaterialLibrary (std::string mtllibName);
+	void SetName (const std::string& modelName);
+	void SetMaterialLibrary (const std::string& mtllibName);
 
 	std::size_t VertexCount () const;
 	std::size_t NormalsCount () const;
@@ -61,7 +62,6 @@ public:
 	glm::vec3 GetVertex (std::size_t position) const;
 	glm::vec3 GetNormal (std::size_t position) const;
 	glm::vec2 GetTexcoord (std::size_t position) const;
-	ObjectModel* GetObject (std::size_t position) const;
 	ObjectModel* GetObject (std::string objectName) const;
 
 	BoundingBox* GetBoundingBox ();
@@ -73,12 +73,17 @@ public:
 	void GenerateSmoothNormals ();
 	void Repair ();
 
-	~Model();
+	MULTIPLE_CONTAINER_TEMPLATE
+
+	~Model ();
 
 protected:
 	glm::vec3 CalculateNormal(Polygon* poly);
 
 	BoundingBox* CalculateBoundingBox ();
 };
- 
+
+MULTIPLE_CONTAINER_SPECIALIZATION (ObjectModel*, Model, _objectModels);
+MULTIPLE_CONTAINER_SPECIALIZATION (glm::vec3, Model, _vertices);
+
 #endif

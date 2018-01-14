@@ -151,7 +151,7 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 	 * TODO: Change this to random hash
 	*/
 
-	material->name = polyGroup->GetName () + std::to_string (polyGroup->GetPolygonCount ()) + "_mat";
+	material->name = polyGroup->GetName () + "_mat";
 
 	aiMaterial* assimpMaterial = assimpScene->mMaterials [assimpMesh->mMaterialIndex];
 

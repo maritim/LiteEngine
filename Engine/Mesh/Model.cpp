@@ -49,17 +49,17 @@ Model::~Model()
 	}
 }
 
-void Model::AddVertex (glm::vec3 vertex) 
+void Model::AddVertex (const glm::vec3& vertex)
 {
 	_vertices.push_back (vertex);
 }
 
-void Model::AddNormal (glm::vec3 normal)
+void Model::AddNormal (const glm::vec3& normal)
 {
 	_normals.push_back (normal);
 }
 
-void Model::AddTexcoord (glm::vec2 texcoord)
+void Model::AddTexcoord (const glm::vec2& texcoord)
 {
 	_texcoords.push_back (texcoord);
 
@@ -71,12 +71,12 @@ void Model::AddObjectModel (ObjectModel* object)
 	_objectModels.push_back (object);
 }
 
-void Model::SetName (std::string modelName)
+void Model::SetName (const std::string& modelName)
 {
 	_name = modelName;
 }
 
-void Model::SetMaterialLibrary (std::string mtllibName)
+void Model::SetMaterialLibrary (const std::string& mtllibName)
 {
 	_mtllib = mtllibName;
 }
@@ -157,15 +157,6 @@ glm::vec2 Model::GetTexcoord (std::size_t position) const
 	return _texcoords [position];
 }
 
-ObjectModel* Model::GetObject (std::size_t position) const 
-{
-	if (position >= _objectModels.size()) {
-		return NULL;
-	}
-
-	return _objectModels [position];
-}
-
 ObjectModel* Model::GetObject (std::string objectName) const
 {
 	// TODO: Maybe optimize this.
@@ -209,22 +200,16 @@ void Model::ClearObjects (void)
 
 void Model::GenerateMissingNormals()
 {
-	for (std::size_t obji=0;obji<_objectModels.size ();obji++) {
-		ObjectModel* objModel = _objectModels [obji];
-
-		for (std::size_t i=0;i<objModel->GetPolygonCount ();i++) {
-			PolygonGroup* polyGroup = objModel->GetPolygonGroup (i);
-
-			for (std::size_t j=0;j<polyGroup->GetPolygonCount ();j++) {
-				Polygon* poly = polyGroup->GetPolygon (j);
-
-				if (poly->VertexCount () > 0 && !poly->HaveNormals ()) {
-					glm::vec3 normal = CalculateNormal (poly);
+	for (auto objModel : _objectModels) {
+		for (auto polyGroup : *objModel) {
+			for (auto polygon : *polyGroup) {
+				if (polygon->VertexCount () > 0 && !polygon->HaveNormals ()) {
+					glm::vec3 normal = CalculateNormal (polygon);
 
 					_normals.push_back (normal);
 
-					for (std::size_t k=0;k<poly->VertexCount ();k++) {
-						poly->AddNormal ((int) _normals.size () - 1);
+					for (std::size_t k=0;k<polygon->VertexCount ();k++) {
+						polygon->AddNormal ((int) _normals.size () - 1);
 					}
 				}
 			}
@@ -239,23 +224,17 @@ void Model::GenerateSmoothNormals ()
 
 	GenerateMissingNormals ();
 
-	for (std::size_t i=0;i<_objectModels.size ();i++) {
-		ObjectModel* objModel = _objectModels [i];
-
-		for (std::size_t j=0;j<objModel->GetPolygonCount ();j++) {
-			PolygonGroup* polyGroup = objModel->GetPolygonGroup (j);
-
-			for (std::size_t k=0;k<polyGroup->GetPolygonCount ();k++) {
-				Polygon* poly = polyGroup->GetPolygon (k);
-
-				for (std::size_t l=0;l<poly->VertexCount ();l++) {
-					std::size_t vertex = poly->GetVertex (l);
-					std::size_t normal = poly->GetNormal (l);
+	for (auto objModel : _objectModels) {
+		for (auto polyGroup : *objModel) {
+			for (auto polygon : *polyGroup) {
+				for (std::size_t l=0;l<polygon->VertexCount ();l++) {
+					std::size_t vertex = polygon->GetVertex (l);
+					std::size_t normal = polygon->GetNormal (l);
 
 					_smoothNormals [vertex] += _normals [normal];
 					_smoothNormalsCount [vertex] ++;
 
-					poly->SetNormal ((int) vertex, l);
+					polygon->SetNormal ((int) vertex, l);
 				}
 			}
 		}
@@ -407,17 +386,11 @@ BoundingBox* Model::CalculateBoundingBox ()
 {
 	BoundingBox* boundingBox = new BoundingBox ();
 
-	for (std::size_t obji=0;obji<_objectModels.size ();obji++) {
-		ObjectModel* objModel = _objectModels [obji];
-
-		for (std::size_t i=0;i<objModel->GetPolygonCount ();i++) {
-			PolygonGroup* polyGroup = objModel->GetPolygonGroup (i);
-
-			for (std::size_t j=0;j<polyGroup->GetPolygonCount ();j++) {
-				Polygon* poly = polyGroup->GetPolygon (j);
-
-				for (std::size_t k=0;k<poly->VertexCount ();k++) {
-					glm::vec3 vertex = _vertices [poly->GetVertex (k)];
+	for (auto objModel : _objectModels) {
+		for (auto polyGroup : *objModel) {
+			for (auto polygon : *polyGroup) {
+				for (std::size_t k=0;k<polygon->VertexCount ();k++) {
+					glm::vec3 vertex = _vertices [polygon->GetVertex (k)];
 
 					boundingBox->xmin = std::min (boundingBox->xmin, vertex.x);
 					boundingBox->xmax = std::max (boundingBox->xmax, vertex.x);

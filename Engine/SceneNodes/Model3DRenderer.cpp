@@ -35,8 +35,8 @@ Model3DRenderer::~Model3DRenderer ()
 
 void Model3DRenderer::Attach (Model* model)
 {
-	for (std::size_t i=0;i<model->ObjectsCount ();i++) {
-		ProcessObjectModel (model, model->GetObject (i));
+	for_each_type (ObjectModel*, objModel, *model) {
+		ProcessObjectModel (model, objModel);
 	}
 
 	// std::sort (_drawableObjects.begin (), _drawableObjects.end (), BufferObjectSorter());
@@ -81,8 +81,8 @@ void Model3DRenderer::Clear ()
 
 void Model3DRenderer::ProcessObjectModel (Model* model, ObjectModel* objModel)
 {
-	for (std::size_t i=0;i<objModel->GetPolygonCount ();i++) {
-		BufferObject bufObj = ProcessPolygonGroup (model, objModel->GetPolygonGroup (i));
+	for (PolygonGroup* polyGroup : *objModel) {
+		BufferObject bufObj = ProcessPolygonGroup (model, polyGroup);
 
 		_drawableObjects.push_back (bufObj);
 	}
@@ -95,9 +95,9 @@ BufferObject Model3DRenderer::ProcessPolygonGroup (Model* model, PolygonGroup* p
 	std::vector<VertexData> vertexBuffer;
 	std::vector<unsigned int> indexBuffer;
 
-	for (std::size_t i=0;i<polyGroup->GetPolygonCount ();i++) {
-		Polygon* polygon = polyGroup->GetPolygon (i);
+	std::size_t polygonIndex = 0;
 
+	for (Polygon* polygon : *polyGroup) {
 		for(std::size_t j=0;j<polygon->VertexCount();j++) {
 			VertexData vertexData;
 
@@ -122,9 +122,11 @@ BufferObject Model3DRenderer::ProcessPolygonGroup (Model* model, PolygonGroup* p
 			vertexBuffer.push_back (vertexData);
 		}
 
-		indexBuffer.push_back(3 * (unsigned int)i);
-		indexBuffer.push_back(3 * (unsigned int)i + 1);
-		indexBuffer.push_back(3 * (unsigned int)i + 2);
+		indexBuffer.push_back(3 * (unsigned int) polygonIndex);
+		indexBuffer.push_back(3 * (unsigned int) polygonIndex + 1);
+		indexBuffer.push_back(3 * (unsigned int) polygonIndex + 2);
+
+		polygonIndex ++;
 	}
 
 	BufferObject bufObj = BindVertexData (vertexBuffer, indexBuffer);
