@@ -6,7 +6,7 @@
 #include "RenderPasses/ForwardRenderPass.h"
 
 #include "RenderPasses/Container/ContainerRenderPass.h"
-#include "RenderPasses/ReflectiveShadowMapDirectionalLightContainerRenderSubPass.h"
+#include "RenderPasses/ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass.h"
 #include "RenderPasses/DirectionalLightShadowMapContainerRenderSubPass.h"
 #include "RenderPasses/ReflectiveShadowMapSamplesGenerationContainerRenderSubPass.h"
 #include "RenderPasses/ReflectiveShadowMapDirectionalLightContainerRenderSubPass.h"
@@ -22,7 +22,7 @@ void ReflectiveShadowMapRenderModule::Init ()
 	_renderPasses.push_back (new DeferredGeometryRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
-		.Attach (new ReflectiveShadowMapDirectionalLightContainerRenderSubPass ())
+		.Attach (new ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass ())
 		.Attach (new DirectionalLightShadowMapContainerRenderSubPass ())
 		.Attach (new ReflectiveShadowMapSamplesGenerationContainerRenderSubPass ())
 		.Attach (new ReflectiveShadowMapDirectionalLightContainerRenderSubPass ())

@@ -13,11 +13,11 @@
 void DirectLightingRenderModule::Init ()
 {
 	_renderPasses.push_back (new DeferredGeometryRenderPass ());	
-	// _renderPasses.push_back (ContainerRenderPass::Builder ()
-	// 	.Volume (new DirectionalLightContainerRenderVolumeCollection ())
-	// 	.Attach (new DirectionalLightShadowMapContainerRenderSubPass ())
-	// 	.Attach (new DeferredDirectionalLightContainerRenderSubPass ())
-	// 	.Build ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
+		.Attach (new DirectionalLightShadowMapContainerRenderSubPass ())
+		.Attach (new DeferredDirectionalLightContainerRenderSubPass ())
+		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (new DeferredBlitRenderPass ());
 	_renderPasses.push_back (new ForwardRenderPass ());
