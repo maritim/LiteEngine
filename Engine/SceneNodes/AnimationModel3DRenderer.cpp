@@ -133,7 +133,7 @@ std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 	glm::mat4 globalInverse = boneTree->GetRoot ()->GetTransform ();
 	globalInverse = glm::inverse (globalInverse);
 
-	float animationTime = Time::GetTime () / 1000;
+	float animationTime = Time::GetTime ();
 	float ticksPerSecond = animContainer->GetTicksPerSecond () != 0 ? animContainer->GetTicksPerSecond () : 25.0f;
 	float timeInTicks = animationTime * ticksPerSecond;
 	animationTime = std::fmod (timeInTicks, animContainer->GetDuration ());
