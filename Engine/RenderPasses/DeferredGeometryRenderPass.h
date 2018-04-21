@@ -27,6 +27,7 @@ protected:
 
 	void PrepareDrawing ();
 	void GeometryPass (const Scene* scene, const Camera* camera);
+	void EndDrawing ();
 
 	void LockShader (int sceneLayers);
 };

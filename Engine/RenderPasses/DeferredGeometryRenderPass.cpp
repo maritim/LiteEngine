@@ -102,6 +102,12 @@ RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const Scene* scene,
 
 	GeometryPass (scene, camera);
 
+	/*
+	 * End geometry drawing
+	*/
+
+	EndDrawing ();
+
 	return rvc->Insert ("GBuffer", _frameBuffer);
 }
 
@@ -207,6 +213,15 @@ void DeferredGeometryRenderPass::GeometryPass (const Scene* scene, const Camera*
 	*/
 
 	GL::Disable (GL_STENCIL_TEST);
+}
+
+void DeferredGeometryRenderPass::EndDrawing ()
+{
+	/*
+	 * Unlock current locked shader for further rendering
+	*/
+
+	Pipeline::UnlockShader ();
 }
 
 void DeferredGeometryRenderPass::LockShader (int sceneLayers)
