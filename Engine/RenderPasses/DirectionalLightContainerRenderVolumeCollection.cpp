@@ -21,13 +21,13 @@ void DirectionalLightContainerRenderVolumeCollection::Reset ()
 
 RenderVolumeI* DirectionalLightContainerRenderVolumeCollection::GetNextVolume ()
 {
-	_directionalLightsIterator ++;
-
 	if (_directionalLightsIterator == LightsManager::Instance ()->end<DirectionalLight*> ()) {
 		return nullptr;
 	}
 
 	_volumetricLightVolume->SetVolumetricLight (*_directionalLightsIterator);
+
+	_directionalLightsIterator ++;
 
 	return _volumetricLightVolume;
 }
