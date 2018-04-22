@@ -1,5 +1,9 @@
 #include "Pipeline.h"
 
+#include <glm/vec3.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Lighting/LightsManager.h"
 #include "Lighting/Light.h"
 #include "Texture/Texture.h"
@@ -11,10 +15,6 @@
 #include "PipelineAttribute.h"
 
 #include "Wrappers/OpenGL/GL.h"
-
-#include "Core/Math/glm/vec3.hpp"
-#include "Core/Math/glm/gtc/matrix_transform.hpp"
-#include "Core/Math/glm/gtc/type_ptr.hpp"
 
 glm::mat4 Pipeline::_modelMatrix (0);
 glm::mat4 Pipeline::_viewMatrix (0);

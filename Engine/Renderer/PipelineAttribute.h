@@ -1,11 +1,10 @@
 #ifndef PIPELINEATTRIBUTE_H
 #define PIPELINEATTRIBUTE_H
 
+#include <glm/vec3.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 #include <string>
-
-#include "Core/Math/glm/vec3.hpp"
-#include "Core/Math/glm/gtc/matrix_transform.hpp"
 
 struct PipelineAttribute
 {

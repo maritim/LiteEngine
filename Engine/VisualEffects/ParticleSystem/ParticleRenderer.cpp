@@ -1,9 +1,8 @@
 #include "ParticleRenderer.h"
 
+#include <glm/vec3.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <string>
-
-#include "Core/Math/glm/vec3.hpp"
-#include "Core/Math/glm/gtc/matrix_transform.hpp"
 
 ParticleRenderer::~ParticleRenderer ()
 {

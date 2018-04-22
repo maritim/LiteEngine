@@ -1,9 +1,8 @@
 #include "ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass.h"
 
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <algorithm>
-
-#include "Core/Math/glm/gtx/quaternion.hpp"
-#include "Core/Math/glm/gtc/quaternion.hpp"
 
 #include "Lighting/LightsManager.h"
 #include "Managers/ShaderManager.h"

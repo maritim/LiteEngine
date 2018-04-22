@@ -7,10 +7,9 @@
 
 #include "Core/Interfaces/Object.h"
 
+#include <glm/vec3.hpp>
 #include <string>
 #include <vector>
-
-#include "Core/Math/glm/vec3.hpp"
 
 struct Attribute
 {

@@ -1,10 +1,9 @@
 #include "Model3DRenderer.h"
 
+#include <glm/vec3.hpp>
 #include <string>
 #include <vector>
 #include <algorithm>
-
-#include "Core/Math/glm/vec3.hpp"
 
 #include "Renderer/Pipeline.h"
 

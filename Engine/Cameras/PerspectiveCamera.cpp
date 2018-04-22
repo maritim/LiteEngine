@@ -1,6 +1,6 @@
 #include "PerspectiveCamera.h"
 
-#include "Core/Math/glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 PerspectiveCamera::PerspectiveCamera () :
 	Camera (),

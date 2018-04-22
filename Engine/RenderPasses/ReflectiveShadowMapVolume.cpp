@@ -1,6 +1,6 @@
 #include "ReflectiveShadowMapVolume.h"
 
-#include "Core/Math/glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 void ReflectiveShadowMapVolume::SetLightCamera (Camera* camera)
 {

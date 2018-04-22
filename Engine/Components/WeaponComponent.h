@@ -4,7 +4,7 @@
 #include "Systems/Components/Component.h"
 #include "Systems/Components/ComponentsFactory.h"
 
-#include "Core/Math/glm/vec3.hpp"
+#include <glm/vec3.hpp>
 
 #include "SceneGraph/SceneObject.h"
 

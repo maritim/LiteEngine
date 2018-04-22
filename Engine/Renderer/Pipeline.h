@@ -1,11 +1,11 @@
 #ifndef PIPELINE_H
 #define PIPELINE_H
 
+#include <glm/glm.hpp>
+
 #include "SceneGraph/Transform.h"
 #include "Material/Material.h"
 #include "Systems/Camera/Camera.h"
-
-#include "Core/Math/glm/glm.hpp"
 
 #include "PipelineAttribute.h"
 

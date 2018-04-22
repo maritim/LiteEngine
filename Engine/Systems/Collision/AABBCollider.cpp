@@ -1,8 +1,8 @@
 #include "AABBCollider.h"
 
-#include "Core/Intersections/AABBVolume.h"
+#include <glm/gtc/matrix_transform.hpp>
 
-#include "Core/Math/glm/gtc/matrix_transform.hpp"
+#include "Core/Intersections/AABBVolume.h"
 
 AABBCollider::~AABBCollider ()
 {
@@ -10,7 +10,7 @@ AABBCollider::~AABBCollider ()
 }
 
 #include "Debug/Logger/Logger.h"
-#include "Core/Math/glm/gtx/string_cast.hpp"
+#include <glm/gtx/string_cast.hpp>
 
 void AABBCollider::Rebuild (Model* mesh, Transform* transform)
 {

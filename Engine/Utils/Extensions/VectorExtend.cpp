@@ -1,6 +1,6 @@
 #include "VectorExtend.h"
 
-#include "Core/Math/glm/glm.hpp"
+#include <glm/glm.hpp>
 
 using namespace Extensions;
 

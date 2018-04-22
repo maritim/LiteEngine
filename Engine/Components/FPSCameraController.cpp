@@ -1,6 +1,6 @@
 #include "FPSCameraController.h"
 
-#include "Core/Math/glm/detail/func_geometric.hpp"
+#include <glm/detail/func_geometric.hpp>
 
 #include "Systems/Camera/Camera.h"
 #include "Systems/Input/Input.h"

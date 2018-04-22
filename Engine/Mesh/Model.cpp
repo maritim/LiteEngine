@@ -1,11 +1,10 @@
 #include "Model.h"
 
+#include <glm/detail/func_geometric.hpp>
 #include <string>
 #include <vector>
 #include <cmath>
 #include <algorithm>
-
-#include "Core/Math/glm/detail/func_geometric.hpp"
 
 #include "Utils/Extensions/VectorExtend.h"
 

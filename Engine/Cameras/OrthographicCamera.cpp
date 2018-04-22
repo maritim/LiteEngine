@@ -1,6 +1,6 @@
 #include "OrthographicCamera.h"
 
-#include "Core/Math/glm/gtc/matrix_transform.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
 OrthographicCamera::OrthographicCamera () :
 	Camera (),

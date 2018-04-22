@@ -4,9 +4,10 @@
 #include "Emiter.h"
 #include "PrimitiveEmiter.h"
 
+#include <glm/glm.hpp>
+
 #include "Particle.h"
 
-#include "Core/Math/glm/glm.hpp"
 
 class CircleEmiter : public PrimitiveEmiter
 {

@@ -4,9 +4,8 @@
 #include "Core/Singleton/Singleton.h"
 
 #include <SDL2/SDL.h>
+#include <glm/vec2.hpp>
 #include <string>
-
-#include "Core/Math/glm/vec2.hpp"
 
 class Window
 {
@@ -26,6 +25,7 @@ public:
 
 	static std::size_t GetWidth ();
 	static std::size_t GetHeight ();
+
 	static std::string GetTitle ();
 
 	static void Clear ();

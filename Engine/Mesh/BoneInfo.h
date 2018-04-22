@@ -3,9 +3,8 @@
 
 #include "Core/Interfaces/Object.h"
 
+#include <glm/glm.hpp>
 #include <string>
-
-#include "Core/Math/glm/glm.hpp"
 
 class BoneInfo : public Object
 {

@@ -1,8 +1,8 @@
 #include "TextGUIRenderer.h"
 
-#include "Wrappers/OpenGL/GL.h"
+#include <glm/glm.hpp>
 
-#include "Core/Math/glm/glm.hpp"
+#include "Wrappers/OpenGL/GL.h"
 
 #include "Renderer/Pipeline.h"
 #include "Systems/Screen/Screen.h"

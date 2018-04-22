@@ -3,9 +3,8 @@
 
 #include "Texture.h"
 
+#include <glm/vec3.hpp>
 #include <vector>
-
-#include "Core/Math/glm/vec3.hpp"
 
 class TextureAtlas : public Texture
 {

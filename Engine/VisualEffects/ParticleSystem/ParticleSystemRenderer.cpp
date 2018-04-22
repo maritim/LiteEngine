@@ -2,8 +2,8 @@
 
 #include "ParticleSystemRenderer.h"
 
-#include "Core/Math/glm/vec3.hpp"
-#include "Core/Math/glm/gtx/norm.hpp"
+#include <glm/vec3.hpp>
+#include <glm/gtx/norm.hpp>
 
 #include "Systems/Camera/Camera.h"
 

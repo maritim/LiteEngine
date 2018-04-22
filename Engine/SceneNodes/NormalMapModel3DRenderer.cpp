@@ -1,8 +1,7 @@
 #include "NormalMapModel3DRenderer.h"
 
+#include <glm/vec3.hpp>
 #include <vector>
-
-#include "Core/Math/glm/vec3.hpp"
 
 #include "Renderer/Pipeline.h"
 

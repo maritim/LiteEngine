@@ -3,7 +3,7 @@
 
 #include "PrimitiveEmiter.h"
 
-#include "Core/Math/glm/vec3.hpp"
+#include <glm/vec3.hpp>
 
 #include "Particle.h"
 

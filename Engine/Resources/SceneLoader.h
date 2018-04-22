@@ -1,11 +1,11 @@
 #ifndef SCENELOADER_H
 #define SCENELOADER_H
 
+#include <glm/vec3.hpp>
 #include <string>
 
 #include "Core/Parsers/XML/TinyXml/tinyxml.h"
 
-#include "Core/Math/glm/vec3.hpp"
 #include "Utils/Color/Color.h"
 
 #include "SceneGraph/Scene.h"

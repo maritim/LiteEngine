@@ -3,7 +3,7 @@
 
 #include "GeometricPrimitive.h"
 
-#include "Core/Math/glm/glm.hpp"
+#include <glm/glm.hpp>
 
 class FrustumVolume : public GeometricPrimitive
 {

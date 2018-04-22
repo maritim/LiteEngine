@@ -1,12 +1,11 @@
 #include "BitmapFontLoader.h"
 
+#include <glm/glm.hpp>
 #include <iostream>
 #include <cctype>
 
 #include "Utils/Extensions/StringExtend.h"
 #include "Utils/Files/FileSystem.h"
-
-#include "Core/Math/glm/glm.hpp"
 
 #include "Resources.h"
 

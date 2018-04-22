@@ -1,10 +1,9 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
+#include <glm/vec3.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <vector>
-
-#include "Core/Math/glm/vec3.hpp"
-#include "Core/Math/glm/gtc/quaternion.hpp"
 
 class Transform
 {

@@ -3,9 +3,8 @@
 
 #include "SceneGraph/SceneObject.h"
 
+#include <glm/vec3.hpp>
 #include <string>
-
-#include "Core/Math/glm/vec3.hpp"
 
 #include "Fonts/Font.h"
 

@@ -1,7 +1,7 @@
 #ifndef VECTOREXTEND_H
 #define VECTOREXTEND_H
 
-#include "Core/Math/glm/vec3.hpp"
+#include <glm/vec3.hpp>
 
 namespace Extensions
 {

@@ -3,8 +3,8 @@
 
 #include "Model3DRenderer.h"
 
-#include "Core/Math/glm/glm.hpp"
-#include "Core/Math/glm/gtc/quaternion.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 struct NormalMapVertexData : VertexData
 {

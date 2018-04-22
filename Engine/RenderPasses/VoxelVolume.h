@@ -3,11 +3,10 @@
 
 #include "Renderer/RenderVolumeI.h"
 
+#include <glm/glm.hpp>
 #include <vector>
 
 #include "Renderer/PipelineAttribute.h"
-
-#include "Core/Math/glm/glm.hpp"
 
 #define MIP_MAP_LEVELS 6
 

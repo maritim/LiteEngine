@@ -1,5 +1,6 @@
 #include "PointLight.h"
 
+#include <glm/vec3.hpp>
 #include <cmath>
 
 #include "LightsManager.h"
@@ -7,8 +8,6 @@
 #include "Utils/Primitives/Primitive.h"
 
 #include "PointLightRenderer.h"
-
-#include "Core/Math/glm/vec3.hpp"
 
 PointLight::PointLight () :
 	_constantAttenuation (1.0f),

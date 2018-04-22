@@ -1,5 +1,6 @@
 #include "BillboardParticleRenderer.h"
 
+#include <glm/glm.hpp>
 #include <vector>
 
 #include "SceneNodes/Model3DRenderer.h"
@@ -10,7 +11,6 @@
 #include "Material/Material.h"
 
 #include "Core/Math/Matrix.h"
-#include "Core/Math/glm/glm.hpp"
 
 #include "Managers/TextureManager.h"
 #include "Managers/MaterialManager.h"

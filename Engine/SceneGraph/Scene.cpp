@@ -117,7 +117,7 @@ Scene::~Scene ()
 }
 
 #include "Debug/Logger/Logger.h"
-#include "Core/Math/glm/gtx/string_cast.hpp"
+#include <glm/gtx/string_cast.hpp>
 
 void Scene::UpdateBoundingBox (SceneObject* sceneObject)
 {

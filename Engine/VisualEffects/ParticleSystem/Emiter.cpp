@@ -4,9 +4,8 @@
 
 #include "Emiter.h"
 
+#include <glm/glm.hpp>
 #include <cmath>
-
-#include "Core/Math/glm/glm.hpp"
 
 #include "Core/Math/Matrix.h"
 #include "Core/Random/Random.h"

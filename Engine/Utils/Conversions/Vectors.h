@@ -2,8 +2,7 @@
 #define VECTORS_H
 
 #include <assimp/scene.h>
-
-#include "Core/Math/glm/glm.hpp"
+#include <glm/glm.hpp>
 
 namespace Conversions
 {

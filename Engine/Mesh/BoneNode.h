@@ -3,10 +3,9 @@
 
 #include "Core/Interfaces/Object.h"
 
+#include <glm/glm.hpp>
 #include <vector>
 #include <string>
-
-#include "Core/Math/glm/glm.hpp"
 
 class BoneNode : public Object
 {

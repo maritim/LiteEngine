@@ -1,10 +1,10 @@
 #ifndef INPUTMANAGER_H
 #define INPUTMANAGER_H
 
+#include <glm/vec2.hpp>
 #include <cstdint>
 #include <map>
 
-#include "Core/Math/glm/vec2.hpp"
 #include "Systems/Input/InputKey.h"
 
 class Input

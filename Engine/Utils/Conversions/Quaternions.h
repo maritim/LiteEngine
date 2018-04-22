@@ -2,8 +2,7 @@
 #define QUATERNIONS_H
 
 #include <assimp/scene.h>
-
-#include "Core/Math/glm/gtc/quaternion.hpp"
+#include <glm/gtc/quaternion.hpp>
 
 namespace Conversions
 {

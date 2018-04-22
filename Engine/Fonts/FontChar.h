@@ -3,7 +3,7 @@
 
 #include "Core/Interfaces/Object.h"
 
-#include "Core/Math/glm/glm.hpp"
+#include <glm/glm.hpp>
 
 class FontChar : public Object
 {

@@ -1,7 +1,7 @@
 #include "FlyCameraController.h"
 
-#include "Core/Math/glm/vec3.hpp"
-#include "Core/Math/glm/detail/func_geometric.hpp"
+#include <glm/vec3.hpp>
+#include <glm/detail/func_geometric.hpp>
 
 #include "Systems/Camera/Camera.h"
 #include "Systems/Input/Input.h"

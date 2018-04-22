@@ -3,7 +3,7 @@
 
 #include "Renderer/RenderVolumeI.h"
 
-#include "Core/Math/glm/glm.hpp"
+#include <glm/glm.hpp>
 
 #define REFLECTIVE_SHADOW_MAP_SAMPLES_NOT_INIT 351
 

@@ -3,8 +3,9 @@
 
 #include "SceneGraph/SceneObject.h"
 
+#include <glm/vec3.hpp>
+
 #include "Mesh/Model.h"
-#include "Core/Math/glm/vec3.hpp"
 #include "SceneGraph/Transform.h"
 
 #include "Utils/Curves/AnimationCurve.h"

@@ -1,8 +1,8 @@
 #include "DirectionalLightShadowMapContainerRenderSubPass.h"
 
-#include "Core/Math/glm/gtx/quaternion.hpp"
-#include "Core/Math/glm/gtc/matrix_transform.hpp"
-#include "Core/Math/glm/gtc/quaternion.hpp"
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include "Managers/ShaderManager.h"
 

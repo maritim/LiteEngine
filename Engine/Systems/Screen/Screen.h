@@ -7,9 +7,8 @@
 
 #include "Core/Singleton/Singleton.h"
 
+#include <glm/glm.hpp>
 #include <cstddef>
-
-#include "Core/Math/glm/glm.hpp"
 
 class Screen : public Singleton<Screen>
 {

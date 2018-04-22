@@ -3,7 +3,7 @@
 
 #include "Core/Interfaces/Object.h"
 
-#include "Core/Math/glm/vec3.hpp"
+#include <glm/vec3.hpp>
 
 class Color : public Object
 {
