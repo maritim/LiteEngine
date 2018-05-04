@@ -45,8 +45,9 @@ Build
 
 * Compile the project
 
-        make
+        mkdir Build && cd Build
+        cmake -DCMAKE_BUILD_TYPE=Release .. && make && cd ..
         
 * Run the application using a prototype scene
 
-        ./GameEngine.out --startscene Assets/Scenes/Prototype.scene 
+        ./Build/LiteEngine --startscene Assets/Scenes/Prototype.scene 

@@ -46,7 +46,6 @@ TODOS
 # Debugging
 *.log
 *.prof
-*.txt
 
 # NVidia Debugger
 *.csv

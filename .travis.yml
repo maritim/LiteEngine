@@ -7,6 +7,8 @@ addons:
 before_install:
   - chmod +x setup.sh
   - ./setup.sh
+  - mkdir Build && cd Build
+  - cmake -DCMAKE_BUILD_TYPE=Release ..
 
 # Enable C++ support
 language: cpp
@@ -17,4 +19,4 @@ compiler:
 
 # Build steps
 script:
-  - make CONFIG=RELEASE
+  - make
