@@ -1,0 +1,17 @@
+version: 0.1.{build}
+
+image: Visual Studio 2017
+
+platform: x64
+configuration: Release
+
+before_build:
+- cmd: |-
+    mkdir Build
+    cd Build
+    cmake --version
+    cmake .. -G "Visual Studio 15 2017 Win64"
+
+build:
+  project: Build\LiteEngine.sln
+  verbosity: minimal
