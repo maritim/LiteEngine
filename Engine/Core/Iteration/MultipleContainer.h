@@ -14,17 +14,9 @@
 #define MULTIPLE_CONTAINER_TEMPLATE \
 public: \
 	template<typename T> \
-	typename std::vector<T>::iterator begin () \
-	{ \
-		Console::LogError ("Ranged based loop missing specialization"); \
-		throw "Ranged based loop missing specialization"; \
-	} \
+	typename std::vector<T>::iterator begin (); \
 	template<typename T> \
-	typename std::vector<T>::iterator end () \
-	{ \
-		Console::LogError ("Ranged based loop missing specialization"); \
-		throw "Ranged based loop missing specialization"; \
-	}
+	typename std::vector<T>::iterator end ();
 
 /*
  *
