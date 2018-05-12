@@ -7,7 +7,7 @@ cmake_minimum_required (VERSION 3.0)
 project (LiteEngine)
 
 if (NOT CMAKE_BUILD_TYPE)
-	set (CMAKE_BUILD_TYPE, RELEASE)
+	set (CMAKE_BUILD_TYPE, DEBUG)
 endif (NOT CMAKE_BUILD_TYPE)
 
 set (CMAKE_CXX_STANDARD 11)
@@ -21,7 +21,10 @@ else(NOT MSVC)
 endif(NOT MSVC)
 
 include_directories (${PROJECT_SOURCE_DIR}/Engine)
-include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include)
+
+if (MSVC)
+	include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include)
+endif (MSVC)
 
 file (GLOB_RECURSE LiteEngineSourceFiles Engine/*)
 
