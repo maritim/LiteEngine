@@ -1,3 +1,7 @@
+#ifdef _MSC_VER
+	#define _USE_MATH_DEFINES
+#endif
+
 #include "ReflectiveShadowMapSamplesVolume.h"
 
 #include "Core/Random/Random.h"
@@ -11,25 +15,18 @@ bool ReflectiveShadowMapSamplesVolume::Init (std::size_t samplesCount)
 {
 	_samples.resize (samplesCount);
 
-	float radius = 0.5f;
+	float sampleRadius = 0.5f;
 
 	for (std::size_t index = 0; index < samplesCount; index++) {
 		glm::vec2 sample;
 
-		while (true) {
-			sample = glm::vec2(
-				Random::Instance()->RangeF(0.0f, 1.0f),
-				Random::Instance()->RangeF(0.0f, 1.0f)
-			);
+		float radius = std::sqrt (Random::Instance ()->RangeF (0, 1.0f));
+		float angle = Random::Instance ()->RangeF (0, 2 * M_PI);
 
-			float sampleRadius = glm::distance (glm::vec2 (0.5f, 0.5f), sample);
+		sample.x = sampleRadius * radius * cos (angle);
+		sample.y = sampleRadius * radius * sin (angle);
 
-			if (sampleRadius < radius) {
-				break;
-			}
-		}
-
-		_samples [index] = sample;
+		_samples.push_back (sample);
 	}
 
 	return true;
