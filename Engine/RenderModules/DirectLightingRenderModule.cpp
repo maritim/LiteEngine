@@ -10,6 +10,9 @@
 #include "RenderPasses/DeferredDirectionalLightContainerRenderSubPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 
+#include "RenderPasses/DeferredPointLightContainerRenderSubPass.h"
+#include "RenderPasses/PointLightContainerRenderVolumeCollection.h"
+
 void DirectLightingRenderModule::Init ()
 {
 	_renderPasses.push_back (new DeferredGeometryRenderPass ());	
@@ -17,6 +20,10 @@ void DirectLightingRenderModule::Init ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 		.Attach (new DirectionalLightShadowMapContainerRenderSubPass ())
 		.Attach (new DeferredDirectionalLightContainerRenderSubPass ())
+		.Build ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new PointLightContainerRenderVolumeCollection ())
+		.Attach (new DeferredPointLightContainerRenderSubPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (new DeferredBlitRenderPass ());
