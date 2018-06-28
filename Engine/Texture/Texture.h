@@ -42,8 +42,9 @@ public:
 	TEXTURE_WRAP_MODE GetWrapMode () const;
 	TEXTURE_MIPMAP_FILTER GetMipmapFilter () const;
 	TEXTURE_COMPRESSION_TYPE GetCompressionType () const;
-	const unsigned char* GetPixels () const;
-	const unsigned char* GetMipmapLevel (std::size_t mipmapLevel) const;
+	// TODO: extend PixelAt
+	unsigned char* GetPixels ();
+	unsigned char* GetMipmapLevel (std::size_t mipmapLevel);
 
 	void SetGPUIndex(unsigned int gpuIndex);
 	void SetName(const std::string& name);
@@ -55,6 +56,7 @@ public:
 	void SetMipmapFilter (TEXTURE_MIPMAP_FILTER mipmapFilter);
 	void SetCompressionType (TEXTURE_COMPRESSION_TYPE compressionType);
 	void SetPixels (const unsigned char* pixels, std::size_t length);
+	void AddMipmapLevel (const unsigned char* pixels, std::size_t length);
 	void SetMipmapLevel (const unsigned char* pixels, std::size_t mipmapLevel, std::size_t length);
 };
 

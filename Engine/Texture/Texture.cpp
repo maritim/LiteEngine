@@ -85,15 +85,17 @@ TEXTURE_COMPRESSION_TYPE Texture::GetCompressionType () const
 	return _compressionType;
 }
 
-const unsigned char* Texture::GetPixels () const
+unsigned char* Texture::GetPixels ()
 {
 	return GetMipmapLevel (0);
 }
 
-const unsigned char* Texture::GetMipmapLevel (std::size_t mipmapLevel) const
+unsigned char* Texture::GetMipmapLevel (std::size_t mipmapLevel)
 {
 	if (mipmapLevel >= _mipmapLevels) {
-		Console::LogWarning ("Texture mipmap out of bounds!");
+		Console::LogWarning ("Texture mipmap index exceed mipmaps count. \
+			You are searching for " + std::to_string (mipmapLevel) +
+			" and the size is " + std::to_string (_mipmapLevels));
 
 		return nullptr;
 	}
@@ -156,10 +158,30 @@ void Texture::SetPixels (const unsigned char* pixels, std::size_t length)
 	SetMipmapLevel (pixels, 0, length);
 }
 
+void Texture::AddMipmapLevel (const unsigned char* pixels, std::size_t length)
+{
+	if (_mipmapLevels + 1 >= MAX_TEXTURE_MIPMAP_LEVEL) {
+		Console::LogWarning ("Texture mipmap index exceed max mipmaps level. \
+			You are searching for " + std::to_string (_mipmapLevels + 1) +
+			" and the size is " + std::to_string (MAX_TEXTURE_MIPMAP_LEVEL));
+
+		return;
+	}
+
+	_mipmapLevels ++;
+
+	_pixels [_mipmapLevels] = new unsigned char [length];
+	memcpy (_pixels [_mipmapLevels], pixels, length);
+}
+
 void Texture::SetMipmapLevel (const unsigned char* pixels, std::size_t mipmapLevel, std::size_t length)
 {
-	if (mipmapLevel >= MAX_TEXTURE_MIPMAP_LEVEL) {
-		return ;
+	if (mipmapLevel >= _mipmapLevels) {
+		Console::LogWarning ("Texture mipmap index exceed mipmaps count. \
+			You are searching for " + std::to_string (mipmapLevel) +
+			" and the size is " + std::to_string (_mipmapLevels));
+
+		return;
 	}
 
 	if (_pixels [mipmapLevel] != nullptr) {
