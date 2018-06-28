@@ -178,7 +178,7 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 	material->diffuseColor = glm::vec3 (col.r, col.g, col.b);
 
 	polyGroup->SetMaterialName (material->name);
-	MaterialManager::Instance ().AddMaterial (material);
+	MaterialManager::Instance ()->AddMaterial (material);
 }
 
 /*

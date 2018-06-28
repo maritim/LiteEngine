@@ -119,7 +119,7 @@ void WavefrontObjectLoader::LoadMaterialLibrary(std::ifstream& file, const std::
 	MaterialLibrary* mtlLibrary = Resources::LoadMaterialLibrary(fullMtlFilename);
 
 	for (std::size_t i=0;i<mtlLibrary->GetMaterialsCount ();i++) {
-		MaterialManager::Instance ().AddMaterial (mtlLibrary->GetMaterial (i));
+		MaterialManager::Instance ()->AddMaterial (mtlLibrary->GetMaterial (i));
 	}	
 }
 

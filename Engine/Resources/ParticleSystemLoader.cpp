@@ -263,7 +263,7 @@ void ParticleSystemLoader::ProcessMeshMaterial (TiXmlElement* xmlElem, Model* me
 	matName = matLbName + "::" + matName;
 	Material* mat = matLb->GetMaterial (matName);
 
-	MaterialManager::Instance ().AddMaterial (mat);
+	MaterialManager::Instance ()->AddMaterial (mat);
 
 	for_each_type (ObjectModel*, objModel, *mesh) {
 		for (PolygonGroup* polyGroup : *objModel) {

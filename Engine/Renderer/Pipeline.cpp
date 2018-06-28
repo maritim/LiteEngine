@@ -8,9 +8,10 @@
 #include "Lighting/Light.h"
 #include "Texture/Texture.h"
 #include "SceneGraph/Transform.h"
-#include "Material/Material.h"
 #include "Managers/ShaderManager.h"
 #include "Managers/TextureManager.h"
+
+#include "Resources/Resources.h"
 
 #include "PipelineAttribute.h"
 
@@ -22,6 +23,26 @@ glm::mat4 Pipeline::_projectionMatrix (0);
 glm::vec3 Pipeline::_cameraPosition (0);
 std::size_t Pipeline::_textureCount (0);
 Shader* Pipeline::_lockedShader(nullptr);
+
+Material* Pipeline::_defaultMaterial (nullptr);
+
+void Pipeline::Init ()
+{
+	/*
+	 * Load default material
+	*/
+
+	std::string defaultMaterialPath = "Assets/Materials/default.mtl";
+	MaterialLibrary* materialLibrary = Resources::LoadMaterialLibrary (defaultMaterialPath);
+
+	_defaultMaterial = materialLibrary->GetMaterial (0);
+
+	for (std::size_t i=1;i<materialLibrary->GetMaterialsCount ();i++) {
+		delete materialLibrary->GetMaterial (i);
+	}
+
+	delete materialLibrary;
+}
 
 void Pipeline::SetShader (Shader* shader)
 {
@@ -122,7 +143,6 @@ void Pipeline::SendLights (Shader* shader)
 	}
 
 	Color ambientColor = LightsManager::Instance ()->GetAmbientColorLight ();
-	Color color;
 
 	GL::Uniform3fv(shader->GetUniformLocation ("sceneAmbient"), 1, glm::value_ptr (ambientColor.ToVector3 ()));
 
@@ -302,6 +322,18 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 
 void Pipeline::SendMaterial(Material* mat, Shader* shader)
 {
+	/*
+	 * Lazy instantiation
+	*/
+
+	if (_defaultMaterial == nullptr) {
+		Init ();
+	}
+
+	if (mat == nullptr) {
+		mat = _defaultMaterial;
+	}
+
 	if (shader == nullptr) {
 		shader = ShaderManager::Instance ()->GetShader (mat->shaderName);
 	}
@@ -315,6 +347,13 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	_textureCount = 0;
 
 	Pipeline::UpdateMatrices (shader);
+
+	/*
+	 * Set material blending mode
+	*/
+
+	GL::Enable (GL_BLEND);
+	GL::BlendFunc (mat->blending.first, mat->blending.second);
 
 	/*
 	 * Send basic material attributes to shader

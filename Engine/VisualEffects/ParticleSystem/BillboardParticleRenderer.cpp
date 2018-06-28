@@ -29,7 +29,7 @@ Buffer<float> BillboardParticleRenderer::GetParticleData ()
 {
 	Buffer<float> buffer;
 
-	Material* mat = MaterialManager::Instance ().GetMaterial (_matName);
+	Material* mat = MaterialManager::Instance ()->GetMaterial (_matName);
 
 	buffer.Add (this->GetModelMatrix ());
 	ManageAtlasTexcoord (mat, &buffer);
@@ -59,7 +59,7 @@ std::vector<BufferAttribute> BillboardParticleRenderer::GetBufferAttributes ()
 
 std::vector<PipelineAttribute> BillboardParticleRenderer::GetUniformAttributes ()
 {
-	Material* mat = MaterialManager::Instance ().GetMaterial (_matName);
+	Material* mat = MaterialManager::Instance ()->GetMaterial (_matName);
 
 	// Take area scale from the atlas
 	Attribute atlasMap = mat->GetAttribute (Attribute::AttrType::ATTR_TEXTURE2D_ATLAS);

@@ -47,13 +47,7 @@ void Model3DRenderer::Draw ()
 
 	for (std::size_t i=0;i<_drawableObjects.size ();i++) {
 		// if (i == 0 || _drawableObjects [i].MAT_NAME != _drawableObjects [i-1].MAT_NAME) {
-			Material* mat = MaterialManager::Instance ().GetMaterial (_drawableObjects [i].MAT_NAME);
-
-			if (mat == NULL) {
-				mat = MaterialManager::Instance ().Default ();
-			}
-
-			GL::BlendFunc (mat->blending.first, mat->blending.second);
+			Material* mat = MaterialManager::Instance ()->GetMaterial (_drawableObjects [i].MAT_NAME);
 
 			Pipeline::SendMaterial (mat);
 		// }

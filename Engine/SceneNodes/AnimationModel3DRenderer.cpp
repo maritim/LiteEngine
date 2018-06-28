@@ -42,13 +42,7 @@ void AnimationModel3DRenderer::Draw ()
 	Pipeline::SetObjectTransform (_transform);
 	
 	for (std::size_t i=0;i<_drawableObjects.size ();i++) {
-		Material* mat = MaterialManager::Instance ().GetMaterial (_drawableObjects [i].MAT_NAME);
-
-		if (mat == nullptr) {
-			mat = MaterialManager::Instance ().Default ();
-		}
-
-		GL::BlendFunc (mat->blending.first, mat->blending.second);
+		Material* mat = MaterialManager::Instance ()->GetMaterial (_drawableObjects [i].MAT_NAME);
 
 		Pipeline::SendMaterial (mat);
 

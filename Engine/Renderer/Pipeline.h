@@ -11,6 +11,8 @@
 
 #include "Shader/Shader.h"
 
+#include "Material/Material.h"
+
 // TODO: Refactor this
 
 class Pipeline
@@ -26,7 +28,11 @@ private:
 
 	static Shader* _lockedShader;
 
+	static Material* _defaultMaterial;
+
 public:
+	static void Init ();
+
 	static void SetShader (Shader* shader);
 
 	static void LockShader (Shader* shader);
