@@ -14,12 +14,10 @@ class TextureManager : public Singleton<TextureManager>
 
 private:
 	std::map<std::string, Texture*> _textures;
-	Texture* _default;
 
 public:
 	void AddTexture (Texture* texture);
 	Texture* GetTexture (const std::string& filename);
-	Texture* Default();
 private:
 	TextureManager ();
 	~TextureManager ();

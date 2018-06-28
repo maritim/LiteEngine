@@ -8,6 +8,7 @@
 #include "Lighting/Light.h"
 #include "Texture/Texture.h"
 #include "SceneGraph/Transform.h"
+#include "Material/Material.h"
 #include "Managers/ShaderManager.h"
 #include "Managers/TextureManager.h"
 
@@ -25,6 +26,7 @@ std::size_t Pipeline::_textureCount (0);
 Shader* Pipeline::_lockedShader(nullptr);
 
 Material* Pipeline::_defaultMaterial (nullptr);
+Texture* Pipeline::_defaultTexture (nullptr);
 
 void Pipeline::Init ()
 {
@@ -42,6 +44,17 @@ void Pipeline::Init ()
 	}
 
 	delete materialLibrary;
+
+	/*
+	 * Load default texture
+	*/
+
+	// TODO: Extend this to default textures for every type (ambient, diffuse ...)
+
+	std::string defaultTexturePath = "Assets/Textures/AmbientDefault.png";
+	_defaultTexture = Resources::LoadTexture (defaultTexturePath);
+
+	TextureManager::Instance ()->AddTexture (_defaultTexture);
 }
 
 void Pipeline::SetShader (Shader* shader)
@@ -326,7 +339,7 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	 * Lazy instantiation
 	*/
 
-	if (_defaultMaterial == nullptr) {
+	if (_defaultMaterial == nullptr || _defaultTexture == nullptr) {
 		Init ();
 	}
 
@@ -370,7 +383,7 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	*/
 
 	GL::ActiveTexture (GL_TEXTURE0);
-	GL::BindTexture (GL_TEXTURE_2D, TextureManager::Instance ()->Default ()->GetGPUIndex ());
+	GL::BindTexture (GL_TEXTURE_2D, _defaultTexture->GetGPUIndex ());
 	++ _textureCount;
 
 	// if (mat->ambientTexture) {

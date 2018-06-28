@@ -1,20 +1,16 @@
 #include "TextureManager.h"
 
-#include <SDL2/SDL.h>
 #include <map>
 #include <string>
 
-#include "Resources/Resources.h"
 #include "Wrappers/OpenGL/GL.h"
 
 #include "Utils/Extensions/MathExtend.h"
 
-TextureManager::TextureManager ()
+TextureManager::TextureManager () :
+	_textures ()
 {
-	std::string defaultTexture = "Assets/Textures/AmbientDefault.png";	
-	
-	_default = Resources::LoadTexture (defaultTexture);
-	this->AddTexture (_default);
+
 }
 
 TextureManager::~TextureManager ()
@@ -46,11 +42,6 @@ Texture* TextureManager::GetTexture (const std::string& filename)
 	}
 
 	return _textures [filename];
-}
-
-Texture* TextureManager::Default()
-{
-	return _default;
 }
 
 /*
@@ -101,7 +92,7 @@ void TextureManager::LoadInGPU (Texture* texture)
 			internalFormat = GL_RGBA;
 		}
 
-		GL::TexImage2D(GL_TEXTURE_2D, i, internalFormat, size.width, size.height, 0, pixelFormat, GL_UNSIGNED_BYTE, texture->GetMipmapLevel (i));
+		GL::TexImage2D(GL_TEXTURE_2D, i, internalFormat, size.width >> i, size.height >> i, 0, pixelFormat, GL_UNSIGNED_BYTE, texture->GetMipmapLevel (i));
 	}
 
 	/*
@@ -127,7 +118,7 @@ void TextureManager::LoadInGPU (Texture* texture)
 	}
 	else if (texture->GetMipmapFilter () == TEXTURE_MIPMAP_FILTER::MIPMAP_BILINEAR) {
 		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);		
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
 	}
 	else if (texture->GetMipmapFilter () == TEXTURE_MIPMAP_FILTER::MIPMAP_ANISOTROPIC) {
 		GLfloat maxAnisotropy;

@@ -12,6 +12,7 @@
 #include "Shader/Shader.h"
 
 #include "Material/Material.h"
+#include "Texture/Texture.h"
 
 // TODO: Refactor this
 
@@ -29,6 +30,7 @@ private:
 	static Shader* _lockedShader;
 
 	static Material* _defaultMaterial;
+	static Texture* _defaultTexture;
 
 public:
 	static void Init ();
