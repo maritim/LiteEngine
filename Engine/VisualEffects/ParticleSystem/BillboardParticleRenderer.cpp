@@ -76,7 +76,7 @@ std::vector<PipelineAttribute> BillboardParticleRenderer::GetUniformAttributes (
 
 	uniformAtlasArea.name = "atlasAreaScale";
 
-	uniformAtlasArea.value = texAtlas->GetSize (0);
+	uniformAtlasArea.value = glm::vec3 (texAtlas->GetSize (0), 0.0f);
 
 	attributes.push_back (uniformAtlasArea);
 
@@ -106,8 +106,8 @@ void BillboardParticleRenderer::ManageAtlasTexcoord (Material* mat, Buffer<float
 	std::size_t nextAreaIndex = areaIndex + (areaIndex + 1 < areasCount);
 	float texBlending = lifeFactor * areasCount - areaIndex;
 
-	glm::vec3 currTexOffset = texAtlas->GetOffset (areaIndex);
-	glm::vec3 nextTexOffset = texAtlas->GetOffset (nextAreaIndex);
+	glm::vec2 currTexOffset = texAtlas->GetOffset (areaIndex);
+	glm::vec2 nextTexOffset = texAtlas->GetOffset (nextAreaIndex);
 
 	buffer->Add (currTexOffset.x); 
 	buffer->Add (currTexOffset.y);

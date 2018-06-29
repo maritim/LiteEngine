@@ -3,7 +3,7 @@
 
 #include "Texture.h"
 
-#include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 #include <vector>
 
 class TextureAtlas : public Texture
@@ -25,12 +25,10 @@ public:
 
 	void AddTextureArea (float startX, float startY, float width, float height);
 
-	virtual glm::vec3 TransformTexcoord (std::size_t areaIndex, const glm::vec3& texcoord);
-
 	virtual std::size_t GetAreasCount () const;
 
-	virtual glm::vec3 GetOffset (std::size_t areaIndex) const;
-	virtual glm::vec3 GetSize (std::size_t areaIndex) const;
+	virtual glm::vec2 GetOffset (std::size_t areaIndex) const;
+	virtual glm::vec2 GetSize (std::size_t areaIndex) const;
 };
 
 #endif
