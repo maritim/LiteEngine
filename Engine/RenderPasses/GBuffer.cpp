@@ -10,24 +10,6 @@ GBuffer::GBuffer () :
 
 }
 
-void GBuffer::BindForGeomPass()
-{
-	/*
-	 * Bind all textures for writing
-	*/
-
-	BindForWriting ();
-} 
-
-void GBuffer::BindForStencilPass()
-{
-	/*
-	 * Must disable the draw buffers
-	*/
-
-	GL::DrawBuffer(GL_NONE);
-}
-
 std::vector<PipelineAttribute> GBuffer::GetCustomAttributes ()
 {
 	std::vector<PipelineAttribute> attributes;

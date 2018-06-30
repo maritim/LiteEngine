@@ -19,9 +19,6 @@ public:
 public:
     GBuffer();
 
-    void BindForGeomPass();
-    void BindForStencilPass();
-
     std::vector<PipelineAttribute> GetCustomAttributes ();
 }; 
 

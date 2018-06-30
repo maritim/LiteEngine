@@ -81,7 +81,11 @@ void PointVolumetricLightContainerRenderSubPass::EndPointLightPass ()
 void PointVolumetricLightContainerRenderSubPass::PointLightStencilPass (const Scene* scene, const Camera* camera,
 	VolumetricLight* volumetricLight, RenderVolumeCollection* rvc)
 {
-	((GBuffer*)rvc->GetRenderVolume ("GBuffer"))->BindForStencilPass ();
+	/*
+	 * No rendering target
+	*/
+
+	GL::DrawBuffer (GL_NONE);
 
 	/*
 	 * Don't need to write the light on depth buffer.

@@ -130,7 +130,11 @@ void DeferredGeometryRenderPass::PrepareDrawing ()
 
 void DeferredGeometryRenderPass::GeometryPass (const Scene* scene, const Camera* camera)
 {
-	_frameBuffer->BindForGeomPass ();
+	/*
+	 * Bind framebuffer for writting
+	*/
+
+	_frameBuffer->BindForWriting ();
 
 	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
