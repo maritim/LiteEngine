@@ -20,6 +20,7 @@ public:
 	~ObjectModel ();
 
 	void AddPolygonGroup (PolygonGroup* polygonGroup);
+	PolygonGroup* GetPolygonGroup (const std::string& polygonGroupName) const;
 
 	std::string GetName () const;
 	

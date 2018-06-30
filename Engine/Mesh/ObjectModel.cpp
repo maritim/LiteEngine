@@ -24,6 +24,19 @@ void ObjectModel::AddPolygonGroup (PolygonGroup* polygonGroup)
 	_polygonGroups.push_back (polygonGroup);
 }
 
+PolygonGroup* ObjectModel::GetPolygonGroup (const std::string& polygonGroupName) const
+{
+	for (PolygonGroup* polyGroup : _polygonGroups) {
+		if (polyGroup->GetName () != polygonGroupName) {
+			continue;
+		}
+
+		return polyGroup;
+	}
+
+	return nullptr;
+}
+
 std::string ObjectModel::GetName () const
 {
 	return _name;
