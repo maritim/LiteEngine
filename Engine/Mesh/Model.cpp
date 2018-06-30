@@ -148,7 +148,7 @@ glm::vec2 Model::GetTexcoord (std::size_t position) const
 	if (position >= _texcoords.size()) {
 		Console::LogWarning ("Texcoord index exceed texcoords count. \
 			You are searching for " + std::to_string (position) + " and the size is " +
-			std::to_string (_normals.size ()));
+			std::to_string (_texcoords.size ()));
 
 		return glm::vec2 ();
 	}
