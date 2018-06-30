@@ -8,6 +8,7 @@
 #include "Core/Interfaces/Object.h"
 
 #include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 #include <string>
 #include <vector>
 
