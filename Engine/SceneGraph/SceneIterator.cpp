@@ -4,7 +4,12 @@ SceneIterator::SceneIterator (const Scene* scene, std::size_t startPos) :
 	_currentPos (startPos),
 	_scene (scene)
 {
+	/*
+	 * Find first active scene object
+	*/
 
+	-- _currentPos;
+	++ (*this);
 }
 
 SceneIterator::~SceneIterator ()
