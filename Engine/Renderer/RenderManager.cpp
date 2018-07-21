@@ -3,6 +3,7 @@
 #include "Pipeline.h"
 
 #include "RenderModules/DirectLightingRenderModule.h"
+#include "RenderModules/LightMapRenderModule.h"
 #include "RenderModules/VoxelizationRenderModule.h"
 #include "RenderModules/VoxelConeTraceRenderModule.h"
 #include "RenderModules/ReflectiveShadowMapRenderModule.h"
@@ -30,6 +31,7 @@ RenderManager::~RenderManager ()
 void RenderManager::Init ()
 {
 	_renderModules.push_back (new DirectLightingRenderModule ());
+	_renderModules.push_back (new LightMapRenderModule ());
 	_renderModules.push_back (new VoxelizationRenderModule ());
 	_renderModules.push_back (new VoxelConeTraceRenderModule ());
 	_renderModules.push_back (new ReflectiveShadowMapRenderModule ());

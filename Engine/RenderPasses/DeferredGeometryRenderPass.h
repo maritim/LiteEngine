@@ -12,6 +12,7 @@ class DeferredGeometryRenderPass : public RenderPassI
 protected:
 	std::string _shaderName;
 	std::string _normalMapShaderName;
+	std::string _lightMapShaderName;
 	std::string _animationShaderName;
 	GBuffer* _frameBuffer;
 

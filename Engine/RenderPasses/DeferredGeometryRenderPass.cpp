@@ -24,6 +24,7 @@
 DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
 	_shaderName ("DEFERRED_GEOMETRY"),
 	_normalMapShaderName ("NORMAL_MAP_DEFERRED_GEOMETRY"),
+	_lightMapShaderName ("LIGHT_MAP_DEFERRED_GEOMETRY"),
 	_animationShaderName ("ANIMATION_DEFERRED_GEOMETRY"),
 	_frameBuffer (new GBuffer ())
 {
@@ -54,6 +55,15 @@ void DeferredGeometryRenderPass::Init ()
 		"Assets/Shaders/deferredNormalMapVertex.glsl",
 		"Assets/Shaders/deferredNormalMapFragment.glsl",
 		"Assets/Shaders/deferredNormalMapGeometry.glsl");
+
+	/*
+	 * Shader for not animated light mapped objects
+	*/
+
+	ShaderManager::Instance ()->AddShader (_lightMapShaderName,
+		"Assets/Shaders/deferredLightMapVertex.glsl",
+		"Assets/Shaders/deferredLightMapFragment.glsl",
+		"Assets/Shaders/deferredLightMapGeometry.glsl");
 
 	/*
 	 * Shader for animations
@@ -250,6 +260,14 @@ void DeferredGeometryRenderPass::LockShader (int sceneLayers)
 
 	if ((sceneLayers & SceneLayer::NORMAL_MAP) && (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC))) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_normalMapShaderName));
+	}
+
+	/*
+	 * Lock the shader for static light mapped objects
+	*/
+
+	if ((sceneLayers & SceneLayer::LIGHT_MAP) && (sceneLayers & SceneLayer::STATIC)) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_lightMapShaderName));
 	}
 
 	/*
