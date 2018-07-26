@@ -5,6 +5,7 @@
 #include "SceneNodes/GameObject.h"
 #include "SceneNodes/AnimationGameObject.h"
 #include "SceneNodes/NormalMapGameObject.h"
+#include "SceneNodes/LightMapGameObject.h"
 #include "VisualEffects/ParticleSystem/ParticleSystem.h"
 #include "Mesh/Model.h"
 #include "Skybox/Skybox.h"
@@ -66,6 +67,9 @@ Scene* SceneLoader::Load (const std::string& filename)
 		}
 		else if (name == "NormalMapGameObject") {
 			ProcessNormalMapGameObject (content, scene);
+		}
+		else if (name == "LightMapGameObject") {
+			ProcessLightMapGameObject (content, scene);
 		}
 		else if (name == "ParticleSystem") {
 			ProcessParticleSystem (content, scene);
@@ -217,6 +221,49 @@ void SceneLoader::ProcessNormalMapGameObject (TiXmlElement* xmlElem, Scene* scen
 	normalMapGameObject->AttachMesh (mesh);
 
 	scene->AttachObject (normalMapGameObject);
+}
+
+void SceneLoader::ProcessLightMapGameObject (TiXmlElement* xmlElem, Scene* scene)
+{
+	std::string name = xmlElem->Attribute ("name");
+	std::string instanceID = xmlElem->Attribute ("InstanceID");
+	std::string meshPath = xmlElem->Attribute ("meshpath");
+	std::string isActive = xmlElem->Attribute ("isActive");
+
+	LightMapGameObject* lightMapGameObject = new LightMapGameObject ();
+	lightMapGameObject->SetName (name);
+	// Need unsigned int here
+	lightMapGameObject->SetInstanceID (std::stoi (instanceID));
+	lightMapGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
+
+	Model* mesh = Resources::LoadModel (meshPath);
+
+	TiXmlElement* content = xmlElem->FirstChildElement ();
+
+	while (content)
+	{
+		std::string name = content->Value ();
+
+		if (name == "Transform") {
+			ProcessTransform (content, scene, lightMapGameObject);
+		}
+		else if (name == "Rigidbody") {
+			ProcessRigidbody (content, lightMapGameObject);
+		}
+		else if (name == "Components") {
+			ProcessComponents (content, lightMapGameObject);
+		}
+
+		content = content->NextSiblingElement ();
+	}
+
+	/*
+	* TODO: Change this from here.
+	*/
+
+	lightMapGameObject->AttachMesh (mesh);
+
+	scene->AttachObject (lightMapGameObject);
 }
 
 void SceneLoader::ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene)
