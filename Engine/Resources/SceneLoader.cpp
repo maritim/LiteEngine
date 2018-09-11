@@ -457,23 +457,29 @@ void SceneLoader::ProcessComponent (TiXmlElement* xmlElem, GameObject* gameObjec
 
 void SceneLoader::ProcessRigidbody (TiXmlElement* xmlElem, SceneObject* object)
 {
+	std::string mass = xmlElem->Attribute ("mass");
+
+	object->GetRigidbody ()->SetMass (std::stof (mass));
+
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
 	while (content) 
 	{
 		std::string name = content->Value ();
 
-		if (name == "Gravity") {
-			ProcessGravity (content, object->GetRigidbody ());
+		if (name == "Collider") {
+			ProcessCollider (content, object->GetRigidbody ());
 		}
 
 		content = content->NextSiblingElement ();
 	}
 }
 
-void SceneLoader::ProcessGravity (TiXmlElement* xmlElem, Rigidbody* rigidbody)
+void SceneLoader::ProcessCollider (TiXmlElement* xmlElem, Rigidbody* rigidbody)
 {
-	bool useGravity = Extensions::StringExtend::ToBool (xmlElem->Attribute ("use"));
+	std::string path = xmlElem->Attribute ("path");
 
-	rigidbody->SetGravityUse (useGravity);
+	BulletCollider* collider = Resources::LoadCollider (path);
+
+	rigidbody->SetCollider (collider);
 }

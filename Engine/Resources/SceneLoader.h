@@ -38,7 +38,7 @@ private:
 
 	void ProcessRigidbody (TiXmlElement* xmlElem, SceneObject* object);
 
-	void ProcessGravity (TiXmlElement* xmlElem, Rigidbody* rigidbody);
+	void ProcessCollider (TiXmlElement* xmlElem, Rigidbody* rigidbody);
 };
 
 #endif

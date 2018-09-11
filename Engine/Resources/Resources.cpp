@@ -15,6 +15,7 @@
 #include "ParticleSystemLoader.h"
 #include "SkyboxLoader.h"
 #include "BitmapFontLoader.h"
+#include "ColliderLoader.h"
 #include "LightLoader.h"
 
 Model* Resources::LoadModel (const std::string& filename)
@@ -155,6 +156,17 @@ Skybox* Resources::LoadSkybox (const std::string& filename)
 	delete skyboxLoader;
 
 	return skybox;
+}
+
+BulletCollider* Resources::LoadCollider (const std::string& filename)
+{
+	ColliderLoader* colliderLoader = new ColliderLoader ();
+
+	BulletCollider* collider = (BulletCollider*) colliderLoader->Load (filename);
+
+	delete colliderLoader;
+
+	return collider;
 }
 
 Light* Resources::LoadLight (const std::string& filename)

@@ -31,7 +31,8 @@ public:
 
 	static MaterialLibrary* LoadMaterialLibrary (const std::string& filename);
 	static ParticleSystem* LoadParticleSystem (const std::string& filename);
-	static Skybox* LoadSkybox (const std::string& filename); 
+	static Skybox* LoadSkybox (const std::string& filename);
+	static BulletCollider* LoadCollider (const std::string& filename);
 	static Light* LoadLight (const std::string& filename);
 
 private:

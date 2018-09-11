@@ -12,9 +12,6 @@
 					<MaterialName>SnowFlake</MaterialName>
 				</Material>
 			</Mesh>
-			<Rigidbody>
-				<Gravity use="true" />
-			</Rigidbody>
 		</Particle>
 	
 		<Transform>
@@ -28,7 +25,7 @@
 		<TweenCurve type="EASE" easeindex="2" description="Linear" ></TweenCurve>
 
 		<LifetimeRange min="9900" max="10000" description="In milliseconds" />
-		<SpeedRange min="0.0" max="0.1" description="In units per second" />
+		<SpeedRange min="2.0" max="2.0" description="In units per second" />
 		<ScaleRange min="0.2" max="0.2" description="In units" />
 	</Emiter>
 </ParticleSystem>

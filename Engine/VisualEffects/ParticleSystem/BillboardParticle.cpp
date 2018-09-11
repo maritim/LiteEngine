@@ -22,7 +22,6 @@ Particle* BillboardParticle::Clone ()
 {
 	BillboardParticle* clone = new BillboardParticle ();
 
-	clone->GetRigidbody ()->SetGravityUse (_rigidbody->GetGravityUse ());
 	clone->SetMesh (_mesh);
 
 	return clone;

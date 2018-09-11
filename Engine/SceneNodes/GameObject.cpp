@@ -28,6 +28,11 @@ void GameObject::AttachMesh (Model * mesh)
 	Model3DRenderer* model3dRenderer = dynamic_cast<Model3DRenderer*>(_renderer);
 	model3dRenderer->Attach (_mesh);
 
+	if (_rigidbody->GetCollider () != nullptr) {
+		_rigidbody->GetCollider ()->Rebuild (_mesh, _transform);
+		_rigidbody->Rebuild ();
+	}
+
 	DEBUG_LOG (_name);
 	_collider->Rebuild (_mesh, _transform);
 }

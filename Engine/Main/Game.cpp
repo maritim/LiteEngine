@@ -3,7 +3,7 @@
 #include "Systems/Time/Time.h"
 #include "Systems/Input/Input.h"
 #include "Systems/Window/Window.h"
-#include "Systems/Physics/PhysicsSystem.h"
+#include "Systems/Physics/PhysicsManager.h"
 #include "Systems/Components/ComponentManager.h"
 
 #include "Debug/Profiler/Profiler.h"
@@ -73,7 +73,7 @@ void Game::UpdateScene()
 	SceneManager::Instance ()->Current ()->Update ();
 
 	ComponentManager::Instance ()->Update ();
-	PhysicsSystem::Instance ().UpdateScene ();
+	PhysicsManager::Instance ()->Update ();
 }
 
 void Game::DisplayScene() 

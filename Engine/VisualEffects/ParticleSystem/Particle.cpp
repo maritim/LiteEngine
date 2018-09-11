@@ -21,8 +21,6 @@ Particle::Particle () :
 {
 	delete _renderer;
 	_renderer = new ParticleRenderer (_transform);
-
-	_rigidbody->SetGravityUse (false);
 }
 
 Particle::~Particle ()
@@ -99,12 +97,7 @@ void Particle::Update ()
 		return ;
 	}
 
-	if (!_rigidbody->GetGravityUse ()) {
-		UpdatePosition ();
-	} else {
-		UpdatePhysics ();
-	}
-
+	UpdatePosition ();
 	UpdateScale ();
 }
 
@@ -126,11 +119,6 @@ void Particle::UpdateScale ()
 	this->GetTransform ()->SetScale (_initialScale * scale);
 }
 
-void Particle::UpdatePhysics ()
-{
-	_rigidbody->Update ();
-}
-
 void Particle::UpdateRotation ()
 {
 	// TODO: implement this
@@ -140,7 +128,6 @@ Particle* Particle::Clone ()
 {
 	Particle* clone = new Particle ();
 
-	clone->GetRigidbody ()->SetGravityUse (_rigidbody->GetGravityUse ());
 	clone->SetMesh (_mesh);
 
 	return clone;

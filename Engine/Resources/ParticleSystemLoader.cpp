@@ -206,9 +206,6 @@ void ParticleSystemLoader::ProcessParticle (TiXmlElement* xmlElem, Emiter* emite
 		if (name == "Mesh") {
 			ProcessParticleMesh (content, particlePrototype, filename);
 		}
-		else if (name == "Rigidbody") {
-			ProcessParticleRigidbody (content, particlePrototype);
-		}
 
 		content = content->NextSiblingElement ();
 	}
@@ -270,29 +267,6 @@ void ParticleSystemLoader::ProcessMeshMaterial (TiXmlElement* xmlElem, Model* me
 			polyGroup->SetMaterialName (mat->name);
 		}
 	}
-}
-
-void ParticleSystemLoader::ProcessParticleRigidbody (TiXmlElement* xmlElem, Particle* prototype)
-{
-	TiXmlElement* content = xmlElem->FirstChildElement ();
-
-	while (content)
-	{
-		std::string name = content->Value ();
-
-		if (name == "Gravity") {
-			ProcessParticleGravity (content, prototype->GetRigidbody ());
-		}
-
-		content = content->NextSiblingElement ();
-	}
-}
-
-void ParticleSystemLoader::ProcessParticleGravity (TiXmlElement* xmlElem, Rigidbody* rigidbody)
-{
-	bool useGravity = Extensions::StringExtend::ToBool (xmlElem->Attribute ("use"));
-
-	rigidbody->SetGravityUse (useGravity);
 }
 
 void ParticleSystemLoader::ProcessTransform (TiXmlElement* xmlElem, Emiter* emiter)

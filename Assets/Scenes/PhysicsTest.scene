@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Scene>
+	<Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
+
+	<GameObject InstanceID="0" name="Plane" meshpath="Assets/Primitives/Cube.obj" isActive="true">
+		<Transform>
+			<Position />
+			<Rotation />
+			<Scale x="10" z="10" />
+		</Transform>
+		<Rigidbody mass="0" >
+			<Collider path="Assets/Colliders/Geometry.collider" />
+		</Rigidbody>
+		<Components>
+			<Component name="FlyCameraController" />
+		</Components>
+	</GameObject>
+
+	<GameObject InstanceID="1" name="Cylinder" meshpath="Assets/Primitives/Cylinder.obj" isActive="true" >
+		<Transform>
+			<Position y="5" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody mass="5" >
+			<Collider path="Assets/Colliders/Cylinder.collider" />
+		</Rigidbody>
+	</GameObject>
+
+	<GameObject InstanceID="2" name="Sphere" meshpath="Assets/Primitives/Sphere.obj" isActive="true" >
+		<Transform>
+			<Position x="1" y="10" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody mass="5" >
+			<Collider path="Assets/Colliders/Sphere.collider" />
+		</Rigidbody>
+	</GameObject>
+
+	<GameObject InstanceID="3" name="Cube" meshpath="Assets/Primitives/Cube.obj" isActive="true" >
+		<Transform>
+			<Position x="1" y="15" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody mass="5" >
+			<Collider path="Assets/Colliders/Box.collider" />
+		</Rigidbody>
+	</GameObject>
+
+	<GameObject InstanceID="3" name="Cube" meshpath="Assets/Primitives/Cube.obj" isActive="true" >
+		<Transform>
+			<Position z="1" y="17" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody mass="5" >
+			<Collider path="Assets/Colliders/Box.collider" />
+		</Rigidbody>
+	</GameObject>
+
+	<GameObject InstanceID="3" name="Cube" meshpath="Assets/Primitives/Cube.obj" isActive="true" >
+		<Transform>
+			<Position x="2" y="19" />
+			<Rotation />
+			<Scale />
+		</Transform>
+		<Rigidbody mass="5" >
+			<Collider path="Assets/Colliders/Box.collider" />
+		</Rigidbody>
+	</GameObject>
+
+	<Light InstanceID="41" name="ShadowsSun" path="Assets/Lights/ShadowsSun.light" isActive="true">
+		<Transform>
+			<Position x="0" y="3" z="0.6" />
+		</Transform>
+	</Light>
+</Scene>

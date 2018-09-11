@@ -57,7 +57,6 @@ protected:
 	void UpdatePosition ();
 	void UpdateScale ();
 	void UpdateRotation ();
-	void UpdatePhysics ();
 };
 
 #endif
