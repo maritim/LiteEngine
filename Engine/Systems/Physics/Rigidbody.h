@@ -3,22 +3,38 @@
 
 #include "Core/Interfaces/Object.h"
 
+#include <bullet/BulletDynamics/Dynamics/btRigidBody.h>
+
 #include "SceneGraph/Transform.h"
+
+#include "Systems/Collision/BulletCollider.h"
 
 class Rigidbody : public Object
 {
 protected:
+	btRigidBody* _rigidBody;
 	Transform* _transform;
-	bool _useGravity;
+
+	float _mass;
+	BulletCollider* _collider;
 
 public:
 	Rigidbody (Transform* _transform);
+	~Rigidbody ();
 
-	bool GetGravityUse () const;
+	void SetMass (float mass);
+	void SetCollider (BulletCollider* collider);
+	void SetVelocity (const glm::vec3& velocity);
+	void SetAngularVelocity (const glm::vec3& velocity);
 
-	void SetGravityUse (bool useGravity);
+	float GetMass () const;
+	BulletCollider* GetCollider () const;
+	glm::vec3 GetVelocity () const;
+	glm::vec3 GetAngularVelocity () const;
 
-	void Update ();
+	void Rebuild ();
+protected:
+	void DestroyRigidbody ();
 };
 
 #endif

@@ -6,7 +6,7 @@ function InstallDependenciesPacman
 {
 	echo "Attempting to install dependencies using pacman"
 
-	dep="gcc g++ make cmake glm sdl2 sdl2_image glew assimp"
+	dep="gcc g++ make cmake glm sdl2 sdl2_image glew assimp bulletphysics"
 
 	for pkg in $dep; do
 		if dpkg -l "$pkg" &> /dev/null; then
@@ -24,7 +24,7 @@ function InstallDependenciesAptGet
 {
 	echo "Attempting to install dependencies using apt-get"
 
-	dep="build-essential cmake libglm-dev libsdl2-image-dev libsdl2-dev libglew-dev libassimp-dev"
+	dep="build-essential cmake libglm-dev libsdl2-image-dev libsdl2-dev libglew-dev libassimp-dev libbullet-dev"
 
 	for pkg in $dep; do
 		if dpkg -l "$pkg" &> /dev/null; then
@@ -42,7 +42,7 @@ function InstallDependenciesDnf
 {
 	echo "Attempting to install dependencies using dnf"
 
-	dep="gcc gcc-c++ make cmake glm-devel SDL2_image-devel SDL2-devel glew-devel assimp-devel"
+	dep="gcc gcc-c++ make cmake glm-devel SDL2_image-devel SDL2-devel glew-devel assimp-devel bullet-devel"
 
 	for pkg in $dep; do
 		if dpkg -l "$pkg" &> /dev/null; then
@@ -66,7 +66,7 @@ function InstallDependenciesDarwin
 	echo "Package brew is updating..."
 	brew update
 
-	dep_apple="cmake glm sdl2 sdl2_image glew assimp"
+	dep_apple="cmake glm sdl2 sdl2_image glew assimp bullet"
 
 	for pkg in $dep_apple; do
 	    if brew list -1 | grep -q "^${pkg}\$"; then

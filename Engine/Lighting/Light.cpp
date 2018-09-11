@@ -5,7 +5,7 @@ Light::Light () :
 	_specularColor (Color::White),
 	_castShadows (false)
 {
-	_rigidbody->SetGravityUse (0);
+
 }
 
 Light::~Light ()

@@ -4,6 +4,7 @@
 #include "Systems/Screen/Screen.h"
 #include "Systems/Input/Input.h"
 #include "Systems/Time/Time.h"
+#include "Systems/Physics/Physics.h"
 
 #include "Managers/ShaderManager.h"
 #include "Managers/SceneManager.h"
@@ -42,6 +43,8 @@ void GameEngine::Init ()
 	// Debugger::Init ();
 
 	Input::Init ();
+
+	Physics::Init ();
 
 	InitRenderer ();
 	InitScene ();

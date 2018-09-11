@@ -15,7 +15,5 @@ Particle* MeshParticle::Clone ()
 {
 	MeshParticle* clone = new MeshParticle ();
 
-	clone->GetRigidbody ()->SetGravityUse (_rigidbody->GetGravityUse ());
-
 	return clone;
 }

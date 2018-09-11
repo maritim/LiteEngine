@@ -7,9 +7,6 @@
 	<Emiter type="QUAD" width="49.0" depth="49.0" >
 		<Particle type="MESH">
 			<Mesh type="Path" path="pig.obj" />
-			<Rigidbody>
-				<Gravity use="false" />
-			</Rigidbody>
 		</Particle>
 	
 		<Transform>

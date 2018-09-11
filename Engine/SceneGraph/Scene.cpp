@@ -6,8 +6,6 @@
 
 #include "SceneObject.h"
 
-#include "Systems/Physics/PhysicsSystem.h"
-
 #include "Core/Console/Console.h"
 
 Scene::Scene () :
@@ -21,7 +19,7 @@ Scene::Scene () :
 
 void Scene::Init ()
 {
-	PhysicsSystem::Instance ().Init (this);
+
 }
 
 void Scene::SetSkybox (Skybox *skybox)

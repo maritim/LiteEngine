@@ -12,9 +12,6 @@
 					<MaterialName>RainDrop</MaterialName>
 				</Material>
 			</Mesh>
-			<Rigidbody>
-				<Gravity use="false" />
-			</Rigidbody>
 		</Particle>
 	
 		<Transform>

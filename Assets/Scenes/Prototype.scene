@@ -14,9 +14,6 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 		<Components>
 			<Component name="FlyCameraController" />
       <!--<Component name="StatisticsView" />-->
@@ -30,9 +27,6 @@
 			<Rotation x="-90"/>
 			<Scale x="0.2" y="0.2" z="0.2" />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</AnimatedGameObject>	
 
 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/Spider-Man.dae" isActive="true" >
@@ -41,9 +35,6 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</AnimatedGameObject>
 
 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/walking.dae" isActive="true" >
@@ -52,9 +43,6 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</AnimatedGameObject>
 
 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Chestie/chestie.dae" isActive="true" >
@@ -63,9 +51,6 @@
 			<Rotation />
 			<Scale x="0.02" y="0.02" z="0.02" />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</AnimatedGameObject>
 
 	<GameObject InstanceID="1" name="CowGirl" meshpath="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" isActive="true" >
@@ -74,9 +59,6 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</GameObject>
 	<GameObject InstanceID="2" name="FantasyGirl" meshpath="Assets/Models/Lightning/lightning_obj.obj" isActive="true" >
 		<Transform>
@@ -84,9 +66,6 @@
 			<Rotation />
 			<Scale x="0.03" y="0.03" z="0.03" />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</GameObject>	
 	<GameObject InstanceID="3" name="Cat" meshpath="Assets/Models/Cat/cat.obj" isActive="true" >
 		<Transform>
@@ -94,9 +73,6 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</GameObject>
 	<GameObject InstanceID="4" name="SpiderMan" meshpath="Assets/Models/Spider-Man/Spider-Man.obj" isActive="true" >
 		<Transform>
@@ -104,9 +80,6 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</GameObject>
 
 	<Light InstanceID="41" name="Sun" path="Assets/Lights/PrototypeSceneSun.light" isActive="false">
@@ -131,9 +104,6 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</ParticleSystem>
 	<ParticleSystem InstanceID="6" name="Smoke" path="Assets/ParticleSystem/Smoke/Smoke.psys" isActive="false" >
 		<Transform>
@@ -141,9 +111,6 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</ParticleSystem> 
 
  	<ParticleSystem InstanceID="7" name="Fireworks" path="Assets/ParticleSystem/Fireworks/Fireworks.psys" isActive="false" >
@@ -152,9 +119,6 @@
 			<Rotation x="0" y="0" z="0" /> 
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</ParticleSystem>
   	<ParticleSystem InstanceID="8" name="Snow" path="Assets/ParticleSystem/Snow/Snow.psys" isActive="false" >
 		<Transform>
@@ -162,9 +126,6 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</ParticleSystem> 
 	<ParticleSystem InstanceID="8" name="Rain" path="Assets/ParticleSystem/Rain/Rain.psys" isActive="false" >
 		<Transform>
@@ -172,9 +133,6 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</ParticleSystem>
 	<ParticleSystem InstanceID="10" name="Tail" path="Assets/ParticleSystem/Tail/Tail.psys" isActive="false" >
 		<Transform parent="CowGirl" >
@@ -182,8 +140,5 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 	</ParticleSystem>
 </Scene>

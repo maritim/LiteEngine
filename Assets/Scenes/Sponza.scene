@@ -9,9 +9,6 @@
 			<Rotation />
 			<Scale x ="0.03" y="0.03" z="0.03"/>
 		</Transform>
-		<Rigidbody>
-			<Gravity use="false" />
-		</Rigidbody>
 		<Components>
 			<Component name="FlyCameraController" />
 			<Component name="FrameRate" />
@@ -28,6 +25,4 @@
 		<Position x="0" y="3" z="0.6" />
 		</Transform>
 	</Light>
-
-
 </Scene>
