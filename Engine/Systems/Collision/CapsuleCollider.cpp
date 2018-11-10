@@ -1,6 +1,7 @@
 #include "CapsuleCollider.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <algorithm>
 
 CapsuleCollider::CapsuleCollider () :
 	_isGenerated (true)

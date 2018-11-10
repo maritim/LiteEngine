@@ -1,6 +1,7 @@
 #include "SphereCollider.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <algorithm>
 
 SphereCollider::SphereCollider () :
 	_isGenerated (true)
