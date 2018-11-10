@@ -57,7 +57,7 @@ float SphereCollider::GetRadius (Model* mesh, Transform* transform)
 	 * Compute object center
 	*/
 
-	glm::vec3 center = glm::vec3 (modelMatrix * glm::vec4 (position, 1));
+	glm::vec3 center = position;
 
 	/*
 	 * Iterate over all vertices and compute radius
