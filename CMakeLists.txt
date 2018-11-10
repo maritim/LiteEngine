@@ -26,7 +26,6 @@ add_executable (LiteEngine ${LiteEngineSourceFiles})
 
 set (LIBS_DIR ${PROJECT_SOURCE_DIR}/3rdparty/lib)
 find_package (OpenGL REQUIRED)
-find_package (Bullet REQUIRED)
 find_library (GLEW NAMES GLEW glew32 HINTS ${LIBS_DIR})
 find_library (SDL2 NAMES SDL2 HINTS ${LIBS_DIR})
 find_library (SDL2_image NAMES SDL2_image HINTS ${LIBS_DIR})
@@ -35,9 +34,22 @@ find_library (assimp NAMES assimp HINTS ${LIBS_DIR})
 include_directories (${PROJECT_SOURCE_DIR}/Engine)
 
 if(NOT MSVC)
+	find_package (Bullet REQUIRED)
+	
 	include_directories (${BULLET_INCLUDE_DIRS})
 else(NOT MSVC)
-	include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include)
+	include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include/bullet)
+
+	find_library (BULLET_LIBRARY_COLLISION NAMES BulletCollision HINTS ${LIBS_DIR})
+	find_library (BULLET_LIBRARY_DYNAMICS NAMES BulletDynamics HINTS ${LIBS_DIR})
+	find_library (BULLET_LIBRARY_SOFTBODY NAMES BulletSoftBody HINTS ${LIBS_DIR})
+	find_library (BULLET_LIBRARY_LINEARMATH NAMES LinearMath HINTS ${LIBS_DIR})
+
+	set (BULLET_LIBRARIES ${BULLET_LIBRARY_COLLISION} ${BULLET_LIBRARY_DYNAMICS} ${BULLET_LIBRARY_SOFTBODY} ${BULLET_LIBRARY_LINEARMATH})
 endif(NOT MSVC)
+
+if(MSVC)
+	include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include)
+endif(MSVC)
 
 target_link_libraries (LiteEngine ${OPENGL_LIBRARIES} ${GLEW} ${SDL2} ${SDL2_image} ${assimp} ${BULLET_LIBRARIES})
