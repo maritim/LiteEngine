@@ -30,7 +30,7 @@ void VoxelShadowMapVolume::BindForWriting ()
 	BindForShadowMapCatch (0);
 }
 
-std::vector<PipelineAttribute> VoxelShadowMapVolume::GetCustomAttributes ()
+std::vector<PipelineAttribute> VoxelShadowMapVolume::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 

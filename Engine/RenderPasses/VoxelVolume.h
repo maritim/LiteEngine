@@ -29,7 +29,7 @@ public:
 	virtual void BindForReading ();
 	virtual void BindForWriting ();
 	virtual void BindForWriting (std::size_t mipmap);
-	virtual std::vector<PipelineAttribute> GetCustomAttributes ();
+	virtual std::vector<PipelineAttribute> GetCustomAttributes () const;
 
 	virtual void ClearVoxels();
 	virtual void UpdateBoundingBox (const glm::vec3& minVertex, const glm::vec3& maxVertex);

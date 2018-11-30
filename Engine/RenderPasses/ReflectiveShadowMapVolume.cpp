@@ -30,7 +30,7 @@ void ReflectiveShadowMapVolume::BindForWriting ()
 	ReflectiveShadowMapDirectionalLightVolume::BindForShadowMapCatch (0);
 }
 
-std::vector<PipelineAttribute> ReflectiveShadowMapVolume::GetCustomAttributes ()
+std::vector<PipelineAttribute> ReflectiveShadowMapVolume::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 

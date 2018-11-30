@@ -46,7 +46,7 @@ void ReflectiveShadowMapSamplesVolume::BindForWriting ()
 	*/
 }
 
-std::vector<PipelineAttribute> ReflectiveShadowMapSamplesVolume::GetCustomAttributes ()
+std::vector<PipelineAttribute> ReflectiveShadowMapSamplesVolume::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 

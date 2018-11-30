@@ -30,7 +30,7 @@ void VolumetricLightVolume::BindForWriting ()
 	*/
 }
 
-std::vector<PipelineAttribute> VolumetricLightVolume::GetCustomAttributes ()
+std::vector<PipelineAttribute> VolumetricLightVolume::GetCustomAttributes () const
 {
 	/*
 	 * Nothing to do here

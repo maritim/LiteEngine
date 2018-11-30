@@ -71,7 +71,7 @@ void VoxelVolume::BindForReading ()
 	GL::BindTexture (GL_TEXTURE_3D, _volumeTexture);
 }
 
-std::vector<PipelineAttribute> VoxelVolume::GetCustomAttributes ()
+std::vector<PipelineAttribute> VoxelVolume::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 

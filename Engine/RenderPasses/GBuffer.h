@@ -20,7 +20,7 @@ public:
 public:
     GBuffer();
 
-    std::vector<PipelineAttribute> GetCustomAttributes ();
+    std::vector<PipelineAttribute> GetCustomAttributes () const;
 }; 
 
 #endif

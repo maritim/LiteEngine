@@ -232,7 +232,7 @@ void ShadowMapDirectionalLightVolume::BindForWriting ()
 	*/
 }
 
-std::vector<PipelineAttribute> ShadowMapDirectionalLightVolume::GetCustomAttributes ()
+std::vector<PipelineAttribute> ShadowMapDirectionalLightVolume::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 

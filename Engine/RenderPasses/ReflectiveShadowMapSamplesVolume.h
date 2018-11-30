@@ -18,7 +18,7 @@ public:
 
 	void BindForReading ();
 	void BindForWriting ();
-	std::vector<PipelineAttribute> GetCustomAttributes ();
+	std::vector<PipelineAttribute> GetCustomAttributes () const;
 };
 
 #endif

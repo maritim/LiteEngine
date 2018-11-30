@@ -14,7 +14,6 @@ public:
 	virtual void EndDrawing () = 0;
 
 	virtual void BindForReading () = 0;
-	virtual std::vector<PipelineAttribute> GetCustomAttributes () = 0;
 };
 
 #endif

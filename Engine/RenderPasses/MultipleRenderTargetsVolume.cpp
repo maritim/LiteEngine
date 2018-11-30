@@ -244,7 +244,7 @@ void MultipleRenderTargetsVolume::BindForWriting ()
 	GL::DrawBuffers(DrawBuffers.size (), DrawBuffers.data ());
 }
 
-std::vector<PipelineAttribute> MultipleRenderTargetsVolume::GetCustomAttributes ()
+std::vector<PipelineAttribute> MultipleRenderTargetsVolume::GetCustomAttributes () const
 {
 	return std::vector<PipelineAttribute> ();
 }

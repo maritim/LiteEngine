@@ -10,7 +10,7 @@ GBuffer::GBuffer () :
 
 }
 
-std::vector<PipelineAttribute> GBuffer::GetCustomAttributes ()
+std::vector<PipelineAttribute> GBuffer::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 

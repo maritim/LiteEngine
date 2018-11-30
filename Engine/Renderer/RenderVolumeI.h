@@ -13,7 +13,7 @@ class RenderVolumeI : public Object
 public:
 	virtual void BindForReading () = 0;
 	virtual void BindForWriting () = 0;
-	virtual std::vector<PipelineAttribute> GetCustomAttributes () = 0;
+	virtual std::vector<PipelineAttribute> GetCustomAttributes () const = 0;
 };
 
 #endif
