@@ -22,7 +22,7 @@ RenderVolumeCollection* DeferredBlitRenderPass::Execute (const Scene* scene, con
 	 * Get frame buffer from render volume collection
 	*/
 
-	GBuffer* frameBuffer = (GBuffer*)rvc->GetRenderVolume ("GBuffer");
+	FrameBuffer2DVolume* frameBuffer = (FrameBuffer2DVolume*) rvc->GetPreviousVolume ();
 
 	/*
 	* Render skybox
@@ -33,9 +33,9 @@ RenderVolumeCollection* DeferredBlitRenderPass::Execute (const Scene* scene, con
 	return rvc;
 }
 
-void DeferredBlitRenderPass::EndDrawing (GBuffer* frameBuffer)
+void DeferredBlitRenderPass::EndDrawing (FrameBuffer2DVolume* frameBufferVolume)
 {
-	frameBuffer->BindForFinalPass ();
+	frameBufferVolume->BindForBliting ();
 
 	std::size_t windowWidth = Window::GetWidth ();
 	std::size_t windowHeight = Window::GetHeight ();

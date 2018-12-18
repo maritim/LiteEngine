@@ -26,7 +26,8 @@ DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
 	_normalMapShaderName ("NORMAL_MAP_DEFERRED_GEOMETRY"),
 	_lightMapShaderName ("LIGHT_MAP_DEFERRED_GEOMETRY"),
 	_animationShaderName ("ANIMATION_DEFERRED_GEOMETRY"),
-	_frameBuffer (new GBuffer ())
+	_frameBuffer (new GBuffer ()),
+	_lightAccumulationVolume (new LightAccumulationVolume ())
 {
 
 }
@@ -34,6 +35,7 @@ DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
 DeferredGeometryRenderPass::~DeferredGeometryRenderPass ()
 {
 	delete _frameBuffer;
+	delete _lightAccumulationVolume;
 }
 
 void DeferredGeometryRenderPass::Init ()
@@ -84,6 +86,17 @@ void DeferredGeometryRenderPass::Init ()
 			" It is not possible to continue the process. End now!");
 		exit (GBUFFER_FBO_NOT_INIT);
 	}
+
+	/*
+	 * Initialize light accumulation volume
+	*/
+
+	if (!_lightAccumulationVolume->Init (Window::GetWidth (), Window::GetHeight (), _frameBuffer)) {
+		Console::LogError (std::string () +
+			"Light accumulation buffer for deferred rendering cannot be initialized!" +
+			" It is not possible to continue the process. End now!");
+		exit (LIGHT_ACCUMULATION_FBO_NOT_INIT);
+	}
 }
 
 RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
@@ -93,12 +106,6 @@ RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const Scene* scene,
 	*/
 
 	UpdateCamera (camera);
-
-	/*
-	* Update GBuffer if needed
-	*/
-
-	UpdateGBuffer ();
 
 	/*
 	* Deferred Rendering: Prepare for rendering
@@ -118,36 +125,32 @@ RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const Scene* scene,
 
 	EndDrawing ();
 
-	return rvc->Insert ("GBuffer", _frameBuffer);
-}
-
-void DeferredGeometryRenderPass::UpdateGBuffer ()
-{
-	glm::ivec2 resizeEvent = Input::GetResizeEvent ();
-
-	if (resizeEvent == glm::ivec2 (0)) {
-		return;
-	}
-
-	_frameBuffer->Clear ();
-	_frameBuffer->Init ((int) resizeEvent.x, (int) resizeEvent.y);
+	return rvc->Insert ("GBuffer", _frameBuffer)->Insert ("LightAccumulationVolume", _lightAccumulationVolume);
 }
 
 void DeferredGeometryRenderPass::PrepareDrawing ()
 {
-	_frameBuffer->StartFrame ();
-}
+	/*
+	 * Bind light accumulation volume for writting
+	*/
 
-void DeferredGeometryRenderPass::GeometryPass (const Scene* scene, const Camera* camera)
-{
+	_lightAccumulationVolume->BindForWriting ();
+
+	/*
+	 * Clear light accumulation buffer
+	*/
+
+	GL::Clear (GL_COLOR_BUFFER_BIT);
+
 	/*
 	 * Bind framebuffer for writting
 	*/
 
 	_frameBuffer->BindForWriting ();
+}
 
-	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+void DeferredGeometryRenderPass::GeometryPass (const Scene* scene, const Camera* camera)
+{
 	/*
 	 * Set Depth Buffer
 	*/

@@ -14,10 +14,15 @@ class RenderVolumeCollection : public Object
 {
 protected:
 	std::map<std::string, RenderVolumeI*> _renderVolumes;
+	std::string _lastRenderVolumeName;
 
 public:
+	RenderVolumeCollection ();
+
 	RenderVolumeCollection* Insert (const std::string& name, RenderVolumeI* volume);
+
 	RenderVolumeI* GetRenderVolume (const std::string& name) const;
+	RenderVolumeI* GetPreviousVolume () const;
 
 	RenderVolumeCollectionIterator begin ();
 	RenderVolumeCollectionIterator end ();

@@ -9,15 +9,97 @@
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 
 MultipleRenderTargetsVolume::MultipleRenderTargetsVolume(std::size_t numTextures) :
+	m_fbo (0),
 	m_textures (new GLuint [numTextures]),
-	m_texturesCount (numTextures),
-	m_finalTextureIndex (numTextures)
+	m_depthTexture (0),
+	m_texturesCount (numTextures)
 {
 
 }
 
 MultipleRenderTargetsVolume::~MultipleRenderTargetsVolume ()
 {
+	Clear ();
+
+	delete[] m_textures;
+}
+
+bool MultipleRenderTargetsVolume::Init(std::size_t bufferWidth, std::size_t bufferHeight)
+{
+	/*
+	 * Clear framebuffer if needed
+	*/
+
+	Clear ();
+
+	/*
+	 * Create the FBO
+	*/
+
+	GL::GenFramebuffers(1, &m_fbo);
+	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+
+	/*
+	 * Create the all drawable textures for multiple render targets
+	*/
+
+	GL::GenTextures(m_texturesCount, m_textures);
+	GL::GenTextures(1, &m_depthTexture);
+
+	for (std::size_t index = 0 ; index < m_texturesCount ; index++) {
+		GL::BindTexture(GL_TEXTURE_2D, m_textures[index]);
+
+		GL::TexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		GL::TexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+
+		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+		GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, bufferWidth, bufferHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+		
+		GL::FramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_textures[index], 0);
+	}
+
+	/*
+	 * Create depth buffer texture
+	*/
+
+	GL::BindTexture(GL_TEXTURE_2D, m_depthTexture);
+	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	GL::FramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthTexture, 0);
+
+	/*
+	 * Check that FBO is ok
+	*/
+
+	GLenum status = GL::CheckFramebufferStatus(GL_FRAMEBUFFER);
+
+	if (status != GL_FRAMEBUFFER_COMPLETE) {
+		Console::LogError ("Framebuffer status error: " + status);
+		return false;
+	}
+
+	/*
+	 * Restore default FBO
+	*/
+
+	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+	return true;
+}
+
+void MultipleRenderTargetsVolume::Clear ()
+{
+	/*
+	 * TODO: Fix this
+	*/
+
+	if (m_fbo == 0) {
+		return;
+	}
+
 	/*
 	 * Bind current FBO for cleaning
 	*/
@@ -34,7 +116,6 @@ MultipleRenderTargetsVolume::~MultipleRenderTargetsVolume ()
 		usedTextures.push_back (m_textures [index]);
 	}
 
-	usedTextures.push_back (m_finalTexture);
 	usedTextures.push_back (m_depthTexture);
 
 	/*
@@ -70,150 +151,8 @@ MultipleRenderTargetsVolume::~MultipleRenderTargetsVolume ()
 	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
 }
 
-bool MultipleRenderTargetsVolume::Init(std::size_t bufferWidth, std::size_t bufferHeight)
-{
-	/*
-	 * Create the FBO
-	*/
-
-	GL::GenFramebuffers(1, &m_fbo);
-	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-
-	/*
-	 * Create the all drawable textures for multiple render targets
-	*/
-
-	GL::GenTextures(m_texturesCount, m_textures);
-	GL::GenTextures(1, &m_depthTexture);
-	GL::GenTextures(1, &m_finalTexture);
-
-	for (std::size_t index = 0 ; index < m_texturesCount ; index++) {
-		GL::BindTexture(GL_TEXTURE_2D, m_textures[index]);
-
-		GL::TexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		GL::TexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-
-		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-		GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, bufferWidth, bufferHeight, 0, GL_RGBA, GL_FLOAT, NULL);
-		
-		GL::FramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_textures[index], 0);
-	}
-
-	/*
-	 * Create depth buffer texture
-	*/
-
-	GL::BindTexture(GL_TEXTURE_2D, m_depthTexture);
-	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	GL::FramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthTexture, 0);
-
-	/*
-	 * Create final texture
-	*/
-
-	GL::BindTexture(GL_TEXTURE_2D, m_finalTexture);
-	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_FLOAT, NULL);
-	GL::FramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_finalTextureIndex, GL_TEXTURE_2D, m_finalTexture, 0);
-
-	/*
-	 * Check that FBO is ok
-	*/
-
-	GLenum status = GL::CheckFramebufferStatus(GL_FRAMEBUFFER);
-
-	if (status != GL_FRAMEBUFFER_COMPLETE) {
-		Console::LogError ("Framebuffer status error: " + status);
-		return false;
-	}
-
-	/*
-	 * Restore default FBO
-	*/
-
-	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-	return true;
-}
-
-bool MultipleRenderTargetsVolume::Clear ()
-{
-	/*
-	 * Delete all textures
-	*/
-
-	GL::DeleteTextures (m_texturesCount, m_textures);
-	GL::DeleteTextures (1, &m_depthTexture);
-	GL::DeleteTextures (1, &m_finalTexture);
-
-	/*
-	 * Delete framebuffer
-	*/
-
-	GL::DeleteFramebuffers (1, &m_fbo);
-
-	return true;
-}
-
-void MultipleRenderTargetsVolume::StartFrame()
-{
-	/*
-	 * Bind framebuffer
-	*/
-
-	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-
-	/*
-	 * Bind final texture as drawing output
-	*/
-
-	GL::DrawBuffer(GL_COLOR_ATTACHMENT0 + m_finalTextureIndex);
-
-	/*
-	 * Clear drawing buffer
-	*/
-
-	GL::Clear(GL_COLOR_BUFFER_BIT);
-}
-
-void MultipleRenderTargetsVolume::BindForFinalPass()
-{
-	/*
-	 * Disable writting to framebuffer
-	*/
-
-	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-	/*
-	 * Bind current framebuffer with read only
-	*/
-
-	GL::BindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);
-
-	/*
-	 * Bind final texture as drawing output
-	*/
-
-	GL::ReadBuffer(GL_COLOR_ATTACHMENT0 + m_finalTextureIndex);
-}
-
 void MultipleRenderTargetsVolume::BindForReading ()
 {
-	/*
-	 * Bind current framebuffer for writting
-	*/
-
-	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, m_fbo);
-
-	/*
-	 * Bind final texture as drawing output
-	*/
-
-	GL::DrawBuffer (GL_COLOR_ATTACHMENT0 + m_finalTextureIndex);
-
 	/*
 	 * Bind all color textures for reading
 	*/
@@ -242,9 +181,20 @@ void MultipleRenderTargetsVolume::BindForWriting ()
 	}
 
 	GL::DrawBuffers(DrawBuffers.size (), DrawBuffers.data ());
+
+	/*
+	 * Clear framebuffer
+	*/
+
+	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 std::vector<PipelineAttribute> MultipleRenderTargetsVolume::GetCustomAttributes () const
 {
 	return std::vector<PipelineAttribute> ();
+}
+
+unsigned int MultipleRenderTargetsVolume::GetDepthBuffer () const
+{
+	return m_depthTexture;
 }

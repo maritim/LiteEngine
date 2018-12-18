@@ -1,8 +1,15 @@
 #include "RenderVolumeCollection.h"
 
+RenderVolumeCollection::RenderVolumeCollection () :
+	_lastRenderVolumeName ()
+{
+
+}
+
 RenderVolumeCollection* RenderVolumeCollection::Insert (const std::string& name, RenderVolumeI* volume)
 {
 	_renderVolumes [name] = volume;
+	_lastRenderVolumeName = name;
 
 	return this;
 }
@@ -16,6 +23,11 @@ RenderVolumeI* RenderVolumeCollection::GetRenderVolume (const std::string& name)
 	}
 
 	return it->second;
+}
+
+RenderVolumeI* RenderVolumeCollection::GetPreviousVolume () const
+{
+	return GetRenderVolume (_lastRenderVolumeName);
 }
 
 RenderVolumeCollectionIterator RenderVolumeCollection::begin ()

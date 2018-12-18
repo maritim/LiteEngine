@@ -17,12 +17,29 @@ void DeferredSkyboxRenderPass::Init ()
 RenderVolumeCollection* DeferredSkyboxRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
+	 * Start skybox pass
+	*/
+
+	StartSkyboxPass (rvc);
+
+	/*
 	 * Render skybox
 	*/
 
 	SkyboxPass (scene, camera);
 
 	return rvc;
+}
+
+void DeferredSkyboxRenderPass::StartSkyboxPass (RenderVolumeCollection* rvc)
+{
+	/*
+	 * Bind light accumulation framebuffer for writing
+	*/
+
+	auto lightAccumulationVolume = rvc->GetRenderVolume ("LightAccumulationVolume");
+
+	lightAccumulationVolume->BindForWriting ();
 }
 
 void DeferredSkyboxRenderPass::SkyboxPass (const Scene* scene, const Camera* camera)

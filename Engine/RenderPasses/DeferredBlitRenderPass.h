@@ -3,7 +3,7 @@
 
 #include "Renderer/RenderPassI.h"
 
-#include "GBuffer.h"
+#include "RenderPasses/FrameBuffer2DVolume.h"
 
 class DeferredBlitRenderPass : public RenderPassI
 {
@@ -13,7 +13,7 @@ public:
 	virtual void Init ();
 	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
 protected:
-	void EndDrawing (GBuffer* gBuffer);
+	void EndDrawing (FrameBuffer2DVolume* frameBufferVolume);
 };
 
 #endif

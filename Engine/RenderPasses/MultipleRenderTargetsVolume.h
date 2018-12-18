@@ -11,23 +11,21 @@ protected:
 	GLuint m_fbo;
 	GLuint* m_textures;
 	GLuint m_depthTexture;
-	GLuint m_finalTexture;
 	std::size_t m_texturesCount;
-	std::size_t m_finalTextureIndex;
 
 public:
 	MultipleRenderTargetsVolume (std::size_t numTextures); 
 	virtual ~MultipleRenderTargetsVolume ();
 
 	virtual bool Init(std::size_t screenWidth, std::size_t screenHeight);
-	bool Clear ();
-
-	void StartFrame();
-	void BindForFinalPass();
 
 	void BindForReading ();
 	void BindForWriting ();
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
+
+    unsigned int GetDepthBuffer () const;
+protected:
+	void Clear ();
 };
 
 #endif

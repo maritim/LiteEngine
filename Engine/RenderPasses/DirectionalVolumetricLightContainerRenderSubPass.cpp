@@ -10,12 +10,10 @@ DirectionalVolumetricLightContainerRenderSubPass::~DirectionalVolumetricLightCon
 RenderVolumeCollection* DirectionalVolumetricLightContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
-	 * Bind all render volumes
+	 * Bind light accumulation volume
 	*/
 
-	for (RenderVolumeI* renderVolume : *rvc) {
-		renderVolume->BindForReading ();
-	}
+	StartDirectionalLightPass (rvc);
 
 	/*
 	 * Draw volumetric lights
@@ -41,8 +39,27 @@ bool DirectionalVolumetricLightContainerRenderSubPass::IsAvailable (const Volume
 	return true;
 }
 
+void DirectionalVolumetricLightContainerRenderSubPass::StartDirectionalLightPass (RenderVolumeCollection* rvc)
+{
+	/*
+	 * Bind light accumulation framebuffer for writing
+	*/
+
+	auto lightAccumulationVolume = rvc->GetRenderVolume ("LightAccumulationVolume");
+
+	lightAccumulationVolume->BindForWriting ();
+}
+
 void DirectionalVolumetricLightContainerRenderSubPass::DirectionalLightPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
+	/*
+	 * Bind all render volumes
+	*/
+
+	for (RenderVolumeI* renderVolume : *rvc) {
+		renderVolume->BindForReading ();
+	}
+
 	/*
 	 * Get volumetric light from render volume collection
 	*/

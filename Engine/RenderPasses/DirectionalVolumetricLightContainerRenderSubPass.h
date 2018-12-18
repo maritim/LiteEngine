@@ -12,6 +12,7 @@ public:
 protected:
 	bool IsAvailable (const VolumetricLight*) const;
 
+	void StartDirectionalLightPass (RenderVolumeCollection*);
 	void DirectionalLightPass (const Scene*, const Camera*, RenderVolumeCollection*);
 	void EndDirectionalLightPass ();
 

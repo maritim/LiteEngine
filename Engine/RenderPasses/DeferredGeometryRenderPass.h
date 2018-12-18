@@ -6,6 +6,7 @@
 #include <string>
 
 #include "GBuffer.h"
+#include "LightAccumulationVolume.h"
 
 class DeferredGeometryRenderPass : public RenderPassI
 {
@@ -15,6 +16,7 @@ protected:
 	std::string _lightMapShaderName;
 	std::string _animationShaderName;
 	GBuffer* _frameBuffer;
+	LightAccumulationVolume* _lightAccumulationVolume;
 
 public:
 	DeferredGeometryRenderPass ();
@@ -24,7 +26,6 @@ public:
 	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
 protected:
 	void UpdateCamera (const Camera* camera);
-	void UpdateGBuffer ();
 
 	void PrepareDrawing ();
 	void GeometryPass (const Scene* scene, const Camera* camera);
