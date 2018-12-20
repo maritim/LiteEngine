@@ -34,10 +34,18 @@ in vec2 geom_texcoord;
 void main()
 {
 	/*
+	 * Apply gamma on diffuse map
+	*/
+
+	const float gamma = 2.2;
+
+	vec3 srgbDiffuseMap = pow (vec3 (texture2D (DiffuseMap, geom_texcoord.xy)), vec3 (gamma));
+
+	/*
 	 * Get color of all used texture maps
 	*/
 
-	vec3 diffuseMap = MaterialDiffuse * vec3 (texture2D (DiffuseMap, 	geom_texcoord.xy));
+	vec3 diffuseMap = MaterialDiffuse * srgbDiffuseMap;
 	vec3 specularMap = MaterialSpecular * vec3 (texture2D (SpecularMap, geom_texcoord.xy));
 	vec3 alphaMap = vec3 (texture2D (AlphaMap, geom_texcoord.xy));
 

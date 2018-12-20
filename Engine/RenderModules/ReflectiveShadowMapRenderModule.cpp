@@ -6,11 +6,15 @@
 #include "RenderPasses/ForwardRenderPass.h"
 
 #include "RenderPasses/Container/ContainerRenderPass.h"
+#include "RenderPasses/IterateOverRenderVolumeCollection.h"
+
 #include "RenderPasses/ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass.h"
 #include "RenderPasses/DirectionalLightShadowMapContainerRenderSubPass.h"
 #include "RenderPasses/ReflectiveShadowMapSamplesGenerationContainerRenderSubPass.h"
 #include "RenderPasses/ReflectiveShadowMapDirectionalLightContainerRenderSubPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
+
+#include "RenderPasses/GammaCorrection/GammaCorrectionContainerRenderSubPass.h"
 
 void ReflectiveShadowMapRenderModule::Init ()
 {
@@ -26,6 +30,11 @@ void ReflectiveShadowMapRenderModule::Init ()
 		.Attach (new DirectionalLightShadowMapContainerRenderSubPass ())
 		.Attach (new ReflectiveShadowMapSamplesGenerationContainerRenderSubPass ())
 		.Attach (new ReflectiveShadowMapDirectionalLightContainerRenderSubPass ())
+		.Build ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new IterateOverRenderVolumeCollection (1))
+		.Attach (new HDRContainerRenderSubPass ())
+		.Attach (new GammaCorrectionContainerRenderSubPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (new DeferredBlitRenderPass ());
