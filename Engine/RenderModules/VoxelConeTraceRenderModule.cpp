@@ -17,6 +17,7 @@
 #include "RenderPasses/VoxelConeTraceDirectionalLightRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 
+#include "RenderPasses/HighDynamicRange/HDRContainerRenderSubPass.h"
 #include "RenderPasses/GammaCorrection/GammaCorrectionContainerRenderSubPass.h"
 
 void VoxelConeTraceRenderModule::Init ()

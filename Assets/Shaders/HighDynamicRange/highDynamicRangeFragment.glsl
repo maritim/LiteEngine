@@ -20,26 +20,34 @@ uniform vec3 cameraPosition;
 
 uniform vec2 screenSize;
 
-uniform sampler2D postProcessMap;
-
 vec2 CalcTexCoord()
 {
 	return gl_FragCoord.xy / screenSize;
 }
 
-vec3 CalcGammaCorrection (vec3 in_diffuse)
+vec3 ReinhardToneMapping (const vec3 color)
 {
-	float gamma = 2.2;
+	return color / (color + vec3 (1.0));
+}
 
-	vec3 color = pow (in_diffuse, vec3 (1.0 / gamma));
+vec3 ExposureToneMapping (vec3 color)
+{
+	float exposure = 2;
 
-	return color;
+	vec3 ldrColor = vec3 (1.0) - exp (-color * exposure);
+
+	return ldrColor;
+}
+
+vec3 CalcHighDynamicRange (vec3 in_diffuse)
+{
+	return ExposureToneMapping (in_diffuse);
 }
 
 void main ()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_diffuse = texture2D (postProcessMap, texCoord).xyz;
+	vec3 in_diffuse = texture2D (lightAccumulationMap, texCoord).xyz;
 
-	out_color = CalcGammaCorrection (in_diffuse);
+	out_color = CalcHighDynamicRange (in_diffuse);
 }

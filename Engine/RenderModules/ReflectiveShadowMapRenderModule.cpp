@@ -14,6 +14,7 @@
 #include "RenderPasses/ReflectiveShadowMapDirectionalLightContainerRenderSubPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 
+#include "RenderPasses/HighDynamicRange/HDRContainerRenderSubPass.h"
 #include "RenderPasses/GammaCorrection/GammaCorrectionContainerRenderSubPass.h"
 
 void ReflectiveShadowMapRenderModule::Init ()

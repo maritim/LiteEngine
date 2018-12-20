@@ -15,6 +15,7 @@
 #include "RenderPasses/DeferredPointLightContainerRenderSubPass.h"
 #include "RenderPasses/PointLightContainerRenderVolumeCollection.h"
 
+#include "RenderPasses/HighDynamicRange/HDRContainerRenderSubPass.h"
 #include "RenderPasses/GammaCorrection/GammaCorrectionContainerRenderSubPass.h"
 
 void DirectLightingRenderModule::Init ()
