@@ -81,7 +81,7 @@ RenderVolumeCollection* DirectionalLightShadowMapContainerRenderSubPass::Execute
 
 	EndShadowMapPass ();
 
-	return rvc->Insert ("ShadowMapDirectionalLightVolume", _volume);
+	return rvc->InsertScoped ("ShadowMapDirectionalLightVolume", _volume);
 }
 
 bool DirectionalLightShadowMapContainerRenderSubPass::IsAvailable (const VolumetricLight* volumetricLight) const
