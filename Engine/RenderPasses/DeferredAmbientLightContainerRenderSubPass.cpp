@@ -7,7 +7,8 @@
 #include "Renderer/Pipeline.h"
 
 DeferredAmbientLightContainerRenderSubPass::DeferredAmbientLightContainerRenderSubPass () :
-	_shaderName ("AMBIENT_LIGHT")
+	_shaderName ("AMBIENT_LIGHT"),
+	_aoShaderName ("AMBIENT_OCCLUSION_AMBIENT_LIGHT")
 {
 
 }
@@ -20,12 +21,20 @@ DeferredAmbientLightContainerRenderSubPass::~DeferredAmbientLightContainerRender
 void DeferredAmbientLightContainerRenderSubPass::Init ()
 {
 	/*
-	 * Shader for ambient light
+	 * Shader for ambient light without ambient occlusion
 	*/
 
 	ShaderManager::Instance ()->AddShader (_shaderName,
 		"Assets/Shaders/PostProcess/postProcessVertex.glsl",
 		"Assets/Shaders/deferredAmbientLightFragment.glsl");
+
+	/*
+	 * Shader for ambient light with ambient occlusion
+	*/
+
+	ShaderManager::Instance ()->AddShader (_aoShaderName,
+		"Assets/Shaders/PostProcess/postProcessVertex.glsl",
+		"Assets/Shaders/deferredAmbientOcclusionAmbientLightFragment.glsl");
 }
 
 bool DeferredAmbientLightContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
@@ -125,7 +134,11 @@ void DeferredAmbientLightContainerRenderSubPass::EndAmbientLightPass ()
 
 void DeferredAmbientLightContainerRenderSubPass::LockShader ()
 {
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
+	/*
+	 * TODO: check if ambient occlusion is enabled
+	*/
+
+	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_aoShaderName));
 }
 
 std::vector<PipelineAttribute> DeferredAmbientLightContainerRenderSubPass::GetCustomAttributes (RenderVolumeCollection* rvc)

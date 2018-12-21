@@ -9,6 +9,7 @@ class DeferredAmbientLightContainerRenderSubPass : public ContainerRenderSubPass
 {
 protected:
 	std::string _shaderName;
+	std::string _aoShaderName;
 
 public:
 	DeferredAmbientLightContainerRenderSubPass ();

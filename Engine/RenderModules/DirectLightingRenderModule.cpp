@@ -8,6 +8,11 @@
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
 
+#include "RenderPasses/AmbientOcclusion/SSAOSamplesGenerationContainerRenderSubPass.h"
+#include "RenderPasses/AmbientOcclusion/SSAONoiseGenerationContainerRenderSubPass.h"
+#include "RenderPasses/AmbientOcclusion/SSAOContainerRenderSubPass.h"
+#include "RenderPasses/AmbientOcclusion/SSAOBlurContainerRenderSubPass.h"
+
 #include "RenderPasses/DirectionalLightShadowMapContainerRenderSubPass.h"
 #include "RenderPasses/DeferredDirectionalLightContainerRenderSubPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
@@ -31,6 +36,13 @@ void DirectLightingRenderModule::Init ()
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new PointLightContainerRenderVolumeCollection ())
 		.Attach (new DeferredPointLightContainerRenderSubPass ())
+		.Build ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new IterateOverRenderVolumeCollection (1))
+		.Attach (new SSAOSamplesGenerationContainerRenderSubPass ())
+		.Attach (new SSAONoiseGenerationContainerRenderSubPass ())
+		.Attach (new SSAOContainerRenderSubPass ())
+		.Attach (new SSAOBlurContainerRenderSubPass ())
 		.Build ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
