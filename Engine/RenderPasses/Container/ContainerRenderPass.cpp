@@ -42,6 +42,8 @@ void ContainerRenderPass::Init ()
 RenderVolumeCollection* ContainerRenderPass::Execute (const Scene* scene, 
 	const Camera* camera, RenderVolumeCollection* rvc)
 {
+	rvc->StartScope ();
+
 	RenderVolumeI* volume = nullptr;
 
 	/*
@@ -63,7 +65,7 @@ RenderVolumeCollection* ContainerRenderPass::Execute (const Scene* scene,
 		IterateOverSubPasses (volume, scene, camera, rvc);
 	}
 
-	return rvc;
+	return rvc->ReleaseScope ();
 }
 
 ContainerRenderPassBuilder& ContainerRenderPass::Builder ()
