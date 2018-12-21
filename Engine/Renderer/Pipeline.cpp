@@ -155,9 +155,9 @@ void Pipeline::SendLights (Shader* shader)
 		shader = _lockedShader;
 	}
 
-	Color ambientColor = LightsManager::Instance ()->GetAmbientColorLight ();
+	// Color ambientColor = LightsManager::Instance ()->GetAmbientColorLight ();
 
-	GL::Uniform3fv(shader->GetUniformLocation ("sceneAmbient"), 1, glm::value_ptr (ambientColor.ToVector3 ()));
+	// GL::Uniform3fv(shader->GetUniformLocation ("sceneAmbient"), 1, glm::value_ptr (ambientColor.ToVector3 ()));
 
 	// const int lightsLimit = 3;
 

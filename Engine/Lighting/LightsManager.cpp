@@ -3,7 +3,7 @@
 #include <algorithm>
 
 LightsManager::LightsManager () :
-	_ambientLight (Color::White)
+	_ambientLight (Color::Black)
 {
 
 }
@@ -13,12 +13,12 @@ LightsManager::~LightsManager ()
 
 }
 
-void LightsManager::SetAmbientColorLight (Color color)
+void LightsManager::SetAmbientLightColor (Color color)
 {
 	_ambientLight = color;
 }
 
-Color LightsManager::GetAmbientColorLight () const
+Color LightsManager::GetAmbientLightColor () const
 {
 	return _ambientLight;
 }

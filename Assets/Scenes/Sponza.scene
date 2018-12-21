@@ -25,4 +25,7 @@
 		<Position x="0" y="3" z="0.6" />
 		</Transform>
 	</Light>
+	
+	<Light InstanceID="43" name="AmbientLight" path="Assets/Lights/Ambient.light" isActive="true" />
+
 </Scene>

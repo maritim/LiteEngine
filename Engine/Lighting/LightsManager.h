@@ -23,8 +23,8 @@ private:
 	Color _ambientLight;
 	
 public:
-	void SetAmbientColorLight (Color ambientLight);
-	Color GetAmbientColorLight () const;
+	void SetAmbientLightColor (Color ambientLight);
+	Color GetAmbientLightColor () const;
 
 	void AddDirectionalLight (DirectionalLight* light);
 	void AddPointLight (PointLight* light);

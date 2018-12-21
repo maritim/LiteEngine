@@ -15,6 +15,8 @@
 #include "RenderPasses/DeferredPointLightContainerRenderSubPass.h"
 #include "RenderPasses/PointLightContainerRenderVolumeCollection.h"
 
+#include "RenderPasses/DeferredAmbientLightContainerRenderSubPass.h"
+
 #include "RenderPasses/HighDynamicRange/HDRContainerRenderSubPass.h"
 #include "RenderPasses/GammaCorrection/GammaCorrectionContainerRenderSubPass.h"
 
@@ -29,6 +31,10 @@ void DirectLightingRenderModule::Init ()
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new PointLightContainerRenderVolumeCollection ())
 		.Attach (new DeferredPointLightContainerRenderSubPass ())
+		.Build ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new IterateOverRenderVolumeCollection (1))
+		.Attach (new DeferredAmbientLightContainerRenderSubPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()

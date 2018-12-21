@@ -11,6 +11,7 @@
 #include "Lighting/DirectionalLight.h"
 #include "Lighting/PointLight.h"
 #include "Lighting/SpotLight.h"
+#include "Lighting/AmbientLight.h"
 
 class LightLoader : public ResourceLoader
 {

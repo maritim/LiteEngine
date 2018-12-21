@@ -59,6 +59,9 @@ Light* LightLoader::GetLight (TiXmlElement* xmlElem)
 	else if (type == "SPOT_LIGHT") {
 		return new SpotLight ();
 	}
+	else if (type == "AMBIENT_LIGHT") {
+		return new AmbientLight ();
+	}
 
 	return nullptr;
 }

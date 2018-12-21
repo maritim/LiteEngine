@@ -97,6 +97,8 @@
 			<Position x="-1" y="-1" z="-1" />
 		</Transform>
 	</Light>
+	
+	<Light InstanceID="43" name="AmbientLight" path="Assets/Lights/Ambient.light" isActive="true" />
 
 	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" isActive="false" >
 		<Transform>
