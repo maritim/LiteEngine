@@ -10,14 +10,14 @@ uniform sampler2D gSpecularMap;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
 uniform mat4 viewProjectionMatrix;
 uniform mat4 modelViewProjectionMatrix;
 uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
+uniform mat4 inverseViewMatrix;
 
 uniform vec3 cameraPosition;
-
-uniform vec3 sceneAmbient;
 
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
@@ -94,7 +94,7 @@ int GetShadowCascadeLevel (float depth)
 vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
 {
 	// The position is also a direction for Directional Lights
-	vec3 lightDirection = normalize (lightPosition);
+	vec3 lightDirection = normalize (vec3 (viewMatrix * vec4 (lightPosition, 0)));
 
 	// Diffuse contribution
 	float dCont = max (dot (in_normal, lightDirection), 0.0);
@@ -102,7 +102,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// Attenuation is 1.0 for Directional Lights
 	vec3 diffuseColor = lightColor * in_diffuse * dCont;
 
-	vec3 surface2view = normalize (cameraPosition - in_position);
+	vec3 surface2view = normalize (-in_position);
 	vec3 reflection = reflect (-lightDirection, in_normal);
 
 	// Specular contribution
@@ -111,12 +111,12 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	vec3 specularColor = lightSpecularColor * in_diffuse * sCont;
 
 	// Calculate shadow level
-	vec4 clipPos = (viewProjectionMatrix * vec4 (in_position, 1.0));
+	vec4 clipPos = (projectionMatrix * vec4 (in_position, 1.0));
 	float depth = clipPos.z / clipPos.w;
 	int shadowCascadedLevel = GetShadowCascadeLevel (depth);
 
 	// Calculate shadow
-	vec4 lightSpacePos = lightSpaceMatrices [shadowCascadedLevel] * vec4 (in_position, 1.0f);
+	vec4 lightSpacePos = lightSpaceMatrices [shadowCascadedLevel] * inverseViewMatrix * vec4 (in_position, 1.0f);
 	float shadow = ShadowCalculation (lightSpacePos, shadowCascadedLevel);
 
 	vec3 multi = vec3 (0);

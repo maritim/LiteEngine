@@ -27,8 +27,8 @@ void main()
 	 * Emit position on the world
 	*/
 
-	vert_position = vec3 (modelMatrix * vec4 (in_position, 1));
-	vert_normal = normalMatrix * in_normal;
+	vert_position = vec3 (modelViewMatrix * vec4 (in_position, 1));
+	vert_normal = normalWorldMatrix * in_normal;
 
 	vert_texcoord = in_texcoord;
 }

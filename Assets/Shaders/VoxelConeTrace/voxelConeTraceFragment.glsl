@@ -14,10 +14,10 @@ uniform mat4 viewProjectionMatrix;
 uniform mat4 modelViewProjectionMatrix;
 uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
+uniform mat4 inverseViewMatrix;
+uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
-
-uniform vec3 sceneAmbient;
 
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
@@ -309,14 +309,18 @@ float CalcOcclusion (vec3 in_position, vec3 in_normal)
 
 vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
 {
-	vec3 directDiffuseColor = CalcDirectDiffuseLight (in_position, in_normal, in_diffuse);
+	// Compute fragment world position and world normal
+	vec3 worldPosition = vec3 (inverseViewMatrix * vec4 (in_position, 1.0));
+	vec3 worldNormal = normalMatrix * inverseNormalWorldMatrix * in_normal;
 
-	float shadow = CalcShadowContribution (in_position);
+	vec3 directDiffuseColor = CalcDirectDiffuseLight (worldPosition, worldNormal, in_diffuse);
+
+	float shadow = CalcShadowContribution (worldPosition);
 
 	directDiffuseColor = (1.0 - shadow) * (directDiffuseColor);
 
-	vec3 indirectDiffuseColor = CalcIndirectDiffuseLight (in_position, in_normal);
-	vec3 indirectSpecularColor = CalcIndirectSpecularLight (in_position, in_normal);
+	vec3 indirectDiffuseColor = CalcIndirectDiffuseLight (worldPosition, worldNormal);
+	vec3 indirectSpecularColor = CalcIndirectSpecularLight (worldPosition, worldNormal);
 
 	// float ambientOcclusion = CalcOcclusion (in_position, in_normal);
 

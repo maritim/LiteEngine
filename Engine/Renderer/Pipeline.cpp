@@ -133,7 +133,9 @@ void Pipeline::UpdateMatrices (Shader* shader)
 	glm::mat3 normalWorldMatrix = glm::transpose (glm::inverse (glm::mat3 (modelViewMatrix)));
 	glm::mat3 normalMatrix = glm::transpose (glm::inverse (glm::mat3 (_modelMatrix)));
 
+	glm::mat4 inverseViewMatrix = glm::inverse (_viewMatrix);
 	glm::mat4 inverseViewProjectionMatrix = glm::inverse (modelViewProjectionMatrix);
+	glm::mat3 inverseNormalWorldMatrix = glm::inverse (normalWorldMatrix);
 
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelMatrix"), 1, GL_FALSE, glm::value_ptr (_modelMatrix));
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("viewMatrix"), 1, GL_FALSE, glm::value_ptr (_viewMatrix));
@@ -143,7 +145,9 @@ void Pipeline::UpdateMatrices (Shader* shader)
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewProjectionMatrix));
 	GL::UniformMatrix3fv (shader->GetUniformLocation ("normalMatrix"), 1, GL_FALSE, glm::value_ptr (normalMatrix));
 	GL::UniformMatrix3fv (shader->GetUniformLocation ("normalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (normalWorldMatrix));
+	GL::UniformMatrix4fv (shader->GetUniformLocation ("inverseViewMatrix"), 1, GL_FALSE, glm::value_ptr (inverseViewMatrix));
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("inverseViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (inverseViewProjectionMatrix));
+	GL::UniformMatrix3fv (shader->GetUniformLocation ("inverseNormalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (inverseNormalWorldMatrix));
 	GL::Uniform3fv (shader->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_cameraPosition));
 
 	// SendLights (shader);

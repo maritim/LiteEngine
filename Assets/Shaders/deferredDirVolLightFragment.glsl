@@ -16,8 +16,6 @@ uniform mat3 normalWorldMatrix;
 
 uniform vec3 cameraPosition;
 
-uniform vec3 sceneAmbient;
-
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
 uniform vec3 lightSpecularColor;
@@ -40,7 +38,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// Attenuation is 1.0 for Directional Lights
 	vec3 diffuseColor = lightColor * in_diffuse * dCont;
 
-	vec3 surface2view = normalize (cameraPosition - in_position);
+	vec3 surface2view = normalize (-in_position);
 	vec3 reflection = reflect (-lightDirection, in_normal);
 
 	// Specular contribution
