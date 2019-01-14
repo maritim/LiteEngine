@@ -4,6 +4,7 @@
 
 #include "Utils/Files/FileSystem.h"
 
+#include "SettingsLoader.h"
 #include "WavefrontObjectLoader.h"
 #include "StanfordObjectLoader.h"
 #include "GenericObjectModelLoader.h"
@@ -17,6 +18,17 @@
 #include "BitmapFontLoader.h"
 #include "ColliderLoader.h"
 #include "LightLoader.h"
+
+SettingsContainer* Resources::LoadSettings (const std::string& filename)
+{
+	SettingsLoader* settingsLoader = new SettingsLoader ();
+
+	SettingsContainer* settingsContainer = (SettingsContainer*)settingsLoader->Load (filename);
+
+	delete settingsLoader;
+
+	return settingsContainer;
+}
 
 Model* Resources::LoadModel (const std::string& filename)
 {

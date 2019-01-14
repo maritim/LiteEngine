@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 
+#include "Core/Settings/SettingsContainer.h"
 #include "Mesh/Model.h"
 #include "Mesh/AnimationModel.h"
 #include "Material/MaterialLibrary.h"
@@ -18,6 +19,8 @@
 class Resources
 {
 public:
+	static SettingsContainer* LoadSettings (const std::string& filename);
+
 	static Model* LoadModel (const std::string& filename);
 	static AnimationModel* LoadAnimatedModel (const std::string& filename);
 //	static int SaveModel (Model* model, char* filename);
