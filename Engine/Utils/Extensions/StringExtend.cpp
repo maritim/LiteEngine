@@ -123,11 +123,11 @@ bool StringExtend::ToBoolExt (const std::string& boolStr)
 {
     std::string str = Upper (boolStr);
 
-    if (boolStr == "FALSE" || boolStr == "0") {
+    if (boolStr == "FALSE" || boolStr == "0" || boolStr == "off" || boolStr == "disabled") {
         return false;
     }
 
-    if (boolStr == "TRUE") {
+    if (boolStr == "TRUE" || boolStr == "on" || boolStr == "enabled") {
         return true;
     }
 

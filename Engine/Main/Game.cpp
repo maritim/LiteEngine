@@ -5,6 +5,7 @@
 #include "Systems/Window/Window.h"
 #include "Systems/Physics/PhysicsManager.h"
 #include "Systems/Components/ComponentManager.h"
+#include "Systems/Settings/SettingsManager.h"
 
 #include "Debug/Profiler/Profiler.h"
 
@@ -74,6 +75,7 @@ void Game::UpdateScene()
 
 	ComponentManager::Instance ()->Update ();
 	PhysicsManager::Instance ()->Update ();
+	SettingsManager::Instance ()->Update ();
 }
 
 void Game::DisplayScene() 

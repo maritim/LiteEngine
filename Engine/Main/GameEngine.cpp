@@ -1,5 +1,6 @@
 #include "GameEngine.h"
 
+#include "Systems/Settings/SettingsManager.h"
 #include "Systems/Window/Window.h"
 #include "Systems/Screen/Screen.h"
 #include "Systems/Input/Input.h"
@@ -27,6 +28,7 @@
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFAULT_WINDOW_HEIGHT 720
 #define DEFAULT_WINDOW_TITLE "Lite Engine"
+#define ENGINE_SETTINGS_PATH "Assets/LiteEngine.ini"
 
 /*
  * TODO (Medium Priority): Refactor initialization responsabilities
@@ -34,6 +36,8 @@
 
 void GameEngine::Init ()
 {
+	InitSettings ();
+
 	SDLModule::Init ();
 
 	Window::Init (DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_TITLE);
@@ -59,6 +63,19 @@ void GameEngine::Clear ()
 	Window::Close ();
 
 	SDLModule::Quit ();
+}
+
+void GameEngine::InitSettings ()
+{
+	std::string settingsPath = ENGINE_SETTINGS_PATH;
+
+	Argument* arg = ArgumentsAnalyzer::Instance ()->GetArgument ("configpath");
+
+	if (arg != nullptr) {
+		settingsPath = arg->GetArgs () [0];
+	}
+
+	SettingsManager::Instance ()->Init (settingsPath);
 }
 
 void GameEngine::InitOpenGL ()
