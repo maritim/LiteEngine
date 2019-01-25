@@ -33,11 +33,13 @@
 #ifndef SINGLETON_H
 #define SINGLETON_H
 
+#include "Core/Interfaces/Object.h"
+
 #include <utility>
 #include <cstdlib>
 
 template <typename T>
-class Singleton
+class Singleton : public Object
 {
 private:
 	static T* _instance;
