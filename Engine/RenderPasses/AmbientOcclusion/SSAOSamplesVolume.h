@@ -20,6 +20,8 @@ public:
 	void BindForReading ();
 	void BindForWriting ();
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
+protected:
+	void Clear ();
 };
 
 #endif

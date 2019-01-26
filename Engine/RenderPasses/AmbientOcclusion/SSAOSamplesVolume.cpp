@@ -12,6 +12,16 @@ SSAOSamplesVolume::SSAOSamplesVolume () :
 
 bool SSAOSamplesVolume::Init (std::size_t samplesCount)
 {
+	/*
+	 * Clear samples
+	*/
+
+	Clear ();
+
+	/*
+	 * Initialize samples
+	*/
+
 	_samples.reserve (samplesCount);
 
 	for (std::size_t index = 0; index < samplesCount; index++) {
@@ -84,4 +94,9 @@ std::vector<PipelineAttribute> SSAOSamplesVolume::GetCustomAttributes () const
 	}
 
 	return attributes;
+}
+
+void SSAOSamplesVolume::Clear ()
+{
+	_samples.clear ();
 }

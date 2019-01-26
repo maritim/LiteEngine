@@ -31,6 +31,9 @@ uniform sampler2D ssaoNoiseMap;
 
 uniform vec2 ssaoNoiseSize;
 
+uniform float ssaoRadius;
+uniform float ssaoBias;
+
 vec2 CalcTexCoord()
 {
 	return gl_FragCoord.xy / screenSize;
@@ -52,12 +55,9 @@ float CalcScreenSpaceAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 te
 	vec3 bitangent = cross (in_normal, tangent);
 	mat3 tangentMatrix = mat3 (tangent, bitangent, in_normal);
 
-	float radius = 0.5;
-	float bias = 0.025;
-
 	for (int sampleIndex = 0; sampleIndex < ssaoSamplesCount; ++ sampleIndex) {
 		vec3 sample = tangentMatrix * ssaoSample [sampleIndex];
-		sample = in_position + sample * radius;
+		sample = in_position + sample * ssaoRadius;
 
 		vec4 offset = projectionMatrix * vec4 (sample, 1.0);
 		offset.xyz /= offset.w;
@@ -65,9 +65,9 @@ float CalcScreenSpaceAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 te
 
 		vec3 samplePos = texture2D (gPositionMap, offset.xy).xyz;
 
-		float rangeCheck = smoothstep (0.0, 1.0, radius / abs (in_position.z - samplePos.z));
+		float rangeCheck = smoothstep (0.0, 1.0, ssaoRadius / abs (in_position.z - samplePos.z));
 
-		occlusion += (samplePos.z >= sample.z + bias ? 1.0 : 0.0) * rangeCheck;
+		occlusion += (samplePos.z >= sample.z + ssaoBias ? 1.0 : 0.0) * rangeCheck;
 	}
 
 	occlusion = 1.0 - (occlusion / ssaoSamplesCount);
