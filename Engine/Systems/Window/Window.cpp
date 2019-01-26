@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include "Systems/Settings/SettingsManager.h"
+
 #include "Core/Console/Console.h"
 
 #include "Wrappers/OpenGL/GL.h"
@@ -8,16 +10,21 @@
 
 std::size_t Window::_width (0);
 std::size_t Window::_height (0);
+bool Window::_fullscreen (true);
 std::string Window::_title ("");
 
 SDL_Window* Window::_window (nullptr);
 SDL_GLContext Window::_glContext;
 
-bool Window::Init (std::size_t width, std::size_t height, std::string title)
+bool Window::Init ()
 {
-	_width = width; 
-	_height = height; 
-	_title = title;
+	/*
+	 * Initialize values based on settings
+	*/
+
+	if (InitSettings () == false) {
+		return false;
+	}
 
 	/*
 	 * Create Window with SDL so MUST include SDL_WINDOW_OPENGL to use OpenGL
@@ -26,11 +33,12 @@ bool Window::Init (std::size_t width, std::size_t height, std::string title)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	
-	_window = SDL_CreateWindow (_title.c_str (), 0, 0, _width, _height, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE|SDL_WINDOW_SHOWN);
+	std::size_t windowFlags = SDL_WINDOW_OPENGL | (_fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
+
+	_window = SDL_CreateWindow (_title.c_str (), 0, 0, _width, _height, windowFlags);
 
 	if (_window == nullptr) {
-		Console::LogError ("Window \"" + title + "\" could not be initialized");
-
+		Console::LogError ("Window \"" + _title + "\" could not be initialized");
 		return false;
 	}
 
@@ -80,15 +88,6 @@ void Window::Close ()
 	SDL_DestroyWindow (_window);
 }
 
-/*
- * TODO: Rethink this
-*/
-
-void Window::UpdateCamera ()
-{
-	Camera::Main ()->SetAspect (1.0f * _width / _height);
-}
-
 std::size_t Window::GetWidth ()
 {
 	return _width;
@@ -102,4 +101,44 @@ std::size_t Window::GetHeight ()
 std::string Window::GetTitle ()
 {
 	return _title;
+}
+
+bool Window::InitSettings ()
+{
+	/*
+	 * Initialize window resolution
+	*/
+
+	glm::vec2 size = SettingsManager::Instance ()->GetValue<glm::vec2> ("resolution", glm::vec2 (0, 0));
+
+	if (size.x == 0 && size.y == 0) {
+		Console::LogError ("Window resolution not specified. Could not proceed further");
+		return false;
+	}
+
+	_width = (std::size_t) size.x;
+	_height = (std::size_t) size.y;
+
+	/*
+	 * Initialize window mode
+	*/
+
+	_fullscreen = SettingsManager::Instance ()->GetValue<bool> ("fullscreen", true);
+
+	/*
+	 * Initialize window title
+	*/
+
+	_title = SettingsManager::Instance ()->GetValue<std::string> ("title", "");
+
+	return true;
+}
+
+/*
+ * TODO: Rethink this
+*/
+
+void Window::UpdateCamera ()
+{
+	Camera::Main ()->SetAspect (1.0f * _width / _height);
 }

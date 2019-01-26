@@ -21,13 +21,6 @@
 
 #include "Modules/SDLModule.h"
 
-/*
- * TODO: Change this to Game Engine properties
-*/
-
-#define DEFAULT_WINDOW_WIDTH 1280
-#define DEFAULT_WINDOW_HEIGHT 720
-#define DEFAULT_WINDOW_TITLE "Lite Engine"
 #define ENGINE_SETTINGS_PATH "Assets/LiteEngine.ini"
 
 /*
@@ -40,7 +33,7 @@ void GameEngine::Init ()
 
 	SDLModule::Init ();
 
-	Window::Init (DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, DEFAULT_WINDOW_TITLE);
+	Window::Init ();
 
 	InitOpenGL ();
 
