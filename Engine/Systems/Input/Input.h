@@ -3,6 +3,7 @@
 
 #include <glm/vec2.hpp>
 #include <cstdint>
+#include <string>
 #include <map>
 
 #include "Systems/Input/InputKey.h"
@@ -35,6 +36,12 @@ private:
 	static std::map<int, std::map<int, std::int16_t> > _joystickAxisState;
 
 	/*
+	 * Text
+	*/
+
+	static std::string _imeTextComposition;
+
+	/*
 	 * Miscellaneous
 	*/
 
@@ -56,6 +63,8 @@ public:
 	static bool GetJoystickButtonDown (std::uint8_t button, std::uint8_t joystick = 0);
 	static bool GetJoystickButtonUp (std::uint8_t button, std::uint8_t joystick = 0);
 	static glm::ivec2 GetJoystickAxis (std::uint8_t axis = 0, std::uint8_t joystick = 0);
+
+	static std::string GetIMETextComposition ();
 
 	static bool GetQuit ();
 	static glm::ivec2 GetResizeEvent ();

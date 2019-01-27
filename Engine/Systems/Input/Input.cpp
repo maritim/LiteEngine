@@ -11,6 +11,8 @@ std::map<int, std::map<int, bool> > Input::Input::_joystickButtonState;
 std::map<int, std::map<int, bool> > Input::_lastJoystickButtonState;
 std::map<int, std::map<int, std::int16_t> > Input::_joystickAxisState;
 
+std::string Input::_imeTextComposition;
+
 bool Input::_sdlQuit (false);
 glm::ivec2 Input::_resizeEvent (glm::ivec2 (0));
 
@@ -50,6 +52,8 @@ void Input::UpdateState ()
 
 	_mouseWheelState = glm::ivec2 (0);
 	_resizeEvent = glm::ivec2 (0);
+
+	_imeTextComposition = "";
 
 	/*
 	 * Update input state
@@ -103,6 +107,9 @@ void Input::UpdateState ()
 					int axis = (int)event.jaxis.axis;
 					_joystickAxisState [joystick][axis] = event.jaxis.value;
 				}
+				break;
+			case SDL_TEXTINPUT:
+				_imeTextComposition = event.text.text;
 				break;
         }
     }
@@ -199,6 +206,11 @@ glm::ivec2 Input::GetJoystickAxis (std::uint8_t axis, std::uint8_t joystick)
 	axisValue.y = _joystickAxisState [joystick][realAxisY];
 
 	return axisValue;
+}
+
+std::string Input::GetIMETextComposition ()
+{
+	return _imeTextComposition;
 }
 
 bool Input::GetQuit ()
