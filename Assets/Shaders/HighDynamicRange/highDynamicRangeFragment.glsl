@@ -20,6 +20,8 @@ uniform vec3 cameraPosition;
 
 uniform vec2 screenSize;
 
+uniform float exposure;
+
 vec2 CalcTexCoord()
 {
 	return gl_FragCoord.xy / screenSize;
@@ -32,8 +34,6 @@ vec3 ReinhardToneMapping (const vec3 color)
 
 vec3 ExposureToneMapping (vec3 color)
 {
-	float exposure = 2;
-
 	vec3 ldrColor = vec3 (1.0) - exp (-color * exposure);
 
 	return ldrColor;
