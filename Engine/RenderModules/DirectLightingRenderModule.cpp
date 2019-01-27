@@ -4,6 +4,7 @@
 #include "RenderPasses/DeferredSkyboxRenderPass.h"
 #include "RenderPasses/DeferredBlitRenderPass.h"
 #include "RenderPasses/ForwardRenderPass.h"
+#include "RenderPasses/Editor/EditorRenderPass.h"
 
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
@@ -56,4 +57,5 @@ void DirectLightingRenderModule::Init ()
 		.Build ());
 	_renderPasses.push_back (new DeferredBlitRenderPass ());
 	_renderPasses.push_back (new ForwardRenderPass ());
+	_renderPasses.push_back (new EditorRenderPass ());
 }

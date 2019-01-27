@@ -19,6 +19,7 @@
       <!--<Component name="StatisticsView" />-->
 			<Component name="FrameRate" />
 			<!--<Component name="ShadowController" />-->
+			<Component name="DebugViewController" />
 		</Components>
 	</GameObject>
 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Dragon/Dragon.dae" isActive="false" >
@@ -97,7 +98,6 @@
 			<Position x="-1" y="-1" z="-1" />
 		</Transform>
 	</Light>
-	
 	<Light InstanceID="43" name="AmbientLight" path="Assets/Lights/Ambient.light" isActive="true" />
 
 	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" isActive="false" >

@@ -7,6 +7,8 @@
 #include "Systems/Input/Input.h"
 #include "Systems/Time/Time.h"
 
+#include "Editor/Editor.h"
+
 #include "Resources/Resources.h"
 
 #include "Utils/Extensions/MathExtend.h"
@@ -20,6 +22,10 @@ void FlyCameraController::Start ()
 
 void FlyCameraController::Update ()
 {
+	if (Editor::WantCaptureInput ()) {
+		return;
+	}
+
 	float cameraVelocity = 10.0f;
 	glm::vec3 velocity = glm::vec3 (0.0f);
 

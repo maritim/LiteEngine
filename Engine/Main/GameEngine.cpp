@@ -21,6 +21,8 @@
 
 #include "Modules/SDLModule.h"
 
+#include "Editor/Editor.h"
+
 #define ENGINE_SETTINGS_PATH "Assets/LiteEngine.ini"
 
 /*
@@ -43,6 +45,8 @@ void GameEngine::Init ()
 
 	Physics::Init ();
 
+	Editor::Init ();
+
 	InitRenderer ();
 	InitScene ();
 }
@@ -52,6 +56,8 @@ void GameEngine::Clear ()
 	ShaderManager::Instance()->Clear();
 	SceneManager::Instance()->Clear();
 	RenderManager::Instance()->Clear();
+
+	Editor::Clear ();
 
 	Window::Close ();
 

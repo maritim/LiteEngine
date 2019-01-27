@@ -13,6 +13,8 @@
 
 #include "Managers/SceneManager.h"
 
+#include "Editor/Editor.h"
+
 #define FRAMES_PER_SECOND 1000
 #define TICKS_PER_FRAME (1000 / FRAMES_PER_SECOND)
 #define MILLISECONDS_PER_FRAME (1.0 / FRAMES_PER_SECOND)
@@ -42,6 +44,7 @@ void Game::Start ()
 
 		Time::UpdateFrame();
 		Input::UpdateState ();
+		Editor::Update ();
 
 		/*
 		 * Remove Exit on Escape Free from here
