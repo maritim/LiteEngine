@@ -11,6 +11,7 @@
 #include "Material/Material.h"
 #include "Managers/ShaderManager.h"
 #include "Managers/TextureManager.h"
+#include "Systems/Settings/SettingsManager.h"
 
 #include "Resources/Resources.h"
 
@@ -149,6 +150,11 @@ void Pipeline::UpdateMatrices (Shader* shader)
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("inverseViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (inverseViewProjectionMatrix));
 	GL::UniformMatrix3fv (shader->GetUniformLocation ("inverseNormalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (inverseNormalWorldMatrix));
 	GL::Uniform3fv (shader->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_cameraPosition));
+
+	// TODO: Change this
+	bool gammaCorrectionEnabled = SettingsManager::Instance ()->GetValue<bool> ("gamma_correction", false);
+
+	GL::Uniform1f (shader->GetUniformLocation ("gamma"), gammaCorrectionEnabled ? 2.2f : 1.0f);
 
 	// SendLights (shader);
 }

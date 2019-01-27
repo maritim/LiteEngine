@@ -23,7 +23,7 @@ uniform sampler2D AlphaMap;
 
 uniform vec3 cameraPosition;
 
-uniform vec3 sceneAmbient;
+uniform float gamma;
 
 const vec3 nullInAlphaMap = vec3 (0.0);
 
@@ -36,8 +36,6 @@ void main()
 	/*
 	 * Apply gamma on diffuse map
 	*/
-
-	const float gamma = 2.2;
 
 	vec3 srgbDiffuseMap = pow (vec3 (texture2D (DiffuseMap, geom_texcoord.xy)), vec3 (gamma));
 
