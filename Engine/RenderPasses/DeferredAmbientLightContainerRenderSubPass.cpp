@@ -18,7 +18,7 @@ DeferredAmbientLightContainerRenderSubPass::DeferredAmbientLightContainerRenderS
 
 DeferredAmbientLightContainerRenderSubPass::~DeferredAmbientLightContainerRenderSubPass ()
 {
-	ClearSettings ();
+
 }
 
 void DeferredAmbientLightContainerRenderSubPass::Init ()
@@ -89,6 +89,15 @@ RenderVolumeCollection* DeferredAmbientLightContainerRenderSubPass::Execute (con
 	EndAmbientLightPass ();
 
 	return rvc;
+}
+
+void DeferredAmbientLightContainerRenderSubPass::Clear ()
+{
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
 }
 
 void DeferredAmbientLightContainerRenderSubPass::StartAmbientLightPass (RenderVolumeCollection* rvc)

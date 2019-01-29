@@ -12,11 +12,14 @@ protected:
 
 public:
 	ReflectiveShadowMapSamplesGenerationContainerRenderSubPass ();
+	~ReflectiveShadowMapSamplesGenerationContainerRenderSubPass ();
 
 	virtual void Init();
 	virtual RenderVolumeCollection* Execute(const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
 
 	virtual bool IsAvailable (const VolumetricLight*) const;
+
+	void Clear ();
 };
 
 #endif

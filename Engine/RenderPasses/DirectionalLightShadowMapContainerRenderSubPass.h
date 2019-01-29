@@ -25,6 +25,8 @@ public:
 
 	virtual void Init ();
 	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+
+	void Clear ();
 protected:
 	bool IsAvailable (const VolumetricLight*) const;
 

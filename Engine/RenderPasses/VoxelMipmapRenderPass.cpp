@@ -40,6 +40,13 @@ RenderVolumeCollection* VoxelMipmapRenderPass::Execute (const Scene* scene, cons
 	return rvc;
 }
 
+void VoxelMipmapRenderPass::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}
+
 void VoxelMipmapRenderPass::StartVoxelMipmaping ()
 {
 	Pipeline::SetShader (ShaderManager::Instance ()->GetShader ("VOXEL_MIPMAP_PASS_COMPUTE_SHADER"));

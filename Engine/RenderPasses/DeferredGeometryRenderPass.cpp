@@ -128,6 +128,21 @@ RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const Scene* scene,
 	return rvc->Insert ("GBuffer", _frameBuffer)->Insert ("LightAccumulationVolume", _lightAccumulationVolume);
 }
 
+void DeferredGeometryRenderPass::Clear ()
+{
+	/*
+	 * Clear GBuffer volume
+	*/
+
+	_frameBuffer->Clear ();
+
+	/*
+	 * Clear light accumulation volume
+	*/
+
+	_lightAccumulationVolume->Clear ();
+}
+
 void DeferredGeometryRenderPass::PrepareDrawing ()
 {
 	/*

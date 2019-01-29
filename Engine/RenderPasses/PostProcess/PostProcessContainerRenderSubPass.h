@@ -23,6 +23,8 @@ public:
 
 	void Init ();
 	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+
+	void Clear ();
 protected:
 	virtual void StartPostProcessPass ();
 	virtual void PostProcessPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);

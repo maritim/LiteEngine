@@ -43,6 +43,7 @@ class RenderManager : public Singleton<RenderManager>
 private:
 	RenderModule* _currentRenderModule;
 	RenderMode _currentRenderMode;
+	bool _needToChangeRenderMode;
 	std::vector<RenderModule*> _renderModules;
 
 public:
@@ -59,6 +60,8 @@ private:
 	RenderManager (const RenderManager& other);
 	RenderManager& operator=(const RenderManager& other);
 	~RenderManager ();
+
+	void SwitchRenderModule ();
 };
 
 #endif

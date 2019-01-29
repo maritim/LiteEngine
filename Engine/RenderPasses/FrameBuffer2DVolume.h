@@ -17,7 +17,7 @@ public:
 
 	void BindForWriting ();
 	void BindForBliting ();
-protected:
+
 	void Clear ();
 };
 

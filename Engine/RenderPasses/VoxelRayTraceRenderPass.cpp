@@ -40,6 +40,13 @@ RenderVolumeCollection* VoxelRayTraceRenderPass::Execute (const Scene* scene, co
 	return rvc;
 }
 
+void VoxelRayTraceRenderPass::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}
+
 void VoxelRayTraceRenderPass::StartRayTrace ()
 {
 	/*

@@ -41,6 +41,15 @@ void PostProcessContainerRenderSubPass::Init ()
 	}
 }
 
+void PostProcessContainerRenderSubPass::Clear ()
+{
+	/*
+	 * Clear post processing volume
+	*/
+
+	_postProcessMapVolume->Clear ();
+}
+
 RenderVolumeCollection* PostProcessContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*

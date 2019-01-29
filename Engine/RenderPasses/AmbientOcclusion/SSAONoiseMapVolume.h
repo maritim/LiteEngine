@@ -21,7 +21,7 @@ public:
 	virtual void BindForReading ();
 	virtual void BindForWriting ();
 	virtual std::vector<PipelineAttribute> GetCustomAttributes () const;
-protected:
+
 	virtual void Clear ();
 };
 

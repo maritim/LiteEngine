@@ -21,6 +21,13 @@ void LightMapDirectionalLightContainerRenderSubPass::Init ()
 		"Assets/Shaders/LightMap/lightMapDirVolLightFragment.glsl");
 }
 
+void LightMapDirectionalLightContainerRenderSubPass::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}
+
 void LightMapDirectionalLightContainerRenderSubPass::LockShader (const VolumetricLight* volumetricLight)
 {
 	/*

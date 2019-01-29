@@ -21,6 +21,13 @@ void VoxelConeTraceDirectionalLightRenderPass::Init ()
 		"Assets/Shaders/VoxelConeTrace/voxelConeTraceFragment.glsl");
 }
 
+void VoxelConeTraceDirectionalLightRenderPass::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}
+
 void VoxelConeTraceDirectionalLightRenderPass::LockShader (const VolumetricLight* volumetricLight)
 {
 	/*

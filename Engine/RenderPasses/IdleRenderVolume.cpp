@@ -22,3 +22,10 @@ std::vector<PipelineAttribute> IdleRenderVolume::GetCustomAttributes () const
 
 	return std::vector<PipelineAttribute> ();
 }
+
+void IdleRenderVolume::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}

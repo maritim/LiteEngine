@@ -24,7 +24,7 @@ public:
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
 
     unsigned int GetDepthBuffer () const;
-protected:
+
 	void Clear ();
 };
 

@@ -97,6 +97,11 @@ bool ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::IsAv
 	return volumetricLight->IsCastingShadows ();
 }
 
+void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Clear ()
+{
+	_reflectiveShadowMapVolume->Clear ();
+}
+
 void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::StartShadowMapPass ()
 {
 	/*

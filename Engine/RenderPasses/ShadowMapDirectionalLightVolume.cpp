@@ -19,57 +19,7 @@ ShadowMapDirectionalLightVolume::ShadowMapDirectionalLightVolume () :
 
 ShadowMapDirectionalLightVolume::~ShadowMapDirectionalLightVolume ()
 {
-	/*
-	 * Bind FBO
-	*/
 
-	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, _frameBufferIndex);
-
-	/*
-	 * Detach current depth buffer from frame buffer object
-	*/
-
-	GL::FramebufferTexture2D (GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
-
-	/*
-	 * Delete depth buffer textures
-	*/
-
-	GL::DeleteTextures (_cascadedLevels, _shadowMapIndices);
-
-	/*
-	 * Delete frame buffer
-	*/
-
-	GL::DeleteFramebuffers (1, &_frameBufferIndex);
-
-	/*
-	 * Restore default FBO
-	*/
-
-	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
-
-	/*
-	 * Delete cascaded resolutions
-	*/
-
-	delete [] _shadowMapResolutions;
-
-	/*
-	 * Delete light cameras
-	*/
-
-	for (std::size_t index = 0; index < _cascadedLevels; index++) {
-		delete _lightCameras [index];
-	}
-
-	delete[] _lightCameras;
-
-	/*
-	 * Delete depth limits
-	*/
-
-	delete[] _shadowMapZEnd;
 }
 
 bool ShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels)
@@ -329,4 +279,59 @@ float ShadowMapDirectionalLightVolume::GetCameraLimit (std::size_t cascadedLevel
 	}
 
 	return _shadowMapZEnd [cascadedLevel];
+}
+
+void ShadowMapDirectionalLightVolume::Clear ()
+{
+	/*
+	 * Bind framebuffer
+	*/
+
+	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, _frameBufferIndex);
+
+	/*
+	 * Detach current depth buffer from frame buffer object
+	*/
+
+	GL::FramebufferTexture2D (GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+
+	/*
+	 * Delete depth buffer textures
+	*/
+
+	GL::DeleteTextures (_cascadedLevels, _shadowMapIndices);
+
+	/*
+	 * Delete frame buffer
+	*/
+
+	GL::DeleteFramebuffers (1, &_frameBufferIndex);
+
+	/*
+	 * Restore default framebuffer
+	*/
+
+	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
+
+	/*
+	 * Delete cascaded resolutions
+	*/
+
+	delete [] _shadowMapResolutions;
+
+	/*
+	 * Delete light cameras
+	*/
+
+	for (std::size_t index = 0; index < _cascadedLevels; index++) {
+		delete _lightCameras [index];
+	}
+
+	delete[] _lightCameras;
+
+	/*
+	 * Delete depth limits
+	*/
+
+	delete[] _shadowMapZEnd;
 }

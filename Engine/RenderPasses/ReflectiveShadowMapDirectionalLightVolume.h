@@ -29,6 +29,8 @@ public:
 	void EndDrawing ();
 
 	void BindForReading ();
+
+	void Clear ();
 };
 
 #endif

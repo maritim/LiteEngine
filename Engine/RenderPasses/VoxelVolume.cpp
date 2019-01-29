@@ -2,6 +2,8 @@
 
 #include "Renderer/Pipeline.h"
 
+#include "Core/Console/Console.h"
+
 VoxelVolume::VoxelVolume() :
 	_volumeTexture(0),
 	_volumeFbo(0),
@@ -12,17 +14,11 @@ VoxelVolume::VoxelVolume() :
 
 VoxelVolume::~VoxelVolume()
 {
-	Clear();
+
 }
 
-void VoxelVolume::Init(std::size_t volumeSize)
+bool VoxelVolume::Init(std::size_t volumeSize)
 {
-	/*
-	* Clear current volume if needed
-	*/
-
-	Clear();
-
 	/*
 	* Keep new current volume size
 	*/
@@ -57,7 +53,25 @@ void VoxelVolume::Init(std::size_t volumeSize)
 
 	GL::BindFramebuffer (GL_FRAMEBUFFER, _volumeFbo);
 	GL::FramebufferTexture (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _volumeTexture, 0);
-	GL::BindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	/*
+	 * Check that framebuffer is ok
+	*/
+
+	GLenum status = GL::CheckFramebufferStatus (GL_FRAMEBUFFER);
+
+	if (status != GL_FRAMEBUFFER_COMPLETE) {
+		Console::LogError ("Framebuffer status error: " + status);
+		return false;
+	}
+
+	/*
+	 * Restore default framebuffer
+	*/
+
+	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
+
+	return true;
 }
 
 void VoxelVolume::BindForWriting ()
@@ -152,6 +166,27 @@ void VoxelVolume::BindForWriting (std::size_t mipmap)
 
 void VoxelVolume::Clear()
 {
+	/*
+	 * Bind current framebuffer for cleaning
+	*/
+
+	GL::BindFramebuffer (GL_FRAMEBUFFER, _volumeFbo);
+
+	/*
+	 * Detach texture from attachment in framebuffer
+	*/
+
+	GL::FramebufferTexture (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 0, 0);
+
+	/*
+	 * Delete texture
+	*/
+
 	GL::DeleteTextures(1, &_volumeTexture);
+
+	/*
+	 * Delete framebuffer
+	*/
+
 	GL::DeleteFramebuffers(1, &_volumeFbo);
 }

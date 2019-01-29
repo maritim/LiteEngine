@@ -74,3 +74,8 @@ std::vector<PipelineAttribute> ReflectiveShadowMapSamplesVolume::GetCustomAttrib
 
 	return attributes;
 }
+
+void ReflectiveShadowMapSamplesVolume::Clear ()
+{
+	_samples.clear ();
+}

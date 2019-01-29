@@ -13,12 +13,6 @@ SSAOSamplesVolume::SSAOSamplesVolume () :
 bool SSAOSamplesVolume::Init (std::size_t samplesCount)
 {
 	/*
-	 * Clear samples
-	*/
-
-	Clear ();
-
-	/*
 	 * Initialize samples
 	*/
 

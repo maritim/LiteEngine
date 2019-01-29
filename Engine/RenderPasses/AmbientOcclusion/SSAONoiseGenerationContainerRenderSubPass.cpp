@@ -15,12 +15,6 @@ SSAONoiseGenerationContainerRenderSubPass::SSAONoiseGenerationContainerRenderSub
 SSAONoiseGenerationContainerRenderSubPass::~SSAONoiseGenerationContainerRenderSubPass ()
 {
 	delete _ssaoNoiseMapVolume;
-
-	/*
-	 * Clear settings
-	*/
-
-	ClearSettings ();
 }
 
 void SSAONoiseGenerationContainerRenderSubPass::Init ()
@@ -41,6 +35,21 @@ void SSAONoiseGenerationContainerRenderSubPass::Init ()
 RenderVolumeCollection* SSAONoiseGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	return rvc->InsertScoped ("SSAONoiseMapVolume", _ssaoNoiseMapVolume);
+}
+
+void SSAONoiseGenerationContainerRenderSubPass::Clear ()
+{
+	/*
+	 * Clear screen space ambient occlusion noise map volume
+	*/
+
+	_ssaoNoiseMapVolume->Clear ();
+
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
 }
 
 bool SSAONoiseGenerationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
@@ -70,6 +79,12 @@ void SSAONoiseGenerationContainerRenderSubPass::Notify (Object* sender, const Se
 
 	if (name == "ssao_noise_resolution") {
 		_ssaoNoiseMapResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssao_noise_resolution", _ssaoNoiseMapResolution);
+
+		/*
+		 * Clear screen space ambient occlusion noise map volume
+		*/
+
+		_ssaoNoiseMapVolume->Clear ();
 
 		/*
 		 * Update screen space ambient occlusion noise map volume

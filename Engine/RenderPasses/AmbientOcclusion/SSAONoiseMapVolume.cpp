@@ -16,17 +16,11 @@ SSAONoiseMapVolume::SSAONoiseMapVolume () :
 
 SSAONoiseMapVolume::~SSAONoiseMapVolume ()
 {
-	Clear ();
+
 }
 
 bool SSAONoiseMapVolume::Init (std::size_t width, std::size_t height)
 {
-	/*
-	 * Clear current volume if needed
-	*/
-
-	Clear();
-
 	/*
 	 * Keep new current noise map size
 	*/
@@ -102,7 +96,11 @@ std::vector<PipelineAttribute> SSAONoiseMapVolume::GetCustomAttributes () const
 	return attributes;
 }
 
-void SSAONoiseMapVolume::Clear()
+void SSAONoiseMapVolume::Clear ()
 {
+	/*
+	 * Delete noise texture
+	*/
+
 	GL::DeleteTextures (1, &_noiseMap);
 }

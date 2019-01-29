@@ -22,6 +22,8 @@ public:
 	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
 
 	bool IsAvailable (const VolumetricLight*) const;
+
+	void Clear ();
 protected:
 	void StartShadowMapPass ();
 	void ShadowMapGeometryPass (const Scene* scene, const Camera* lightCamera);

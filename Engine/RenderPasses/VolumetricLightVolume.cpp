@@ -38,3 +38,10 @@ std::vector<PipelineAttribute> VolumetricLightVolume::GetCustomAttributes () con
 
 	return std::vector<PipelineAttribute> ();
 }
+
+void VolumetricLightVolume::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}

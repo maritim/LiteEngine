@@ -15,12 +15,6 @@ SSAOSamplesGenerationContainerRenderSubPass::SSAOSamplesGenerationContainerRende
 SSAOSamplesGenerationContainerRenderSubPass::~SSAOSamplesGenerationContainerRenderSubPass ()
 {
 	delete _ssaoSamplesVolume;
-
-	/*
-	 * Clear settings
-	*/
-
-	ClearSettings ();
 }
 
 void SSAOSamplesGenerationContainerRenderSubPass::Init ()
@@ -72,11 +66,32 @@ void SSAOSamplesGenerationContainerRenderSubPass::Notify (Object* sender, const 
 		_samplesSize = SettingsManager::Instance ()->GetValue<int> ("ssao_samples", _samplesSize);
 
 		/*
+		 * Clear sceen space ambient occlusion samples volume
+		*/
+
+		_ssaoSamplesVolume->Clear ();
+
+		/*
 		 * Update screen space ambient occlusion samples volume
 		*/
 
 		InitSamplesVolume ();
 	}
+}
+
+void SSAOSamplesGenerationContainerRenderSubPass::Clear ()
+{
+	/*
+	 * Clear screen space ambient occlusion samples volume
+	*/
+
+	_ssaoSamplesVolume->Clear ();
+
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
 }
 
 void SSAOSamplesGenerationContainerRenderSubPass::InitSettings ()

@@ -18,6 +18,8 @@ public:
 
 	void Init ();
 	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+
+	void Clear ();
 protected:
 	void StartShadowMapPass ();
 	void ShadowMapGeometryPass (const Scene* scene, Camera* lightCamera);

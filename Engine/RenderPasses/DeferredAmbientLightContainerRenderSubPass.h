@@ -25,6 +25,8 @@ public:
 	virtual bool IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const;
 
 	void Notify (Object* sender, const SettingsObserverArgs& args);
+
+	void Clear ();
 protected:
 	void StartAmbientLightPass (RenderVolumeCollection* rvc);
 	void AmbientLightPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);

@@ -38,6 +38,13 @@ RenderVolumeCollection* VoxelRadianceInjectionRenderPass::Execute (const Scene* 
 	return rvc;
 }
 
+void VoxelRadianceInjectionRenderPass::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}
+
 void VoxelRadianceInjectionRenderPass::StartRadianceInjectionPass ()
 {
 	Pipeline::SetShader (ShaderManager::Instance ()->GetShader ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER"));

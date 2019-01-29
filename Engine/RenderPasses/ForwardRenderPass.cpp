@@ -4,11 +4,6 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
-ForwardRenderPass::~ForwardRenderPass ()
-{
-
-}
-
 void ForwardRenderPass::Init ()
 {
 
@@ -23,6 +18,13 @@ RenderVolumeCollection* ForwardRenderPass::Execute (const Scene* scene, const Ca
 	ForwardPass (scene);
 
 	return rvc;
+}
+
+void ForwardRenderPass::Clear ()
+{
+	/*
+	 * Nothing
+	*/
 }
 
 bool cmpForwardPass (Renderer* a, Renderer* b) {

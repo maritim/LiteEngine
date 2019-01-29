@@ -8,6 +8,11 @@ ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::ReflectiveShadowMapS
 
 }
 
+ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::~ReflectiveShadowMapSamplesGenerationContainerRenderSubPass ()
+{
+	delete _reflectiveShadowMapSamplesVolume;
+}
+
 void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Init ()
 {
 	if (!_reflectiveShadowMapSamplesVolume->Init(50)) {
@@ -29,4 +34,9 @@ bool ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::IsAvailable (co
 	*/
 
 	return true;
+}
+
+void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Clear ()
+{
+	_reflectiveShadowMapSamplesVolume->Clear ();
 }

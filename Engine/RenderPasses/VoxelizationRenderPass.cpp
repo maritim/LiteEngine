@@ -37,7 +37,12 @@ void VoxelizationRenderPass::Init ()
 	 * Initialize voxel volume
 	*/
 
-	_voxelVolume->Init (VOLUME_DIMENSTIONS);
+	if (!_voxelVolume->Init (VOLUME_DIMENSTIONS)) {
+		Console::LogError (std::string () +
+			"Voxel texture cannot be initialized!" +
+			" It is not possible to continue the process. End now!");
+		exit (VOXEL_TEXTURE_NOT_INIT);
+	}
 
 	/*
 	 * Shader for static objects
@@ -83,6 +88,15 @@ RenderVolumeCollection* VoxelizationRenderPass::Execute (const Scene* scene, con
 	*/
 
 	return rvc->Insert ("VoxelVolume", _voxelVolume);
+}
+
+void VoxelizationRenderPass::Clear ()
+{
+	/*
+	 * Clear voxel volume
+	*/
+
+	_voxelVolume->Clear ();
 }
 
 void VoxelizationRenderPass::StartVoxelization ()

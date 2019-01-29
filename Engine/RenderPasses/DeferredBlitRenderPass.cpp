@@ -33,6 +33,13 @@ RenderVolumeCollection* DeferredBlitRenderPass::Execute (const Scene* scene, con
 	return rvc;
 }
 
+void DeferredBlitRenderPass::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}
+
 void DeferredBlitRenderPass::EndDrawing (FrameBuffer2DVolume* frameBufferVolume)
 {
 	frameBufferVolume->BindForBliting ();

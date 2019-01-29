@@ -87,6 +87,15 @@ RenderVolumeCollection* DirectionalShadowMapRenderPass::Execute (const Scene* sc
 	return rvc->Insert ("ShadowMapDirectionalLightVolume", _voxelShadowMapVolume);
 }
 
+void DirectionalShadowMapRenderPass::Clear ()
+{
+	/*
+	 * Clear voxel shadow map volume
+	*/
+
+	_voxelShadowMapVolume->Clear ();
+}
+
 void DirectionalShadowMapRenderPass::StartShadowMapPass ()
 {
 	/*

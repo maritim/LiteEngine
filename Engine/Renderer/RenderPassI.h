@@ -15,6 +15,8 @@ public:
 
 	virtual void Init () = 0;
 	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc) = 0;
+
+	virtual void Clear () = 0;
 };
 
 #endif

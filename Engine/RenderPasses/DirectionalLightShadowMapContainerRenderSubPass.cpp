@@ -25,7 +25,7 @@ DirectionalLightShadowMapContainerRenderSubPass::DirectionalLightShadowMapContai
 
 DirectionalLightShadowMapContainerRenderSubPass::~DirectionalLightShadowMapContainerRenderSubPass ()
 {
-
+	delete _volume;
 }
 
 void DirectionalLightShadowMapContainerRenderSubPass::Init ()
@@ -82,6 +82,15 @@ RenderVolumeCollection* DirectionalLightShadowMapContainerRenderSubPass::Execute
 	EndShadowMapPass ();
 
 	return rvc->InsertScoped ("ShadowMapDirectionalLightVolume", _volume);
+}
+
+void DirectionalLightShadowMapContainerRenderSubPass::Clear ()
+{
+	/*
+	 * Clear shadow map volume
+	*/
+
+	_volume->Clear ();
 }
 
 bool DirectionalLightShadowMapContainerRenderSubPass::IsAvailable (const VolumetricLight* volumetricLight) const

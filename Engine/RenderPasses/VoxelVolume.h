@@ -10,6 +10,8 @@
 
 #define MIP_MAP_LEVELS 6
 
+#define VOXEL_TEXTURE_NOT_INIT 360
+
 class VoxelVolume : public RenderVolumeI
 {
 protected:
@@ -24,7 +26,7 @@ public:
 	VoxelVolume ();
 	virtual ~VoxelVolume ();
 
-	virtual void Init (std::size_t size);
+	virtual bool Init (std::size_t size);
 
 	virtual void BindForReading ();
 	virtual void BindForWriting ();
@@ -33,7 +35,7 @@ public:
 
 	virtual void ClearVoxels();
 	virtual void UpdateBoundingBox (const glm::vec3& minVertex, const glm::vec3& maxVertex);
-protected:
+
 	virtual void Clear ();
 };
 

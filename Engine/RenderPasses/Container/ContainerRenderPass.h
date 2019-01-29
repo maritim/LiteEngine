@@ -29,6 +29,8 @@ public:
 	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, 
 		RenderVolumeCollection* rvc);
 
+	void Clear ();
+
 	static ContainerRenderPassBuilder& Builder ();
 protected:
 	ContainerRenderPass (

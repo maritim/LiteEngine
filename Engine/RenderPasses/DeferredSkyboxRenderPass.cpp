@@ -31,6 +31,13 @@ RenderVolumeCollection* DeferredSkyboxRenderPass::Execute (const Scene* scene, c
 	return rvc;
 }
 
+void DeferredSkyboxRenderPass::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}
+
 void DeferredSkyboxRenderPass::StartSkyboxPass (RenderVolumeCollection* rvc)
 {
 	/*

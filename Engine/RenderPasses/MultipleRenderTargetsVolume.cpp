@@ -19,19 +19,11 @@ MultipleRenderTargetsVolume::MultipleRenderTargetsVolume(std::size_t numTextures
 
 MultipleRenderTargetsVolume::~MultipleRenderTargetsVolume ()
 {
-	Clear ();
-
 	delete[] m_textures;
 }
 
 bool MultipleRenderTargetsVolume::Init(std::size_t bufferWidth, std::size_t bufferHeight)
 {
-	/*
-	 * Clear framebuffer if needed
-	*/
-
-	Clear ();
-
 	/*
 	 * Create the FBO
 	*/
@@ -92,14 +84,6 @@ bool MultipleRenderTargetsVolume::Init(std::size_t bufferWidth, std::size_t buff
 
 void MultipleRenderTargetsVolume::Clear ()
 {
-	/*
-	 * TODO: Fix this
-	*/
-
-	if (m_fbo == 0) {
-		return;
-	}
-
 	/*
 	 * Bind current FBO for cleaning
 	*/

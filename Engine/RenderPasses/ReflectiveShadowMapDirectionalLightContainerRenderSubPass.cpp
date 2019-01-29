@@ -21,6 +21,13 @@ void ReflectiveShadowMapDirectionalLightContainerRenderSubPass::Init ()
 		"Assets/Shaders/ReflectiveShadowMap/reflectiveDeferredDirVolShadowMapLightFragment.glsl");
 }
 
+void ReflectiveShadowMapDirectionalLightContainerRenderSubPass::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}
+
 void ReflectiveShadowMapDirectionalLightContainerRenderSubPass::LockShader (const VolumetricLight* volumetricLight)
 {
 	/*

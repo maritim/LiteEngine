@@ -1,14 +1,14 @@
 #include "RenderModule.h"
 
+RenderModule::RenderModule () :
+	_rvc (nullptr)
+{
+
+}
+
 RenderModule::~RenderModule ()
 {
-	/*
-	 * Delete render passes
-	*/
 
-	for (RenderPassI* renderPass : _renderPasses) {
-		delete renderPass;
-	}
 }
 
 void RenderModule::InitModule ()
@@ -26,21 +26,48 @@ void RenderModule::InitModule ()
 	for (RenderPassI* renderPass : _renderPasses) {
 		renderPass->Init ();
 	}
+
+	/*
+	 * Initialize render volume collection
+	*/
+
+	_rvc = new RenderVolumeCollection ();
 }
 
 void RenderModule::RenderScene (const Scene* scene, const Camera* camera)
 {
 	/*
-	 * Initialize a render volume collection
-	*/
-
-	static RenderVolumeCollection* rvc = new RenderVolumeCollection ();
-
-	/*
 	 * Iterate on every pass on associated order to draw scene
 	*/
 
 	for (RenderPassI* renderPass : _renderPasses) {
-		rvc = renderPass->Execute (scene, camera, rvc);
+		_rvc = renderPass->Execute (scene, camera, _rvc);
 	}
+}
+
+void RenderModule::ClearModule ()
+{
+	/*
+	 * Delete render volume collection
+	*/
+
+	delete _rvc;
+
+	/*
+	 * Clear every render pass
+	*/
+
+	for (RenderPassI* renderPass : _renderPasses) {
+		renderPass->Clear ();
+	}
+
+	/*
+	 * Delete render passes
+	*/
+
+	for (RenderPassI* renderPass : _renderPasses) {
+		delete renderPass;
+	}
+
+	_renderPasses.clear ();
 }

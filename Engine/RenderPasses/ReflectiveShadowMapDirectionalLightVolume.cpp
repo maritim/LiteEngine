@@ -13,21 +13,7 @@ ReflectiveShadowMapDirectionalLightVolume::ReflectiveShadowMapDirectionalLightVo
 
 ReflectiveShadowMapDirectionalLightVolume::~ReflectiveShadowMapDirectionalLightVolume ()
 {
-	/*
-	 * Delete shadow map buffers
-	*/
 
-	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
-		delete _shadowMapBuffers [index];
-	}
-
-	delete[] _shadowMapBuffers;
-
-	/*
-	 * Delete cascaded resolutions
-	*/
-
-	delete [] _shadowMapResolutions;
 }
 
 bool ReflectiveShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels)
@@ -117,4 +103,31 @@ void ReflectiveShadowMapDirectionalLightVolume::BindForReading ()
 	*/
 
 	_shadowMapBuffers [0]->BindForReading ();
+}
+
+void ReflectiveShadowMapDirectionalLightVolume::Clear ()
+{
+	/*
+	 * Clear shadow map buffers
+	*/
+
+	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
+		_shadowMapBuffers [index]->Clear ();
+	}
+
+	/*
+	 * Delete shadow map buffers
+	*/
+
+	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
+		delete _shadowMapBuffers [index];
+	}
+
+	delete[] _shadowMapBuffers;
+
+	/*
+	 * Delete cascaded resolutions
+	*/
+
+	delete [] _shadowMapResolutions;
 }

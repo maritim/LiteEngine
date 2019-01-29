@@ -19,12 +19,6 @@ FrameBuffer2DVolume::~FrameBuffer2DVolume ()
 bool FrameBuffer2DVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
 {
 	/*
-	 * Clear framebuffer if needed
-	*/
-
-	Clear ();
-
-	/*
 	 * Create framebuffer
 	*/
 
@@ -118,14 +112,6 @@ void FrameBuffer2DVolume::BindForBliting ()
 
 void FrameBuffer2DVolume::Clear ()
 {
-	/*
-	 * TODO: Fix this
-	*/
-
-	if (_fbo == 0) {
-		return;
-	}
-
 	/*
 	 * Bind current framebuffer for cleaning
 	*/

@@ -68,6 +68,17 @@ RenderVolumeCollection* ContainerRenderPass::Execute (const Scene* scene,
 	return rvc->ReleaseScope ();
 }
 
+void ContainerRenderPass::Clear ()
+{
+	/*
+	 * Clear every subpass
+	*/
+
+	for (auto renderSubPass : _renderSubPasses) {
+		renderSubPass->Clear ();
+	}
+}
+
 ContainerRenderPassBuilder& ContainerRenderPass::Builder ()
 {
 	return *_builder;

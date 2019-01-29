@@ -20,6 +20,8 @@ public:
 
 	void Init ();
 	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+
+	void Clear ();
 protected:
 	void StartVoxelization ();
 	void GeometryVoxelizationPass (const Scene* scene);

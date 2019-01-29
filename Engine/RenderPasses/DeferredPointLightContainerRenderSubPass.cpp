@@ -30,6 +30,13 @@ void DeferredPointLightContainerRenderSubPass::Init ()
 	// 	"Assets/Shaders/ShadowMap/deferredDirVolShadowMapLightFragment.glsl");
 }
 
+void DeferredPointLightContainerRenderSubPass::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}
+
 void DeferredPointLightContainerRenderSubPass::LockShader (const VolumetricLight* volumetricLight)
 {
 	/*

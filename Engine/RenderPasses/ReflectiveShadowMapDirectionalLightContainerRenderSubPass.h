@@ -14,6 +14,8 @@ public:
 	ReflectiveShadowMapDirectionalLightContainerRenderSubPass ();
 
 	void Init ();
+
+	void Clear ();
 protected:
 	void LockShader (const VolumetricLight*);
 };

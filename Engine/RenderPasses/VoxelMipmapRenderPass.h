@@ -12,6 +12,8 @@ public:
 
 	virtual void Init ();
 	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+
+	void Clear ();
 protected:
 	void StartVoxelMipmaping ();
 	void GenerateMipmaps (RenderVolumeCollection*);
