@@ -2,12 +2,16 @@
 #define REFLECTIVESHADOWMAPSAMPLESGENERATIONCONTAINERRENDERSUBPASS_H
 
 #include "RenderPasses/VolumetricLightContainerRenderSubPassI.h"
+#include "Core/Observer/ObserverI.h"
 
 #include "ReflectiveShadowMapSamplesVolume.h"
 
-class ReflectiveShadowMapSamplesGenerationContainerRenderSubPass : public VolumetricLightContainerRenderSubPassI
+#include "Systems/Settings/SettingsObserverArgs.h"
+
+class ReflectiveShadowMapSamplesGenerationContainerRenderSubPass : public VolumetricLightContainerRenderSubPassI, public ObserverI<SettingsObserverArgs>
 {
 protected:
+	std::size_t _samplesSize;
 	ReflectiveShadowMapSamplesVolume* _reflectiveShadowMapSamplesVolume;
 
 public:
@@ -19,7 +23,14 @@ public:
 
 	virtual bool IsAvailable (const VolumetricLight*) const;
 
+	void Notify (Object* sender, const SettingsObserverArgs& args);
+
 	void Clear ();
+protected:
+	void InitSettings ();
+	void ClearSettings ();
+
+	void InitRSMSamplesVolume ();
 };
 
 #endif

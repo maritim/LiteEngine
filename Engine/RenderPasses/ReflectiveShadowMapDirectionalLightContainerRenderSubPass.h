@@ -2,12 +2,17 @@
 #define REFLECTIVESHADOWMAPDIRECTIONALLIGHTCONTAINERRENDERSUBPASS_H
 
 #include "RenderPasses/DirectionalVolumetricLightContainerRenderSubPass.h"
+#include "Core/Observer/ObserverI.h"
 
 #include <string>
 
-class ReflectiveShadowMapDirectionalLightContainerRenderSubPass : public DirectionalVolumetricLightContainerRenderSubPass
+#include "Systems/Settings/SettingsObserverArgs.h"
+
+class ReflectiveShadowMapDirectionalLightContainerRenderSubPass : public DirectionalVolumetricLightContainerRenderSubPass, public ObserverI<SettingsObserverArgs>
 {
 protected:
+	float _radius;
+	float _intensity;
 	std::string _shadowShaderName;
 
 public:
@@ -15,9 +20,18 @@ public:
 
 	void Init ();
 
+	void Notify (Object* sender, const SettingsObserverArgs& args);
+
 	void Clear ();
 protected:
+	void DirectionalLightPass (const Scene*, const Camera*, RenderVolumeCollection*);
+
 	void LockShader (const VolumetricLight*);
+
+	std::vector<PipelineAttribute> GetCustomAttributes ();
+
+	void InitSettings ();
+	void ClearSettings ();
 };
 
 #endif

@@ -1,19 +1,33 @@
 #include "DebugViewController.h"
 
+#include <sstream>
+#include <iomanip>
 #include <glm/vec2.hpp>
 #include "Editor/ImGui/imgui.h"
 
 #include "Systems/Settings/SettingsManager.h"
 #include "Systems/Window/Window.h"
+#include "Systems/Time/Time.h"
 
 #include "Renderer/RenderManager.h"
 
 void DebugViewController::Start ()
 {
 	_continuousVoxelizationReset = false;
+
+	_timeElapsed = 0;
+	_computeRange = 0.3f;
+	_firstTime = true;
 }
 
 void DebugViewController::Update ()
+{
+	ShowRenderingSettingsWindow ();
+
+	ShowStatisticsWindow ();
+}
+
+void DebugViewController::ShowRenderingSettingsWindow ()
 {
 	std::size_t windowHeight = Window::GetHeight ();
 
@@ -102,6 +116,43 @@ void DebugViewController::Update ()
 
     ImGui::Spacing();
 
+	if (ImGui::CollapsingHeader ("Reflective Shadow Map")) {
+		glm::vec2 lastRSMResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("rsm_resolution", glm::vec2 (0));
+		int rsmResolution [2] = { (int) lastRSMResolution.x, (int) lastRSMResolution.y };
+		ImGui::InputInt2 ("Resolution", rsmResolution);
+
+		int lastRSMSamplesSize = SettingsManager::Instance ()->GetValue<int> ("rsm_samples", 0);
+		int rsmSamplesSize = lastRSMSamplesSize;
+		ImGui::SliderInt ("Samples Size", &rsmSamplesSize, 1, 200);
+
+		float lastRSMRadius = SettingsManager::Instance ()->GetValue<float> ("rsm_radius", 0.0f);
+		float rsmRadius = lastRSMRadius;
+		ImGui::InputFloat ("Sample Radius", &rsmRadius);
+
+		float lastRSMIntensity = SettingsManager::Instance ()->GetValue<float> ("rsm_intensity", 0.0f);
+		float rsmIntensity = lastRSMIntensity;
+		ImGui::InputFloat ("Indirect Light Intensity", &rsmIntensity);
+
+		if (lastRSMResolution.x != rsmResolution [0] || lastRSMResolution.y != rsmResolution [1]) {
+			SettingsManager::Instance ()->SetValue ("rsm_resolution",
+				std::to_string (rsmResolution [0]) + "," + std::to_string (rsmResolution [1]));
+		}
+
+		if (lastRSMSamplesSize != rsmSamplesSize) {
+			SettingsManager::Instance ()->SetValue ("rsm_samples", std::to_string (rsmSamplesSize));
+		}
+
+		if (lastRSMRadius != rsmRadius) {
+			SettingsManager::Instance ()->SetValue ("rsm_radius", std::to_string (rsmRadius));
+		}
+
+		if (lastRSMIntensity != rsmIntensity) {
+			SettingsManager::Instance ()->SetValue ("rsm_intensity", std::to_string (rsmIntensity));
+		}
+	}
+
+    ImGui::Spacing();
+
 	if (ImGui::CollapsingHeader ("Post Processing")) {
 		if (ImGui::TreeNode ("Screen Space Ambient Occlusion")) {
 			bool lastAmbientOcclusionEnabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", false);
@@ -110,7 +161,7 @@ void DebugViewController::Update ()
 
 			int lastSamplesSize = SettingsManager::Instance ()->GetValue<int> ("ssao_samples", 0);
 			int samplesSize = lastSamplesSize;
-			ImGui::SliderInt ("Samples Size", &samplesSize, 0, 63);
+			ImGui::SliderInt ("Samples Size", &samplesSize, 1, 64);
 
 			glm::vec2 lastNoiseMapResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssao_noise_resolution", glm::vec2 (0, 0));
 			int noiseMapResolution [2] { (int) lastNoiseMapResolution.x, (int) lastNoiseMapResolution.y };
@@ -187,6 +238,62 @@ void DebugViewController::Update ()
 
 			ImGui::TreePop();
 		}
+	}
+
+	ImGui::End();
+}
+
+void DebugViewController::ShowStatisticsWindow ()
+{
+	std::size_t windowWidth = Window::GetWidth ();
+	std::size_t windowHeight = Window::GetHeight ();
+
+	_timeElapsed += Time::GetDeltaTime ();
+
+	float dt = Time::GetDeltaTime();
+	float roughFrameRate = 1.0f / (dt == 0 ? 1 : dt);
+
+	if (_firstTime == true) {
+		_lastFrameRate = roughFrameRate;
+		_firstTime = false;
+	} else {
+		_lastFrameRate = 0.9f * _lastFrameRate + 0.1f * roughFrameRate;
+	}
+
+	if (_timeElapsed > _computeRange) {
+		_frameRates.push_back (_lastFrameRate);
+
+		_timeElapsed = 0;
+	}
+
+	if (_frameRates.size () > 100) {
+		_frameRates.erase (_frameRates.begin ());
+	}
+
+	ImGui::SetNextWindowPos(ImVec2 (windowWidth - 300, 5), ImGuiCond_Always);
+	ImGui::SetNextWindowSize (ImVec2 (200, 100), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowBgAlpha(0.3f);
+
+	if (ImGui::Begin("Statistics", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav)) {
+
+		ImGui::Text ("Statistics");
+		ImGui::Separator ();
+
+		ImGui::Spacing ();
+
+		ImGui::Text("Graphics: %.2f FPS (%.2f ms)", _lastFrameRate, (1000.0f / _lastFrameRate));
+
+		ImGui::Spacing ();
+
+		ImGui::Text ("Window Resolution: %ldx%ld", windowWidth, windowHeight);
+
+		ImGui::Spacing ();
+
+		std::stringstream ss;
+		ss << std::fixed << std::setprecision (2) << _lastFrameRate;
+		std::string frameRate = ss.str ();
+
+		ImGui::PlotLines (std::string (frameRate + " FPS").c_str (), _frameRates.data (), _frameRates.size ());
 	}
 
 	ImGui::End();

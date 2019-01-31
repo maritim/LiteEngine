@@ -17,6 +17,8 @@ protected:
 	void EndDirectionalLightPass ();
 
 	virtual void LockShader (const VolumetricLight*) = 0;
+
+	virtual std::vector<PipelineAttribute> GetCustomAttributes () = 0;
 };
 
 #endif

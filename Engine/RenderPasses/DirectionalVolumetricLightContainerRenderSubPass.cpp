@@ -86,6 +86,18 @@ void DirectionalVolumetricLightContainerRenderSubPass::DirectionalLightPass (con
 	GL::BlendFunc (GL_ONE, GL_ZERO);
 
 	/*
+	 * Disable face culling
+	*/
+
+	GL::Disable (GL_CULL_FACE);
+
+	/*
+	 * Send custom attributes
+	*/
+
+	Pipeline::SendCustomAttributes ("", GetCustomAttributes ());
+
+	/*
 	 * Draw volumetric light
 	*/
 

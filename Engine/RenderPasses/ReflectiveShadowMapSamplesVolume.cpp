@@ -13,7 +13,7 @@ ReflectiveShadowMapSamplesVolume::ReflectiveShadowMapSamplesVolume ()
 
 bool ReflectiveShadowMapSamplesVolume::Init (std::size_t samplesCount)
 {
-	_samples.resize (samplesCount);
+	_samples.reserve (samplesCount);
 
 	float sampleRadius = 0.5f;
 

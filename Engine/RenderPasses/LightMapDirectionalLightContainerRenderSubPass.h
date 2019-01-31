@@ -18,6 +18,8 @@ public:
 	void Clear ();
 protected:
 	void LockShader (const VolumetricLight*);
+
+	std::vector<PipelineAttribute> GetCustomAttributes ();
 };
 
 #endif

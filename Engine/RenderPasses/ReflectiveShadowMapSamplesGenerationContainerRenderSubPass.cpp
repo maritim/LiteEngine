@@ -1,9 +1,12 @@
 #include "ReflectiveShadowMapSamplesGenerationContainerRenderSubPass.h"
 
+#include "Systems/Settings/SettingsManager.h"
+
 #include "Core/Console/Console.h"
 
-ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::ReflectiveShadowMapSamplesGenerationContainerRenderSubPass ()
-	: _reflectiveShadowMapSamplesVolume (new ReflectiveShadowMapSamplesVolume ())
+ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::ReflectiveShadowMapSamplesGenerationContainerRenderSubPass () :
+	_samplesSize (0),
+	_reflectiveShadowMapSamplesVolume (new ReflectiveShadowMapSamplesVolume ())
 {
 
 }
@@ -15,11 +18,17 @@ ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::~ReflectiveShadowMap
 
 void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Init ()
 {
-	if (!_reflectiveShadowMapSamplesVolume->Init(50)) {
-		Console::LogError(std::string () + "Reflective shadow map samples cannot be initialized! " +
-			"It is not possible to continue the process. End now!");
-		exit(REFLECTIVE_SHADOW_MAP_SAMPLES_NOT_INIT);
-	}
+	/*
+	 * Initialize reflective shadow map samples settings
+	*/
+
+	InitSettings ();
+
+	/*
+	 * Initialize reflective shadow map samples volume
+	*/
+
+	InitRSMSamplesVolume ();
 }
 
 RenderVolumeCollection* ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
@@ -36,7 +45,71 @@ bool ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::IsAvailable (co
 	return true;
 }
 
+void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Notify (Object* sender, const SettingsObserverArgs& args)
+{
+	std::string name = args.GetName ();
+
+	/*
+	 * Update reflective shadow map samples size
+	*/
+
+	if (name == "rsm_samples") {
+		_samplesSize = SettingsManager::Instance ()->GetValue<int> ("rsm_samples", _samplesSize);
+
+		/*
+		 * Clear reflective shadow map samples volume
+		*/
+
+		_reflectiveShadowMapSamplesVolume->Clear ();
+
+		/*
+		 * Initialize reflective shadow map samples volume
+		*/
+
+		InitRSMSamplesVolume ();
+	}
+}
+
 void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Clear ()
 {
 	_reflectiveShadowMapSamplesVolume->Clear ();
+
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
+}
+
+void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::InitSettings ()
+{
+	/*
+	 * Initialize reflective shadow map samples size
+	*/
+
+	_samplesSize = SettingsManager::Instance ()->GetValue<int> ("rsm_samples", _samplesSize);
+
+	/*
+	 * Attach to settings manager
+	*/
+
+	SettingsManager::Instance ()->Attach ("rsm_samples", this);
+}
+
+void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::ClearSettings ()
+{
+	/*
+	 * Detach
+	*/
+
+	SettingsManager::Instance ()->Detach ("rsm_samples", this);
+}
+
+void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::InitRSMSamplesVolume ()
+{
+	if (!_reflectiveShadowMapSamplesVolume->Init(_samplesSize)) {
+		Console::LogError(std::string () + "Reflective shadow map samples cannot be initialized! " +
+			"It is not possible to continue the process. End now!");
+		exit(REFLECTIVE_SHADOW_MAP_SAMPLES_NOT_INIT);
+	}
 }

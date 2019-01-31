@@ -46,7 +46,8 @@ uniform int rsmSamplesCount;
 
 uniform vec2 rsmSample[200];
 
-const float rsmIntensity = 1.0f;
+uniform float rsmRadius;
+uniform float rsmIntensity;
 
 vec2 CalcTexCoord()
 {
@@ -153,7 +154,6 @@ vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal)
 vec3 CalcIndirectDiffuseLight (vec3 worldSpacePos, vec3 worldSpaceNormal)
 {
 	vec3 indirectColor = vec3 (0.0);
-	float rMax = 0.07f;
 
 	vec4 lightSpacePos = rsmLightSpaceMatrix * vec4 (worldSpacePos, 1.0);
 	vec3 rsmProjCoords = lightSpacePos.xyz / lightSpacePos.w;
@@ -163,7 +163,7 @@ vec3 CalcIndirectDiffuseLight (vec3 worldSpacePos, vec3 worldSpaceNormal)
 	for (int index = 0; index < rsmSamplesCount; index ++) {
 		vec2 rnd = rsmSample [index];
 
-		vec2 coords = rsmProjCoords.xy + rnd * rMax;
+		vec2 coords = rsmProjCoords.xy + rnd * rsmRadius;
 
 		vec3 rsmWorldSpacePos = texture2D (rsmPositionMap, coords).xyz;
 		vec3 rsmWorldSpaceNormal = texture2D (rsmNormalMap, coords).xyz;

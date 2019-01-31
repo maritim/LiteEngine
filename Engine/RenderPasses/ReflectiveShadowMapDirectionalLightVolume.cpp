@@ -16,6 +16,25 @@ ReflectiveShadowMapDirectionalLightVolume::~ReflectiveShadowMapDirectionalLightV
 
 }
 
+
+bool ReflectiveShadowMapDirectionalLightVolume::Init (std::size_t width, std::size_t height, std::size_t cascadedLevels)
+{
+	/*
+	 * Initialize resolution
+	*/
+
+	_width = width;
+	_height = height;
+
+	/*
+	 * Initialize
+	*/
+
+	bool result = Init (cascadedLevels);
+
+	return result;
+}
+
 bool ReflectiveShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels)
 {
 	/*
@@ -36,8 +55,8 @@ bool ReflectiveShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels
 	*/
 
 	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
-		_shadowMapResolutions [index].first = REFLECTIVE_SHADOW_MAP_MAX_RESOLUTION_WIDTH;
-		_shadowMapResolutions [index].second = REFLECTIVE_SHADOW_MAP_MAX_RESOLUTION_HEIGHT;
+		_shadowMapResolutions [index].first = _width;
+		_shadowMapResolutions [index].second = _height;
 	}
 
 	/*

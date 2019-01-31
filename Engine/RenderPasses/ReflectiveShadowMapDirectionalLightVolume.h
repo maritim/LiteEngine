@@ -7,14 +7,13 @@
 
 #include "RenderPasses/ReflectiveShadowMapBuffer.h"
 
-#define REFLECTIVE_SHADOW_MAP_MAX_RESOLUTION_WIDTH 512
-#define REFLECTIVE_SHADOW_MAP_MAX_RESOLUTION_HEIGHT 512
-
 #define REFLECTIVE_SHADOW_MAP_FBO_NOT_INIT 350
 
 class ReflectiveShadowMapDirectionalLightVolume : public ShadowMapVolume
 {
 protected:
+	std::size_t _width;
+	std::size_t _height;
 	std::size_t _cascadedLevels;
 
 	ReflectiveShadowMapBuffer** _shadowMapBuffers;
@@ -23,6 +22,8 @@ protected:
 public:
 	ReflectiveShadowMapDirectionalLightVolume ();
 	~ReflectiveShadowMapDirectionalLightVolume ();
+
+	virtual bool Init (std::size_t width, std::size_t height, std::size_t cascadedLevels);
 
 	bool Init (std::size_t cascadedLevels);
 	void BindForShadowMapCatch (std::size_t cascadedLevel);

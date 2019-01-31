@@ -10,6 +10,8 @@
 
 #include "Renderer/Pipeline.h"
 
+#include "Systems/Settings/SettingsManager.h"
+
 #include "Core/Intersections/Intersection.h"
 
 #include "Core/Console/Console.h"
@@ -17,6 +19,7 @@
 #include "SceneNodes/SceneLayer.h"
 
 ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass () :
+	_rsmResolution (0),
 	_staticShaderName ("STATIC_REFLECTIVE_SHADOW_MAP"),
 	_animationShaderName ("ANIMATION_REFLECTIVE_SHADOW_MAP"),
 	_reflectiveShadowMapVolume (new ReflectiveShadowMapVolume ())
@@ -48,14 +51,16 @@ void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Init
 		"Assets/Shaders/ReflectiveShadowMap/reflectiveShadowMapFragment.glsl");
 
 	/*
+	 * Initialize reflective shadow map volume settings
+	*/
+
+	InitSettings ();
+
+	/*
 	 * Initialize reflective shadow map volume
 	*/
 
-	if (!_reflectiveShadowMapVolume->Init (1)) {
-		Console::LogError (std::string () + "Reflective shadow map cannot be initialized!" +
-			"It is not possible to continue the process. End now!");
-		exit (REFLECTIVE_SHADOW_MAP_FBO_NOT_INIT);
-	}
+	InitRSMVolume ();
 }
 
 RenderVolumeCollection* ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
@@ -97,9 +102,40 @@ bool ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::IsAv
 	return volumetricLight->IsCastingShadows ();
 }
 
+void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Notify (Object* sender, const SettingsObserverArgs& args)
+{
+	std::string name = args.GetName ();
+
+	/*
+	 * Update reflective shadow map resolution
+	*/
+
+	if (name == "rsm_resolution") {
+		_rsmResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("rsm_resolution", _rsmResolution);
+
+		/*
+		 * Clear reflective shadow map volume
+		*/
+
+		_reflectiveShadowMapVolume->Clear ();
+
+		/*
+		 * Initialize reflective shadow map volume
+		*/
+
+		InitRSMVolume ();
+	}
+}
+
 void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Clear ()
 {
 	_reflectiveShadowMapVolume->Clear ();
+
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
 }
 
 void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::StartShadowMapPass ()
@@ -276,5 +312,38 @@ void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Lock
 
 	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+	}
+}
+
+void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::InitSettings ()
+{
+	/*
+	 * Initialize reflective shadow map resolution
+	*/
+
+	_rsmResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("rsm_resolution", _rsmResolution);
+
+	/*
+	 * Attach to settings manager
+	*/
+
+	SettingsManager::Instance ()->Attach ("rsm_resolution", this);
+}
+
+void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::ClearSettings ()
+{
+	/*
+	 * Detach
+	*/
+
+	SettingsManager::Instance ()->Detach ("rsm_resolution", this);
+}
+
+void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::InitRSMVolume ()
+{
+	if (!_reflectiveShadowMapVolume->Init (_rsmResolution.x, _rsmResolution.y, 1)) {
+		Console::LogError (std::string () + "Reflective shadow map cannot be initialized!" +
+			"It is not possible to continue the process. End now!");
+		exit (REFLECTIVE_SHADOW_MAP_FBO_NOT_INIT);
 	}
 }
