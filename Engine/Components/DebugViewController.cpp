@@ -6,6 +6,8 @@
 #include "Systems/Settings/SettingsManager.h"
 #include "Systems/Window/Window.h"
 
+#include "Renderer/RenderManager.h"
+
 void DebugViewController::Start ()
 {
 
@@ -28,82 +30,119 @@ void DebugViewController::Update ()
 
 	ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
 
-	if (ImGui::CollapsingHeader ("Screen Space Ambient Occlusion")) {
-		bool lastAmbientOcclusionEnabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", false);
-		bool ambientOcclusionEnabled = lastAmbientOcclusionEnabled;
-		ImGui::Checkbox ("Enabled", &ambientOcclusionEnabled);
+	int lastRenderModule = SettingsManager::Instance ()->GetValue<int> ("render_module", 0);
+	int renderModule = lastRenderModule;
+	ImGui::Combo("Render Module", &renderModule, "Direct Light\0Voxel Cone Trace\0Reflective Shadow Map\0");
 
-		int lastSamplesSize = SettingsManager::Instance ()->GetValue<int> ("ssao_samples", 0);
-		int samplesSize = lastSamplesSize;
-		ImGui::InputInt ("Samples Size", &samplesSize);
+	if (lastRenderModule != renderModule) {
+		SettingsManager::Instance ()->SetValue ("render_module", std::to_string (renderModule));
 
-		glm::vec2 lastNoiseMapResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssao_noise_resolution", glm::vec2 (0, 0));
-		int noiseMapResolution [2] { (int) lastNoiseMapResolution.x, (int) lastNoiseMapResolution.y };
-		ImGui::InputInt2 ("Noise Resolution", noiseMapResolution);
-
-		float lastSSAORadius = SettingsManager::Instance ()->GetValue<float> ("ssao_radius", 0.0f);
-		float ssaoRadius = lastSSAORadius;
-		ImGui::InputFloat ("Radius", &ssaoRadius, 0.1f);
-
-		float lasstSSAOBias = SettingsManager::Instance ()->GetValue<float> ("ssao_bias", 0.0f);
-		float ssaoBias = lasstSSAOBias;
-		ImGui::InputFloat ("Bias", &ssaoBias, 0.1f);
-
-		bool lastSSAOBlurEnabled = SettingsManager::Instance ()->GetValue<bool> ("ssao_blur", false);
-		bool ssaoBlurEnabled = lastSSAOBlurEnabled;
-		ImGui::Checkbox ("Blur Enabled", &ssaoBlurEnabled);
-
-		if (lastSamplesSize != samplesSize) {
-			SettingsManager::Instance ()->SetValue ("ssao_samples", std::to_string (samplesSize));
+		if (renderModule == 0) {
+			RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_DIRECT_LIGHTING);
+			SettingsManager::Instance ()->SetValue ("ambient_occlusion", std::to_string (_lastAmbientOcclusionEnabled));
 		}
 
-		if (lastNoiseMapResolution.x != noiseMapResolution [0] || lastNoiseMapResolution.y != noiseMapResolution [1]) {
-			SettingsManager::Instance ()->SetValue ("ssao_noise_resolution", 
-				std::to_string (noiseMapResolution [0]) + "," + std::to_string (noiseMapResolution [1]));
+		if (renderModule == 1) {
+			RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_VOXEL_CONE_TRACE);
+
+			_lastAmbientOcclusionEnabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", false);
+			SettingsManager::Instance ()->SetValue ("ambient_occlusion", std::to_string (false));
 		}
 
-		if (lastSSAORadius != ssaoRadius) {
-			SettingsManager::Instance ()->SetValue ("ssao_radius", std::to_string (ssaoRadius));
-		}
+		if (renderModule == 2) {
+			RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_REFLECTIVE_SHADOW_MAP);
 
-		if (lasstSSAOBias != ssaoBias) {
-			SettingsManager::Instance ()->SetValue ("ssao_bias", std::to_string (ssaoBias));
-		}
-
-		if (lastSSAOBlurEnabled != ssaoBlurEnabled) {
-			SettingsManager::Instance ()->SetValue ("ssao_blur", std::to_string (ssaoBlurEnabled));
-		}
-
-		if (lastAmbientOcclusionEnabled != ambientOcclusionEnabled) {
-			SettingsManager::Instance ()->SetValue ("ambient_occlusion", std::to_string (ambientOcclusionEnabled));
+			_lastAmbientOcclusionEnabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", false);
+			SettingsManager::Instance ()->SetValue ("ambient_occlusion", std::to_string (false));
 		}
 	}
 
-	if (ImGui::CollapsingHeader ("High Dynamic Range")) {
-		bool lastHDREnabled = SettingsManager::Instance ()->GetValue<bool> ("high_dynamic_range", false);
-		bool hdrEnabled = lastHDREnabled;
-		ImGui::Checkbox ("Enabled", &hdrEnabled);
+    ImGui::Spacing();
 
-		float lastExposure = SettingsManager::Instance ()->GetValue<float> ("hdr_exposure", 0.0f);
-		float exposure = lastExposure;
-		ImGui::InputFloat ("Exposure", &exposure, 0.1f);
+	if (ImGui::CollapsingHeader ("Post Processing")) {
+		if (ImGui::TreeNode ("Screen Space Ambient Occlusion")) {
+			bool lastAmbientOcclusionEnabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", false);
+			bool ambientOcclusionEnabled = lastAmbientOcclusionEnabled;
+			ImGui::Checkbox ("Enabled", &ambientOcclusionEnabled);
 
-		if (lastExposure != exposure) {
-			SettingsManager::Instance ()->SetValue ("hdr_exposure", std::to_string (exposure));
+			int lastSamplesSize = SettingsManager::Instance ()->GetValue<int> ("ssao_samples", 0);
+			int samplesSize = lastSamplesSize;
+			ImGui::SliderInt ("Samples Size", &samplesSize, 0, 63);
+
+			glm::vec2 lastNoiseMapResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssao_noise_resolution", glm::vec2 (0, 0));
+			int noiseMapResolution [2] { (int) lastNoiseMapResolution.x, (int) lastNoiseMapResolution.y };
+			ImGui::InputInt2 ("Noise Resolution", noiseMapResolution);
+
+			float lastSSAORadius = SettingsManager::Instance ()->GetValue<float> ("ssao_radius", 0.0f);
+			float ssaoRadius = lastSSAORadius;
+			ImGui::InputFloat ("Radius", &ssaoRadius, 0.1f);
+
+			float lasstSSAOBias = SettingsManager::Instance ()->GetValue<float> ("ssao_bias", 0.0f);
+			float ssaoBias = lasstSSAOBias;
+			ImGui::InputFloat ("Bias", &ssaoBias, 0.1f);
+
+			bool lastSSAOBlurEnabled = SettingsManager::Instance ()->GetValue<bool> ("ssao_blur", false);
+			bool ssaoBlurEnabled = lastSSAOBlurEnabled;
+			ImGui::Checkbox ("Blur Enabled", &ssaoBlurEnabled);
+
+			if (lastSamplesSize != samplesSize) {
+				SettingsManager::Instance ()->SetValue ("ssao_samples", std::to_string (samplesSize));
+			}
+
+			if (lastNoiseMapResolution.x != noiseMapResolution [0] || lastNoiseMapResolution.y != noiseMapResolution [1]) {
+				SettingsManager::Instance ()->SetValue ("ssao_noise_resolution", 
+					std::to_string (noiseMapResolution [0]) + "," + std::to_string (noiseMapResolution [1]));
+			}
+
+			if (lastSSAORadius != ssaoRadius) {
+				SettingsManager::Instance ()->SetValue ("ssao_radius", std::to_string (ssaoRadius));
+			}
+
+			if (lasstSSAOBias != ssaoBias) {
+				SettingsManager::Instance ()->SetValue ("ssao_bias", std::to_string (ssaoBias));
+			}
+
+			if (lastSSAOBlurEnabled != ssaoBlurEnabled) {
+				SettingsManager::Instance ()->SetValue ("ssao_blur", std::to_string (ssaoBlurEnabled));
+			}
+
+			if (lastAmbientOcclusionEnabled != ambientOcclusionEnabled && renderModule == 0) {
+				SettingsManager::Instance ()->SetValue ("ambient_occlusion", std::to_string (ambientOcclusionEnabled));
+			}
+
+			ImGui::TreePop();
 		}
 
-		if (lastHDREnabled != hdrEnabled) {
-			SettingsManager::Instance ()->SetValue ("high_dynamic_range", std::to_string (hdrEnabled));
+		if (ImGui::TreeNode ("High Dynamic Range")) {
+			bool lastHDREnabled = SettingsManager::Instance ()->GetValue<bool> ("high_dynamic_range", false);
+			bool hdrEnabled = lastHDREnabled;
+			ImGui::Checkbox ("Enabled", &hdrEnabled);
+
+			float lastExposure = SettingsManager::Instance ()->GetValue<float> ("hdr_exposure", 0.0f);
+			float exposure = lastExposure;
+			ImGui::InputFloat ("Exposure", &exposure, 0.1f);
+
+			if (lastExposure != exposure) {
+				SettingsManager::Instance ()->SetValue ("hdr_exposure", std::to_string (exposure));
+			}
+
+			if (lastHDREnabled != hdrEnabled) {
+				SettingsManager::Instance ()->SetValue ("high_dynamic_range", std::to_string (hdrEnabled));
+			}
+
+			ImGui::TreePop();
 		}
-	}
 
-	if (ImGui::CollapsingHeader ("Gamma Correction")) {
-		bool lastGammaCorrectionEnabled = SettingsManager::Instance ()->GetValue<bool> ("gamma_correction", false);
-		bool gammaCorrectionEnabled = lastGammaCorrectionEnabled;
-		ImGui::Checkbox ("Enabled", &gammaCorrectionEnabled);
+		if (ImGui::TreeNode ("Gamma Correction")) {
+			bool lastGammaCorrectionEnabled = SettingsManager::Instance ()->GetValue<bool> ("gamma_correction", false);
+			bool gammaCorrectionEnabled = lastGammaCorrectionEnabled;
+			ImGui::Checkbox ("Enabled", &gammaCorrectionEnabled);
 
-		if (lastGammaCorrectionEnabled != gammaCorrectionEnabled) {
-			SettingsManager::Instance ()->SetValue ("gamma_correction", std::to_string (gammaCorrectionEnabled));
+			if (lastGammaCorrectionEnabled != gammaCorrectionEnabled) {
+				SettingsManager::Instance ()->SetValue ("gamma_correction", std::to_string (gammaCorrectionEnabled));
+			}
+
+			ImGui::TreePop();
 		}
 	}
 

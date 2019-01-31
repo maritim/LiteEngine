@@ -6,6 +6,9 @@
 
 class DebugViewController : public Component
 {
+protected:
+	bool _lastAmbientOcclusionEnabled;
+
 public:
 	void Start ();
 
