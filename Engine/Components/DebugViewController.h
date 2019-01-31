@@ -7,6 +7,8 @@
 class DebugViewController : public Component
 {
 protected:
+	bool _continuousVoxelizationReset;
+	bool _lastContinuousVoxelization;
 	bool _lastAmbientOcclusionEnabled;
 
 public:

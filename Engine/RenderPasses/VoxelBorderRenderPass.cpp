@@ -4,9 +4,15 @@
 
 #include "Renderer/Pipeline.h"
 
+#include "Systems/Settings/SettingsManager.h"
+
 #include "VoxelVolume.h"
 
-VoxelBorderRenderPass::~VoxelBorderRenderPass ()
+VoxelBorderRenderPass::VoxelBorderRenderPass () :
+	_enabled (false),
+	_voxelVolumeSize (0),
+	_continuousVoxelization (false),
+	_firstTime (true)
 {
 
 }
@@ -15,29 +21,78 @@ void VoxelBorderRenderPass::Init ()
 {
 	ShaderManager::Instance ()->AddComputeShader ("VOXEL_BORDER_PASS_COMPUTE_SHADER",
 		"Assets/Shaders/Voxelize/voxelBorderCompute.glsl");
+
+	/*
+	 * Initialized voxel border settings
+	*/
+
+	InitSettings ();
 }
 
 RenderVolumeCollection* VoxelBorderRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
-	/*
-	* Start mipmapping pass
-	*/
+	if (_enabled && (_firstTime || _continuousVoxelization)) {
 
-	StartVoxelBordering ();
+		/*
+		* Start mipmapping pass
+		*/
 
-	/*
-	* Mipmapping pass
-	*/
+		StartVoxelBordering ();
 
-	BorderVoxelVolume (rvc);
+		/*
+		* Mipmapping pass
+		*/
 
-	/*
-	* End mipmapping pass
-	*/
+		BorderVoxelVolume (rvc);
 
-	EndVoxelBordering ();
+		/*
+		* End mipmapping pass
+		*/
+
+		EndVoxelBordering ();
+
+		_firstTime = false;
+	}
 
 	return rvc;
+}
+
+void VoxelBorderRenderPass::Notify (Object* sender, const SettingsObserverArgs& args)
+{
+	std::string name = args.GetName ();
+
+	/*
+	 * Update voxel volume bordering availability
+	*/
+
+	if (name == "vct_bordering") {
+		_enabled = SettingsManager::Instance ()->GetValue<bool> ("vct_bordering", _enabled);
+	}
+
+	/*
+	 * Update voxel volume size
+	*/
+
+	if (name == "vct_voxels_size") {
+		_voxelVolumeSize = SettingsManager::Instance ()->GetValue<bool> ("vct_voxels_size", _voxelVolumeSize);
+	}
+
+	/*
+	 * Update continuous voxelization
+	*/
+
+	if (name == "vct_continuous_voxelization") {
+		_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
+	}
+}
+
+void VoxelBorderRenderPass::Clear ()
+{
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
 }
 
 void VoxelBorderRenderPass::StartVoxelBordering ()
@@ -49,7 +104,7 @@ void VoxelBorderRenderPass::StartVoxelBordering ()
 
 void VoxelBorderRenderPass::BorderVoxelVolume (RenderVolumeCollection* rvc)
 {
-	std::size_t dstMipRes = 512;
+	std::size_t dstMipRes = _voxelVolumeSize;
 	Shader* computeShader = ShaderManager::Instance ()->GetShader ("VOXEL_BORDER_PASS_COMPUTE_SHADER");
 
 	VoxelVolume* voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
@@ -83,3 +138,42 @@ void VoxelBorderRenderPass::EndVoxelBordering ()
 	GL::MemoryBarrier (GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
+void VoxelBorderRenderPass::InitSettings ()
+{
+	/*
+	 * Initialize voxel volume bordering availability
+	*/
+
+	_enabled = SettingsManager::Instance ()->GetValue<bool> ("vct_bordering", _enabled);
+
+	/*
+	 * Initialize voxel volume size
+	*/
+
+	_voxelVolumeSize = SettingsManager::Instance ()->GetValue<int> ("vct_voxels_size", _voxelVolumeSize);
+
+	/*
+	 * Initialize continuous voxelization
+	*/
+
+	_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
+
+	/*
+	 * Attach to settings manager
+	*/
+
+	SettingsManager::Instance ()->Attach ("vct_bordering", this);
+	SettingsManager::Instance ()->Attach ("vct_voxels_size", this);
+	SettingsManager::Instance ()->Attach ("vct_continuous_voxelization", this);
+}
+
+void VoxelBorderRenderPass::ClearSettings ()
+{
+	/*
+	 * Detach
+	*/
+
+	SettingsManager::Instance ()->Detach ("vct_bordering", this);
+	SettingsManager::Instance ()->Detach ("vct_voxels_size", this);
+	SettingsManager::Instance ()->Detach ("vct_continuous_voxelization", this);
+}

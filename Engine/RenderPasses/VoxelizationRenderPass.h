@@ -2,17 +2,24 @@
 #define VOXELIZATIONRENDERPASS_H
 
 #include "Renderer/RenderPassI.h"
+#include "Core/Observer/ObserverI.h"
 
 #include <string>
 
 #include "VoxelVolume.h"
 
-class VoxelizationRenderPass : public RenderPassI
+#include "Systems/Settings/SettingsObserverArgs.h"
+
+class VoxelizationRenderPass : public RenderPassI, public ObserverI<SettingsObserverArgs>
 {
 protected:
+	std::size_t _voxelVolumeSize;
+	bool _continuousVoxelization;
 	std::string _staticShaderName;
 	std::string _animationShaderName;
 	VoxelVolume* _voxelVolume;
+
+	bool _firstTime;
 
 public:
 	VoxelizationRenderPass ();
@@ -20,6 +27,8 @@ public:
 
 	void Init ();
 	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+
+	void Notify (Object* sender, const SettingsObserverArgs& args);
 
 	void Clear ();
 protected:
@@ -30,6 +39,11 @@ protected:
 	void LockShader (int sceneLayers);
 
 	void UpdateVoxelVolumeBoundingBox (const Scene*);
+
+	void InitSettings ();
+	void ClearSettings ();
+
+	void InitVoxelVolume ();
 };
 
 #endif

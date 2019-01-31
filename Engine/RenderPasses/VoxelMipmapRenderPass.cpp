@@ -4,9 +4,14 @@
 
 #include "Renderer/Pipeline.h"
 
+#include "Systems/Settings/SettingsManager.h"
+
 #include "VoxelVolume.h"
 
-VoxelMipmapRenderPass::~VoxelMipmapRenderPass ()
+VoxelMipmapRenderPass::VoxelMipmapRenderPass () :
+	_voxelVolumeSize (0),
+	_continuousVoxelization (false),
+	_firstTime (true)
 {
 
 }
@@ -15,36 +20,70 @@ void VoxelMipmapRenderPass::Init ()
 {
 	ShaderManager::Instance ()->AddComputeShader ("VOXEL_MIPMAP_PASS_COMPUTE_SHADER",
 		"Assets/Shaders/Voxelize/voxelMipmapCompute.glsl");
+
+	/*
+	 * Initialize voxel mipmap settings
+	*/
+
+	InitSettings ();
 }
 
 RenderVolumeCollection* VoxelMipmapRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
-	/*
-	* Start mipmapping pass
-	*/
+	if (_firstTime || _continuousVoxelization) {
 
-	StartVoxelMipmaping ();
+		/*
+		* Start mipmapping pass
+		*/
 
-	/*
-	* Mipmapping pass
-	*/
+		StartVoxelMipmaping ();
 
-	GenerateMipmaps (rvc);
+		/*
+		* Mipmapping pass
+		*/
 
-	/*
-	* End mipmapping pass
-	*/
+		GenerateMipmaps (rvc);
 
-	EndVoxelMipmaping ();
+		/*
+		* End mipmapping pass
+		*/
+
+		EndVoxelMipmaping ();
+
+		_firstTime = false;
+	}
 
 	return rvc;
+}
+
+void VoxelMipmapRenderPass::Notify (Object* sender, const SettingsObserverArgs& args)
+{
+	std::string name = args.GetName ();
+
+	/*
+	 * Update voxel volume size
+	*/
+
+	if (name == "vct_voxels_size") {
+		_voxelVolumeSize = SettingsManager::Instance ()->GetValue<int> ("vct_voxels_size", _voxelVolumeSize);
+	}
+
+	/*
+	 * Update continuous voxelization
+	*/
+
+	if (name == "vct_continuous_voxelization") {
+		_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
+	}
 }
 
 void VoxelMipmapRenderPass::Clear ()
 {
 	/*
-	 * Nothing
+	 * Clear settings
 	*/
+
+	ClearSettings ();
 }
 
 void VoxelMipmapRenderPass::StartVoxelMipmaping ()
@@ -54,7 +93,7 @@ void VoxelMipmapRenderPass::StartVoxelMipmaping ()
 
 void VoxelMipmapRenderPass::GenerateMipmaps (RenderVolumeCollection* rvc)
 {
-	std::size_t dstMipRes = 512 >> 1;
+	std::size_t dstMipRes = _voxelVolumeSize >> 1;
 	Shader* computeShader = ShaderManager::Instance ()->GetShader ("VOXEL_MIPMAP_PASS_COMPUTE_SHADER");
 
 	VoxelVolume* voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
@@ -88,3 +127,34 @@ void VoxelMipmapRenderPass::EndVoxelMipmaping ()
 	GL::MemoryBarrier (GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
+void VoxelMipmapRenderPass::InitSettings ()
+{
+	/*
+	 * Initialize voxel volume size
+	*/
+
+	_voxelVolumeSize = SettingsManager::Instance ()->GetValue<int> ("vct_voxels_size", _voxelVolumeSize);
+
+	/*
+	 * Initialize continuous voxelization
+	*/
+
+	_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
+
+	/*
+	 * Attach to settings manager
+	*/
+
+	SettingsManager::Instance ()->Attach ("vct_voxels_size", this);
+	SettingsManager::Instance ()->Attach ("vct_continuous_voxelization", this);
+}
+
+void VoxelMipmapRenderPass::ClearSettings ()
+{
+	/*
+	 * Detach
+	*/
+
+	SettingsManager::Instance ()->Detach ("vct_voxels_size", this);
+	SettingsManager::Instance ()->Detach ("vct_continuous_voxelization", this);
+}

@@ -1,4 +1,4 @@
-#include "DirectionalShadowMapRenderPass.h"
+#include "VoxelDirectionalShadowMapRenderPass.h"
 
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -10,26 +10,30 @@
 
 #include "Renderer/Pipeline.h"
 
+#include "Systems/Settings/SettingsManager.h"
+
 #include "Core/Intersections/Intersection.h"
 
 #include "Core/Console/Console.h"
 
 #include "SceneNodes/SceneLayer.h"
 
-DirectionalShadowMapRenderPass::DirectionalShadowMapRenderPass () :
+VoxelDirectionalShadowMapRenderPass::VoxelDirectionalShadowMapRenderPass () :
+	_continuousVoxelization (false),
 	_staticShaderName ("STATIC_SHADOW_MAP"),
 	_animationShaderName ("ANIMATION_SHADOW_MAP"),
-	_voxelShadowMapVolume (new VoxelShadowMapVolume ())
+	_voxelShadowMapVolume (new VoxelShadowMapVolume ()),
+	_firstTime (true)
 {
 
 }
 
-DirectionalShadowMapRenderPass::~DirectionalShadowMapRenderPass ()
+VoxelDirectionalShadowMapRenderPass::~VoxelDirectionalShadowMapRenderPass ()
 {
 	delete _voxelShadowMapVolume;
 }
 
-void DirectionalShadowMapRenderPass::Init ()
+void VoxelDirectionalShadowMapRenderPass::Init ()
 {
 	/*
 	 * Shader for static objects
@@ -48,6 +52,12 @@ void DirectionalShadowMapRenderPass::Init ()
 		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
 
 	/*
+	 * Initialize directional shadow map settings
+	*/
+
+	InitSettings ();
+
+	/*
 	 * Initialize shadow map volume
 	*/
 
@@ -57,46 +67,70 @@ void DirectionalShadowMapRenderPass::Init ()
 	}
 }
 
-RenderVolumeCollection* DirectionalShadowMapRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelDirectionalShadowMapRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
-	/*
-	* Start shadow map drawing process
-	*/
+	if (_firstTime || _continuousVoxelization) {
 
-	StartShadowMapPass ();
+		/*
+		* Start shadow map drawing process
+		*/
 
-	/*
-	* Calculate light camera for shadow map
-	*/
+		StartShadowMapPass ();
 
-	Camera* lightCamera = GetLightCamera (scene, camera);
-	_voxelShadowMapVolume->SetLightCamera (lightCamera);
+		/*
+		* Calculate light camera for shadow map
+		*/
 
-	/*
-	* Render geometry on shadow map
-	*/
+		Camera* lightCamera = GetLightCamera (scene, camera);
+		_voxelShadowMapVolume->SetLightCamera (lightCamera);
 
-	ShadowMapGeometryPass (scene, lightCamera);
+		/*
+		* Render geometry on shadow map
+		*/
 
-	/*
-	* End shadow map drawing process
-	*/
+		ShadowMapGeometryPass (scene, lightCamera);
 
-	EndShadowMapPass ();
+		/*
+		* End shadow map drawing process
+		*/
+
+		EndShadowMapPass ();
+
+		_firstTime = false;
+	}
 
 	return rvc->Insert ("ShadowMapDirectionalLightVolume", _voxelShadowMapVolume);
 }
 
-void DirectionalShadowMapRenderPass::Clear ()
+void VoxelDirectionalShadowMapRenderPass::Notify (Object* sender, const SettingsObserverArgs& args)
+{
+	std::string name = args.GetName ();
+
+	/*
+	 * Update continuous voxelization
+	*/
+
+	if (name == "vct_continuous_voxelization") {
+		_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
+	}
+}
+
+void VoxelDirectionalShadowMapRenderPass::Clear ()
 {
 	/*
 	 * Clear voxel shadow map volume
 	*/
 
 	_voxelShadowMapVolume->Clear ();
+
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
 }
 
-void DirectionalShadowMapRenderPass::StartShadowMapPass ()
+void VoxelDirectionalShadowMapRenderPass::StartShadowMapPass ()
 {
 	/*
 	* Bind shadow map volume for writing
@@ -105,7 +139,7 @@ void DirectionalShadowMapRenderPass::StartShadowMapPass ()
 	_voxelShadowMapVolume->BindForWriting ();
 }
 
-void DirectionalShadowMapRenderPass::ShadowMapGeometryPass (const Scene* scene, Camera* lightCamera)
+void VoxelDirectionalShadowMapRenderPass::ShadowMapGeometryPass (const Scene* scene, Camera* lightCamera)
 {
 	/*
 	* Send light camera
@@ -177,12 +211,12 @@ void DirectionalShadowMapRenderPass::ShadowMapGeometryPass (const Scene* scene, 
 	}
 }
 
-void DirectionalShadowMapRenderPass::EndShadowMapPass ()
+void VoxelDirectionalShadowMapRenderPass::EndShadowMapPass ()
 {
 	_voxelShadowMapVolume->EndDrawing ();
 }
 
-Camera* DirectionalShadowMapRenderPass::GetLightCamera (const Scene* scene, const Camera* viewCamera)
+Camera* VoxelDirectionalShadowMapRenderPass::GetLightCamera (const Scene* scene, const Camera* viewCamera)
 {
 	const float LIGHT_CAMERA_OFFSET = 50.0f;
 
@@ -249,7 +283,7 @@ Camera* DirectionalShadowMapRenderPass::GetLightCamera (const Scene* scene, cons
 	return lightCamera;
 }
 
-void DirectionalShadowMapRenderPass::LockShader (int sceneLayers)
+void VoxelDirectionalShadowMapRenderPass::LockShader (int sceneLayers)
 {
 	/*
 	 * Unlock last shader
@@ -272,4 +306,28 @@ void DirectionalShadowMapRenderPass::LockShader (int sceneLayers)
 	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
 	}
+}
+
+void VoxelDirectionalShadowMapRenderPass::InitSettings ()
+{
+	/*
+	 * Initialize continuous voxelization
+	*/
+
+	_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
+
+	/*
+	 * Attach to settings manager
+	*/
+
+	SettingsManager::Instance ()->Attach ("vct_continuous_voxelization", this);
+}
+
+void VoxelDirectionalShadowMapRenderPass::ClearSettings ()
+{
+	/*
+	 * Detach
+	*/
+
+	SettingsManager::Instance ()->Detach ("vct_continuous_voxelization", this);
 }

@@ -5,6 +5,7 @@
 #include "Renderer/Pipeline.h"
 
 #include "Systems/Window/Window.h"
+#include "Systems/Settings/SettingsManager.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
@@ -12,16 +13,13 @@
 
 #include "SceneNodes/SceneLayer.h"
 
-/*
- * TODO: Move this to settings
-*/
-
-#define VOLUME_DIMENSTIONS 512
-
 VoxelizationRenderPass::VoxelizationRenderPass () :
+	_voxelVolumeSize (0),
+	_continuousVoxelization (false),
 	_staticShaderName ("VOXELIZATION_PASS_STATIC_SHADER"),
 	_animationShaderName ("VOXELIZATION_PASS_ANIMATION_SHADER"),
-	_voxelVolume (new VoxelVolume ())
+	_voxelVolume (new VoxelVolume ()),
+	_firstTime (true)
 {
 
 }
@@ -34,15 +32,16 @@ VoxelizationRenderPass::~VoxelizationRenderPass ()
 void VoxelizationRenderPass::Init ()
 {
 	/*
+	 * Initialize voxelization settings
+	*/
+
+	InitSettings ();
+
+	/*
 	 * Initialize voxel volume
 	*/
 
-	if (!_voxelVolume->Init (VOLUME_DIMENSTIONS)) {
-		Console::LogError (std::string () +
-			"Voxel texture cannot be initialized!" +
-			" It is not possible to continue the process. End now!");
-		exit (VOXEL_TEXTURE_NOT_INIT);
-	}
+	InitVoxelVolume ();
 
 	/*
 	 * Shader for static objects
@@ -65,29 +64,67 @@ void VoxelizationRenderPass::Init ()
 
 RenderVolumeCollection* VoxelizationRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
-	/*
-	* Voxelization start
-	*/
+	if (_firstTime || _continuousVoxelization) {
 
-	StartVoxelization ();
+		/*
+		* Voxelization start
+		*/
 
-	/*
-	* Voxelization: voxelize geomtry
-	*/
+		StartVoxelization ();
 
-	GeometryVoxelizationPass (scene);
+		/*
+		* Voxelization: voxelize geomtry
+		*/
 
-	/*
-	* Clear opengl state after voxelization
-	*/
+		GeometryVoxelizationPass (scene);
 
-	EndVoxelization ();
+		/*
+		* Clear opengl state after voxelization
+		*/
 
-	/*
-	 * Send back the collection with voxel volume attached
-	*/
+		EndVoxelization ();
+
+		/*
+		 * Send back the collection with voxel volume attached
+		*/
+
+		_firstTime = false;
+	}
 
 	return rvc->Insert ("VoxelVolume", _voxelVolume);
+}
+
+void VoxelizationRenderPass::Notify (Object* sender, const SettingsObserverArgs& args)
+{
+	std::string name = args.GetName ();
+
+	/*
+	 * Update voxel volume size
+	*/
+
+	if (name == "vct_voxels_size") {
+		_voxelVolumeSize = SettingsManager::Instance ()->GetValue<int> ("vct_voxels_size", _voxelVolumeSize);
+
+		/*
+		 * Clear voxel volume
+		*/
+
+		_voxelVolume->Clear ();
+
+		/*
+		 * Initialize voxel volume
+		*/
+
+		InitVoxelVolume ();
+	}
+
+	/*
+	 * Update continuous voxelization
+	*/
+
+	if (name == "vct_continuous_voxelization") {
+		_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
+	}
 }
 
 void VoxelizationRenderPass::Clear ()
@@ -97,6 +134,12 @@ void VoxelizationRenderPass::Clear ()
 	*/
 
 	_voxelVolume->Clear ();
+
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
 }
 
 void VoxelizationRenderPass::StartVoxelization ()
@@ -115,7 +158,7 @@ void VoxelizationRenderPass::StartVoxelization ()
 
 	GL::ColorMask (GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	GL::DepthMask (GL_FALSE);
-	GL::Viewport (0, 0, VOLUME_DIMENSTIONS, VOLUME_DIMENSTIONS);
+	GL::Viewport (0, 0, _voxelVolumeSize, _voxelVolumeSize);
 }
 
 void VoxelizationRenderPass::GeometryVoxelizationPass (const Scene* scene)
@@ -216,4 +259,46 @@ void VoxelizationRenderPass::UpdateVoxelVolumeBoundingBox (const Scene* scene)
 	glm::vec3 maxVertex = volume->maxVertex;
 
 	_voxelVolume->UpdateBoundingBox (minVertex, maxVertex);
+}
+
+void VoxelizationRenderPass::InitSettings ()
+{
+	/*
+	 * Initialize voxel volume size
+	*/
+
+	_voxelVolumeSize = SettingsManager::Instance ()->GetValue<int> ("vct_voxels_size", _voxelVolumeSize);
+
+	/*
+	 * Initialize continuous voxelization
+	*/
+
+	_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
+
+	/*
+	 * Attach to settings manager
+	*/
+
+	SettingsManager::Instance ()->Attach ("vct_voxels_size", this);
+	SettingsManager::Instance ()->Attach ("vct_continuous_voxelization", this);
+}
+
+void VoxelizationRenderPass::ClearSettings ()
+{
+	/*
+	 * Detach
+	*/
+
+	SettingsManager::Instance ()->Detach ("vct_voxels_size", this);
+	SettingsManager::Instance ()->Detach ("vct_continuous_voxelization", this);
+}
+
+void VoxelizationRenderPass::InitVoxelVolume ()
+{
+	if (!_voxelVolume->Init (_voxelVolumeSize)) {
+		Console::LogError (std::string () +
+			"Voxel texture cannot be initialized!" +
+			" It is not possible to continue the process. End now!");
+		exit (VOXEL_TEXTURE_NOT_INIT);
+	}
 }

@@ -10,7 +10,7 @@
 
 void DebugViewController::Start ()
 {
-
+	_continuousVoxelizationReset = false;
 }
 
 void DebugViewController::Update ()
@@ -54,6 +54,49 @@ void DebugViewController::Update ()
 
 			_lastAmbientOcclusionEnabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", false);
 			SettingsManager::Instance ()->SetValue ("ambient_occlusion", std::to_string (false));
+		}
+	}
+
+	ImGui::Spacing ();
+
+	if (ImGui::CollapsingHeader ("Voxel Cone Trace")) {
+		if (_continuousVoxelizationReset == true) {
+			SettingsManager::Instance ()->SetValue ("vct_continuous_voxelization", std::to_string (_lastContinuousVoxelization));
+			_continuousVoxelizationReset = false;
+		}
+
+		int lastVoxelVolumeSize = SettingsManager::Instance ()->GetValue<int> ("vct_voxels_size", 0);
+		int voxelVolumeSize = lastVoxelVolumeSize;
+		ImGui::InputInt ("Voxel Volume Size", &voxelVolumeSize);
+
+		bool lastRevoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", false);
+		bool revoxelization = lastRevoxelization;
+		ImGui::Checkbox ("Continuous Voxelization", &revoxelization);
+
+		bool lastVoxelBordering = SettingsManager::Instance ()->GetValue<bool> ("vct_bordering", false);
+		bool voxelBordering = lastVoxelBordering;
+		ImGui::Checkbox ("Voxel Volume Bordering", &voxelBordering);
+
+		if (lastVoxelVolumeSize != voxelVolumeSize) {
+			SettingsManager::Instance ()->SetValue ("vct_voxels_size", std::to_string (voxelVolumeSize));
+
+			_lastContinuousVoxelization = revoxelization;
+			_continuousVoxelizationReset = true;
+
+			SettingsManager::Instance ()->SetValue ("vct_continuous_voxelization", std::to_string (true));
+		}
+
+		if (lastRevoxelization != revoxelization) {
+			SettingsManager::Instance ()->SetValue ("vct_continuous_voxelization", std::to_string (revoxelization));
+		}
+
+		if (lastVoxelBordering != voxelBordering) {
+			SettingsManager::Instance ()->SetValue ("vct_bordering", std::to_string (voxelBordering));
+
+			_lastContinuousVoxelization = revoxelization;
+			_continuousVoxelizationReset = true;
+
+			SettingsManager::Instance ()->SetValue ("vct_continuous_voxelization", std::to_string (true));
 		}
 	}
 

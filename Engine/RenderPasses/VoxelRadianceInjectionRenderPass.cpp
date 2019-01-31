@@ -4,7 +4,11 @@
 
 #include "Renderer/Pipeline.h"
 
-VoxelRadianceInjectionRenderPass::~VoxelRadianceInjectionRenderPass ()
+#include "Systems/Settings/SettingsManager.h"
+
+VoxelRadianceInjectionRenderPass::VoxelRadianceInjectionRenderPass () :
+	_continuousVoxelization (false),
+	_firstTime (true)
 {
 
 }
@@ -13,36 +17,70 @@ void VoxelRadianceInjectionRenderPass::Init ()
 {
 	ShaderManager::Instance ()->AddComputeShader ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER",
 		"Assets/Shaders/Voxelize/voxelRadianceInjectionCompute.glsl");
+
+	/*
+	 * Initialize voxel radiance injection settings
+	*/
+
+	InitSettings ();
 }
 
 RenderVolumeCollection* VoxelRadianceInjectionRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
-	/*
-	* Start radiance injecting pass
-	*/
+	if (_firstTime || _continuousVoxelization) {
 
-	StartRadianceInjectionPass ();
+		/*
+		* Start radiance injecting pass
+		*/
 
-	/*
-	* Radiance Injecting pass
-	*/
+		StartRadianceInjectionPass ();
 
-	RadianceInjectPass (rvc);
+		/*
+		* Radiance Injecting pass
+		*/
 
-	/*
-	* End radiance injecting pass
-	*/
+		RadianceInjectPass (rvc);
 
-	EndRadianceInjectionPass ();
+		/*
+		* End radiance injecting pass
+		*/
+
+		EndRadianceInjectionPass ();
+
+		_firstTime = false;
+	}
 
 	return rvc;
+}
+
+void VoxelRadianceInjectionRenderPass::Notify (Object* sender, const SettingsObserverArgs& args)
+{
+	std::string name = args.GetName ();
+
+	/*
+	 * Update voxel volume size
+	*/
+
+	if (name == "vct_voxels_size") {
+		_voxelVolumeSize = SettingsManager::Instance ()->GetValue<int> ("vct_voxels_size", _voxelVolumeSize);
+	}
+
+	/*
+	 * Update continuous voxelization
+	*/
+
+	if (name == "vct_continuous_voxelization") {
+		_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
+	}
 }
 
 void VoxelRadianceInjectionRenderPass::Clear ()
 {
 	/*
-	 * Nothing
+	 * Clear settings
 	*/
+
+	ClearSettings ();
 }
 
 void VoxelRadianceInjectionRenderPass::StartRadianceInjectionPass ()
@@ -97,7 +135,7 @@ void VoxelRadianceInjectionRenderPass::RadianceInjectPass (RenderVolumeCollectio
 	 * Inject radiance
 	*/
 
-	int numWorkGroups = (int) std::ceil (512.0f / 4.0f);
+	int numWorkGroups = (int) std::ceil (_voxelVolumeSize / 4.0f);
 	GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);
 }
 
@@ -108,4 +146,36 @@ void VoxelRadianceInjectionRenderPass::EndRadianceInjectionPass ()
 	*/
 
 	GL::MemoryBarrier (GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
+void VoxelRadianceInjectionRenderPass::InitSettings ()
+{
+	/*
+	 * Initialize voxel volume size
+	*/
+
+	_voxelVolumeSize = SettingsManager::Instance ()->GetValue<int> ("vct_voxels_size", _voxelVolumeSize);
+
+	/*
+	 * Initialize continuous voxelization
+	*/
+
+	_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
+
+	/*
+	 * Attach to settings manager
+	*/
+
+	SettingsManager::Instance ()->Attach ("vct_voxels_size", this);
+	SettingsManager::Instance ()->Attach ("vct_continuous_voxelization", this);
+}
+
+void VoxelRadianceInjectionRenderPass::ClearSettings ()
+{
+	/*
+	 * Detach
+	*/
+
+	SettingsManager::Instance ()->Detach ("vct_voxels_size", this);
+	SettingsManager::Instance ()->Detach ("vct_continuous_voxelization", this);
 }
