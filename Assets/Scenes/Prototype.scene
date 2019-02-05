@@ -17,9 +17,8 @@
 		<Components>
 			<Component name="FlyCameraController" />
       <!--<Component name="StatisticsView" />-->
-			<Component name="FrameRate" />
-			<!--<Component name="ShadowController" />-->
 			<Component name="DebugViewController" />
+			<Component name="EditorGizmosManager" />
 		</Components>
 	</GameObject>
 	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Dragon/Dragon.dae" isActive="false" >

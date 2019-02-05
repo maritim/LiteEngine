@@ -11,8 +11,8 @@
 		</Transform>
 		<Components>
 			<Component name="FlyCameraController" />
-			<Component name="FrameRate" />
 			<Component name="DebugViewController" />
+			<Component name="EditorGizmosManager" />
 		</Components>
 	</NormalMapGameObject>
 

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "ImGui/imgui.h"
+#include "ImGui/ImGuizmo.h"
 
 #include "Systems/Window/Window.h"
 #include "Systems/Input/Input.h"
@@ -145,6 +146,12 @@ void Editor::Update ()
 	*/
 
 	ImGui::NewFrame ();
+
+	/*
+	 * Start ImGuizmo frame
+	*/
+
+	ImGuizmo::BeginFrame();
 }
 
 bool Editor::WantCaptureInput ()

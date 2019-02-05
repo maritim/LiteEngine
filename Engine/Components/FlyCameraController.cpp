@@ -58,10 +58,10 @@ void FlyCameraController::Update ()
 
 	glm::ivec2 mousePosition = Input::GetMousePosition ();
 
-	if (Input::GetMouseButtonUp (MOUSE_BUTTON_LEFT)) {
+	if (Input::GetMouseButtonUp (MOUSE_BUTTON_RIGHT)) {
 		leftButtonDown = false;
 	}
-	else if (Input::GetMouseButtonDown (MOUSE_BUTTON_LEFT)) {
+	else if (Input::GetMouseButtonDown (MOUSE_BUTTON_RIGHT)) {
 		iLastMouseMoveX = mousePosition.x;
 		iLastMouseMoveY = mousePosition.y;
 
