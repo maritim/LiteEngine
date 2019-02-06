@@ -48,8 +48,6 @@ bool Window::Init ()
 
 	_glContext = SDL_GL_CreateContext(_window);
 
-	GL::Viewport (0, 0, _width, _height);
-
 	Window::UpdateCamera ();
 
 	return true;
@@ -66,8 +64,6 @@ void Window::Resize (const glm::ivec2& dimensions)
 	_height = (std::size_t)dimensions.y;
 
 	SDL_SetWindowSize (_window, _width, _height);
-
-	GL::Viewport (0, 0, _width, _height);
 
 	Window::UpdateCamera ();
 }

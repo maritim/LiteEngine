@@ -2,6 +2,8 @@
 
 #include "Renderer/Pipeline.h"
 
+#include "Systems/Window/Window.h"
+
 DirectionalVolumetricLightContainerRenderSubPass::~DirectionalVolumetricLightContainerRenderSubPass ()
 {
 
@@ -71,6 +73,12 @@ void DirectionalVolumetricLightContainerRenderSubPass::DirectionalLightPass (con
 	*/
 
 	LockShader (volumetricLight);
+
+	/*
+	 * Set viewport
+	*/
+
+	GL::Viewport (0, 0, Window::GetWidth (), Window::GetHeight ());
 
 	/*
 	 * Disable depth test

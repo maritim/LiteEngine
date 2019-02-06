@@ -107,11 +107,6 @@ void ReflectiveShadowMapDirectionalLightVolume::EndDrawing ()
 
 	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	GL::Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	std::size_t windowWidth = Window::GetWidth ();
-	std::size_t windowHeight = Window::GetHeight ();
-
-	GL::Viewport(0, 0, windowWidth, windowHeight);
 }
 
 void ReflectiveShadowMapDirectionalLightVolume::BindForReading ()

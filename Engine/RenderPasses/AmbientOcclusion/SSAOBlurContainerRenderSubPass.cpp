@@ -6,29 +6,30 @@
 
 SSAOBlurContainerRenderSubPass::SSAOBlurContainerRenderSubPass () :
 	_aoEnabled (false),
-	_enabled (false)
+	_enabled (false),
+	_resolution (0)
 {
 
 }
 
 SSAOBlurContainerRenderSubPass::~SSAOBlurContainerRenderSubPass ()
 {
-	ClearSettings ();
+
 }
 
 void SSAOBlurContainerRenderSubPass::Init ()
 {
 	/*
-	 *
-	*/
-
-	PostProcessContainerRenderSubPass::Init ();
-
-	/*
 	 * Initialize screen space ambient occlusion blur settings
 	*/
 
 	InitSettings ();
+
+	/*
+	 *
+	*/
+
+	PostProcessContainerRenderSubPass::Init ();
 }
 
 bool SSAOBlurContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
@@ -59,6 +60,35 @@ void SSAOBlurContainerRenderSubPass::Notify (Object* sender, const SettingsObser
 	if (name == "ssao_blur") {
 		_enabled = SettingsManager::Instance ()->GetValue<bool> ("ssao_blur", _enabled);
 	}
+
+	/*
+	 * Update screen space ambient occlusion resolution
+	*/
+
+	if (name == "ssao_resolution") {
+		_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssao_resolution", (glm::vec2) _resolution);
+
+		/*
+		 * Initialize screen space ambient occlusion blur map
+		*/
+
+		ReinitPostProcessVolume ();
+	}
+}
+
+void SSAOBlurContainerRenderSubPass::Clear ()
+{
+	/*
+	 *
+	*/
+
+	PostProcessContainerRenderSubPass::Clear ();
+
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
 }
 
 std::string SSAOBlurContainerRenderSubPass::GetPostProcessFragmentShaderPath () const
@@ -71,11 +101,41 @@ std::string SSAOBlurContainerRenderSubPass::GetPostProcessVolumeName () const
 	return "SSAOMapVolume";
 }
 
+glm::ivec2 SSAOBlurContainerRenderSubPass::GetPostProcessVolumeResolution () const
+{
+	return _resolution;
+}
+
 PostProcessMapVolume* SSAOBlurContainerRenderSubPass::CreatePostProcessVolume () const
 {
 	SSAOMapVolume* ssaoBlurMapVolume = new SSAOMapVolume ();
 
 	return ssaoBlurMapVolume;
+}
+
+std::vector<PipelineAttribute> SSAOBlurContainerRenderSubPass::GetCustomAttributes (RenderVolumeCollection* rvc)
+{
+	/*
+	 * Attach post process volume attributes to pipeline
+	*/
+
+	std::vector<PipelineAttribute> attributes = PostProcessContainerRenderSubPass::GetCustomAttributes (rvc);
+
+	/*
+	 * Attach screen space ambient occlusion attributes to pipeline
+	*/
+
+	PipelineAttribute ssaoResolution;
+
+	ssaoResolution.type = PipelineAttribute::AttrType::ATTR_2F;
+
+	ssaoResolution.name = "ssaoResolution";
+
+	ssaoResolution.value = glm::vec3 (_resolution, 0.0f);
+
+	attributes.push_back (ssaoResolution);
+
+	return attributes;
 }
 
 void SSAOBlurContainerRenderSubPass::InitSettings ()
@@ -93,11 +153,18 @@ void SSAOBlurContainerRenderSubPass::InitSettings ()
 	_enabled = SettingsManager::Instance ()->GetValue<bool> ("ssao_blur", _enabled);
 
 	/*
+	 * Initialize screen space ambient occlusion resolution
+	*/
+
+	_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssao_resolution", (glm::vec2) _resolution);
+
+	/*
 	 * Attach to settings manager
 	*/
 
 	SettingsManager::Instance ()->Attach ("ambient_occlusion", this);
 	SettingsManager::Instance ()->Attach ("ssao_blur", this);
+	SettingsManager::Instance ()->Attach ("ssao_resolution", this);
 }
 
 void SSAOBlurContainerRenderSubPass::ClearSettings ()
@@ -108,4 +175,5 @@ void SSAOBlurContainerRenderSubPass::ClearSettings ()
 
 	SettingsManager::Instance ()->Detach ("ambient_occlusion", this);
 	SettingsManager::Instance ()->Detach ("ssao_blur", this);
+	SettingsManager::Instance ()->Detach ("ssao_resolution", this);
 }

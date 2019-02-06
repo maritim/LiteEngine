@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <string>
+#include <glm/vec2.hpp>
 
 #include "RenderPasses/PostProcess/PostProcessMapVolume.h"
 
@@ -32,8 +33,11 @@ protected:
 
 	virtual std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection* rvc);
 
+	virtual void ReinitPostProcessVolume ();
+
 	virtual std::string GetPostProcessFragmentShaderPath () const = 0;
 	virtual std::string GetPostProcessVolumeName () const = 0;
+	virtual glm::ivec2 GetPostProcessVolumeResolution () const = 0;
 	virtual PostProcessMapVolume* CreatePostProcessVolume () const = 0;
 };
 

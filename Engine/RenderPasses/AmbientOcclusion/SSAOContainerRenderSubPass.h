@@ -10,6 +10,7 @@ class SSAOContainerRenderSubPass : public PostProcessContainerRenderSubPass, pub
 {
 protected:
 	bool _enabled;
+	glm::ivec2 _resolution;
 	float _radius;
 	float _bias;
 
@@ -22,9 +23,12 @@ public:
 	bool IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const;
 
 	void Notify (Object* sender, const SettingsObserverArgs& args);
+
+	void Clear ();
 protected:
 	std::string GetPostProcessFragmentShaderPath () const;
-	std::string GetPostProcessVolumeName () const;	
+	std::string GetPostProcessVolumeName () const;
+	glm::ivec2 GetPostProcessVolumeResolution () const;
 	PostProcessMapVolume* CreatePostProcessVolume () const;
 
 	std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection* rvc);

@@ -21,9 +21,11 @@ uniform vec2 screenSize;
 
 uniform sampler2D ambientOcclusionMap;
 
+uniform vec2 ssaoResolution;
+
 vec2 CalcTexCoord()
 {
-	return gl_FragCoord.xy / screenSize;
+	return gl_FragCoord.xy / ssaoResolution;
 }
 
 float CalcBlur (vec2 texCoord)

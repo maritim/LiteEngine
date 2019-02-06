@@ -159,6 +159,10 @@ void DebugViewController::ShowRenderingSettingsWindow ()
 			bool ambientOcclusionEnabled = lastAmbientOcclusionEnabled;
 			ImGui::Checkbox ("Enabled", &ambientOcclusionEnabled);
 
+			glm::vec2 lastResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssao_resolution", glm::vec2 (0, 0));
+			int resolution [2] { (int) lastResolution.x, (int) lastResolution.y };
+			ImGui::InputInt2 ("Resolution", resolution);
+
 			int lastSamplesSize = SettingsManager::Instance ()->GetValue<int> ("ssao_samples", 0);
 			int samplesSize = lastSamplesSize;
 			ImGui::SliderInt ("Samples Size", &samplesSize, 1, 64);
@@ -181,6 +185,11 @@ void DebugViewController::ShowRenderingSettingsWindow ()
 
 			if (lastSamplesSize != samplesSize) {
 				SettingsManager::Instance ()->SetValue ("ssao_samples", std::to_string (samplesSize));
+			}
+
+			if (lastResolution.x != resolution [0] || lastResolution.y != resolution [1]) {
+				SettingsManager::Instance ()->SetValue ("ssao_resolution",
+					std::to_string (resolution [0]) + "," + std::to_string (resolution [1]));
 			}
 
 			if (lastNoiseMapResolution.x != noiseMapResolution [0] || lastNoiseMapResolution.y != noiseMapResolution [1]) {

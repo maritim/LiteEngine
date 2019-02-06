@@ -7,12 +7,6 @@
 bool SSAOMapVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
 {
 	/*
-	 * Clear framebuffer if needed
-	*/
-
-	Clear ();
-
-	/*
 	 * Create framebuffer
 	*/
 

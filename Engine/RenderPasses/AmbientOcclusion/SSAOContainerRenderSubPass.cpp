@@ -6,6 +6,7 @@
 
 SSAOContainerRenderSubPass::SSAOContainerRenderSubPass () :
 	_enabled (false),
+	_resolution (0),
 	_radius (0.0f),
 	_bias (0.0f)
 {
@@ -14,22 +15,22 @@ SSAOContainerRenderSubPass::SSAOContainerRenderSubPass () :
 
 SSAOContainerRenderSubPass::~SSAOContainerRenderSubPass ()
 {
-	ClearSettings ();
+
 }
 
 void SSAOContainerRenderSubPass::Init ()
 {
 	/*
-	 *
-	*/
-
-	PostProcessContainerRenderSubPass::Init ();
-
-	/*
 	 * Initialize screen space ambient occlusion settings
 	*/
 
 	InitSettings ();
+
+	/*
+	 *
+	*/
+
+	PostProcessContainerRenderSubPass::Init ();
 }
 
 bool SSAOContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
@@ -54,6 +55,20 @@ void SSAOContainerRenderSubPass::Notify (Object* sender, const SettingsObserverA
 	}
 
 	/*
+	 * Update screen space ambient occlusion resolution
+	*/
+
+	if (name == "ssao_resolution") {
+		_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssao_resolution", (glm::vec2) _resolution);
+
+		/*
+		 * Initialize screen space ambient occlusion map
+		*/
+
+		ReinitPostProcessVolume ();
+	}
+
+	/*
 	 * Update screen space ambient occlusion radius
 	*/
 
@@ -70,6 +85,21 @@ void SSAOContainerRenderSubPass::Notify (Object* sender, const SettingsObserverA
 	}
 }
 
+void SSAOContainerRenderSubPass::Clear ()
+{
+	/*
+	 *
+	*/
+
+	PostProcessContainerRenderSubPass::Clear ();
+
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
+}
+
 std::string SSAOContainerRenderSubPass::GetPostProcessFragmentShaderPath () const
 {
 	return "Assets/Shaders/AmbientOcclusion/screenSpaceAmbientOcclusionFragment.glsl";
@@ -78,6 +108,11 @@ std::string SSAOContainerRenderSubPass::GetPostProcessFragmentShaderPath () cons
 std::string SSAOContainerRenderSubPass::GetPostProcessVolumeName () const
 {
 	return "SSAOMapVolume";
+}
+
+glm::ivec2 SSAOContainerRenderSubPass::GetPostProcessVolumeResolution () const
+{
+	return _resolution;
 }
 
 PostProcessMapVolume* SSAOContainerRenderSubPass::CreatePostProcessVolume () const
@@ -99,18 +134,23 @@ std::vector<PipelineAttribute> SSAOContainerRenderSubPass::GetCustomAttributes (
 	 * Attach screen space ambient occlusion attributes to pipeline
 	*/
 
+	PipelineAttribute ssaoResolution;
 	PipelineAttribute ssaoRadius;
 	PipelineAttribute ssaoBias;
 
+	ssaoResolution.type = PipelineAttribute::AttrType::ATTR_2F;
 	ssaoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssaoBias.type = PipelineAttribute::AttrType::ATTR_1F;
 
+	ssaoResolution.name = "ssaoResolution";
 	ssaoRadius.name = "ssaoRadius";
 	ssaoBias.name = "ssaoBias";
 
+	ssaoResolution.value = glm::vec3 (_resolution, 0.0f);
 	ssaoRadius.value.x = _radius;
 	ssaoBias.value.x = _bias;
 
+	attributes.push_back (ssaoResolution);
 	attributes.push_back (ssaoRadius);
 	attributes.push_back (ssaoBias);
 
@@ -124,6 +164,12 @@ void SSAOContainerRenderSubPass::InitSettings ()
 	*/
 
 	_enabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", _enabled);
+
+	/*
+	 * Initialize screen space ambient occlusion resolution
+	*/
+
+	_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssao_resolution", (glm::vec2) _resolution);
 
 	/*
 	 * Initialize screen space ambient occlusion radius
@@ -142,6 +188,7 @@ void SSAOContainerRenderSubPass::InitSettings ()
 	*/
 
 	SettingsManager::Instance ()->Attach ("ambient_occlusion", this);
+	SettingsManager::Instance ()->Attach ("ssao_resolution", this);
 	SettingsManager::Instance ()->Attach ("ssao_radius", this);
 	SettingsManager::Instance ()->Attach ("ssao_bias", this);
 }
@@ -153,6 +200,7 @@ void SSAOContainerRenderSubPass::ClearSettings ()
 	*/
 
 	SettingsManager::Instance ()->Detach ("ambient_occlusion", this);
+	SettingsManager::Instance ()->Detach ("ssao_resolution", this);
 	SettingsManager::Instance ()->Detach ("ssao_radius", this);
 	SettingsManager::Instance ()->Detach ("ssao_bias", this);
 }

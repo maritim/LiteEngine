@@ -167,6 +167,12 @@ void DeferredGeometryRenderPass::PrepareDrawing ()
 void DeferredGeometryRenderPass::GeometryPass (const Scene* scene, const Camera* camera)
 {
 	/*
+	 * Set viewport
+	*/
+
+	GL::Viewport (0, 0, Window::GetWidth (), Window::GetHeight ());
+
+	/*
 	 * Set Depth Buffer
 	*/
 

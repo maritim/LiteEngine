@@ -3,8 +3,6 @@
 #include "Renderer/Pipeline.h"
 #include "Managers/ShaderManager.h"
 
-#include "Systems/Window/Window.h"
-
 #include "Core/Console/Console.h"
 
 PostProcessContainerRenderSubPass::PostProcessContainerRenderSubPass () :
@@ -34,7 +32,9 @@ void PostProcessContainerRenderSubPass::Init ()
 
 	_postProcessMapVolume = CreatePostProcessVolume ();
 
-	if (!_postProcessMapVolume->Init (Window::GetWidth (), Window::GetHeight ())) {
+	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution ();
+
+	if (!_postProcessMapVolume->Init (volumeResolution.x, volumeResolution.y)) {
 		Console::LogError (std::string () + "Post-process volume cannot be initialized!" +
 			"It is not possible to continue the process. End now!");
 		exit (POST_PROCESS_MAP_VOLUME_NOT_INIT);
@@ -92,6 +92,14 @@ void PostProcessContainerRenderSubPass::StartPostProcessPass ()
 
 void PostProcessContainerRenderSubPass::PostProcessPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
+	/*
+	 * Set viewport
+	*/
+
+	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution ();
+
+	GL::Viewport (0, 0, volumeResolution.x, volumeResolution.y);
+
 	/*
 	 * Enable color blending
 	*/
@@ -158,4 +166,25 @@ std::vector<PipelineAttribute> PostProcessContainerRenderSubPass::GetCustomAttri
 	}
 
 	return attributes;
+}
+
+void PostProcessContainerRenderSubPass::ReinitPostProcessVolume ()
+{
+	/*
+	 * Clear current post process volume
+	*/
+
+	_postProcessMapVolume->Clear ();
+
+	/*
+	 * Initialize post process volume
+	*/
+
+	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution ();
+
+	if (!_postProcessMapVolume->Init (volumeResolution.x, volumeResolution.y)) {
+		Console::LogError (std::string () + "Post-process volume cannot be initialized!" +
+			"It is not possible to continue the process. End now!");
+		exit (POST_PROCESS_MAP_VOLUME_NOT_INIT);
+	}
 }

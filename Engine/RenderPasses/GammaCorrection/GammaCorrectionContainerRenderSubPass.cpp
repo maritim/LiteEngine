@@ -1,5 +1,6 @@
 #include "GammaCorrectionContainerRenderSubPass.h"
 
+#include "Systems/Window/Window.h"
 #include "Systems/Settings/SettingsManager.h"
 
 GammaCorrectionContainerRenderSubPass::GammaCorrectionContainerRenderSubPass () :
@@ -16,16 +17,16 @@ GammaCorrectionContainerRenderSubPass::~GammaCorrectionContainerRenderSubPass ()
 void GammaCorrectionContainerRenderSubPass::Init ()
 {
 	/*
-	 *
-	*/
-
-	PostProcessContainerRenderSubPass::Init ();
-
-	/*
 	 * Initialize gamma correction settings
 	*/
 
 	InitSettings ();
+
+	/*
+	 *
+	*/
+
+	PostProcessContainerRenderSubPass::Init ();
 }
 
 bool GammaCorrectionContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
@@ -50,6 +51,21 @@ void GammaCorrectionContainerRenderSubPass::Notify (Object* sender, const Settin
 	}
 }
 
+void GammaCorrectionContainerRenderSubPass::Clear ()
+{
+	/*
+	 *
+	*/
+
+	PostProcessContainerRenderSubPass::Clear ();
+
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
+}
+
 std::string GammaCorrectionContainerRenderSubPass::GetPostProcessFragmentShaderPath () const
 {
 	return "Assets/Shaders/GammaCorrection/gammaCorrectionFragment.glsl";
@@ -58,6 +74,11 @@ std::string GammaCorrectionContainerRenderSubPass::GetPostProcessFragmentShaderP
 std::string GammaCorrectionContainerRenderSubPass::GetPostProcessVolumeName () const
 {
 	return "PostProcessMapVolume";
+}
+
+glm::ivec2 GammaCorrectionContainerRenderSubPass::GetPostProcessVolumeResolution () const
+{
+	return glm::ivec2 (Window::GetWidth (), Window::GetHeight ());
 }
 
 PostProcessMapVolume* GammaCorrectionContainerRenderSubPass::CreatePostProcessVolume () const

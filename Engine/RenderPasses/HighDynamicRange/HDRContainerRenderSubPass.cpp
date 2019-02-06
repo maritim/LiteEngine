@@ -1,5 +1,6 @@
 #include "HDRContainerRenderSubPass.h"
 
+#include "Systems/Window/Window.h"
 #include "Systems/Settings/SettingsManager.h"
 
 HDRContainerRenderSubPass::HDRContainerRenderSubPass () :
@@ -12,22 +13,22 @@ HDRContainerRenderSubPass::HDRContainerRenderSubPass () :
 
 HDRContainerRenderSubPass::~HDRContainerRenderSubPass ()
 {
-	ClearSettings ();
+
 }
 
 void HDRContainerRenderSubPass::Init ()
 {
 	/*
-	 *
-	*/
-
-	PostProcessContainerRenderSubPass::Init ();
-
-	/*
 	 * Initialize high dynamic range settings
 	*/
 
 	InitSettings ();
+
+	/*
+	 *
+	*/
+
+	PostProcessContainerRenderSubPass::Init ();
 }
 
 bool HDRContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
@@ -60,6 +61,21 @@ void HDRContainerRenderSubPass::Notify (Object* sender, const SettingsObserverAr
 	}
 }
 
+void HDRContainerRenderSubPass::Clear ()
+{
+	/*
+	 *
+	*/
+
+	PostProcessContainerRenderSubPass::Clear ();
+
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
+}
+
 std::string HDRContainerRenderSubPass::GetPostProcessFragmentShaderPath () const
 {
 	return "Assets/Shaders/HighDynamicRange/highDynamicRangeFragment.glsl";
@@ -68,6 +84,11 @@ std::string HDRContainerRenderSubPass::GetPostProcessFragmentShaderPath () const
 std::string HDRContainerRenderSubPass::GetPostProcessVolumeName () const
 {
 	return "PostProcessMapVolume";
+}
+
+glm::ivec2 HDRContainerRenderSubPass::GetPostProcessVolumeResolution () const
+{
+	return glm::ivec2 (Window::GetWidth (), Window::GetHeight ());
 }
 
 PostProcessMapVolume* HDRContainerRenderSubPass::CreatePostProcessVolume () const

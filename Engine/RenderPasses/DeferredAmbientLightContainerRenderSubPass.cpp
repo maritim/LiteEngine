@@ -8,6 +8,8 @@
 
 #include "Renderer/Pipeline.h"
 
+#include "Systems/Window/Window.h"
+
 DeferredAmbientLightContainerRenderSubPass::DeferredAmbientLightContainerRenderSubPass () :
 	_aoEnabled (false),
 	_shaderName ("AMBIENT_LIGHT"),
@@ -132,6 +134,12 @@ void DeferredAmbientLightContainerRenderSubPass::AmbientLightPass (const Scene* 
 	*/
 
 	Pipeline::SendCustomAttributes ("", GetCustomAttributes (rvc));
+
+	/*
+	 * Set viewport
+	*/
+
+	GL::Viewport (0, 0, Window::GetWidth (), Window::GetHeight ());
 
 	/*
 	 * Blend between point lights with same weight.

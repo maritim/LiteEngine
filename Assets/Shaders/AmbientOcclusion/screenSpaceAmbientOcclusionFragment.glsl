@@ -31,12 +31,13 @@ uniform sampler2D ssaoNoiseMap;
 
 uniform vec2 ssaoNoiseSize;
 
+uniform vec2 ssaoResolution;
 uniform float ssaoRadius;
 uniform float ssaoBias;
 
 vec2 CalcTexCoord()
 {
-	return gl_FragCoord.xy / screenSize;
+	return gl_FragCoord.xy / ssaoResolution;
 }
 
 float CalcScreenSpaceAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 texCoord)
@@ -47,7 +48,7 @@ float CalcScreenSpaceAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 te
 	 * Compute noise scale to map the noise on the whole screen
 	*/
 
-	vec2 noiseScale = screenSize / ssaoNoiseSize;
+	vec2 noiseScale = ssaoResolution / ssaoNoiseSize;
 
 	vec3 randomVec = texture (ssaoNoiseMap, texCoord * noiseScale).xyz;
 
