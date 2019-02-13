@@ -30,10 +30,10 @@ void main()
 
 	gl_Position = modelViewProjectionMatrix * localPosition;
 
-	vert_position = (modelMatrix * localPosition).xyz;
+	vert_position = (modelViewMatrix * localPosition).xyz;
 
 	vec4 localNormal = boneTransform * vec4 (in_normal, 0.0);
-	vert_normal = (modelMatrix * localNormal).xyz;
+	vert_normal = (normalWorldMatrix * vec3 (localNormal)).xyz;
 
 	vert_texcoord = in_texcoord;
 }
