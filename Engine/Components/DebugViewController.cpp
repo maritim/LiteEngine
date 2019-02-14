@@ -216,6 +216,59 @@ void DebugViewController::ShowRenderingSettingsWindow ()
 			ImGui::TreePop();
 		}
 
+		if (ImGui::TreeNode ("Screen Space Reflection")) {
+			bool lastScreenSpaceReflectionEnabled = SettingsManager::Instance ()->GetValue<bool> ("screen_space_reflection", false);
+			bool screenSpaceReflectionEnabled = lastScreenSpaceReflectionEnabled;
+			ImGui::Checkbox ("Enabled", &screenSpaceReflectionEnabled);
+
+			glm::vec2 lastResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssr_resolution", glm::vec2 (0, 0));
+			int resolution [2] { (int) lastResolution.x, (int) lastResolution.y };
+			ImGui::InputInt2 ("Resolution", resolution);
+
+			float lastRoughness = SettingsManager::Instance ()->GetValue<float> ("ssr_roughness", 0.0f);
+			float roughness = lastRoughness;
+			ImGui::SliderFloat ("Roughness", &roughness, 0.0f, 1.0f);
+
+			int lastSampleIterations = SettingsManager::Instance ()->GetValue<int> ("ssr_iterations", 0);
+			int sampleIterations = lastSampleIterations;
+			ImGui::InputInt ("Sample Iterations", &sampleIterations, 1);
+
+			float lastSSRSampleSkip = SettingsManager::Instance ()->GetValue<float> ("ssr_sample_skip", 0.0f);
+			float ssrSampleSkip = lastSSRSampleSkip;
+			ImGui::InputFloat ("Spatial Sample Skip", &ssrSampleSkip, 0.1f);
+
+			float lastSSRSpatialBias = SettingsManager::Instance ()->GetValue<float> ("ssr_spatial_bias", 0.0f);
+			float ssrSpatialBias = lastSSRSpatialBias;
+			ImGui::InputFloat ("Spatial Bias", &ssrSpatialBias, 0.1f);
+
+			if (lastResolution.x != resolution [0] || lastResolution.y != resolution [1]) {
+				SettingsManager::Instance ()->SetValue ("ssr_resolution",
+					std::to_string (resolution [0]) + "," + std::to_string (resolution [1]));
+			}
+
+			if (lastSampleIterations != sampleIterations) {
+				SettingsManager::Instance ()->SetValue ("ssr_iterations", std::to_string (sampleIterations));
+			}
+
+			if (lastRoughness != roughness) {
+				SettingsManager::Instance ()->SetValue ("ssr_roughness", std::to_string (roughness));
+			}
+
+			if (lastSSRSampleSkip != ssrSampleSkip) {
+				SettingsManager::Instance ()->SetValue ("ssr_sample_skip", std::to_string (ssrSampleSkip));
+			}
+
+			if (lastSSRSpatialBias != ssrSpatialBias) {
+				SettingsManager::Instance ()->SetValue ("ssr_spatial_bias", std::to_string (ssrSpatialBias));
+			}
+
+			if (lastScreenSpaceReflectionEnabled != screenSpaceReflectionEnabled && renderModule == 0) {
+				SettingsManager::Instance ()->SetValue ("screen_space_reflection", std::to_string (screenSpaceReflectionEnabled));
+			}
+
+			ImGui::TreePop();
+		}
+
 		if (ImGui::TreeNode ("High Dynamic Range")) {
 			bool lastHDREnabled = SettingsManager::Instance ()->GetValue<bool> ("high_dynamic_range", false);
 			bool hdrEnabled = lastHDREnabled;

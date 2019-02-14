@@ -23,6 +23,8 @@
 
 #include "RenderPasses/DeferredAmbientLightContainerRenderSubPass.h"
 
+#include "RenderPasses/ScreenSpaceReflection/SSRContainerRenderSubPass.h"
+#include "RenderPasses/ScreenSpaceReflection/SSRAccumulationContainerRenderSubPass.h"
 #include "RenderPasses/HighDynamicRange/HDRContainerRenderSubPass.h"
 #include "RenderPasses/GammaCorrection/GammaCorrectionContainerRenderSubPass.h"
 
@@ -53,6 +55,8 @@ void DirectLightingRenderModule::Init ()
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
 		.Attach (new HDRContainerRenderSubPass ())
+		.Attach (new SSRContainerRenderSubPass ())
+		.Attach (new SSRAccumulationContainerRenderSubPass ())
 		.Attach (new GammaCorrectionContainerRenderSubPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredBlitRenderPass ());
