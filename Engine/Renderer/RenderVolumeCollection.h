@@ -14,7 +14,7 @@ class RenderVolumeCollectionIterator;
 class RenderVolumeCollection : public Object
 {
 protected:
-	std::map<std::string, RenderVolumeI*> _renderVolumes;
+	std::map<std::string, std::stack<std::pair<RenderVolumeI*, std::size_t>>> _nestedRenderVolumes;
 	std::stack<std::pair<std::string, std::size_t>> _scopedVolumes;
 	std::size_t _currentLevel;
 	std::string _lastRenderVolumeName;
@@ -22,8 +22,7 @@ protected:
 public:
 	RenderVolumeCollection ();
 
-	RenderVolumeCollection* Insert (const std::string& name, RenderVolumeI* volume);
-	RenderVolumeCollection* InsertScoped (const std::string& name, RenderVolumeI* volume);
+	RenderVolumeCollection* Insert (const std::string& name, RenderVolumeI* volume, bool external = true);
 
 	RenderVolumeCollection* StartScope ();
 	RenderVolumeCollection* ReleaseScope ();
@@ -40,14 +39,14 @@ class RenderVolumeCollectionIterator
 	friend RenderVolumeCollection;
 
 protected:
-	std::map<std::string, RenderVolumeI*>::iterator _it;
+	std::map<std::string, std::stack<std::pair<RenderVolumeI*, std::size_t>>>::iterator _it;
 
 public:
 	RenderVolumeCollectionIterator& operator++ ();
 	bool operator != (const RenderVolumeCollectionIterator& other);
 	RenderVolumeI* operator* ();
 protected:
-	RenderVolumeCollectionIterator (std::map<std::string, RenderVolumeI*>::iterator it);
+	RenderVolumeCollectionIterator (std::map<std::string, std::stack<std::pair<RenderVolumeI*, std::size_t>>>::iterator it);
 };
 
 #endif

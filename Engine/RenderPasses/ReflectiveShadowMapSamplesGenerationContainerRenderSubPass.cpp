@@ -33,7 +33,7 @@ void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Init ()
 
 RenderVolumeCollection* ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
-	return rvc->InsertScoped ("ReflectiveShadowMapSamplesVolume", _reflectiveShadowMapSamplesVolume);
+	return rvc->Insert ("ReflectiveShadowMapSamplesVolume", _reflectiveShadowMapSamplesVolume);
 }
 
 bool ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::IsAvailable (const VolumetricLight* volumetricLight) const

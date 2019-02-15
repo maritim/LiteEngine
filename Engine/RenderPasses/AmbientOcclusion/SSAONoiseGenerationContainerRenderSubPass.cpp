@@ -34,7 +34,7 @@ void SSAONoiseGenerationContainerRenderSubPass::Init ()
 
 RenderVolumeCollection* SSAONoiseGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
-	return rvc->InsertScoped ("SSAONoiseMapVolume", _ssaoNoiseMapVolume);
+	return rvc->Insert ("SSAONoiseMapVolume", _ssaoNoiseMapVolume);
 }
 
 void SSAONoiseGenerationContainerRenderSubPass::Clear ()

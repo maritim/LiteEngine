@@ -81,7 +81,7 @@ RenderVolumeCollection* DirectionalLightShadowMapContainerRenderSubPass::Execute
 
 	EndShadowMapPass ();
 
-	return rvc->InsertScoped ("ShadowMapDirectionalLightVolume", _volume);
+	return rvc->Insert ("ShadowMapDirectionalLightVolume", _volume);
 }
 
 void DirectionalLightShadowMapContainerRenderSubPass::Clear ()

@@ -34,7 +34,7 @@ void SSAOSamplesGenerationContainerRenderSubPass::Init ()
 
 RenderVolumeCollection* SSAOSamplesGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
 {
-	return rvc->InsertScoped ("SSAOSamplesVolume", _ssaoSamplesVolume);
+	return rvc->Insert ("SSAOSamplesVolume", _ssaoSamplesVolume);
 }
 
 bool SSAOSamplesGenerationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const

@@ -90,7 +90,7 @@ RenderVolumeCollection* ReflectiveShadowMapDirectionalLightAccumulationContainer
 
 	EndShadowMapPass ();
 
-	return rvc->InsertScoped ("ReflectiveShadowMapVolume", _reflectiveShadowMapVolume);
+	return rvc->Insert ("ReflectiveShadowMapVolume", _reflectiveShadowMapVolume);
 }
 
 bool ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::IsAvailable (const VolumetricLight* volumetricLight) const

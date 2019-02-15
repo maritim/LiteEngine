@@ -1,7 +1,5 @@
 #include "ContainerRenderPass.h"
 
-ContainerRenderPassBuilder* ContainerRenderPass::_builder (new ContainerRenderPassBuilder ());
-
 ContainerRenderPass::ContainerRenderPass (
 	const std::vector<ContainerRenderSubPassI*>& renderSubPasses,
 	ContainerRenderVolumeCollectionI* renderVolumeCollection) :
@@ -68,6 +66,15 @@ RenderVolumeCollection* ContainerRenderPass::Execute (const Scene* scene,
 	return rvc->ReleaseScope ();
 }
 
+bool ContainerRenderPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
+{
+	/*
+	 * Always execute container render pass
+	*/
+
+	return true;
+}
+
 void ContainerRenderPass::Clear ()
 {
 	/*
@@ -79,9 +86,11 @@ void ContainerRenderPass::Clear ()
 	}
 }
 
-ContainerRenderPassBuilder& ContainerRenderPass::Builder ()
+ContainerRenderPassBuilder ContainerRenderPass::Builder ()
 {
-	return *_builder;
+	ContainerRenderPassBuilder builder;
+
+	return builder;
 }
 
 RenderVolumeCollection* ContainerRenderPass::IterateOverSubPasses (
@@ -93,7 +102,7 @@ RenderVolumeCollection* ContainerRenderPass::IterateOverSubPasses (
 	 * In this way it could be obtained at pass execution
 	*/
 
-	rvc->Insert ("SubpassVolume", volume);
+	rvc->Insert ("SubpassVolume", volume, false);
 
 	/*
 	 * Iterate all sub passes
