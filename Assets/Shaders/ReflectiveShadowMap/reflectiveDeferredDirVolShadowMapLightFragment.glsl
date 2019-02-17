@@ -79,7 +79,7 @@ float ShadowCalculation (vec4 lightSpacePos, int cascadedLevel)
 	float bias = 0.0002;
 
     // Check whether current frag pos is in shadow
-    float shadow = 0.5;
+    float shadow = 0.0;
 
 	vec2 texelSize = 1.0 / textureSize(shadowMaps [cascadedLevel], 0);
 	for(int x = -1; x <= 1; ++x)
