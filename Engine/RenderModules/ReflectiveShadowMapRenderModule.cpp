@@ -17,6 +17,7 @@
 
 #include "RenderPasses/DeferredAmbientLightContainerRenderSubPass.h"
 
+#include "RenderPasses/IdleContainerRenderSubPass.h"
 #include "RenderPasses/HighDynamicRange/HDRContainerRenderSubPass.h"
 #include "RenderPasses/GammaCorrection/GammaCorrectionContainerRenderSubPass.h"
 
@@ -42,6 +43,7 @@ void ReflectiveShadowMapRenderModule::Init ()
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
+		.Attach (new IdleContainerRenderSubPass ())
 		.Attach (new HDRContainerRenderSubPass ())
 		.Attach (new GammaCorrectionContainerRenderSubPass ())
 		.Build ());

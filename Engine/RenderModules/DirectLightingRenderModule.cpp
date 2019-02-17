@@ -23,6 +23,7 @@
 
 #include "RenderPasses/DeferredAmbientLightContainerRenderSubPass.h"
 
+#include "RenderPasses/IdleContainerRenderSubPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRContainerRenderSubPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRAccumulationContainerRenderSubPass.h"
 #include "RenderPasses/HighDynamicRange/HDRContainerRenderSubPass.h"
@@ -54,6 +55,7 @@ void DirectLightingRenderModule::Init ()
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
+		.Attach (new IdleContainerRenderSubPass ())
 		.Attach (new HDRContainerRenderSubPass ())
 		.Attach (new SSRContainerRenderSubPass ())
 		.Attach (new SSRAccumulationContainerRenderSubPass ())

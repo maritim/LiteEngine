@@ -6,7 +6,6 @@ uniform sampler2D gPositionMap;
 uniform sampler2D gNormalMap;
 uniform sampler2D gDiffuseMap;
 uniform sampler2D gSpecularMap;
-uniform sampler2D lightAccumulationMap;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -21,6 +20,8 @@ uniform vec3 cameraPosition;
 uniform vec2 screenSize;
 
 uniform float exposure;
+
+uniform sampler2D postProcessMap;
 
 vec2 CalcTexCoord()
 {
@@ -47,7 +48,7 @@ vec3 CalcHighDynamicRange (vec3 in_diffuse)
 void main ()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_diffuse = texture2D (lightAccumulationMap, texCoord).xyz;
+	vec3 in_diffuse = texture2D (postProcessMap, texCoord).xyz;
 
 	out_color = CalcHighDynamicRange (in_diffuse);
 }

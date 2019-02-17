@@ -42,6 +42,12 @@ void DeferredBlitRenderPass::Clear ()
 
 void DeferredBlitRenderPass::EndDrawing (FrameBuffer2DVolume* frameBufferVolume)
 {
+	/*
+	 * Disable writting to framebuffer
+	*/
+
+	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
+
 	frameBufferVolume->BindForBliting ();
 
 	std::size_t windowWidth = Window::GetWidth ();

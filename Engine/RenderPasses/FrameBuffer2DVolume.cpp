@@ -92,12 +92,6 @@ void FrameBuffer2DVolume::BindForWriting ()
 void FrameBuffer2DVolume::BindForBliting ()
 {
 	/*
-	 * Disable writting to framebuffer
-	*/
-
-	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
-
-	/*
 	 * Bind current framebuffer as read only
 	*/
 
@@ -108,6 +102,21 @@ void FrameBuffer2DVolume::BindForBliting ()
 	*/
 
 	GL::ReadBuffer (GL_COLOR_ATTACHMENT0);
+}
+
+void FrameBuffer2DVolume::BindToBlit ()
+{
+	/*
+	 * Bind current framebuffer as write only
+	*/
+
+	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, _fbo);
+
+	/*
+	 * Bind texture as drawing input
+	*/
+
+	GL::DrawBuffer (GL_COLOR_ATTACHMENT0);
 }
 
 void FrameBuffer2DVolume::Clear ()

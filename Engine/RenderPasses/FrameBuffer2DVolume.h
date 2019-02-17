@@ -17,6 +17,7 @@ public:
 
 	void BindForWriting ();
 	void BindForBliting ();
+	void BindToBlit ();
 
 	void Clear ();
 };

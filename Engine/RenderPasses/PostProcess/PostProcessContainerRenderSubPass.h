@@ -11,8 +11,6 @@
 
 #include "Renderer/PipelineAttribute.h"
 
-#define POST_PROCESS_MAP_VOLUME_NOT_INIT 354
-
 class PostProcessContainerRenderSubPass : public ContainerRenderSubPassI
 {
 protected:
