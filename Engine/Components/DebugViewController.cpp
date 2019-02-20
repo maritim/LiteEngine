@@ -241,6 +241,10 @@ void DebugViewController::ShowRenderingSettingsWindow ()
 			float ssrSpatialBias = lastSSRSpatialBias;
 			ImGui::InputFloat ("Spatial Bias", &ssrSpatialBias, 0.1f);
 
+			float lastSSRIntensity = SettingsManager::Instance ()->GetValue<float> ("ssr_intensity", 0.0f);
+			float ssrIntensity = lastSSRIntensity;
+			ImGui::InputFloat ("Intensity", &ssrIntensity, 0.1f);
+
 			if (lastResolution.x != resolution [0] || lastResolution.y != resolution [1]) {
 				SettingsManager::Instance ()->SetValue ("ssr_resolution",
 					std::to_string (resolution [0]) + "," + std::to_string (resolution [1]));
@@ -260,6 +264,10 @@ void DebugViewController::ShowRenderingSettingsWindow ()
 
 			if (lastSSRSpatialBias != ssrSpatialBias) {
 				SettingsManager::Instance ()->SetValue ("ssr_spatial_bias", std::to_string (ssrSpatialBias));
+			}
+
+			if (lastSSRIntensity != ssrIntensity) {
+				SettingsManager::Instance ()->SetValue ("ssr_intensity", std::to_string (ssrIntensity));
 			}
 
 			if (lastScreenSpaceReflectionEnabled != screenSpaceReflectionEnabled && renderModule == 0) {

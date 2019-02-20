@@ -21,6 +21,8 @@ uniform vec3 cameraPosition;
 
 uniform vec2 screenSize;
 
+uniform float ssrIntensity;
+
 uniform sampler2D postProcessMap;
 
 uniform sampler2D reflectionMap;
@@ -41,6 +43,7 @@ void main()
 	vec3 in_position = texture (gPositionMap, texCoord).xyz;
 	vec3 in_normal = texture (gNormalMap, texCoord).xyz;
 	vec3 in_diffuse = texture (postProcessMap, texCoord).xyz;
+	vec3 in_specular = texture (gSpecularMap, texCoord).xyz;
 	vec2 in_reflection = texture (reflectionMap, texCoord).xy;
 
 	in_normal = normalize (in_normal);
@@ -57,5 +60,6 @@ void main()
 
     vec3 fresnel = fresnelSchlick(max(dot(in_normal, normalize(-in_position)), 0.0), vec3 (0.0f));
 
-	out_color = in_diffuse + reflection * screenEdgeFade * clamp (-reflectionDirection.z, 0.0f, 1.0f) * fresnel;
+	out_color = in_diffuse + in_specular * reflection * screenEdgeFade *
+		clamp (-reflectionDirection.z, 0.0f, 1.0f) * fresnel * ssrIntensity;
 }

@@ -10,6 +10,7 @@ class SSRAccumulationContainerRenderSubPass : public PostProcessContainerRenderS
 {
 protected:
 	bool _enabled;
+	float _intensity;
 
 public:
 	SSRAccumulationContainerRenderSubPass ();
@@ -27,6 +28,8 @@ protected:
 	std::string GetPostProcessVolumeName () const;
 	glm::ivec2 GetPostProcessVolumeResolution () const;
 	PostProcessMapVolume* CreatePostProcessVolume () const;
+
+	std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection* rvc);
 
 	void InitSettings ();
 	void ClearSettings ();
