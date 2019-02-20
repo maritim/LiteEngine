@@ -269,6 +269,34 @@ void DebugViewController::ShowRenderingSettingsWindow ()
 			ImGui::TreePop();
 		}
 
+		if (ImGui::TreeNode ("Bloom")) {
+			bool lastBloomEnabled = SettingsManager::Instance ()->GetValue<bool> ("bloom", false);
+			bool bloomEnabled = lastBloomEnabled;
+			ImGui::Checkbox ("Enabled", &bloomEnabled);
+
+			float lastBloomThreshold = SettingsManager::Instance ()->GetValue<float> ("bloom_threshold", 0.0f);
+			float bloomThreshold = lastBloomThreshold;
+			ImGui::SliderFloat ("Threshold", &bloomThreshold, 0.0f, 10.0f);
+
+			float lastBloomIntensity = SettingsManager::Instance ()->GetValue<float> ("bloom_intensity", 0.0f);
+			float bloomIntensity = lastBloomIntensity;
+			ImGui::InputFloat ("Intensity", &bloomIntensity, 0.1f);
+
+			if (lastBloomThreshold != bloomThreshold) {
+				SettingsManager::Instance ()->SetValue ("bloom_threshold", std::to_string (bloomThreshold));
+			}
+
+			if (lastBloomIntensity != bloomIntensity) {
+				SettingsManager::Instance ()->SetValue ("bloom_intensity", std::to_string (bloomIntensity));
+			}
+
+			if (lastBloomEnabled != bloomEnabled) {
+				SettingsManager::Instance ()->SetValue ("bloom", std::to_string (bloomEnabled));
+			}
+
+			ImGui::TreePop();
+		}
+
 		if (ImGui::TreeNode ("High Dynamic Range")) {
 			bool lastHDREnabled = SettingsManager::Instance ()->GetValue<bool> ("high_dynamic_range", false);
 			bool hdrEnabled = lastHDREnabled;

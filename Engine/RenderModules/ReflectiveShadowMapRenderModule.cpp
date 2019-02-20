@@ -18,6 +18,10 @@
 #include "RenderPasses/DeferredAmbientLightContainerRenderSubPass.h"
 
 #include "RenderPasses/IdleContainerRenderSubPass.h"
+#include "RenderPasses/Bloom/BrightExtractionContainerRenderSubPass.h"
+#include "RenderPasses/Bloom/BloomHorizontalBlurContainerRenderSubPass.h"
+#include "RenderPasses/Bloom/BloomVerticalBlurContainerRenderSubPass.h"
+#include "RenderPasses/Bloom/BloomAccumulationContainerRenderSubPass.h"
 #include "RenderPasses/HighDynamicRange/HDRContainerRenderSubPass.h"
 #include "RenderPasses/GammaCorrection/GammaCorrectionContainerRenderSubPass.h"
 
@@ -44,6 +48,16 @@ void ReflectiveShadowMapRenderModule::Init ()
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
 		.Attach (new IdleContainerRenderSubPass ())
+		.Attach (ContainerRenderPass::Builder ()
+			.Volume (new IterateOverRenderVolumeCollection (1))
+			.Attach (new BrightExtractionContainerRenderSubPass ())
+			.Attach (ContainerRenderPass::Builder ()
+				.Volume (new IterateOverRenderVolumeCollection (5))
+				.Attach (new BloomHorizontalBlurContainerRenderSubPass ())
+				.Attach (new BloomVerticalBlurContainerRenderSubPass ())
+				.Build ())
+			.Attach (new BloomAccumulationContainerRenderSubPass ())
+			.Build ())
 		.Attach (new HDRContainerRenderSubPass ())
 		.Attach (new GammaCorrectionContainerRenderSubPass ())
 		.Build ());
