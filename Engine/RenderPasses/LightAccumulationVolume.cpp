@@ -13,17 +13,11 @@ LightAccumulationVolume::LightAccumulationVolume () :
 
 LightAccumulationVolume::~LightAccumulationVolume ()
 {
-	Clear ();
+
 }
 
 bool LightAccumulationVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight, GBuffer* gBuffer)
 {
-	/*
-	 * Clear framebuffer if needed
-	*/
-
-	Clear ();
-
 	/*
 	 * Initialize framebuffer
 	*/

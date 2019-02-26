@@ -13,7 +13,7 @@ FrameBuffer2DVolume::FrameBuffer2DVolume () :
 
 FrameBuffer2DVolume::~FrameBuffer2DVolume ()
 {
-	Clear ();
+
 }
 
 bool FrameBuffer2DVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
