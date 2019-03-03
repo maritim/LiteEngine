@@ -76,7 +76,7 @@ void ReflectiveShadowMapDirectionalLightContainerRenderSubPass::LockShader (cons
 	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shadowShaderName));
 }
 
-std::vector<PipelineAttribute> ReflectiveShadowMapDirectionalLightContainerRenderSubPass::GetCustomAttributes ()
+std::vector<PipelineAttribute> ReflectiveShadowMapDirectionalLightContainerRenderSubPass::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 

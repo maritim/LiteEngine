@@ -20,7 +20,7 @@ public:
 protected:
 	void LockShader (const VolumetricLight*);
 
-	std::vector<PipelineAttribute> GetCustomAttributes ();
+	std::vector<PipelineAttribute> GetCustomAttributes () const;
 };
 
 #endif

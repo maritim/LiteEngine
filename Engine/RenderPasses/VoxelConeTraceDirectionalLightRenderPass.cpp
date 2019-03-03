@@ -43,7 +43,7 @@ void VoxelConeTraceDirectionalLightRenderPass::LockShader (const VolumetricLight
 	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shadowShaderName));
 }
 
-std::vector<PipelineAttribute> VoxelConeTraceDirectionalLightRenderPass::GetCustomAttributes ()
+std::vector<PipelineAttribute> VoxelConeTraceDirectionalLightRenderPass::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 

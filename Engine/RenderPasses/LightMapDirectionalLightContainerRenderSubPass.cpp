@@ -43,7 +43,7 @@ void LightMapDirectionalLightContainerRenderSubPass::LockShader (const Volumetri
 	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
 }
 
-std::vector<PipelineAttribute> LightMapDirectionalLightContainerRenderSubPass::GetCustomAttributes ()
+std::vector<PipelineAttribute> LightMapDirectionalLightContainerRenderSubPass::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 

@@ -62,7 +62,7 @@ void DeferredDirectionalLightContainerRenderSubPass::LockShader (const Volumetri
 	}
 }
 
-std::vector<PipelineAttribute> DeferredDirectionalLightContainerRenderSubPass::GetCustomAttributes ()
+std::vector<PipelineAttribute> DeferredDirectionalLightContainerRenderSubPass::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 
