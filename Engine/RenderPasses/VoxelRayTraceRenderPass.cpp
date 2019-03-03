@@ -6,6 +6,8 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
+#include "Systems/Window/Window.h"
+
 VoxelRayTraceRenderPass::~VoxelRayTraceRenderPass ()
 {
 
@@ -58,6 +60,12 @@ void VoxelRayTraceRenderPass::StartRayTrace ()
 
 void VoxelRayTraceRenderPass::VoxelRenderingRayTracePass (const Camera* camera, RenderVolumeCollection* rvc)
 {
+	/*
+	 * Set viewport
+	*/
+
+	GL::Viewport (0, 0, Window::GetWidth (), Window::GetHeight ());
+
 	/*
 	 * Bind voxel volume for reading
 	*/

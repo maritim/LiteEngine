@@ -4,7 +4,6 @@
 
 #include "Renderer/Pipeline.h"
 
-#include "Systems/Window/Window.h"
 #include "Systems/Settings/SettingsManager.h"
 
 #include "Wrappers/OpenGL/GL.h"
@@ -212,11 +211,8 @@ void VoxelizationRenderPass::EndVoxelization ()
 	* Clear settings
 	*/
 
-	GL::Viewport (0, 0, Window::GetWidth (), Window::GetHeight ());
 	GL::ColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	GL::DepthMask (GL_TRUE);
-
-	GL::Enable (GL_CULL_FACE);
 
 	/*
 	* Unlock voxelization shader
