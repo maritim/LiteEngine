@@ -2,24 +2,33 @@
 #define VOXELCONETRACEDIRECTIONALLIGHTRENDERPASS_H
 
 #include "RenderPasses/DirectionalVolumetricLightContainerRenderSubPass.h"
+#include "Core/Observer/ObserverI.h"
 
 #include <string>
 
-class VoxelConeTraceDirectionalLightRenderPass : public DirectionalVolumetricLightContainerRenderSubPass
+#include "Systems/Settings/SettingsObserverArgs.h"
+
+class VoxelConeTraceDirectionalLightRenderPass : public DirectionalVolumetricLightContainerRenderSubPass, public ObserverI<SettingsObserverArgs>
 {
 protected:
 	std::string _shadowShaderName;
+	float _indirectIntensity;
 
 public:
 	VoxelConeTraceDirectionalLightRenderPass ();
 
 	void Init ();
 
+	void Notify (Object* sender, const SettingsObserverArgs& args);
+
 	void Clear ();
 protected:
 	void LockShader (const VolumetricLight*);
 
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
+
+	void InitSettings ();
+	void ClearSettings ();
 };
 
 #endif

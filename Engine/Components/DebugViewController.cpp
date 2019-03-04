@@ -91,6 +91,10 @@ void DebugViewController::ShowRenderingSettingsWindow ()
 		bool voxelBordering = lastVoxelBordering;
 		ImGui::Checkbox ("Voxel Volume Bordering", &voxelBordering);
 
+		float lastIndirectLightIntensity = SettingsManager::Instance ()->GetValue<float> ("vct_indirect_intensity", 0.0f);
+		float indirectLightIntensity = lastIndirectLightIntensity;
+		ImGui::InputFloat ("Indirect Light Intensity", &indirectLightIntensity, 0.1f);
+
 		if (lastVoxelVolumeSize != voxelVolumeSize) {
 			SettingsManager::Instance ()->SetValue ("vct_voxels_size", std::to_string (voxelVolumeSize));
 
@@ -111,6 +115,10 @@ void DebugViewController::ShowRenderingSettingsWindow ()
 			_continuousVoxelizationReset = true;
 
 			SettingsManager::Instance ()->SetValue ("vct_continuous_voxelization", std::to_string (true));
+		}
+
+		if (lastIndirectLightIntensity != indirectLightIntensity) {
+			SettingsManager::Instance ()->SetValue ("vct_indirect_intensity", std::to_string (indirectLightIntensity));
 		}
 	}
 

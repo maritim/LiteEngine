@@ -4,8 +4,11 @@
 
 #include "Renderer/Pipeline.h"
 
+#include "Systems/Settings/SettingsManager.h"
+
 VoxelConeTraceDirectionalLightRenderPass::VoxelConeTraceDirectionalLightRenderPass () :
-	_shadowShaderName ("VOXEL_CONE_TRACE_SHADOW_MAP_DIRECTIONAL_LIGHT")
+	_shadowShaderName ("VOXEL_CONE_TRACE_SHADOW_MAP_DIRECTIONAL_LIGHT"),
+	_indirectIntensity (0.0f)
 {
 
 }
@@ -19,13 +22,34 @@ void VoxelConeTraceDirectionalLightRenderPass::Init ()
 	ShaderManager::Instance ()->AddShader (_shadowShaderName,
 		"Assets/Shaders/VoxelConeTrace/voxelConeTraceVertex.glsl",
 		"Assets/Shaders/VoxelConeTrace/voxelConeTraceFragment.glsl");
+
+	/*
+	 * Initialize voxel cone trace directional light settings
+	*/
+
+	InitSettings ();
+}
+
+void VoxelConeTraceDirectionalLightRenderPass::Notify (Object* sender, const SettingsObserverArgs& args)
+{
+	std::string name = args.GetName ();
+
+	/*
+	 * Update voxel cone trace directional light indirect intensity
+	*/
+
+	if (name == "vct_indirect_intensity") {
+		_indirectIntensity = SettingsManager::Instance ()->GetValue<float> ("vct_indirect_intensity", _indirectIntensity);
+	}
 }
 
 void VoxelConeTraceDirectionalLightRenderPass::Clear ()
 {
 	/*
-	 * Nothing
+	 * Clear settings
 	*/
+
+	ClearSettings ();
 }
 
 void VoxelConeTraceDirectionalLightRenderPass::LockShader (const VolumetricLight* volumetricLight)
@@ -47,5 +71,39 @@ std::vector<PipelineAttribute> VoxelConeTraceDirectionalLightRenderPass::GetCust
 {
 	std::vector<PipelineAttribute> attributes;
 
+	PipelineAttribute indirectIntensity;
+
+	indirectIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+
+	indirectIntensity.name = "indirectIntensity";
+
+	indirectIntensity.value.x = _indirectIntensity;
+
+	attributes.push_back (indirectIntensity);
+
 	return attributes;
+}
+
+void VoxelConeTraceDirectionalLightRenderPass::InitSettings ()
+{
+	/*
+	 * Initialize voxel cone trace directional light indirect intensity
+	*/
+
+	_indirectIntensity = SettingsManager::Instance ()->GetValue<float> ("vct_indirect_intensity", _indirectIntensity);
+
+	/*
+	 * Attach to settings manager
+	*/
+
+	SettingsManager::Instance ()->Attach ("vct_indirect_intensity", this);
+}
+
+void VoxelConeTraceDirectionalLightRenderPass::ClearSettings ()
+{
+	/*
+	 * Detach
+	*/
+
+	SettingsManager::Instance ()->Detach ("vct_indirect_intensity", this);
 }

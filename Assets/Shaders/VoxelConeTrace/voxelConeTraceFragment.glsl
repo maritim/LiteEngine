@@ -43,6 +43,8 @@ uniform vec3 maxVertex;
 uniform ivec3 volumeSize;
 uniform int volumeMipmapLevel;
 
+uniform float indirectIntensity;
+
 vec2 CalcTexCoord()
 {
 	return gl_FragCoord.xy / screenSize;
@@ -343,8 +345,8 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 
 	// return vec3 (ambientOcclusion);
 	// return indirectSpecularColor;
-	return (directDiffuseColor + indirectDiffuseColor) * in_diffuse
-		   + (directSpecularColor + indirectSpecularColor) * in_specular;
+	return (directDiffuseColor + indirectDiffuseColor * indirectIntensity) * in_diffuse
+		   + (directSpecularColor + indirectSpecularColor * indirectIntensity) * in_specular;
 }
 
 void main()
