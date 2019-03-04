@@ -2,7 +2,6 @@
 
 Light::Light () :
 	_color (Color::White),
-	_specularColor (Color::White),
 	_castShadows (false)
 {
 
@@ -18,11 +17,6 @@ Color Light::GetColor () const
 	return _color;
 }
 
-Color Light::GetSpecularColor () const
-{
-	return _specularColor;
-}
-
 bool Light::IsCastingShadows () const
 {
 	return _castShadows;
@@ -31,11 +25,6 @@ bool Light::IsCastingShadows () const
 void Light::SetColor (const Color& color)
 {
 	_color = color;
-}
-
-void Light::SetSpecularColor (const Color& specularColor)
-{
-	_specularColor = specularColor;
 }
 
 void Light::SetShadowCasting (bool castShadows)

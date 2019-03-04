@@ -21,7 +21,6 @@ uniform vec3 cameraPosition;
 
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
-uniform vec3 lightSpecularColor;
 
 uniform vec3 attenuationComp;
 
@@ -141,7 +140,7 @@ vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal)
 //	// Specular contribution
 //	float sCont = pow (max (dot (surface2view, reflection), 0.0), 1.0);
 
-//	vec3 specularColor = lightSpecularColor * sCont;
+//	vec3 specularColor = lightColor * sCont;
 
 //	return specularColor;
 //}

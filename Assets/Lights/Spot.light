@@ -2,7 +2,6 @@
 
 <Light type="SPOT_LIGHT">
 	<Color r="255" g="255" b="255" />
-	<SpecularColor r="255" g="255" b="255" />
 
 	<Spot>
 		<Cutoff value="360" />

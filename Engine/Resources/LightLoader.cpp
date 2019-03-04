@@ -25,9 +25,6 @@ Object* LightLoader::Load (const std::string& filename)
 		if (name == "Color") {
 			ProcessColor (content, light);
 		}
-		else if (name == "SpecularColor") {
-			ProcessSpecularColor (content, light);
-		}
 		else if (name == "Point") {
 			ProcessPointLight (content, light);
 		}
@@ -71,13 +68,6 @@ void LightLoader::ProcessColor (TiXmlElement* xmlElem, Light* light)
 	Color color = GetColor (xmlElem);
 
 	light->SetColor (color);
-}
-
-void LightLoader::ProcessSpecularColor (TiXmlElement* xmlElem, Light* light)
-{
-	Color specularColor = GetColor (xmlElem);
-
-	light->SetSpecularColor (specularColor);
 }
 
 void LightLoader::ProcessShadows (TiXmlElement* xmlElem, Light* light)

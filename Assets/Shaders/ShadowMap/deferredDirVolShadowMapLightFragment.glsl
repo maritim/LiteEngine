@@ -21,7 +21,6 @@ uniform vec3 cameraPosition;
 
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
-uniform vec3 lightSpecularColor;
 
 uniform vec3 attenuationComp;
 
@@ -108,7 +107,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// Specular contribution
 	float sCont = pow (max (dot (surface2view, reflection), 0.0), 1.0);
 
-	vec3 specularColor = lightSpecularColor * in_diffuse * sCont;
+	vec3 specularColor = lightColor * in_diffuse * sCont;
 
 	// Calculate shadow level
 	vec4 clipPos = (projectionMatrix * vec4 (in_position, 1.0));

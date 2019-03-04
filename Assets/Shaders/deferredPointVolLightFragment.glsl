@@ -20,7 +20,6 @@ uniform vec3 sceneAmbient;
 
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
-uniform vec3 lightSpecularColor;
 
 uniform vec3 attenuationComp;
 
@@ -58,7 +57,7 @@ vec3 CalcPointLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_
 	// Specular contribution
 	float sCont = pow (max (dot (surface2view, reflection), 0.0), 3);
 
-	vec3 specularColor = lightSpecularColor * in_specular * sCont;
+	vec3 specularColor = lightColor * in_specular * sCont;
 
 	return diffuseColor + specularColor;
 }

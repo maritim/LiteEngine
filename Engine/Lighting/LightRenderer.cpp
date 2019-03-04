@@ -52,23 +52,18 @@ std::vector<PipelineAttribute> LightRenderer::GetCustomAttributes ()
 
 	PipelineAttribute lightPosition;
 	PipelineAttribute lightColor;
-	PipelineAttribute lightSpecularColor;
 
 	lightPosition.type = PipelineAttribute::AttrType::ATTR_3F;
 	lightColor.type = PipelineAttribute::AttrType::ATTR_3F;
-	lightSpecularColor.type = PipelineAttribute::AttrType::ATTR_3F;
 
 	lightPosition.name = "lightPosition";
 	lightColor.name = "lightColor";
-	lightSpecularColor.name = "lightSpecularColor";
 
 	lightPosition.value = _transform->GetPosition ();
 	lightColor.value = _light->GetColor ().ToVector3 ();
-	lightSpecularColor.value = _light->GetSpecularColor ().ToVector3 ();
 
 	attributes.push_back (lightPosition);
 	attributes.push_back (lightColor);
-	attributes.push_back (lightSpecularColor);
 
 	/*
 	 * Attach all volume attributes to pipeline
