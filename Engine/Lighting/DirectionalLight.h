@@ -8,16 +8,10 @@ class DirectionalLight : public VolumetricLight
 public:
 	DirectionalLight ();
 
-	void SetShadowCasting (bool casting);
-
 	void Update ();
 
 	void OnAttachedToScene ();
 	void OnDetachedFromScene ();
-protected:
-	std::vector<PipelineAttribute> GetCustomAttributes ();
-
-	void ChangeShadowCasting (bool casting);
 };
 
 #endif

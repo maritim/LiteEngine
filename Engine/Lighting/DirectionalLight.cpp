@@ -16,11 +16,6 @@ void DirectionalLight::Update ()
 	
 }
 
-void DirectionalLight::SetShadowCasting (bool casting)
-{
-	ChangeShadowCasting (casting);
-}
-
 void DirectionalLight::OnAttachedToScene ()
 {
 	LightsManager::Instance ()->AddDirectionalLight (this);
@@ -29,9 +24,4 @@ void DirectionalLight::OnAttachedToScene ()
 void DirectionalLight::OnDetachedFromScene ()
 {
 	LightsManager::Instance ()->RemoveDirectionalLight (this);
-}
-
-void DirectionalLight::ChangeShadowCasting (bool casting)
-{
-	_castShadows = casting;
 }

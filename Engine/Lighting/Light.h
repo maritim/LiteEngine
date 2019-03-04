@@ -5,13 +5,6 @@
 
 #include "Utils/Color/Color.h"
 
-enum LightRenderMode 
-{
-	DEFERRED = 0,
-	VOXEL_CONE_TRACE,
-	REFLECTIVE_SHADOW_MAP
-};
-
 /*
  * Color: light color
  *
@@ -35,7 +28,7 @@ public:
 
 	void SetColor (const Color& color);
 	void SetSpecularColor (const Color& specularColor);
-	virtual void SetShadowCasting (bool castShadows);
+	void SetShadowCasting (bool castShadows);
 
 	virtual void Update () = 0;
 };
