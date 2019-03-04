@@ -54,7 +54,7 @@ bool ShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels)
 	GL::GenFramebuffers(1, &_frameBufferIndex);
 
 	/*
-	 * Create shadow map cascaded textures 
+	 * Create shadow map cascaded textures
 	*/
 
 	GL::GenTextures (_cascadedLevels, _shadowMapIndices);
@@ -65,7 +65,7 @@ bool ShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels)
 		_shadowMapResolutions [index].first = SHADOW_MAP_MAX_RESOLUTION_WIDTH;
 		_shadowMapResolutions [index].second = SHADOW_MAP_MAX_RESOLUTION_HEIGHT;
 
-		GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32,
+		GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
 			_shadowMapResolutions [index].first, _shadowMapResolutions [index].second,
 			0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
@@ -131,7 +131,7 @@ void ShadowMapDirectionalLightVolume::BindForShadowMapCatch (std::size_t cascade
 	/*
 	 * Bind frame buffer
 	*/
-	
+
 	GL::BindFramebuffer(GL_FRAMEBUFFER, _frameBufferIndex);
 
 	/*

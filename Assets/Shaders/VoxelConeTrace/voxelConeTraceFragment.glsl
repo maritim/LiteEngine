@@ -158,7 +158,7 @@ vec4 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
 	float minDiameter = minVoxelDiameter;
 
 	// push out the starting point to avoid self-intersection
-	float startDist = minDiameter * 10;
+	float startDist = minDiameter * 2;
 	
 	float dist = startDist;
 	while (dist <= maxDist && alpha < 1.0)
@@ -234,7 +234,7 @@ vec3 CalcIndirectSpecularLight (vec3 in_position, vec3 in_normal)
 	return specularLight;
 }
 
-vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse)
+vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal)
 {
 	// The position is also a direction for Directional Lights
 	vec3 lightDirection = normalize (lightPosition);
@@ -246,6 +246,22 @@ vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse)
 	vec3 diffuseColor = lightColor * dCont;
 
 	return diffuseColor;
+}
+
+vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shininess)
+{
+	// The position is also a direction for Directional Lights
+	vec3 lightDirection = normalize (lightPosition);
+
+	vec3 surface2view = normalize (cameraPosition - in_position);
+	vec3 reflection = reflect (-lightDirection, in_normal);
+
+	// Specular contribution
+	float sCont = pow (max (dot (surface2view, reflection), 0.0), in_shininess);
+
+	vec3 specularColor = lightColor * sCont;
+
+	return specularColor;
 }
 
 float voxelTraceConeOcclusion(vec3 origin, vec3 dir, float coneRatio, float maxDist)
@@ -312,11 +328,13 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	vec3 worldPosition = vec3 (inverseViewMatrix * vec4 (in_position, 1.0));
 	vec3 worldNormal = normalMatrix * inverseNormalWorldMatrix * in_normal;
 
-	vec3 directDiffuseColor = CalcDirectDiffuseLight (worldPosition, worldNormal, in_diffuse);
+	vec3 directDiffuseColor = CalcDirectDiffuseLight (worldPosition, worldNormal);
+	vec3 directSpecularColor = CalcDirectSpecularLight (worldPosition, worldNormal, in_shininess);
 
 	float shadow = CalcShadowContribution (worldPosition);
 
 	directDiffuseColor = (1.0 - shadow) * (directDiffuseColor);
+	directSpecularColor = (1.0 - shadow) * directSpecularColor;
 
 	vec3 indirectDiffuseColor = CalcIndirectDiffuseLight (worldPosition, worldNormal);
 	vec3 indirectSpecularColor = CalcIndirectSpecularLight (worldPosition, worldNormal);
@@ -326,7 +344,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// return vec3 (ambientOcclusion);
 	// return indirectSpecularColor;
 	return (directDiffuseColor + indirectDiffuseColor) * in_diffuse
-		   + (indirectSpecularColor) * in_specular;
+		   + (directSpecularColor + indirectSpecularColor) * in_specular;
 }
 
 void main()

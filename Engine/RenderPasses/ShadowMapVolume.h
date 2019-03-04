@@ -12,8 +12,6 @@ public:
 	virtual bool Init (std::size_t cascadedLevelsCount) = 0;
 	virtual void BindForShadowMapCatch (std::size_t cascadedLevel = 0) = 0;
 	virtual void EndDrawing () = 0;
-
-	virtual void BindForReading () = 0;
 };
 
 #endif
