@@ -41,9 +41,9 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	vec3 reflection = reflect (-lightDirection, in_normal);
 
 	// Specular contribution
-	float sCont = pow (max (dot (surface2view, reflection), 0.0), 1.0);
+	float sCont = pow (max (dot (surface2view, reflection), 0.0), in_shininess);
 
-	vec3 specularColor = lightColor * in_diffuse * sCont;
+	vec3 specularColor = lightColor * in_specular * sCont;
 
 	return diffuseColor + specularColor;
 }
