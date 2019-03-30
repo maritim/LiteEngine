@@ -35,6 +35,8 @@ void AnimationModel3DRenderer::Attach (Model* model)
 	}
 
 	_animationModel = dynamic_cast<AnimationModel*> (model);
+
+	_currentAnimClipName = std::string ();
 }
 
 void AnimationModel3DRenderer::Draw ()
@@ -54,6 +56,11 @@ void AnimationModel3DRenderer::Draw ()
 		//comanda desenare
 		GL::DrawElements (GL_TRIANGLES, _drawableObjects [i].INDEX_COUNT, GL_UNSIGNED_INT, 0);
 	}
+}
+
+void AnimationModel3DRenderer::SetAnimationClip (const std::string& animName)
+{
+	_currentAnimClipName = animName;
 }
 
 // For the moment I clone the vertex/normal/texture tuple for every one
@@ -115,23 +122,25 @@ BufferObject AnimationModel3DRenderer::ProcessPolygonGroup (Model* model, Polygo
 std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 {
 	// Calculate attribute
-	std::vector<glm::mat4> boneTransform (_animationModel->GetBoneCount ());
+	std::vector<glm::mat4> boneTransform (_animationModel->GetBoneCount (), glm::mat4 (1.0f));
 
-	BoneTree* boneTree = _animationModel->GetBoneTree ();
 	AnimationsController* animController = _animationModel->GetAnimationsController ();
-	// AnimationContainer* animContainer = animController->GetAnimationContainer ("combinedAnim_0");
-	AnimationContainer* animContainer = animController->GetAnimationContainer ("");
-	glm::mat4 rootMatrix (1.0f);
+	AnimationContainer* animContainer = animController->GetAnimationContainer (_currentAnimClipName);
 
-	glm::mat4 globalInverse = boneTree->GetRoot ()->GetTransform ();
-	globalInverse = glm::inverse (globalInverse);
+	if (animContainer != nullptr) {
+		BoneTree* boneTree = _animationModel->GetBoneTree ();
+		glm::mat4 rootMatrix (1.0f);
 
-	float animationTime = Time::GetTime ();
-	float ticksPerSecond = animContainer->GetTicksPerSecond () != 0 ? animContainer->GetTicksPerSecond () : 25.0f;
-	float timeInTicks = animationTime * ticksPerSecond;
-	animationTime = std::fmod (timeInTicks, animContainer->GetDuration ());
+		glm::mat4 globalInverse = boneTree->GetRoot ()->GetTransform ();
+		globalInverse = glm::inverse (globalInverse);
 
-	ProcessBoneTransform (_animationModel, rootMatrix, animContainer, boneTree->GetRoot (), globalInverse, animationTime, boneTransform);
+		float animationTime = Time::GetTime ();
+		float ticksPerSecond = animContainer->GetTicksPerSecond () != 0 ? animContainer->GetTicksPerSecond () : 25.0f;
+		float timeInTicks = animationTime * ticksPerSecond;
+		animationTime = std::fmod (timeInTicks, animContainer->GetDuration ());
+
+		ProcessBoneTransform (_animationModel, rootMatrix, animContainer, boneTree->GetRoot (), globalInverse, animationTime, boneTransform);
+	}
 
 	// Create attribute
 	std::vector<PipelineAttribute> attributes;

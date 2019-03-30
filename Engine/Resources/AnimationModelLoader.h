@@ -1,7 +1,9 @@
 #ifndef ANIMATIONMODELLOADER_H
 #define ANIMATIONMODELLOADER_H
 
-#include "GenericObjectModelLoader.h"
+#include "ResourceLoader.h"
+
+#include "Core/Parsers/XML/TinyXml/tinyxml.h"
 
 #include "Mesh/AnimationModel.h"
 #include "Mesh/AnimationsController.h"
@@ -9,24 +11,15 @@
 
 #include "Mesh/BoneNode.h"
 
-class AnimationModelLoader : public GenericObjectModelLoader
+class AnimationModelLoader : public ResourceLoader
 {
 public:
 	Object* Load (const std::string& fileName);
 
 protected:
-	void ProcessTree (AnimationModel* model, aiNode* node, const aiScene* assimpScene, const std::string& filename);
+	AnimationModel* GetAnimationModel (TiXmlElement* xmlElem);
 
-	void ProcessObject (AnimationModel* model, aiMesh* assimpMesh, const aiScene* assimpScene, const std::string& filename);
-
-	void ProcessAnimations (AnimationModel* model, const aiScene* assimpScene);
-	void ProcessAnimation (AnimationsController* animController, aiAnimation* assimpAnimation);
-	void ProcessAnimationNode (AnimationContainer* animContainer, aiNodeAnim* assimpAnimNode);
-
-	void ProcessBones (AnimationModel* animModel, const aiMesh* assimpMesh);
-
-	void ProcessAnimationTree (AnimationModel* animModel, aiNode* assimpNode);
-	void ProcessAnimationNode (BoneNode*& node, aiNode* assimpNode);
+	void ProcessAnimation (TiXmlElement* xmlElem, AnimationsController* animController);
 };
 
 #endif

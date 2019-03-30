@@ -7,6 +7,7 @@
 #include "Core/Settings/SettingsContainer.h"
 #include "Mesh/Model.h"
 #include "Mesh/AnimationModel.h"
+#include "Mesh/AnimationContainer.h"
 #include "Material/MaterialLibrary.h"
 #include "Texture/Texture.h"
 #include "Texture/TextureAtlas.h"
@@ -24,6 +25,9 @@ public:
 	static Model* LoadModel (const std::string& filename);
 	static AnimationModel* LoadAnimatedModel (const std::string& filename);
 //	static int SaveModel (Model* model, char* filename);
+
+	static AnimationModel* LoadSkinModel (const std::string& filename);
+	static AnimationContainer* LoadAnimationClip (const std::string& filename);
 	
 	static Texture* LoadTexture (const std::string& filename);
 	static TextureAtlas* LoadTextureAtlas (const std::string& filename);

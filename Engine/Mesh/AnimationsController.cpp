@@ -1,14 +1,10 @@
 #include "AnimationsController.h"
 
-#include "Core/Console/Console.h"
-
 AnimationContainer* AnimationsController::GetAnimationContainer (const std::string& animationName)
 {
 	auto animContainer = _animations.find (animationName);
 
 	if (animContainer == _animations.end ()) {
-		Console::LogError ("There is no animation with name " + animationName + " in animation container!");
-
 		return nullptr;
 	}
 
@@ -20,4 +16,45 @@ void AnimationsController::AddAnimationContainer (AnimationContainer* animContai
 	std::string animContainerName = animContainer->GetName ();
 
 	_animations [animContainerName] = animContainer;
+}
+
+AnimationsContainerIterator AnimationsController::begin ()
+{
+	AnimationsContainerIterator acIt (_animations.begin ());
+
+	return acIt;
+}
+
+AnimationsContainerIterator AnimationsController::end ()
+{
+	AnimationsContainerIterator acIt (_animations.end ());
+
+	return acIt;
+}
+
+/*
+ * Animations container iterator
+*/
+
+AnimationsContainerIterator& AnimationsContainerIterator::operator++ ()
+{
+	_it++;
+
+	return *this;
+}
+
+bool AnimationsContainerIterator::operator != (const AnimationsContainerIterator& other)
+{
+	return _it != other._it;
+}
+
+AnimationContainer* AnimationsContainerIterator::operator* ()
+{
+	return _it->second;
+}
+
+AnimationsContainerIterator::AnimationsContainerIterator (std::map<std::string, AnimationContainer*>::iterator it) :
+	_it (it)
+{
+
 }

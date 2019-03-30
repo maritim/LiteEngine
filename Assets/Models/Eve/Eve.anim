@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<AnimatedModel name="Test" skinPath="Assets/Models/Eve/Eve.dae" >
+	<Animation name="Idle" path="Assets/Models/Eve/Idle.dae" />
+	<Animation name="Walk" path="Assets/Models/Eve/Walk.dae" />
+</AnimatedModel>

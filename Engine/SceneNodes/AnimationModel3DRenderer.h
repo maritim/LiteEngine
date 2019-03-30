@@ -22,6 +22,7 @@ class AnimationModel3DRenderer : public Model3DRenderer
 {
 protected:
 	AnimationModel* _animationModel;
+	std::string _currentAnimClipName;
 
 public:
 	using Model3DRenderer::Model3DRenderer;	
@@ -29,6 +30,8 @@ public:
 	void Attach (Model* model);
 
 	void Draw ();
+
+	void SetAnimationClip (const std::string& animName);
 
 protected:
 	BufferObject ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup);

@@ -13,19 +13,12 @@ protected:
 	bool _lastContinuousVoxelization;
 	bool _lastAmbientOcclusionEnabled;
 
-	float _lastFrameRate;
-	float _timeElapsed;
-	float _computeRange;
-	bool _firstTime;
-	std::vector<float> _frameRates;
-
 public:
 	void Start ();
 
 	void Update ();
 protected:
 	void ShowRenderingSettingsWindow ();
-	void ShowStatisticsWindow ();
 };
 
 REGISTER_COMPONENT(DebugViewController)

@@ -9,6 +9,8 @@
 #include "StanfordObjectLoader.h"
 #include "GenericObjectModelLoader.h"
 #include "AnimationModelLoader.h"
+#include "AnimationSkinLoader.h"
+#include "AnimationClipLoader.h"
 #include "MaterialLibraryLoader.h"
 #include "TextureLoader.h"
 #include "TextureAtlasLoader.h"
@@ -90,6 +92,28 @@ AnimationModel* Resources::LoadAnimatedModel (const std::string& filename)
 	delete animatedModelLoader;
 
 	return animatedModel;
+}
+
+AnimationModel* Resources::LoadSkinModel (const std::string& filename)
+{
+	AnimationSkinLoader* animatedSkinLoader = new AnimationSkinLoader ();
+
+	AnimationModel* animatedModel = (AnimationModel*)animatedSkinLoader->Load (filename);
+
+	delete animatedSkinLoader;
+
+	return animatedModel;
+}
+
+AnimationContainer* Resources::LoadAnimationClip (const std::string& filename)
+{
+	AnimationClipLoader* animationClipLoader = new AnimationClipLoader ();
+
+	AnimationContainer* animContainer = (AnimationContainer*)animationClipLoader->Load (filename);
+
+	delete animationClipLoader;
+
+	return animContainer;
 }
 
 Texture* Resources::LoadTexture(const std::string& filename)

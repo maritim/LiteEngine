@@ -19,39 +19,9 @@
       <!--<Component name="StatisticsView" />-->
 			<Component name="DebugViewController" />
 			<Component name="EditorGizmosManager" />
+			<Component name="StatsView" />
 		</Components>
 	</GameObject>
-	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Dragon/Dragon.dae" isActive="false" >
-		<Transform>
-			<Position y="-0.1" x="15" />
-			<Rotation x="-90"/>
-			<Scale x="0.2" y="0.2" z="0.2" />
-		</Transform>
-	</AnimatedGameObject>	
-
-	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/Spider-Man.dae" isActive="true" >
-		<Transform>
-			<Position y="-0.1" x="9" />
-			<Rotation />
-			<Scale />
-		</Transform>
-	</AnimatedGameObject>
-
-	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/SpiderMan/walking.dae" isActive="true" >
-		<Transform>
-			<Position y="-0.1" x="6" />
-			<Rotation />
-			<Scale />
-		</Transform>
-	</AnimatedGameObject>
-
-	<AnimatedGameObject InstanceID="0" name="ArmyPilot" meshpath="Assets/Models/Chestie/chestie.dae" isActive="true" >
-		<Transform>
-			<Position y="-0.1" x="12" />
-			<Rotation />
-			<Scale x="0.02" y="0.02" z="0.02" />
-		</Transform>
-	</AnimatedGameObject>
 
 	<GameObject InstanceID="1" name="CowGirl" meshpath="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" isActive="true" >
 		<Transform>
