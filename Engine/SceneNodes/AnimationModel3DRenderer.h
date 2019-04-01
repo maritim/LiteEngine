@@ -23,6 +23,12 @@ class AnimationModel3DRenderer : public Model3DRenderer
 protected:
 	AnimationModel* _animationModel;
 	std::string _currentAnimClipName;
+	float _currAnimStartTime;
+
+	std::string _previousAnimClipName;
+	float _blendStartTime;
+	float _globalBlendStartTime;
+	float _blendDuration;
 
 public:
 	using Model3DRenderer::Model3DRenderer;	
@@ -32,6 +38,7 @@ public:
 	void Draw ();
 
 	void SetAnimationClip (const std::string& animName);
+	void Blend (const std::string& nextAnimName, float duration);
 
 protected:
 	BufferObject ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup);
@@ -39,8 +46,9 @@ protected:
 	std::vector<PipelineAttribute> GetCustomAttributes ();
 
 	void ProcessBoneTransform (AnimationModel* animModel, const glm::mat4& parentTransform,
-		AnimationContainer* animContainer, BoneNode* boneNode, const glm::mat4& inverseGlobalMatrix,
-		float animationTime, std::vector<glm::mat4>& boneTransform);
+		AnimationContainer* prevAnimContainer, AnimationContainer* currAnimContainer, BoneNode* boneNode,
+		const glm::mat4& inverseGlobalMatrix, float prevAnimTime, float currAnimTime,
+		float blendWeight, std::vector<glm::mat4>& boneTransform);
 
 	void CalcInterpolatedScaling (glm::vec3& scaling, float animTime, AnimationNode* animNode);
 	void CalcInterpolatedPosition (glm::vec3& position, float animTime, AnimationNode* animNode);

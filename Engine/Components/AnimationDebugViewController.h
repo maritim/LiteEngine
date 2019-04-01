@@ -10,6 +10,8 @@ class AnimationDebugViewController : public Component
 {
 protected:
 	int _currentAnimIndex;
+	bool _isBlending;
+	float _blendDuration;
 
 public:
 	void Start ();

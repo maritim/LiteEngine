@@ -37,6 +37,9 @@ void AnimationModel3DRenderer::Attach (Model* model)
 	_animationModel = dynamic_cast<AnimationModel*> (model);
 
 	_currentAnimClipName = std::string ();
+	_previousAnimClipName = std::string ();
+	_blendDuration = 0.0f;
+	_blendStartTime = 0.0f;
 }
 
 void AnimationModel3DRenderer::Draw ()
@@ -60,7 +63,18 @@ void AnimationModel3DRenderer::Draw ()
 
 void AnimationModel3DRenderer::SetAnimationClip (const std::string& animName)
 {
+	_previousAnimClipName = std::string ();
 	_currentAnimClipName = animName;
+	_currAnimStartTime = Time::GetTime ();
+}
+
+void AnimationModel3DRenderer::Blend (const std::string& nextAnimName, float duration)
+{
+	_previousAnimClipName = _currentAnimClipName;
+	_currentAnimClipName = nextAnimName;
+	_blendDuration = duration;
+	_globalBlendStartTime = Time::GetTime ();
+	_blendStartTime = Time::GetTime () - _currAnimStartTime;
 }
 
 // For the moment I clone the vertex/normal/texture tuple for every one
@@ -125,6 +139,7 @@ std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 	std::vector<glm::mat4> boneTransform (_animationModel->GetBoneCount (), glm::mat4 (1.0f));
 
 	AnimationsController* animController = _animationModel->GetAnimationsController ();
+	AnimationContainer* prevAnimContainer = animController->GetAnimationContainer (_previousAnimClipName);
 	AnimationContainer* animContainer = animController->GetAnimationContainer (_currentAnimClipName);
 
 	if (animContainer != nullptr) {
@@ -134,12 +149,35 @@ std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 		glm::mat4 globalInverse = boneTree->GetRoot ()->GetTransform ();
 		globalInverse = glm::inverse (globalInverse);
 
-		float animationTime = Time::GetTime ();
+		float animationTime = Time::GetTime () - _currAnimStartTime;
 		float ticksPerSecond = animContainer->GetTicksPerSecond () != 0 ? animContainer->GetTicksPerSecond () : 25.0f;
 		float timeInTicks = animationTime * ticksPerSecond;
 		animationTime = std::fmod (timeInTicks, animContainer->GetDuration ());
 
-		ProcessBoneTransform (_animationModel, rootMatrix, animContainer, boneTree->GetRoot (), globalInverse, animationTime, boneTransform);
+		if (prevAnimContainer != nullptr) {
+			float blendElapsedTime = Time::GetTime () - _globalBlendStartTime;
+			float blendWeight = blendElapsedTime / _blendDuration;
+
+			float prevAnimationTime = _blendStartTime;
+			float prevTicksPerSecond = prevAnimContainer->GetTicksPerSecond () != 0 ? prevAnimContainer->GetTicksPerSecond () : 25.0f;
+			float prevTimeInTicks = prevAnimationTime * prevTicksPerSecond;
+			prevAnimationTime = std::fmod (prevTimeInTicks, prevAnimContainer->GetDuration ());
+
+			animationTime = 0.0f;
+
+			ProcessBoneTransform (_animationModel, rootMatrix, prevAnimContainer, animContainer,
+				boneTree->GetRoot (), globalInverse, prevAnimationTime, animationTime, blendWeight, boneTransform);
+
+			if (blendElapsedTime > _blendDuration) {
+				_previousAnimClipName = std::string ();
+				_currAnimStartTime = Time::GetTime ();
+			}
+		}
+
+		if (prevAnimContainer == nullptr) {
+			ProcessBoneTransform (_animationModel, rootMatrix, nullptr, animContainer,
+				boneTree->GetRoot (), globalInverse, 0.0f, animationTime, 0.0f, boneTransform);
+		}
 	}
 
 	// Create attribute
@@ -162,25 +200,54 @@ std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 }
 
 void AnimationModel3DRenderer::ProcessBoneTransform (AnimationModel* animModel, const glm::mat4& parentTransform, 
-	AnimationContainer* animContainer, BoneNode* boneNode, const glm::mat4& inverseGlobalMatrix,
-	float animationTime, std::vector<glm::mat4>& boneTransform)
+	AnimationContainer* prevAnimContainer, AnimationContainer* currAnimContainer, BoneNode* boneNode,
+	const glm::mat4& inverseGlobalMatrix, float prevAnimTime, float currAnimTime,
+	float blendWeight, std::vector<glm::mat4>& boneTransform)
 {
 	std::string nodeName = boneNode->GetName ();
 	glm::mat4 nodeTransform = boneNode->GetTransform ();
 
-	AnimationNode* animNode = animContainer->GetAnimationNode (nodeName);
+	AnimationNode* prevAnimNode = prevAnimContainer != nullptr ? prevAnimContainer->GetAnimationNode (nodeName) : nullptr;
+	AnimationNode* currAnimNode = currAnimContainer->GetAnimationNode (nodeName);
 
-	if (animNode != nullptr) {
-		glm::vec3 scaling;
-		CalcInterpolatedScaling (scaling, animationTime, animNode);
+	if (currAnimNode != nullptr) {
+		glm::vec3 scaling, prevScaling, currScaling;
+		CalcInterpolatedScaling (currScaling, currAnimTime, currAnimNode);
+
+		if (prevAnimContainer != nullptr) {
+			CalcInterpolatedScaling (prevScaling, prevAnimTime, prevAnimNode);
+
+			scaling = prevScaling * (1.0f - blendWeight) + currScaling * blendWeight;
+		} else {
+			scaling = currScaling;
+		}
+
 		glm::mat4 scalingM = glm::scale (glm::mat4 (1.0f), scaling);
 
-		glm::quat rotationQ;
-		CalcInterpolatedRotation(rotationQ, animationTime, animNode);
+		glm::quat rotationQ, prevRotationQ, currRotationQ;
+		CalcInterpolatedRotation (currRotationQ, currAnimTime, currAnimNode);
+
+		if (prevAnimContainer != nullptr) {
+			CalcInterpolatedRotation(prevRotationQ, prevAnimTime, prevAnimNode);
+
+			rotationQ = glm::slerp (prevRotationQ, currRotationQ, blendWeight);
+		} else {
+			rotationQ = currRotationQ;
+		}
+
 		glm::mat4 rotationM = glm::mat4_cast (rotationQ);
 
-		glm::vec3 translation;
-		CalcInterpolatedPosition(translation, animationTime, animNode);
+		glm::vec3 translation, prevTranslation, currTranslation;
+		CalcInterpolatedPosition (currTranslation, currAnimTime, currAnimNode);
+
+		if (prevAnimContainer != nullptr) {
+			CalcInterpolatedPosition(prevTranslation, prevAnimTime, prevAnimNode);
+
+			translation = prevTranslation * (1.0f - blendWeight) + currTranslation * blendWeight;
+		} else {
+			translation = currTranslation;
+		}
+
 		glm::mat4 translationM = glm::translate (glm::mat4 (1), translation);
 
 		nodeTransform = translationM * rotationM * scalingM;
@@ -195,8 +262,8 @@ void AnimationModel3DRenderer::ProcessBoneTransform (AnimationModel* animModel, 
 	}
 
 	for (std::size_t i=0;i<boneNode->GetChildrenCount ();i++) {
-		ProcessBoneTransform (animModel, globalTransformation, animContainer, boneNode->GetChild (i), 
-			inverseGlobalMatrix, animationTime, boneTransform);
+		ProcessBoneTransform (animModel, globalTransformation, prevAnimContainer, currAnimContainer,
+			boneNode->GetChild (i), inverseGlobalMatrix, prevAnimTime, currAnimTime, blendWeight, boneTransform);
 	}
 }
 
@@ -210,8 +277,8 @@ void AnimationModel3DRenderer::CalcInterpolatedRotation(glm::quat& rotationQ, fl
 	std::size_t rotationIndex = 0;
 	std::size_t nextRotationIndex = 0;
 
-	while (rotationIndex < animNode->GetScalingKeysCount () - 1 &&
-		animNode->GetScalingKey (rotationIndex + 1).time < animationTime) {
+	while (rotationIndex < animNode->GetRotationKeysCount () - 1 &&
+		animNode->GetRotationKey (rotationIndex + 1).time < animationTime) {
 		++ rotationIndex;
 	}
 
