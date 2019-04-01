@@ -173,9 +173,31 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 		material->diffuseTexture = texture->GetGPUIndex ();
 	}
 
-	aiColor4D col;
-	aiGetMaterialColor (assimpMaterial, AI_MATKEY_COLOR_DIFFUSE, &col);
-	material->diffuseColor = glm::vec3 (col.r, col.g, col.b);
+	for (unsigned int i=0;i<assimpMaterial->GetTextureCount (aiTextureType_SPECULAR); i++) {
+		aiString textureNameS;
+		assimpMaterial->GetTexture (aiTextureType_SPECULAR, i, &textureNameS);
+		std::string textureName = textureNameS.C_Str ();
+		Extensions::StringExtend::Trim (textureName, '/');
+
+		std::string directory = FileSystem::GetDirectory (filename);
+		textureName = directory + textureName;
+
+		Texture* texture = TextureManager::Instance ()->GetTexture (textureName);
+		if (texture == nullptr) {
+			texture = Resources::LoadTexture (std::string (textureName));
+			TextureManager::Instance ()->AddTexture (texture);
+		}
+
+		material->specularTexture = texture->GetGPUIndex ();
+	}
+
+	aiColor4D diffCol;
+	aiGetMaterialColor (assimpMaterial, AI_MATKEY_COLOR_DIFFUSE, &diffCol);
+	material->diffuseColor = glm::vec3 (diffCol.r, diffCol.g, diffCol.b);
+
+	aiColor4D specCol;
+	aiGetMaterialColor (assimpMaterial, AI_MATKEY_COLOR_SPECULAR, &specCol);
+	material->specularColor = glm::vec3 (specCol.r, specCol.g, specCol.b);
 
 	polyGroup->SetMaterialName (material->name);
 	MaterialManager::Instance ()->AddMaterial (material);
