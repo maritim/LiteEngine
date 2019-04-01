@@ -6,12 +6,7 @@
 
 #include "Resources.h"
 
-#include "Mesh/VertexBoneInfo.h"
-#include "Mesh/BoneTree.h"
-
-#include "Utils/Conversions/Matrices.h"
-#include "Utils/Conversions/Quaternions.h"
-#include "Utils/Conversions/Vectors.h"
+#include "Utils/Files/FileSystem.h"
 
 Object* AnimationModelLoader::Load (const std::string& filename)
 {
@@ -27,7 +22,7 @@ Object* AnimationModelLoader::Load (const std::string& filename)
 		return nullptr;
 	}
 
-	AnimationModel* animModel = GetAnimationModel (root);
+	AnimationModel* animModel = GetAnimationModel (root, filename);
 
 	TiXmlElement* content = root->FirstChildElement ();
 
@@ -35,7 +30,7 @@ Object* AnimationModelLoader::Load (const std::string& filename)
 		std::string name = content->Value ();
 
 		if (name == "Animation") {
-			ProcessAnimation (content, animModel->GetAnimationsController ());
+			ProcessAnimation (content, animModel->GetAnimationsController (), filename);
 		}
 
 		content = content->NextSiblingElement ();
@@ -46,9 +41,12 @@ Object* AnimationModelLoader::Load (const std::string& filename)
 	return animModel;
 }
 
-AnimationModel* AnimationModelLoader::GetAnimationModel (TiXmlElement* xmlElem)
+AnimationModel* AnimationModelLoader::GetAnimationModel (TiXmlElement* xmlElem, const std::string& filename)
 {
 	std::string skinPath = xmlElem->Attribute ("skinPath");
+
+	std::string directory = FileSystem::GetDirectory (filename);
+	skinPath = directory + skinPath;
 
 	AnimationModel* animModel = Resources::LoadSkinModel (skinPath);
 
@@ -58,10 +56,13 @@ AnimationModel* AnimationModelLoader::GetAnimationModel (TiXmlElement* xmlElem)
 	return animModel;
 }
 
-void AnimationModelLoader::ProcessAnimation (TiXmlElement* xmlElem, AnimationsController* animController)
+void AnimationModelLoader::ProcessAnimation (TiXmlElement* xmlElem, AnimationsController* animController, const std::string& filename)
 {
 	std::string animationName = xmlElem->Attribute ("name");
 	std::string animationPath = xmlElem->Attribute ("path");
+
+	std::string directory = FileSystem::GetDirectory (filename);
+	animationPath = directory + animationPath;
 
 	AnimationContainer* animContainer = Resources::LoadAnimationClip (animationPath);
 
