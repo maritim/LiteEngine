@@ -26,8 +26,8 @@ void DeferredDirectionalLightContainerRenderSubPass::Init ()
 	*/
 
 	ShaderManager::Instance ()->AddShader (_shadowShaderName,
-		"Assets/Shaders/ShadowMap/deferredDirVolShadowMapLightVertex.glsl",
-		"Assets/Shaders/ShadowMap/deferredDirVolShadowMapLightFragment.glsl");
+		"Assets/Shaders/deferredDirVolLightVertex.glsl",
+		"Assets/Shaders/deferredDirVolShadowMapLightFragment.glsl");
 }
 
 void DeferredDirectionalLightContainerRenderSubPass::Clear ()
