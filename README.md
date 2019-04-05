@@ -3,8 +3,6 @@ LiteEngine
 
 Lite 3D Game Engine
 
-<img src="https://github.com/maritim/LiteEngine/blob/gh-pages/LiteEngine%20Screenshot%209.png" alt="Particles" width="720px"/>
-
 Project Health
 =================
 
@@ -12,6 +10,14 @@ Project Health
 | ------- | ------ | -------- | ------ |
 | [Travis CI](https://travis-ci.org/maritim/LiteEngine)| Linux 64 bits  | GCC 4.8.4 | [![Travis CI](https://travis-ci.org/maritim/LiteEngine.svg?branch=master)](https://travis-ci.org/maritim/LiteEngine)
 | [AppVeyor](https://ci.appveyor.com/project/maritim/liteengine)| Windows 64 | Visual Studio 2017 | [![AppVeyor](https://ci.appveyor.com/api/projects/status/s0fqli66756555gt/branch/master?svg=true)](https://ci.appveyor.com/project/maritim/liteengine/branch/master)
+
+Gallery
+=================
+
+Global Illumination
+![Voxel Cone Tracing](https://github.com/maritim/LiteEngine/blob/gh-pages/LiteEngine%20Screenshot%209.png)
+Animation System
+![Animation System](https://github.com/maritim/LiteEngine/blob/gh-pages/LiteEngine%20Screenshot%2010.png)
 
 Debian Install Guide
 =================
