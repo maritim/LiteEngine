@@ -11,6 +11,7 @@
 #include "AnimationModelLoader.h"
 #include "AnimationSkinLoader.h"
 #include "AnimationClipLoader.h"
+#include "ShaderContentLoader.h"
 #include "MaterialLibraryLoader.h"
 #include "TextureLoader.h"
 #include "TextureAtlasLoader.h"
@@ -114,6 +115,17 @@ AnimationContainer* Resources::LoadAnimationClip (const std::string& filename)
 	delete animationClipLoader;
 
 	return animContainer;
+}
+
+ShaderContent* Resources::LoadShaderContent (const std::string& filename)
+{
+	ShaderContentLoader* shaderContentLoader = new ShaderContentLoader ();
+
+	ShaderContent* shaderContent = (ShaderContent*)shaderContentLoader->Load (filename);
+
+	delete shaderContentLoader;
+
+	return shaderContent;
 }
 
 Texture* Resources::LoadTexture(const std::string& filename)

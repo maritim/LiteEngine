@@ -8,6 +8,7 @@
 #include "Mesh/Model.h"
 #include "Mesh/AnimationModel.h"
 #include "Mesh/AnimationContainer.h"
+#include "Shader/ShaderContent.h"
 #include "Material/MaterialLibrary.h"
 #include "Texture/Texture.h"
 #include "Texture/TextureAtlas.h"
@@ -28,6 +29,8 @@ public:
 
 	static AnimationModel* LoadSkinModel (const std::string& filename);
 	static AnimationContainer* LoadAnimationClip (const std::string& filename);
+
+	static ShaderContent* LoadShaderContent (const std::string& filename);
 	
 	static Texture* LoadTexture (const std::string& filename);
 	static TextureAtlas* LoadTextureAtlas (const std::string& filename);

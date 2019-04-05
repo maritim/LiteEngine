@@ -1,12 +1,10 @@
 #include "ShaderManager.h"
 
-#include <string>
-#include <map>
-#include <fstream>
-
 #include "Core/Console/Console.h"
 
 #include "Wrappers/OpenGL/GL.h"
+
+#include "Resources/Resources.h"
 
 ShaderManager::ShaderManager ()
 {
@@ -38,26 +36,13 @@ unsigned int ShaderManager::BuildShaderFile (unsigned int program, int shaderTyp
 	return shader;
 }
 
-// medium priority TODO: Improve this
 void ShaderManager::LoadShaderFile (const std::string& filename, std::string& content)
 {
-	std::ifstream f (filename);
+	ShaderContent* shaderContent = Resources::LoadShaderContent (filename);
 
-	if (!f.is_open ()) {
-		Console::LogError ("Shader " + filename + " could not be opened!");
+	content = shaderContent->GetContent ();
 
-		return ;
-	}
-
-	std::string line;
-
-	while (!f.eof ()) {
-		std::getline (f, line);
-		content += line;
-		content += "\n";
-	}
-
-	f.close ();
+	delete shaderContent;
 }
 
 unsigned int ShaderManager::LoadShader (const std::string& source, unsigned int mode)
