@@ -61,6 +61,23 @@ void AnimationModel3DRenderer::Draw ()
 	}
 }
 
+void AnimationModel3DRenderer::DrawGeometry ()
+{
+	Pipeline::SetObjectTransform (_transform);
+
+	for (std::size_t i=0;i<_drawableObjects.size ();i++) {
+		Pipeline::UpdateMatrices (nullptr);
+
+		std::vector<PipelineAttribute> customAttributes = GetCustomAttributes ();
+		Pipeline::SendCustomAttributes ("", customAttributes);
+
+		//bind pe containerul de stare de geometrie (vertex array object)
+		GL::BindVertexArray(_drawableObjects [i].VAO_INDEX);
+		//comanda desenare
+		GL::DrawElements (GL_TRIANGLES, _drawableObjects [i].INDEX_COUNT, GL_UNSIGNED_INT, 0);
+	}
+}
+
 void AnimationModel3DRenderer::SetAnimationClip (const std::string& animName)
 {
 	_previousAnimClipName = std::string ();

@@ -213,7 +213,11 @@ void VoxelDirectionalShadowMapRenderPass::ShadowMapGeometryPass (const Scene* sc
 
 void VoxelDirectionalShadowMapRenderPass::EndShadowMapPass ()
 {
-	_voxelShadowMapVolume->EndDrawing ();
+	/*
+	 * Unlock shader
+	*/
+
+	Pipeline::UnlockShader ();
 }
 
 Camera* VoxelDirectionalShadowMapRenderPass::GetLightCamera (const Scene* scene, const Camera* viewCamera)

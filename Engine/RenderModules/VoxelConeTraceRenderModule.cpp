@@ -14,7 +14,7 @@
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
 
-#include "RenderPasses/DirectionalLightShadowMapContainerRenderSubPass.h"
+#include "RenderPasses/ShadowMap/DirectionalLightShadowMapContainerRenderSubPass.h"
 #include "RenderPasses/VoxelConeTraceDirectionalLightRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 

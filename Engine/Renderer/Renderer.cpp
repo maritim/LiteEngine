@@ -51,3 +51,12 @@ void Renderer::Draw ()
 	// Do nothing
 	// It is supposed to inherit the class and implement this function
 }
+
+void Renderer::DrawGeometry ()
+{
+	/*
+	 * Do nothing
+	 *
+	 * Intended to draw only the geometry without a material
+	*/
+}

@@ -59,6 +59,20 @@ void Model3DRenderer::Draw ()
 	}
 }
 
+void Model3DRenderer::DrawGeometry ()
+{
+	Pipeline::SetObjectTransform (_transform);
+
+	for (std::size_t i=0;i<_drawableObjects.size ();i++) {
+		Pipeline::UpdateMatrices (nullptr);
+
+		//bind pe containerul de stare de geometrie (vertex array object)
+		GL::BindVertexArray(_drawableObjects [i].VAO_INDEX);
+		//comanda desenare
+		GL::DrawElements (GL_TRIANGLES, _drawableObjects [i].INDEX_COUNT, GL_UNSIGNED_INT, 0);
+	}
+}
+
 void Model3DRenderer::Clear ()
 {
 	for (std::size_t i=0;i<_drawableObjects.size ();i++) {

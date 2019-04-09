@@ -3,7 +3,7 @@
 
 #include "RenderPasses/VolumetricLightContainerRenderSubPassI.h"
 
-#include "RenderPasses/ShadowMapDirectionalLightVolume.h"
+#include "RenderPasses/ShadowMap/CascadedShadowMapDirectionalLightVolume.h"
 
 #include "Systems/Camera/Camera.h"
 #include "Cameras/OrthographicCamera.h"
@@ -17,7 +17,7 @@ class DirectionalLightShadowMapContainerRenderSubPass : public VolumetricLightCo
 protected:
 	std::string _staticShaderName;
 	std::string _animationShaderName;
-	ShadowMapDirectionalLightVolume* _volume;
+	CascadedShadowMapDirectionalLightVolume* _volume;
 
 public:
 	DirectionalLightShadowMapContainerRenderSubPass ();

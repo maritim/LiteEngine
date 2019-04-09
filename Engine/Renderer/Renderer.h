@@ -18,6 +18,7 @@ public:
 	virtual ~Renderer ();
 
 	virtual void Draw ();
+	virtual void DrawGeometry ();
 
 	StageType GetStageType () const;
 	void SetStageType (StageType stageType);

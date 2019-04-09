@@ -1,7 +1,9 @@
-#ifndef SHADOWMAPDIRECTIONALLIGHTVOLUME_H
-#define SHADOWMAPDIRECTIONALLIGHTVOLUME_H
+#ifndef CASCADEDSHADOWMAPDIRECTIONALLIGHTVOLUME_H
+#define CASCADEDSHADOWMAPDIRECTIONALLIGHTVOLUME_H
 
-#include "RenderPasses/ShadowMapVolume.h"
+#include "RenderPasses/ShadowMap/ShadowMapVolumeI.h"
+
+#include "RenderPasses/ShadowMap/ShadowMapVolume.h"
 
 #include "Systems/Camera/Camera.h"
 
@@ -12,21 +14,20 @@
 
 #define SHADOW_MAP_FBO_NOT_INIT 330
 
-class ShadowMapDirectionalLightVolume : public ShadowMapVolume
+class CascadedShadowMapDirectionalLightVolume : public ShadowMapVolumeI
 {
 protected:
 	std::size_t _cascadedLevels;
 
-	GLuint* _shadowMapIndices;
-	std::pair<GLuint, GLuint>* _shadowMapResolutions;
-	GLuint _frameBufferIndex;
+	std::vector<ShadowMapVolume*> _shadowMaps;
+	std::vector<std::pair<GLuint, GLuint>> _shadowMapResolutions;
 
-	Camera** _lightCameras;
-	float* _shadowMapZEnd;
+	std::vector<Camera*> _lightCameras;
+	std::vector<float> _shadowMapZEnd;
 
 public:
-	ShadowMapDirectionalLightVolume ();
-	~ShadowMapDirectionalLightVolume ();
+	CascadedShadowMapDirectionalLightVolume ();
+	~CascadedShadowMapDirectionalLightVolume ();
 
 	bool Init (std::size_t cascadedLevels);
 	void BindForShadowMapCatch (std::size_t cascadedLevel);

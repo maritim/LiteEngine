@@ -14,7 +14,7 @@
 #include "RenderPasses/AmbientOcclusion/SSAOContainerRenderSubPass.h"
 #include "RenderPasses/AmbientOcclusion/SSAOBlurContainerRenderSubPass.h"
 
-#include "RenderPasses/DirectionalLightShadowMapContainerRenderSubPass.h"
+#include "RenderPasses/ShadowMap/DirectionalLightShadowMapContainerRenderSubPass.h"
 #include "RenderPasses/DeferredDirectionalLightContainerRenderSubPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 

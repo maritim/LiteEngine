@@ -2,11 +2,11 @@
 #define VOXELSHADOWMAPVOLUME_H
 
 #include "Renderer/RenderVolumeI.h"
-#include "RenderPasses/ShadowMapDirectionalLightVolume.h"
+#include "RenderPasses/ShadowMap/CascadedShadowMapDirectionalLightVolume.h"
 
 #include "Systems/Camera/Camera.h"
 
-class VoxelShadowMapVolume : public ShadowMapDirectionalLightVolume
+class VoxelShadowMapVolume : public CascadedShadowMapDirectionalLightVolume
 {
 protected:
 	Camera* _camera;

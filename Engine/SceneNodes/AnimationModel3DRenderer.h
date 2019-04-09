@@ -36,6 +36,7 @@ public:
 	void Attach (Model* model);
 
 	void Draw ();
+	void DrawGeometry ();
 
 	void SetAnimationClip (const std::string& animName);
 	void Blend (const std::string& nextAnimName, float duration);

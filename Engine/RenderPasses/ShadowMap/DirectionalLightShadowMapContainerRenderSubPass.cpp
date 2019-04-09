@@ -18,7 +18,7 @@
 DirectionalLightShadowMapContainerRenderSubPass::DirectionalLightShadowMapContainerRenderSubPass () :
 	_staticShaderName ("STATIC_SHADOW_MAP"),
 	_animationShaderName ("ANIMATION_SHADOW_MAP"),
-	_volume (new ShadowMapDirectionalLightVolume ())
+	_volume (new CascadedShadowMapDirectionalLightVolume ())
 {
 
 }
@@ -123,7 +123,7 @@ void DirectionalLightShadowMapContainerRenderSubPass::EndShadowMapPass ()
 	 * End shadow map pass
 	*/
 
-	_volume->EndDrawing ();	
+	Pipeline::UnlockShader ();
 }
 
 void DirectionalLightShadowMapContainerRenderSubPass::UpdateCascadeLevelsLimits (const Camera* camera)
@@ -275,7 +275,7 @@ void DirectionalLightShadowMapContainerRenderSubPass::RenderScene (const Scene* 
 		 * Render object on shadow map
 		*/
 
-		sceneObject->GetRenderer ()->Draw ();
+		sceneObject->GetRenderer ()->DrawGeometry ();
 	}
 }
 

@@ -47,6 +47,7 @@ public:
 	virtual void Attach (Model* mesh);
 
 	virtual void Draw ();
+	virtual void DrawGeometry ();
 
 	void Clear ();
 protected:

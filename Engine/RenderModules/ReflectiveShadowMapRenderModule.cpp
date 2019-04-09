@@ -10,7 +10,7 @@
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
 
 #include "RenderPasses/ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass.h"
-#include "RenderPasses/DirectionalLightShadowMapContainerRenderSubPass.h"
+#include "RenderPasses/ShadowMap/DirectionalLightShadowMapContainerRenderSubPass.h"
 #include "RenderPasses/ReflectiveShadowMapSamplesGenerationContainerRenderSubPass.h"
 #include "RenderPasses/ReflectiveShadowMapDirectionalLightContainerRenderSubPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"

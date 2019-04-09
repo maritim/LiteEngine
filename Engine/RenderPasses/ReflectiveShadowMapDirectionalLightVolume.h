@@ -1,7 +1,7 @@
 #ifndef REFLECTIVESHADOWMAPDIRECTIONALLIGHTVOLUME_H
 #define REFLECTIVESHADOWMAPDIRECTIONALLIGHTVOLUME_H
 
-#include "ShadowMapVolume.h"
+#include "RenderPasses/ShadowMap/ShadowMapVolumeI.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
@@ -9,7 +9,7 @@
 
 #define REFLECTIVE_SHADOW_MAP_FBO_NOT_INIT 350
 
-class ReflectiveShadowMapDirectionalLightVolume : public ShadowMapVolume
+class ReflectiveShadowMapDirectionalLightVolume : public ShadowMapVolumeI
 {
 protected:
 	std::size_t _width;

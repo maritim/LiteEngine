@@ -18,7 +18,7 @@ void VoxelShadowMapVolume::BindForReading ()
 	 * Bind for reading first shadow map cascade
 	*/
 
-	ShadowMapDirectionalLightVolume::BindForReading ();
+	CascadedShadowMapDirectionalLightVolume::BindForReading ();
 }
 
 void VoxelShadowMapVolume::BindForWriting ()
