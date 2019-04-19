@@ -359,6 +359,18 @@ void DebugViewController::ShowRenderingSettingsWindow ()
 			SettingsManager::Instance ()->SetValue ("sm_resolution",
 				std::to_string (resolution [0]) + "," + std::to_string (resolution [1]));
 		}
+
+		if (ImGui::TreeNode ("Exponential Shadow Mapping")) {
+			int lastExponential = SettingsManager::Instance ()->GetValue<int> ("esm_exponential", 0);
+			int exponential = lastExponential;
+			ImGui::SliderInt ("Exponential", &exponential, 0, 200);
+
+			if (lastExponential != exponential) {
+				SettingsManager::Instance ()->SetValue ("esm_exponential", std::to_string (exponential));
+			}
+
+			ImGui::TreePop();
+		}
 	}
 
 	ImGui::End();

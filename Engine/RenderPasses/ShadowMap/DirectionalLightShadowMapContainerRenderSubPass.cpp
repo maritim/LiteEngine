@@ -381,6 +381,17 @@ void DirectionalLightShadowMapContainerRenderSubPass::LockShader (int sceneLayer
 	}
 }
 
+std::vector<PipelineAttribute> DirectionalLightShadowMapContainerRenderSubPass::GetCustomAttributes () const
+{
+	std::vector<PipelineAttribute> attributes;
+
+	/*
+	 * Do nothing
+	*/
+
+	return attributes;
+}
+
 void DirectionalLightShadowMapContainerRenderSubPass::InitSettings ()
 {
 	/*
