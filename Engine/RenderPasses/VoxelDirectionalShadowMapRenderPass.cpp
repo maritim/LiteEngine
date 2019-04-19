@@ -61,7 +61,8 @@ void VoxelDirectionalShadowMapRenderPass::Init ()
 	 * Initialize shadow map volume
 	*/
 
-	if (!_voxelShadowMapVolume->Init (1)) {
+	//TODO: Change this
+	if (!_voxelShadowMapVolume->Init (1, glm::ivec2 (1024))) {
 		Console::LogError ("Shadow map cannot be initialized! It is not possible to continue the process. End now!");
 		exit (SHADOW_MAP_FBO_NOT_INIT);
 	}

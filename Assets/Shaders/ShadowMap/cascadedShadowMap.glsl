@@ -1,5 +1,7 @@
 const int CASCADED_SHADOW_MAP_LEVELS = 4;
 
+uniform int cascadesCount;
+
 uniform sampler2D shadowMaps[CASCADED_SHADOW_MAP_LEVELS];
 
 uniform mat4 lightSpaceMatrices[CASCADED_SHADOW_MAP_LEVELS];
@@ -21,9 +23,6 @@ float ShadowCalculation (vec4 lightSpacePos, int cascadedLevel)
 
 	// Transform to [0,1] range
 	projCoords = projCoords * 0.5 + 0.5;
-
-	// Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-	float closestDepth = texture (shadowMaps [cascadedLevel], projCoords.xy).r; 
 
 	// Get depth of current fragment from light's perspective
 	float currentDepth = projCoords.z;
@@ -50,7 +49,7 @@ float ShadowCalculation (vec4 lightSpacePos, int cascadedLevel)
 
 int GetShadowCascadeLevel (float depth)
 {
-	for (int index = 0 ; index < CASCADED_SHADOW_MAP_LEVELS ; index++) {
+	for (int index = 0 ; index < cascadesCount ; index++) {
 		if (depth <= clipZLevels [index]) {
 			return index;
 		}

@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <algorithm>
+#include <cmath>
 
 #include "Managers/ShaderManager.h"
 
@@ -15,10 +16,14 @@
 
 #include "SceneNodes/SceneLayer.h"
 
+#include "Systems/Settings/SettingsManager.h"
+
 DirectionalLightShadowMapContainerRenderSubPass::DirectionalLightShadowMapContainerRenderSubPass () :
 	_staticShaderName ("STATIC_SHADOW_MAP"),
 	_animationShaderName ("ANIMATION_SHADOW_MAP"),
-	_volume (new CascadedShadowMapDirectionalLightVolume ())
+	_volume (new CascadedShadowMapDirectionalLightVolume ()),
+	_cascades (0),
+	_resolution (0)
 {
 
 }
@@ -47,18 +52,16 @@ void DirectionalLightShadowMapContainerRenderSubPass::Init ()
 		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
 
 	/*
+	 * Initialize settings
+	*/
+
+	InitSettings ();
+
+	/*
 	 * Initialize shadow map volume
 	*/
 
-	if (!_volume->Init (CASCADED_SHADOW_MAP_LEVELS)) {
-		Console::LogError (std::string () + "Shadow map cannot be initialized!" +
-			" It is not possible to continue the process. End now!");
-		exit (SHADOW_MAP_FBO_NOT_INIT);
-	}
-
-	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index ++) {
-		_volume->SetLightCamera (index, new OrthographicCamera ());
-	}
+	InitShadowMapVolume ();
 }
 
 RenderVolumeCollection* DirectionalLightShadowMapContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
@@ -84,6 +87,39 @@ RenderVolumeCollection* DirectionalLightShadowMapContainerRenderSubPass::Execute
 	return rvc->Insert ("ShadowMapDirectionalLightVolume", _volume);
 }
 
+void DirectionalLightShadowMapContainerRenderSubPass::Notify (Object* sender, const SettingsObserverArgs& args)
+{
+	std::string name = args.GetName ();
+
+	/*
+	 * Update directional light shadow map cascades
+	*/
+
+	if (name == "sm_cascades") {
+		_cascades = SettingsManager::Instance ()->GetValue<int> ("sm_cascades", _cascades);
+	}
+
+	/*
+	 * Update directional light shadow map resolution
+	*/
+
+	if (name == "sm_resolution") {
+		_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("sm_resolution", (glm::vec2) _resolution);
+
+		/*
+		 * Clear shadow map volume
+		*/
+
+		_volume->Clear ();
+
+		/*
+		 * Initialize shadow map volume
+		*/
+
+		InitShadowMapVolume ();
+	}
+}
+
 void DirectionalLightShadowMapContainerRenderSubPass::Clear ()
 {
 	/*
@@ -91,6 +127,12 @@ void DirectionalLightShadowMapContainerRenderSubPass::Clear ()
 	*/
 
 	_volume->Clear ();
+
+	/*
+	 * Clear settings
+	*/
+
+	ClearSettings ();
 }
 
 bool DirectionalLightShadowMapContainerRenderSubPass::IsAvailable (const VolumetricLight* volumetricLight) const
@@ -107,7 +149,7 @@ void DirectionalLightShadowMapContainerRenderSubPass::ShadowMapPass (const Scene
 	UpdateCascadeLevelsLimits (camera);
 	UpdateLightCameras (camera, volumetricLight);
 
-	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
+	for (std::size_t index = 0; index < _cascades; index++) {
 		_volume->BindForShadowMapCatch (index);
 
 		OrthographicCamera* lightCamera = (OrthographicCamera*) _volume->GetLightCamera (index);
@@ -129,13 +171,42 @@ void DirectionalLightShadowMapContainerRenderSubPass::EndShadowMapPass ()
 void DirectionalLightShadowMapContainerRenderSubPass::UpdateCascadeLevelsLimits (const Camera* camera)
 {
 	/*
-	 * TODO: Calculate this at run time
+	 * Practical split scheme
+	 * Thanks to: https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch10.html
 	*/
 
-	_volume->SetCameraLimit (0, 0.92f);
-	_volume->SetCameraLimit (1, 0.98f);
-	_volume->SetCameraLimit (2, 0.995f);
-	_volume->SetCameraLimit (3, 1.0f);
+	float l = 0.5f;
+
+	for (std::size_t cascadeIndex = 0; cascadeIndex < _cascades; cascadeIndex ++) {
+
+		float zNear = camera->GetZNear ();
+		float zFar = camera->GetZFar ();
+
+		/*
+		 * Compute distance limit
+		*/
+
+		float dLimit1 = std::pow (zNear * (zFar / zNear), (float) (cascadeIndex + 1) / _cascades);
+		float dLimit2 = zNear + (zFar - zNear) * ((float) (cascadeIndex + 1) / _cascades);
+
+		float dLimit = l * dLimit1 + (1.0f - l) * dLimit2;
+
+		/*
+		 * Compute projection z limit
+		*/
+
+		glm::mat4 projMatrix = camera->GetProjectionMatrix ();
+
+		glm::vec4 pLimit = projMatrix * glm::vec4 (0, 0, -dLimit, 1);
+
+		float zLimit = pLimit.z / pLimit.w;
+
+		/*
+		 * Attach z limit to shadow map volume
+		*/
+
+		_volume->SetCameraLimit (cascadeIndex, zLimit);
+	}
 }
 
 void DirectionalLightShadowMapContainerRenderSubPass::SendLightCamera (Camera* lightCamera)
@@ -173,7 +244,7 @@ void DirectionalLightShadowMapContainerRenderSubPass::UpdateLightCameras (const 
 	glm::mat4 cameraProjection = viewCamera->GetProjectionMatrix();
 	glm::mat4 invCameraProjView = glm::inverse(cameraProjection * cameraView);
 
-	for (std::size_t index = 0; index < CASCADED_SHADOW_MAP_LEVELS; index++) {
+	for (std::size_t index = 0; index < _cascades; index++) {
 
 		OrthographicCamera* lightCamera = (OrthographicCamera*)_volume->GetLightCamera (index);
 
@@ -272,6 +343,12 @@ void DirectionalLightShadowMapContainerRenderSubPass::RenderScene (const Scene* 
 		LockShader (sceneObject->GetLayers ());
 
 		/*
+		 * Send custom attributes
+		*/
+
+		Pipeline::SendCustomAttributes ("", GetCustomAttributes ());
+
+		/*
 		 * Render object on shadow map
 		*/
 
@@ -301,5 +378,54 @@ void DirectionalLightShadowMapContainerRenderSubPass::LockShader (int sceneLayer
 
 	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+	}
+}
+
+void DirectionalLightShadowMapContainerRenderSubPass::InitSettings ()
+{
+	/*
+	 * Initialize directional light shadow map cascades
+	*/
+
+	_cascades = SettingsManager::Instance ()->GetValue<int> ("sm_cascades", _cascades);
+
+	/*
+	 * Initialize directional light shadow map resolution
+	*/
+
+	_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("sm_resolution", (glm::vec2) _resolution);
+
+	/*
+	 * Attach to settings manager
+	*/
+
+	SettingsManager::Instance ()->Attach ("sm_cascades", this);
+	SettingsManager::Instance ()->Attach ("sm_resolution", this);
+}
+
+void DirectionalLightShadowMapContainerRenderSubPass::ClearSettings ()
+{
+	/*
+	 * Detach
+	*/
+
+	SettingsManager::Instance ()->Detach ("sm_cascades", this);
+	SettingsManager::Instance ()->Detach ("sm_resolution", this);
+}
+
+void DirectionalLightShadowMapContainerRenderSubPass::InitShadowMapVolume ()
+{
+	/*
+	 * Initialize shadow map volume
+	*/
+
+	if (!_volume->Init (_cascades, _resolution)) {
+		Console::LogError (std::string () + "Shadow map cannot be initialized!" +
+			" It is not possible to continue the process. End now!");
+		exit (SHADOW_MAP_FBO_NOT_INIT);
+	}
+
+	for (std::size_t index = 0; index < _cascades; index ++) {
+		_volume->SetLightCamera (index, new OrthographicCamera ());
 	}
 }

@@ -19,7 +19,7 @@ CascadedShadowMapDirectionalLightVolume::~CascadedShadowMapDirectionalLightVolum
 
 }
 
-bool CascadedShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels)
+bool CascadedShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels, const glm::ivec2& resolution)
 {
 	/*
 	 * Initialize cascaded levels
@@ -50,8 +50,7 @@ bool CascadedShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels)
 
 	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
 		_shadowMapResolutions [index] = std::pair<GLuint, GLuint> (
-			SHADOW_MAP_MAX_RESOLUTION_WIDTH,
-			SHADOW_MAP_MAX_RESOLUTION_HEIGHT
+			resolution.x, resolution.y
 		);
 
 		if (!_shadowMaps [index]->Init (
@@ -111,6 +110,16 @@ void CascadedShadowMapDirectionalLightVolume::BindForWriting ()
 std::vector<PipelineAttribute> CascadedShadowMapDirectionalLightVolume::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
+
+	PipelineAttribute cascadesCount;
+
+	cascadesCount.name = "cascadesCount";
+
+	cascadesCount.type = PipelineAttribute::AttrType::ATTR_1I;
+
+	cascadesCount.value.x = _cascadedLevels;
+
+	attributes.push_back (cascadesCount);
 
 	for (std::size_t index = 0; index<_cascadedLevels; index++) {
 
@@ -205,6 +214,20 @@ float CascadedShadowMapDirectionalLightVolume::GetCameraLimit (std::size_t casca
 	}
 
 	return _shadowMapZEnd [cascadedLevel];
+}
+
+ShadowMapVolume* CascadedShadowMapDirectionalLightVolume::GetShadowMapVolume (std::size_t cascadedLevel)
+{
+	/*
+	 * Check if cascaded level excedes the maximum level
+	*/
+
+	if (cascadedLevel >= _cascadedLevels) {
+		Console::LogWarning ("There is not level " + std::to_string (cascadedLevel) + " on directional shadow map");
+		return nullptr;
+	}
+
+	return _shadowMaps [cascadedLevel];
 }
 
 void CascadedShadowMapDirectionalLightVolume::Clear ()

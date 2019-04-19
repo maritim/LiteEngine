@@ -34,15 +34,19 @@ std::vector<PipelineAttribute> VoxelShadowMapVolume::GetCustomAttributes () cons
 {
 	std::vector<PipelineAttribute> attributes;
 
+	PipelineAttribute cascadesCount;
 	PipelineAttribute shadowMap;
 	PipelineAttribute lightSpaceMatrix;
 
+	cascadesCount.type = PipelineAttribute::AttrType::ATTR_1I;
 	shadowMap.type = PipelineAttribute::AttrType::ATTR_1I;
 	lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
 
+	cascadesCount.name = "cascadesCount";
 	shadowMap.name = "shadowMap";
 	lightSpaceMatrix.name = "lightSpaceMatrix";
 
+	cascadesCount.value.x = _cascadedLevels;
 	shadowMap.value.x = 4;
 
 	glm::mat4 lightProjection = _camera->GetProjectionMatrix ();

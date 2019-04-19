@@ -2,6 +2,7 @@
 #define DIRECTIONALLIGHTSHADOWMAPCONTAINERRENDERSUBPASS_H
 
 #include "RenderPasses/VolumetricLightContainerRenderSubPassI.h"
+#include "Core/Observer/ObserverI.h"
 
 #include "RenderPasses/ShadowMap/CascadedShadowMapDirectionalLightVolume.h"
 
@@ -9,15 +10,17 @@
 #include "Cameras/OrthographicCamera.h"
 #include "Lighting/VolumetricLight.h"
 
-//TODO: Change this from here
-#define CASCADED_SHADOW_MAP_LEVELS 4
+#include "Systems/Settings/SettingsObserverArgs.h"
 
-class DirectionalLightShadowMapContainerRenderSubPass : public VolumetricLightContainerRenderSubPassI
+class DirectionalLightShadowMapContainerRenderSubPass : public VolumetricLightContainerRenderSubPassI, public ObserverI<SettingsObserverArgs>
 {
 protected:
 	std::string _staticShaderName;
 	std::string _animationShaderName;
 	CascadedShadowMapDirectionalLightVolume* _volume;
+
+	std::size_t _cascades;
+	glm::ivec2 _resolution;
 
 public:
 	DirectionalLightShadowMapContainerRenderSubPass ();
@@ -25,6 +28,8 @@ public:
 
 	virtual void Init ();
 	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+
+	void Notify (Object* sender, const SettingsObserverArgs& args);
 
 	void Clear ();
 protected:
@@ -38,6 +43,13 @@ protected:
 	void UpdateLightCameras (const Camera* viewCamera, VolumetricLight* volumetricLight);
 	void RenderScene (const Scene* scene, OrthographicCamera* lightCamera);
 	void LockShader (int sceneLayers);
+
+	virtual std::vector<PipelineAttribute> GetCustomAttributes () const;
+
+	virtual void InitSettings ();
+	virtual void ClearSettings ();
+
+	virtual void InitShadowMapVolume ();
 };
 
 #endif

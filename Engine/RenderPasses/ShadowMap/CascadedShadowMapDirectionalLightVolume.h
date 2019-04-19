@@ -9,9 +9,6 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
-#define SHADOW_MAP_MAX_RESOLUTION_WIDTH 1024		
-#define SHADOW_MAP_MAX_RESOLUTION_HEIGHT 1024
-
 #define SHADOW_MAP_FBO_NOT_INIT 330
 
 class CascadedShadowMapDirectionalLightVolume : public ShadowMapVolumeI
@@ -29,9 +26,8 @@ public:
 	CascadedShadowMapDirectionalLightVolume ();
 	~CascadedShadowMapDirectionalLightVolume ();
 
-	bool Init (std::size_t cascadedLevels);
+	virtual bool Init (std::size_t cascadedLevels, const glm::ivec2& resolution);
 	void BindForShadowMapCatch (std::size_t cascadedLevel);
-	void EndDrawing ();
 
 	void SetLightCamera (std::size_t cascadedLevel, Camera* lightCamera);
 	void SetCameraLimit (std::size_t cascadedLevel, float zLimit);
@@ -42,6 +38,8 @@ public:
 	void BindForReading ();
 	void BindForWriting ();
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
+
+	ShadowMapVolume* GetShadowMapVolume (std::size_t cascadedLevel);
 
 	void Clear ();
 };
