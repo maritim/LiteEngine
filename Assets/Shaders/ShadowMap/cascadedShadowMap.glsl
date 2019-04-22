@@ -2,7 +2,7 @@ const int CASCADED_SHADOW_MAP_LEVELS = 4;
 
 uniform int cascadesCount;
 
-uniform sampler2D shadowMaps[CASCADED_SHADOW_MAP_LEVELS];
+uniform sampler2DShadow shadowMaps[CASCADED_SHADOW_MAP_LEVELS];
 
 uniform mat4 lightSpaceMatrices[CASCADED_SHADOW_MAP_LEVELS];
 
@@ -37,8 +37,8 @@ float ShadowCalculation (vec4 lightSpacePos, int cascadedLevel)
 	{
 		for(int y = -1; y <= 1; ++y)
 		{
-			float pcfDepth = texture(shadowMaps [cascadedLevel], projCoords.xy + vec2(x, y) * texelSize).r; 
-			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+			vec3 samplePos = vec3 (projCoords.xy + vec2 (x, y) * texelSize, projCoords.z);
+			shadow += texture (shadowMaps [cascadedLevel], samplePos, bias);
 		}    
 	}
 
