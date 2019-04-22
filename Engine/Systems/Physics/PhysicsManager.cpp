@@ -1,5 +1,7 @@
 #include "PhysicsManager.h"
 
+#include <glm/geometric.hpp>
+
 #include "Systems/Time/Time.h"
 
 /*
@@ -75,6 +77,55 @@ void PhysicsManager::AttachRigidbody (btRigidBody* rigidbody)
 void PhysicsManager::DetachRigidbody (btRigidBody* rigidbody)
 {
 	_dynamicsWorld->removeRigidBody (rigidbody);
+}
+
+RaycastProduct PhysicsManager::Raycast (const glm::vec3& origin, const glm::vec3& direction, float distance)
+{
+	RaycastProduct product;
+
+	/*
+	 * Compute ray cast limit
+	*/
+
+	glm::vec3 limit = origin + glm::normalize (direction) * distance;
+
+	btVector3 btOrigin = btVector3 (origin.x, origin.y, origin.z);
+	btVector3 btLimit = btVector3 (limit.x, limit.y, limit.z);
+
+	/*
+	 * Create ray callback
+	*/
+
+	btCollisionWorld::ClosestRayResultCallback rayCallback (btOrigin, btLimit);
+
+	/*
+	 * Ray test
+	*/
+
+	_dynamicsWorld->rayTest (btOrigin, btLimit, rayCallback);
+
+	/*
+	 * Check ray callback
+	*/
+
+	if (rayCallback.hasHit()) {
+
+		product.isCollision = true;
+
+		product.hitPosition = glm::vec3 (
+			rayCallback.m_hitPointWorld.x (),
+			rayCallback.m_hitPointWorld.y (),
+			rayCallback.m_hitPointWorld.z ()
+		);
+
+		product.hitNormal = glm::vec3 (
+			rayCallback.m_hitNormalWorld.x (),
+			rayCallback.m_hitNormalWorld.y (),
+			rayCallback.m_hitNormalWorld.z ()
+		);
+	}
+
+	return product;
 }
 
 void PhysicsManager::Update ()

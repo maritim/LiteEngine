@@ -5,6 +5,8 @@
 
 #include "bullet/btBulletDynamicsCommon.h"
 
+#include "RaycastProduct.h"
+
 class PhysicsManager : public Singleton<PhysicsManager>
 {
 	friend Singleton<PhysicsManager>;
@@ -17,6 +19,9 @@ public:
 
 	void AttachRigidbody (btRigidBody* rigidbody);
 	void DetachRigidbody (btRigidBody* rigidbody);
+
+	RaycastProduct Raycast (const glm::vec3& origin, const glm::vec3& direction,
+		float distance = 2000);
 
 	void Update ();
 private:
