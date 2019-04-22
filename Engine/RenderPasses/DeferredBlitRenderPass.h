@@ -15,7 +15,7 @@ public:
 
 	void Clear ();
 protected:
-	void EndDrawing (FrameBuffer2DVolume* frameBufferVolume);
+	void EndDrawing (FrameBuffer2DVolume* frameBufferVolume, FrameBuffer2DVolume* depthBufferVolume);
 };
 
 #endif

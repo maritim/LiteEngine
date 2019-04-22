@@ -25,10 +25,16 @@ RenderVolumeCollection* DeferredBlitRenderPass::Execute (const Scene* scene, con
 	FrameBuffer2DVolume* frameBuffer = (FrameBuffer2DVolume*) rvc->GetPreviousVolume ();
 
 	/*
+	 * Get depth buffer from render volume collection
+	*/
+
+	FrameBuffer2DVolume* depthBuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("LightAccumulationVolume");
+
+	/*
 	* Render skybox
 	*/
 
-	EndDrawing (frameBuffer);
+	EndDrawing (frameBuffer, depthBuffer);
 
 	return rvc;
 }
@@ -40,19 +46,30 @@ void DeferredBlitRenderPass::Clear ()
 	*/
 }
 
-void DeferredBlitRenderPass::EndDrawing (FrameBuffer2DVolume* frameBufferVolume)
+void DeferredBlitRenderPass::EndDrawing (FrameBuffer2DVolume* frameBufferVolume, FrameBuffer2DVolume* depthBufferVolume)
 {
+	std::size_t windowWidth = Window::GetWidth ();
+	std::size_t windowHeight = Window::GetHeight ();
+
 	/*
-	 * Disable writting to framebuffer
+	 * Bind framebuffer to blit
 	*/
 
 	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
 
 	frameBufferVolume->BindForBliting ();
 
-	std::size_t windowWidth = Window::GetWidth ();
-	std::size_t windowHeight = Window::GetHeight ();
+	GL::BlitFramebuffer (0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight,
+		GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+	/*
+	 * Bind depth buffer to blit
+	*/
+
+	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
+
+	depthBufferVolume->BindForBliting ();
 
 	GL::BlitFramebuffer (0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight,
-		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
 }
