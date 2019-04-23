@@ -47,6 +47,10 @@ void GameObject::Update()
 {
 	if (_transform->IsDirty ()) {
 		_collider->Rebuild (_mesh, _transform);
+
+		if (_rigidbody != nullptr) {
+			_rigidbody->Update ();
+		}
 	}
 
 	_transform->SetIsDirty (false);

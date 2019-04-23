@@ -91,6 +91,23 @@ glm::vec3 Rigidbody::GetAngularVelocity () const
 	return glm::vec3 (velocity.getX (), velocity.getY (), velocity.getZ ());
 }
 
+void Rigidbody::Update ()
+{
+	if (_rigidBody == nullptr) {
+		return;
+	}
+
+	btTransform transform;
+
+	glm::vec3 position = _transform->GetPosition ();
+	glm::quat rotation = _transform->GetRotation ();
+
+	transform.setOrigin (btVector3 (position.x, position.y, position.z));
+	transform.setRotation (btQuaternion (rotation.x, rotation.y, rotation.z, rotation.w));
+
+	_rigidBody->setWorldTransform (transform);
+}
+
 void Rigidbody::Rebuild ()
 {
 	if (_collider == nullptr) {

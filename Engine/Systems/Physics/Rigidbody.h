@@ -32,6 +32,8 @@ public:
 	glm::vec3 GetVelocity () const;
 	glm::vec3 GetAngularVelocity () const;
 
+	void Update ();
+
 	void Rebuild ();
 protected:
 	void DestroyRigidbody ();
