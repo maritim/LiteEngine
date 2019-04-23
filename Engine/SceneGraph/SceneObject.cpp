@@ -80,6 +80,10 @@ void SceneObject::SetInstanceID (std::size_t instanceID)
 void SceneObject::SetActive (bool isActive)
 {
 	_isActive = isActive;
+
+	if (_rigidbody != nullptr) {
+		_rigidbody->Enable (_isActive);
+	}
 }
 
 void SceneObject::OnAttachedToScene ()

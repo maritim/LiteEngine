@@ -9,7 +9,8 @@ Rigidbody::Rigidbody (Transform* transform) :
 	_rigidBody (nullptr),
 	_transform (transform),
 	_mass (0.0f),
-	_collider (nullptr)
+	_collider (nullptr),
+	_isEnabled (true)
 {
 
 }
@@ -59,6 +60,33 @@ void Rigidbody::SetAngularVelocity (const glm::vec3& velocity)
 	_rigidBody->setAngularVelocity (btVector3 (velocity.x, velocity.y, velocity.z));
 }
 
+void Rigidbody::Enable (bool isEnabled)
+{
+	if (_isEnabled == isEnabled) {
+		return;
+	}
+
+	_isEnabled = isEnabled;
+
+	if (_isEnabled) {
+
+		/*
+		 * Attach rigid body to physics system
+		*/
+
+		PhysicsManager::Instance ()->AttachRigidbody (_rigidBody);
+	}
+
+	if (!_isEnabled) {
+
+		/*
+		 * Detach rigid body from the physics system
+		*/
+
+		PhysicsManager::Instance ()->DetachRigidbody (_rigidBody);
+	}
+}
+
 float Rigidbody::GetMass () const
 {
 	return _mass;
@@ -89,6 +117,11 @@ glm::vec3 Rigidbody::GetAngularVelocity () const
 	btVector3 velocity = _rigidBody->getAngularVelocity ();
 
 	return glm::vec3 (velocity.getX (), velocity.getY (), velocity.getZ ());
+}
+
+bool Rigidbody::IsEnabled () const
+{
+	return _isEnabled;
 }
 
 void Rigidbody::Update ()

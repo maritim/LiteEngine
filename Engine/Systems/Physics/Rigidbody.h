@@ -18,6 +18,8 @@ protected:
 	float _mass;
 	BulletCollider* _collider;
 
+	bool _isEnabled;
+
 public:
 	Rigidbody (Transform* _transform);
 	~Rigidbody ();
@@ -26,11 +28,13 @@ public:
 	void SetCollider (BulletCollider* collider);
 	void SetVelocity (const glm::vec3& velocity);
 	void SetAngularVelocity (const glm::vec3& velocity);
+	void Enable (bool isEnabled);
 
 	float GetMass () const;
 	BulletCollider* GetCollider () const;
 	glm::vec3 GetVelocity () const;
 	glm::vec3 GetAngularVelocity () const;
+	bool IsEnabled () const;
 
 	void Update ();
 
