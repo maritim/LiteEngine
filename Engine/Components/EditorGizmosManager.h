@@ -27,10 +27,14 @@ public:
 
 	void Update ();
 protected:
+	void UpdateMode ();
+
 	void ShowTransformWidget (Transform* transform);
 	void ShowGizmo (const Camera* camera, Transform* transform);
 
 	float* GetObjectMatrix (const Transform* transform) const;
+
+	SceneObject* GetSelectedObject (const glm::ivec2& pos);
 };
 
 REGISTER_COMPONENT(EditorGizmosManager)
