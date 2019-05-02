@@ -2,7 +2,9 @@
 
 BulletCollider::BulletCollider () :
 	_collisionShape (nullptr),
-	_offset (0.0f)
+	_offset (0.0f),
+	_mesh (nullptr),
+	_isDirty (false)
 {
 
 }
@@ -15,6 +17,26 @@ BulletCollider::~BulletCollider ()
 void BulletCollider::SetOffset (const glm::vec3& offset)
 {
 	_offset = offset;
+
+	_isDirty = true;
+}
+
+void BulletCollider::SetMesh (Model* mesh)
+{
+	_mesh = mesh;
+
+	/*
+	 * Rebuild collision shape
+	*/
+
+	Rebuild ();
+
+	_isDirty = true;
+}
+
+void BulletCollider::SetDirty (bool isDirty)
+{
+	_isDirty = isDirty;
 }
 
 btCollisionShape* BulletCollider::GetCollisionShape () const
@@ -25,6 +47,16 @@ btCollisionShape* BulletCollider::GetCollisionShape () const
 glm::vec3 BulletCollider::GetOffset () const
 {
 	return _offset;
+}
+
+Model* BulletCollider::GetMesh () const
+{
+	return _mesh;
+}
+
+bool BulletCollider::IsDirty () const
+{
+	return _isDirty;
 }
 
 void BulletCollider::DestroyCollisionShape ()

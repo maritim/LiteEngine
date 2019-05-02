@@ -33,7 +33,7 @@ Color::Color (const Color& other) :
 
 }
 
-glm::vec3 Color::ToVector3 ()
+glm::vec3 Color::ToVector3 () const
 {
 	return glm::vec3 (r / 255.0f, g / 255.0f, b / 255.0f);	
 }

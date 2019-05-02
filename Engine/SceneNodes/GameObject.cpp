@@ -17,23 +17,17 @@ GameObject::GameObject () :
 	_collider = new AABBCollider ();
 }
 
-#include "Debug/Logger/Logger.h"
-
 void GameObject::AttachMesh (Model * mesh)
 {
-	DestroyCurrentMesh ();
-
 	_mesh = mesh;
 
 	Model3DRenderer* model3dRenderer = dynamic_cast<Model3DRenderer*>(_renderer);
 	model3dRenderer->Attach (_mesh);
 
 	if (_rigidbody->GetCollider () != nullptr) {
-		_rigidbody->GetCollider ()->Rebuild (_mesh, _transform);
-		_rigidbody->Rebuild ();
+		_rigidbody->GetCollider ()->SetMesh (_mesh);
 	}
 
-	DEBUG_LOG (_name);
 	_collider->Rebuild (_mesh, _transform);
 }
 
@@ -48,24 +42,14 @@ void GameObject::Update()
 	if (_transform->IsDirty ()) {
 		_collider->Rebuild (_mesh, _transform);
 
-		if (_rigidbody != nullptr) {
-			_rigidbody->Update ();
-		}
+		_rigidbody->Update ();
+		_audioSource->Update ();
 	}
 
 	_transform->SetIsDirty (false);
 }
 
-void GameObject::DestroyCurrentMesh ()
-{
-	if (!_mesh) {
-		return;
-	}
-
-	delete _mesh;
-}
-
 GameObject::~GameObject ()
 {
-	DestroyCurrentMesh ();
+
 }

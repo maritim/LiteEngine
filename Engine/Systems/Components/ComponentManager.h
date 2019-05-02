@@ -20,13 +20,13 @@ public:
 
 	void Register (Component*);
 	void Unregister (Component*);
+
+	void Clear ();
 private:
 	ComponentManager ();
 	~ComponentManager ();
 	ComponentManager (const ComponentManager&);
 	ComponentManager& operator=(const ComponentManager&);
-
-	void Clear ();
 };
 
 #endif

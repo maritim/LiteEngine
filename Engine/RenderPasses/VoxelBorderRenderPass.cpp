@@ -17,7 +17,7 @@ VoxelBorderRenderPass::VoxelBorderRenderPass () :
 
 }
 
-void VoxelBorderRenderPass::Init ()
+void VoxelBorderRenderPass::Init (const RenderSettings& settings)
 {
 	ShaderManager::Instance ()->AddComputeShader ("VOXEL_BORDER_PASS_COMPUTE_SHADER",
 		"Assets/Shaders/Voxelize/voxelBorderCompute.glsl");
@@ -29,7 +29,8 @@ void VoxelBorderRenderPass::Init ()
 	InitSettings ();
 }
 
-RenderVolumeCollection* VoxelBorderRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelBorderRenderPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	if (_enabled && (_firstTime || _continuousVoxelization)) {
 

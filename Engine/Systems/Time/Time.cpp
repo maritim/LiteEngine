@@ -18,12 +18,15 @@ void Time::Init()
 	_currentTimeMS = SDL_GetTicks();
 }
 
+#include <algorithm>
+
 void Time::UpdateFrame()
 {
 	uint32_t lastTimeMS = _currentTimeMS;
 	_currentTimeMS = SDL_GetTicks();
 
-	_deltaTimeMS = _currentTimeMS - lastTimeMS;
+	//TODO: Fix this
+	_deltaTimeMS = std::max (1u, _currentTimeMS - lastTimeMS);
 }
 
 unsigned int Time::GetDeltaTimeMS ()

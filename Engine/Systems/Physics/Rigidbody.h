@@ -14,6 +14,7 @@ class Rigidbody : public Object
 protected:
 	btRigidBody* _rigidBody;
 	Transform* _transform;
+	bool _isAttached;
 
 	float _mass;
 	BulletCollider* _collider;
@@ -38,8 +39,14 @@ public:
 
 	void Update ();
 
-	void Rebuild ();
+	void OnAttachedToScene ();
+	void OnDetachedFromScene ();
+
+	void Debug (bool isEnabled);
 protected:
+	void Build ();
+	void UpdateCollider ();
+
 	void DestroyRigidbody ();
 };
 

@@ -2,8 +2,6 @@
 
 #include "Renderer/Pipeline.h"
 
-#include "Systems/Window/Window.h"
-
 #include "Wrappers/OpenGL/GL.h"
 
 DeferredBlitRenderPass::~DeferredBlitRenderPass ()
@@ -11,12 +9,13 @@ DeferredBlitRenderPass::~DeferredBlitRenderPass ()
 
 }
 
-void DeferredBlitRenderPass::Init ()
+void DeferredBlitRenderPass::Init (const RenderSettings& settings)
 {
 
 }
 
-RenderVolumeCollection* DeferredBlitRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* DeferredBlitRenderPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Get frame buffer from render volume collection
@@ -28,13 +27,13 @@ RenderVolumeCollection* DeferredBlitRenderPass::Execute (const Scene* scene, con
 	 * Get depth buffer from render volume collection
 	*/
 
-	FrameBuffer2DVolume* depthBuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("LightAccumulationVolume");
+	FrameBuffer2DVolume* resultFramebuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("LightAccumulationVolume");
 
 	/*
 	* Render skybox
 	*/
 
-	EndDrawing (frameBuffer, depthBuffer);
+	EndDrawing (frameBuffer, resultFramebuffer, settings);
 
 	return rvc;
 }
@@ -46,30 +45,19 @@ void DeferredBlitRenderPass::Clear ()
 	*/
 }
 
-void DeferredBlitRenderPass::EndDrawing (FrameBuffer2DVolume* frameBufferVolume, FrameBuffer2DVolume* depthBufferVolume)
+void DeferredBlitRenderPass::EndDrawing (FrameBuffer2DVolume* frameBufferVolume, FrameBuffer2DVolume* resultFramebuffer,
+	const RenderSettings& settings)
 {
-	std::size_t windowWidth = Window::GetWidth ();
-	std::size_t windowHeight = Window::GetHeight ();
-
 	/*
 	 * Bind framebuffer to blit
 	*/
 
-	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
-
 	frameBufferVolume->BindForBliting ();
+	resultFramebuffer->BindToBlit ();
 
-	GL::BlitFramebuffer (0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight,
+	GL::BlitFramebuffer (settings.viewport.x, settings.viewport.y,
+		settings.viewport.width, settings.viewport.height,
+		settings.viewport.x, settings.viewport.y,
+		settings.viewport.width, settings.viewport.height,
 		GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-	/*
-	 * Bind depth buffer to blit
-	*/
-
-	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
-
-	depthBufferVolume->BindForBliting ();
-
-	GL::BlitFramebuffer (0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight,
-		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
 }

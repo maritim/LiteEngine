@@ -3,6 +3,8 @@
 
 #include "Renderer/RenderVolumeI.h"
 
+#include <glm/vec3.hpp>
+
 #include "Wrappers/OpenGL/GL.h"
 
 class MultipleRenderTargetsVolume : public RenderVolumeI
@@ -12,18 +14,21 @@ protected:
 	GLuint* m_textures;
 	GLuint m_depthTexture;
 	std::size_t m_texturesCount;
+	glm::ivec2 _size;
 
 public:
 	MultipleRenderTargetsVolume (std::size_t numTextures); 
 	virtual ~MultipleRenderTargetsVolume ();
 
-	virtual bool Init(std::size_t screenWidth, std::size_t screenHeight);
+	virtual bool Init(const glm::ivec2& size);
 
 	void BindForReading ();
 	void BindForWriting ();
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
 
     unsigned int GetDepthBuffer () const;
+
+    glm::ivec2 GetSize () const;
 
 	void Clear ();
 };

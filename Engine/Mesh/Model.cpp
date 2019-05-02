@@ -1,6 +1,6 @@
 #include "Model.h"
 
-#include <glm/detail/func_geometric.hpp>
+#include <glm/geometric.hpp>
 #include <string>
 #include <vector>
 #include <cmath>

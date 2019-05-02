@@ -2,32 +2,14 @@
 #define BLOOMVERTICALBLURCONTAINERRENDERSUBPASS_H
 
 #include "RenderPasses/Blur/VerticalGaussianBlurContainerRenderSubPass.h"
-#include "Core/Observer/ObserverI.h"
 
-#include "Systems/Settings/SettingsObserverArgs.h"
-
-class BloomVerticalBlurContainerRenderSubPass : public VerticalGaussianBlurContainerRenderSubPass, public ObserverI<SettingsObserverArgs>
+class BloomVerticalBlurContainerRenderSubPass : public VerticalGaussianBlurContainerRenderSubPass
 {
-protected:
-	bool _enabled;
-	glm::ivec2 _resolution;
-
 public:
-	BloomVerticalBlurContainerRenderSubPass ();
-	~BloomVerticalBlurContainerRenderSubPass ();
-
-	void Init ();
-
-	bool IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const;
-
-	void Notify (Object* sender, const SettingsObserverArgs& args);
-
-	void Clear ();
+	bool IsAvailable (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 protected:
-	glm::ivec2 GetPostProcessVolumeResolution () const;
-
-	void InitSettings ();
-	void ClearSettings ();
+	glm::ivec2 GetPostProcessVolumeResolution (const RenderSettings& settings) const;
 };
 
 #endif

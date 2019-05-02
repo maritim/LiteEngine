@@ -21,38 +21,20 @@
 
 #include "Core/Singleton/Singleton.h"
 
+#include "RenderProduct.h"
+
 #include "SceneGraph/Scene.h"
 #include "Systems/Camera/Camera.h"
-
-#include "RenderModule.h"
-
-#include <vector>
-
-enum RenderMode {
-	RENDER_MODE_DIRECT_LIGHTING = 0,
-	RENDER_MODE_LIGHT_MAP,
-	RENDER_MODE_VOXELIZATION,
-	RENDER_MODE_VOXEL_CONE_TRACE,
-	RENDER_MODE_REFLECTIVE_SHADOW_MAP
-};
+#include "RenderSettings.h"
 
 class RenderManager : public Singleton<RenderManager>
 {
 	friend class Singleton<RenderManager>;
 
-private:
-	RenderModule* _currentRenderModule;
-	RenderMode _currentRenderMode;
-	bool _needToChangeRenderMode;
-	std::vector<RenderModule*> _renderModules;
-
 public:
 	void Init ();
 
-	void SetRenderMode (RenderMode);
-	RenderMode GetRenderMode () const;
-
-	void RenderScene (const Scene* scene, const Camera* camera);
+	RenderProduct RenderScene (const Scene* scene, const Camera* camera, const RenderSettings&);
 
 	void Clear ();
 private:
@@ -60,8 +42,6 @@ private:
 	RenderManager (const RenderManager& other);
 	RenderManager& operator=(const RenderManager& other);
 	~RenderManager ();
-
-	void SwitchRenderModule ();
 };
 
 #endif

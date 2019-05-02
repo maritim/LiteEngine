@@ -7,14 +7,16 @@
 
 #include "SceneGraph/Scene.h"
 #include "Systems/Camera/Camera.h"
+#include "RenderSettings.h"
 
 class RenderPassI : public Object
 {
 public:
 	virtual ~RenderPassI () = 0;
 
-	virtual void Init () = 0;
-	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc) = 0;
+	virtual void Init (const RenderSettings&) = 0;
+	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc) = 0;
 
 	virtual void Clear () = 0;
 };

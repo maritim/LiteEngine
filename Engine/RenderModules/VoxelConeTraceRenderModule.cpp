@@ -9,7 +9,6 @@
 #include "RenderPasses/DeferredSkyboxRenderPass.h"
 #include "RenderPasses/DeferredBlitRenderPass.h"
 #include "RenderPasses/ForwardRenderPass.h"
-#include "RenderPasses/Editor/EditorRenderPass.h"
 
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
@@ -21,6 +20,8 @@
 #include "RenderPasses/DeferredAmbientLightContainerRenderSubPass.h"
 
 #include "RenderPasses/IdleContainerRenderSubPass.h"
+#include "RenderPasses/ScreenSpaceReflection/SSRContainerRenderSubPass.h"
+#include "RenderPasses/ScreenSpaceReflection/SSRAccumulationContainerRenderSubPass.h"
 #include "RenderPasses/Bloom/BrightExtractionContainerRenderSubPass.h"
 #include "RenderPasses/Bloom/BloomHorizontalBlurContainerRenderSubPass.h"
 #include "RenderPasses/Bloom/BloomVerticalBlurContainerRenderSubPass.h"
@@ -45,14 +46,19 @@ void VoxelConeTraceRenderModule::Init ()
 		.Attach (new DirectionalLightShadowMapContainerRenderSubPass ())
 		.Attach (new VoxelConeTraceDirectionalLightRenderPass ())
 		.Build ());
-	_renderPasses.push_back (ContainerRenderPass::Builder ()
-		.Volume (new IterateOverRenderVolumeCollection (1))
-		.Attach (new DeferredAmbientLightContainerRenderSubPass ())
-		.Build ());
+	// _renderPasses.push_back (ContainerRenderPass::Builder ()
+	// 	.Volume (new IterateOverRenderVolumeCollection (1))
+	// 	.Attach (new DeferredAmbientLightContainerRenderSubPass ())
+	// 	.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
 		.Attach (new IdleContainerRenderSubPass ())
+		.Attach (ContainerRenderPass::Builder ()
+			.Volume (new IterateOverRenderVolumeCollection (1))
+			.Attach (new SSRContainerRenderSubPass ())
+			.Attach (new SSRAccumulationContainerRenderSubPass ())
+			.Build ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new BrightExtractionContainerRenderSubPass ())
@@ -68,5 +74,4 @@ void VoxelConeTraceRenderModule::Init ()
 		.Build ());
 	_renderPasses.push_back (new DeferredBlitRenderPass ());
 	_renderPasses.push_back (new ForwardRenderPass ());
-	_renderPasses.push_back (new EditorRenderPass ());
 }

@@ -2,18 +2,21 @@
 
 #include "Managers/ShaderManager.h"
 
+#include "Lighting/LightsManager.h"
+
 #include "Renderer/Pipeline.h"
 
 #include "Systems/Settings/SettingsManager.h"
 
 VoxelRadianceInjectionRenderPass::VoxelRadianceInjectionRenderPass () :
 	_continuousVoxelization (false),
+	_ambient (false),
 	_firstTime (true)
 {
 
 }
 
-void VoxelRadianceInjectionRenderPass::Init ()
+void VoxelRadianceInjectionRenderPass::Init (const RenderSettings& settings)
 {
 	ShaderManager::Instance ()->AddComputeShader ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER",
 		"Assets/Shaders/Voxelize/voxelRadianceInjectionCompute.glsl");
@@ -25,7 +28,8 @@ void VoxelRadianceInjectionRenderPass::Init ()
 	InitSettings ();
 }
 
-RenderVolumeCollection* VoxelRadianceInjectionRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelRadianceInjectionRenderPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	if (_firstTime || _continuousVoxelization) {
 
@@ -71,6 +75,10 @@ void VoxelRadianceInjectionRenderPass::Notify (Object* sender, const SettingsObs
 
 	if (name == "vct_continuous_voxelization") {
 		_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
+	}
+
+	if (name == "vct_ambient") {
+		_ambient = SettingsManager::Instance ()->GetValue<bool> ("vct_ambient", _ambient);
 	}
 }
 
@@ -125,6 +133,8 @@ void VoxelRadianceInjectionRenderPass::RadianceInjectPass (RenderVolumeCollectio
 	Pipeline::SendCustomAttributes ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER",
 		rvc->GetRenderVolume ("VoxelVolume")->GetCustomAttributes ());
 
+	Pipeline::SendCustomAttributes ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER", GetCustomAttributes ());
+
 	/*
 	 * Bind voxel volume for writing
 	*/
@@ -148,6 +158,32 @@ void VoxelRadianceInjectionRenderPass::EndRadianceInjectionPass ()
 	GL::MemoryBarrier (GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
+std::vector<PipelineAttribute> VoxelRadianceInjectionRenderPass::GetCustomAttributes () const
+{
+	/*
+	 * Attach voxel radiance injection attributes to pipeline
+	*/
+
+	std::vector<PipelineAttribute> attributes;
+
+	PipelineAttribute ambientLightColor;
+	PipelineAttribute ambient;
+
+	ambientLightColor.type = PipelineAttribute::AttrType::ATTR_3F;
+	ambient.type = PipelineAttribute::AttrType::ATTR_3F;
+
+	ambientLightColor.name = "ambientLightColor";
+	ambient.name = "ambient";
+
+	ambientLightColor.value = LightsManager::Instance ()->GetAmbientLightColor ().ToVector3 ();
+	ambient.value = _ambient ? glm::vec3 (1.0f) : glm::vec3 (0.0f);
+
+	attributes.push_back (ambientLightColor);
+	attributes.push_back (ambient);
+
+	return attributes;
+}
+
 void VoxelRadianceInjectionRenderPass::InitSettings ()
 {
 	/*
@@ -163,11 +199,18 @@ void VoxelRadianceInjectionRenderPass::InitSettings ()
 	_continuousVoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", _continuousVoxelization);
 
 	/*
+	 * Initialize ambient voxelization
+	*/
+
+	_ambient = SettingsManager::Instance ()->GetValue<bool> ("vct_ambient", _ambient);
+
+	/*
 	 * Attach to settings manager
 	*/
 
 	SettingsManager::Instance ()->Attach ("vct_voxels_size", this);
 	SettingsManager::Instance ()->Attach ("vct_continuous_voxelization", this);
+	SettingsManager::Instance ()->Attach ("vct_ambient", this);
 }
 
 void VoxelRadianceInjectionRenderPass::ClearSettings ()
@@ -178,4 +221,5 @@ void VoxelRadianceInjectionRenderPass::ClearSettings ()
 
 	SettingsManager::Instance ()->Detach ("vct_voxels_size", this);
 	SettingsManager::Instance ()->Detach ("vct_continuous_voxelization", this);
+	SettingsManager::Instance ()->Detach ("vct_ambient", this);
 }

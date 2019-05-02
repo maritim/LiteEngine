@@ -13,10 +13,10 @@ protected:
 public:
 	SphereCollider ();
 	SphereCollider (float radius);
-
-	void Rebuild (Model* mesh, Transform* transform);
 protected:
-	float GetRadius (Model* mesh, Transform* transform);
+	void Rebuild ();
+
+	float GetRadius ();
 };
 
 #endif

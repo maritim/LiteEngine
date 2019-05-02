@@ -28,7 +28,7 @@ VoxelizationRenderPass::~VoxelizationRenderPass ()
 	delete _voxelVolume;
 }
 
-void VoxelizationRenderPass::Init ()
+void VoxelizationRenderPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Initialize voxelization settings
@@ -61,7 +61,8 @@ void VoxelizationRenderPass::Init ()
 		"Assets/Shaders/Voxelize/voxelizeGeometry.glsl");
 }
 
-RenderVolumeCollection* VoxelizationRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelizationRenderPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	if (_firstTime || _continuousVoxelization) {
 

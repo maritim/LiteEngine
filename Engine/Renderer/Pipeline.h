@@ -43,7 +43,7 @@ public:
 	static void CreateProjection (const Camera* camera);
 	static void CreateProjection (glm::mat4 projectionMatrix);
 
-	static void SetObjectTransform (Transform *transform);
+	static void SetObjectTransform (const Transform *transform);
 	static void SendCamera (const Camera* camera);
 
 	static void UpdateMatrices (Shader* shader);

@@ -4,7 +4,9 @@
 #include "RenderPasses/DeferredSkyboxRenderPass.h"
 #include "RenderPasses/DeferredBlitRenderPass.h"
 #include "RenderPasses/ForwardRenderPass.h"
-#include "RenderPasses/Editor/EditorRenderPass.h"
+#include "RenderPasses/GUI/GUIGizmosRenderPass.h"
+#include "RenderPasses/GUI/GUIRenderPass.h"
+#include "RenderPasses/WindowBlitRenderPass.h"
 
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
@@ -15,6 +17,8 @@
 #include "RenderPasses/AmbientOcclusion/SSAOBlurContainerRenderSubPass.h"
 
 #include "RenderPasses/ShadowMap/DirectionalLightShadowMapContainerRenderSubPass.h"
+// #include "RenderPasses/ShadowMap/DirectionalLightExponentialShadowMapContainerRenderSubPass.h"
+// #include "RenderPasses/ShadowMap/ExponentialShadowMapBlurContainerRenderSubPass.h"
 #include "RenderPasses/DeferredDirectionalLightContainerRenderSubPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 
@@ -39,6 +43,8 @@ void DirectLightingRenderModule::Init ()
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 		.Attach (new DirectionalLightShadowMapContainerRenderSubPass ())
+		// .Attach (new DirectionalLightExponentialShadowMapContainerRenderSubPass ())
+		// .Attach (new ExponentialShadowMapBlurContainerRenderSubPass ())
 		.Attach (new DeferredDirectionalLightContainerRenderSubPass ())
 		.Build ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
@@ -80,5 +86,7 @@ void DirectLightingRenderModule::Init ()
 		.Build ());
 	_renderPasses.push_back (new DeferredBlitRenderPass ());
 	_renderPasses.push_back (new ForwardRenderPass ());
-	_renderPasses.push_back (new EditorRenderPass ());
+	_renderPasses.push_back (new GUIGizmosRenderPass ());
+	_renderPasses.push_back (new GUIRenderPass ());
+	_renderPasses.push_back (new WindowBlitRenderPass ());
 }

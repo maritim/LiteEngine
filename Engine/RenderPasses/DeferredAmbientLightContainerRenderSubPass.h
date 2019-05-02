@@ -2,16 +2,12 @@
 #define DEFERREDAMBIENTLIGHTRENDERCONTAINERSUBPASS_H
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
-#include "Core/Observer/ObserverI.h"
 
 #include <string>
 
-#include "Systems/Settings/SettingsObserverArgs.h"
-
-class DeferredAmbientLightContainerRenderSubPass : public ContainerRenderSubPassI, public ObserverI<SettingsObserverArgs>
+class DeferredAmbientLightContainerRenderSubPass : public ContainerRenderSubPassI
 {
 protected:
-	bool _aoEnabled;
 	std::string _shaderName;
 	std::string _aoShaderName;
 
@@ -19,24 +15,22 @@ public:
 	DeferredAmbientLightContainerRenderSubPass ();
 	virtual ~DeferredAmbientLightContainerRenderSubPass ();
 
-	virtual void Init ();
-	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	virtual void Init (const RenderSettings& settings);
+	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
-	virtual bool IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const;
-
-	void Notify (Object* sender, const SettingsObserverArgs& args);
+	virtual bool IsAvailable (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 
 	void Clear ();
 protected:
-	void StartAmbientLightPass (RenderVolumeCollection* rvc);
-	void AmbientLightPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	void StartAmbientLightPass (const RenderSettings& settings, RenderVolumeCollection* rvc);
+	void AmbientLightPass (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 	void EndAmbientLightPass ();
 
-	void LockShader ();
+	void LockShader (const RenderSettings& settings);
 	std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection* rvc);
-
-	void InitSettings ();
-	void ClearSettings ();
 };
 
 #endif

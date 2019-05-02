@@ -32,7 +32,7 @@ ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::~Reflecti
 	delete _reflectiveShadowMapVolume;
 }
 
-void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Init ()
+void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Shader for static objects
@@ -63,7 +63,8 @@ void ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Init
 	InitRSMVolume ();
 }
 
-RenderVolumeCollection* ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	* Start shadow map drawing process

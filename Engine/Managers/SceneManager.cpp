@@ -4,10 +4,14 @@
 
 #include "Core/Console/Console.h"
 
+#include "Systems/Components/ComponentManager.h"
+
 #define SCENE_LOADING_ERROR_CODE 10
 
 SceneManager::SceneManager () :
-	_current (nullptr)
+	_current (nullptr),
+	_needToLoad (false),
+	_nextSceneName ()
 {
 
 }
@@ -26,9 +30,38 @@ Scene* SceneManager::Current ()
  * TODO: Improve this to manage more cleaning stuff
 */
 
-Scene* SceneManager::Load (const std::string& sceneName)
+void SceneManager::Update ()
 {
-	Clear ();
+	if (_needToLoad == true) {
+		LoadNextScene (_nextSceneName);
+
+		_needToLoad = false;
+	}
+}
+
+void SceneManager::Load (const std::string& sceneName)
+{
+	_needToLoad = true;
+	_nextSceneName = sceneName;
+}
+
+void SceneManager::Clear ()
+{
+	if (_current == nullptr) {
+		return ;
+	}
+
+	delete _current;
+	_current = nullptr;
+}
+
+void SceneManager::LoadNextScene (const std::string& sceneName)
+{
+	if (_current != nullptr) {
+		delete _current;
+
+		ComponentManager::Instance ()->Clear ();
+	}
 
 	_current = SceneLoader::Instance ().Load (sceneName);
 
@@ -42,16 +75,4 @@ Scene* SceneManager::Load (const std::string& sceneName)
 	*/
 
 	_current->Init ();
-
-	return _current;
-}
-
-void SceneManager::Clear ()
-{
-	if (_current == nullptr) {
-		return ;
-	}
-
-	delete _current;
-	_current = nullptr;
 }

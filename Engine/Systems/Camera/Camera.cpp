@@ -4,19 +4,15 @@
 
 #include <cmath>
 
-/*
- * TODO: Change this somewhere else
-*/
- 
-#include "Cameras/PerspectiveCamera.h"
-#include "Cameras/OrthographicCamera.h"
+#include "Systems/Window/Window.h"
 
 Camera::Camera(void) :
 	_position (),
 	_rotation (),
 	_aspect (0.0f),
 	_zNear (0.0f),
-	_zFar (1.0f)
+	_zFar (1.0f),
+	_constraintAspect (true)
 {
 
 }
@@ -25,35 +21,6 @@ Camera::~Camera ()
 {
 
 }
-
-Camera* Camera::_main (nullptr);
-
-Camera* Camera::Main ()
-{
-	/*
-	 * TODO: Change this somewhere else
-	*/
- 
-	if (_main == nullptr) {
-		_main = new PerspectiveCamera ();
-	}
-
-	return _main;
-}
-
-// Camera* Camera::Active ()
-// {
-// 	if (_active == nullptr) {
-// 		_active = Camera::Main ();
-// 	}
-
-// 	return _active;
-// }
-
-// void Camera::Activate ()
-// {
-	
-// }
 
 glm::vec3 Camera::GetPosition () const
 {
@@ -80,6 +47,11 @@ float Camera::GetZFar () const
 	return _zFar;
 }
 
+bool Camera::GetConstraintAspect () const
+{
+	return _constraintAspect;
+}
+
 void Camera::SetPosition (const glm::vec3& pos)
 {
 	_position = pos;
@@ -98,6 +70,11 @@ void Camera::SetZNear (float zNear)
 void Camera::SetZFar (float zFar)
 {
 	_zFar = zFar;
+}
+
+void Camera::SetConstraintAspect (bool constraintAspect)
+{
+	_constraintAspect = constraintAspect;
 }
 
 void Camera::SetRotation (const glm::quat& rotation)
@@ -142,4 +119,11 @@ void Camera::Rotate (const glm::quat& rotation)
 {
 	_rotation = rotation * _rotation;
 	_rotation = glm::normalize (_rotation);
+}
+
+void Camera::Update ()
+{
+	if (_constraintAspect == true) {
+		_aspect = ((float) Window::GetWidth ()) / Window::GetHeight ();
+	}
 }

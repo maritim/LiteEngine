@@ -13,7 +13,7 @@ protected:
 public:
 	LightMapDirectionalLightContainerRenderSubPass ();
 
-	void Init ();
+	void Init (const RenderSettings& settings);
 
 	void Clear ();
 protected:

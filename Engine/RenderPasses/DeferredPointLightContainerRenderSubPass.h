@@ -14,7 +14,7 @@ protected:
 public:
 	DeferredPointLightContainerRenderSubPass ();
 
-	void Init ();
+	void Init (const RenderSettings& settings);
 
 	void Clear ();
 protected:

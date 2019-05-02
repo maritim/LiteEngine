@@ -17,7 +17,7 @@ protected:
 public:
 	VoxelConeTraceDirectionalLightRenderPass ();
 
-	void Init ();
+	void Init (const RenderSettings& settings);
 
 	void Notify (Object* sender, const SettingsObserverArgs& args);
 

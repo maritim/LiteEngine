@@ -5,14 +5,17 @@
 #include <string>
 
 #include "Core/Settings/SettingsContainer.h"
+#include "Renderer/RenderSettings.h"
 #include "Mesh/Model.h"
 #include "Mesh/AnimationModel.h"
 #include "Mesh/AnimationContainer.h"
+#include "Audio/AudioClip.h"
 #include "Shader/ShaderContent.h"
 #include "Material/MaterialLibrary.h"
 #include "Texture/Texture.h"
 #include "Texture/TextureAtlas.h"
 #include "Texture/CubeMap.h"
+#include "Texture/TextureLUT.h"
 #include "VisualEffects/ParticleSystem/ParticleSystem.h"
 #include "Skybox/Skybox.h"
 #include "Fonts/BitmapFont.h"
@@ -22,6 +25,7 @@ class Resources
 {
 public:
 	static SettingsContainer* LoadSettings (const std::string& filename);
+	static RenderSettings* LoadRenderSettings (const std::string& filename);
 
 	static Model* LoadModel (const std::string& filename);
 	static AnimationModel* LoadAnimatedModel (const std::string& filename);
@@ -30,11 +34,14 @@ public:
 	static AnimationModel* LoadSkinModel (const std::string& filename);
 	static AnimationContainer* LoadAnimationClip (const std::string& filename);
 
+	static AudioClip* LoadAudioClip (const std::string& filename);
+
 	static ShaderContent* LoadShaderContent (const std::string& filename);
 	
 	static Texture* LoadTexture (const std::string& filename);
 	static TextureAtlas* LoadTextureAtlas (const std::string& filename);
 	static CubeMap* LoadCubemap (const std::vector<std::string>& filenames);
+	static TextureLUT* LoadTextureLUT (const std::string& filename);
 //	static unsigned int Load_R5G6B5_BMP (const std::string filename);
 
 	static BitmapFont* LoadBitmapFont (const std::string& filename); 
@@ -49,6 +56,8 @@ private:
 	static Model* LoadWavefrontModel (const std::string& filename);
 	static Model* LoadStanfordModel (const std::string& filename);
 	static Model* LoadGenericModel (const std::string& filename);
+
+	static AudioClip* LoadWAV (const std::string& filename);
 
 //	static int SaveWavefrontModel (Model* model, char* filename);
 //	static int SaveStanfordModel (Model* model, char* filename);

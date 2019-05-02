@@ -19,7 +19,8 @@ VolumetricLight* VolumetricLightContainerRenderSubPassI::GetVolumetricLight (con
 	return volumetricLight;
 }
 
-bool VolumetricLightContainerRenderSubPassI::IsAvailable (const Scene*, const Camera*, const RenderVolumeCollection* rvc) const
+bool VolumetricLightContainerRenderSubPassI::IsAvailable (const Scene*, const Camera*,
+	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Get volumetric light from render volume collection

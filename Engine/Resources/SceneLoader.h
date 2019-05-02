@@ -38,7 +38,11 @@ private:
 
 	void ProcessRigidbody (TiXmlElement* xmlElem, SceneObject* object);
 
+	void ProcessAudioSource (TiXmlElement* xmlElem, SceneObject* object);
+
 	void ProcessCollider (TiXmlElement* xmlElem, Rigidbody* rigidbody);
+
+	void ProcessAudioClip (TiXmlElement* xmlElem, AudioSource* audioSource);
 };
 
 #endif

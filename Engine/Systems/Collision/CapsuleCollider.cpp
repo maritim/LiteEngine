@@ -1,8 +1,5 @@
 #include "CapsuleCollider.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <algorithm>
-
 CapsuleCollider::CapsuleCollider () :
 	_isGenerated (true)
 {
@@ -19,17 +16,23 @@ CapsuleCollider::CapsuleCollider (float radius, float height) :
 	_collisionShape = new btCapsuleShape (radius, height);
 }
 
-void CapsuleCollider::Rebuild (Model* mesh, Transform* transform)
+void CapsuleCollider::Rebuild ()
 {
-	if (!_isGenerated) {
+	if (!_isGenerated || _mesh == nullptr) {
 		return;
 	}
+
+	/*
+	 * Destroy current collision shape if exists
+	*/
+
+	DestroyCollisionShape ();
 
 	/*
 	 * Compute the bounding capsule extents of the mesh
 	*/
 
-	std::pair<float, float> size = GetSize (mesh, transform);
+	std::pair<float, float> size = GetSize ();
 
 	/*
 	 * Bullet capsule shape is created based on radius and height
@@ -38,57 +41,22 @@ void CapsuleCollider::Rebuild (Model* mesh, Transform* transform)
 	_collisionShape = new btCapsuleShape (size.first, size.second);
 }
 
-std::pair<float, float> CapsuleCollider::GetSize (Model* mesh, Transform* transform)
+std::pair<float, float> CapsuleCollider::GetSize ()
 {
-	float radius = 0.0f;
-	float height = 0.0f;
-
-	float minY = std::numeric_limits<float>::max ();
-	float maxY = -std::numeric_limits<float>::max ();
-
 	/*
-	 * Calculate model matrix
+	 * Get mesh bounding box
 	*/
 
-	glm::vec3 position = transform->GetPosition ();
-	glm::vec3 scalev = transform->GetScale ();
-
-	glm::mat4 translate = glm::translate (glm::mat4 (1.f), glm::vec3 (position.x, position.y, position.z));
-	glm::mat4 scale = glm::scale (glm::mat4 (1.f), glm::vec3 (scalev.x, scalev.y, scalev.z));
-
-	glm::mat4 modelMatrix = translate * scale;
+	BoundingBox* boundingBox = _mesh->GetBoundingBox ();
 
 	/*
-	 * Compute object center
+	 * Compute mesh extents according to its world position
 	*/
 
-	glm::vec3 center = position;
+	glm::vec3 minVertex = glm::vec3 (boundingBox->xmin, boundingBox->ymin, boundingBox->zmin);
+	glm::vec3 maxVertex = glm::vec3 (boundingBox->xmax, boundingBox->ymax, boundingBox->zmax);
 
-	/*
-	 * Iterate over all vertices and compute radius and Y limits
-	 * according to object transform
-	*/
-
-	for_each_type (ObjectModel*, objModel, *mesh) {
-		for (PolygonGroup* polyGroup : *objModel) {
-			for (Polygon* polygon : *polyGroup) {
-				for(std::size_t vertexIndex=0;vertexIndex<polygon->VertexCount();vertexIndex++) {
-					glm::vec3 vertex = mesh->GetVertex (polygon->GetVertex (vertexIndex));
-
-					vertex = glm::vec3 (modelMatrix * glm::vec4 (vertex, 1));
-
-					float vertexDistance = glm::distance (
-						glm::vec2 (center.x, center.z),
-						glm::vec2 (vertex.x, vertex.z)
-					);
-					radius = std::max (radius, vertexDistance);
-
-					minY = std::min (minY, vertex.y);
-					maxY = std::max (maxY, vertex.y);
-				}
-			}
-		}
-	}
+	glm::vec3 extents = maxVertex - minVertex;
 
 	/*
 	 * Compute capsule height according to its actual size
@@ -96,7 +64,8 @@ std::pair<float, float> CapsuleCollider::GetSize (Model* mesh, Transform* transf
 	 * actualHeight = height + 2 * radius
 	*/
 
-	height = maxY - minY - radius * 2.0f;
+	float radius = glm::length (glm::vec2 (extents.x, extents.z) / 2.0f);
+	float height = extents.y - 2 * radius;
 
 	return std::pair<float, float> (radius, height);
 }

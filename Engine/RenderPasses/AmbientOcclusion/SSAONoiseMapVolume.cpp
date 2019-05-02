@@ -96,6 +96,11 @@ std::vector<PipelineAttribute> SSAONoiseMapVolume::GetCustomAttributes () const
 	return attributes;
 }
 
+glm::ivec2 SSAONoiseMapVolume::GetSize () const
+{
+	return glm::ivec2 (_noiseWidth, _noiseHeight);
+}
+
 void SSAONoiseMapVolume::Clear ()
 {
 	/*

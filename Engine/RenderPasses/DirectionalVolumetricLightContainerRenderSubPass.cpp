@@ -2,14 +2,13 @@
 
 #include "Renderer/Pipeline.h"
 
-#include "Systems/Window/Window.h"
-
 DirectionalVolumetricLightContainerRenderSubPass::~DirectionalVolumetricLightContainerRenderSubPass ()
 {
 
 }
 
-RenderVolumeCollection* DirectionalVolumetricLightContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* DirectionalVolumetricLightContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Bind light accumulation volume
@@ -21,7 +20,7 @@ RenderVolumeCollection* DirectionalVolumetricLightContainerRenderSubPass::Execut
 	 * Draw volumetric lights
 	*/
 
-	DirectionalLightPass (scene, camera, rvc);
+	DirectionalLightPass (scene, camera, settings, rvc);
 
 	/*
 	 * End directional light pass
@@ -52,7 +51,8 @@ void DirectionalVolumetricLightContainerRenderSubPass::StartDirectionalLightPass
 	lightAccumulationVolume->BindForWriting ();
 }
 
-void DirectionalVolumetricLightContainerRenderSubPass::DirectionalLightPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+void DirectionalVolumetricLightContainerRenderSubPass::DirectionalLightPass (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Bind all render volumes
@@ -78,7 +78,8 @@ void DirectionalVolumetricLightContainerRenderSubPass::DirectionalLightPass (con
 	 * Set viewport
 	*/
 
-	GL::Viewport (0, 0, Window::GetWidth (), Window::GetHeight ());
+	GL::Viewport (settings.viewport.x, settings.viewport.y,
+		settings.viewport.width, settings.viewport.height);
 
 	/*
 	 * Disable depth test

@@ -13,6 +13,9 @@
 #include "Systems/Components/ComponentsFactory.h"
 #include "Systems/Components/Component.h"
 
+#include "Managers/ModelManager.h"
+#include "Managers/AudioClipManager.h"
+
 #include "Resources/Resources.h"
 
 #include "Utils/Extensions/StringExtend.h"
@@ -105,7 +108,12 @@ void SceneLoader::ProcessGameObject (TiXmlElement* xmlElem, Scene* scene)
 	gameObject->SetInstanceID (std::stoi (instanceID));
 	gameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
-	Model* mesh = Resources::LoadModel (meshPath);
+	Model* mesh = ModelManager::Instance ()->GetModel (meshPath);
+
+	if (mesh == nullptr) {
+		mesh = Resources::LoadModel (meshPath);
+		ModelManager::Instance ()->AddModel (mesh);
+	}
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -118,6 +126,9 @@ void SceneLoader::ProcessGameObject (TiXmlElement* xmlElem, Scene* scene)
 		}
 		else if (name == "Rigidbody") {
 			ProcessRigidbody (content, gameObject);
+		}
+		else if (name == "AudioSource") {
+			ProcessAudioSource (content, gameObject);
 		}
 		else if (name == "Components") {
 			ProcessComponents (content, gameObject);
@@ -148,7 +159,12 @@ void SceneLoader::ProcessAnimationGameObject (TiXmlElement* xmlElem, Scene* scen
 	animGameObject->SetInstanceID (std::stoi (instanceID));
 	animGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
-	Model* mesh = Resources::LoadAnimatedModel (meshPath);
+	Model* mesh = ModelManager::Instance ()->GetModel (meshPath);
+
+	if (mesh == nullptr) {
+		mesh = Resources::LoadAnimatedModel (meshPath);
+		ModelManager::Instance ()->AddModel (mesh);
+	}
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -161,6 +177,9 @@ void SceneLoader::ProcessAnimationGameObject (TiXmlElement* xmlElem, Scene* scen
 		}
 		else if (name == "Rigidbody") {
 			ProcessRigidbody (content, animGameObject);
+		}
+		else if (name == "AudioSource") {
+			ProcessAudioSource (content, animGameObject);
 		}
 		else if (name == "Components") {
 			ProcessComponents (content, animGameObject);
@@ -193,7 +212,12 @@ void SceneLoader::ProcessNormalMapGameObject (TiXmlElement* xmlElem, Scene* scen
 	normalMapGameObject->SetInstanceID (std::stoi (instanceID));
 	normalMapGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
-	Model* mesh = Resources::LoadModel (meshPath);
+	Model* mesh = ModelManager::Instance ()->GetModel (meshPath);
+
+	if (mesh == nullptr) {
+		mesh = Resources::LoadModel (meshPath);
+		ModelManager::Instance ()->AddModel (mesh);
+	}
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -206,6 +230,9 @@ void SceneLoader::ProcessNormalMapGameObject (TiXmlElement* xmlElem, Scene* scen
 		}
 		else if (name == "Rigidbody") {
 			ProcessRigidbody (content, normalMapGameObject);
+		}
+		else if (name == "AudioSource") {
+			ProcessAudioSource (content, normalMapGameObject);
 		}
 		else if (name == "Components") {
 			ProcessComponents (content, normalMapGameObject);
@@ -236,7 +263,12 @@ void SceneLoader::ProcessLightMapGameObject (TiXmlElement* xmlElem, Scene* scene
 	lightMapGameObject->SetInstanceID (std::stoi (instanceID));
 	lightMapGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
-	Model* mesh = Resources::LoadModel (meshPath);
+	Model* mesh = ModelManager::Instance ()->GetModel (meshPath);
+
+	if (mesh == nullptr) {
+		mesh = Resources::LoadModel (meshPath);
+		ModelManager::Instance ()->AddModel (mesh);
+	}
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -363,7 +395,7 @@ void SceneLoader::ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneOb
 
 glm::vec3 SceneLoader::GetPosition (TiXmlElement* xmlElem)
 {
-	glm::vec3 vector3;
+	glm::vec3 vector3 (0.0f);
 
 	const char* x = xmlElem->Attribute ("x");
 	const char* y = xmlElem->Attribute ("y");
@@ -452,6 +484,10 @@ void SceneLoader::ProcessComponent (TiXmlElement* xmlElem, GameObject* gameObjec
 
 	Component* component = ComponentsFactory::Instance ()->Create ((std::string) name);
 
+	if (component == nullptr) {
+		return;
+	}
+
 	gameObject->AttachComponent (component);	
 }
 
@@ -475,6 +511,28 @@ void SceneLoader::ProcessRigidbody (TiXmlElement* xmlElem, SceneObject* object)
 	}
 }
 
+void SceneLoader::ProcessAudioSource (TiXmlElement* xmlElem, SceneObject* object)
+{
+	std::string volume = xmlElem->Attribute ("volume");
+	std::string loop = xmlElem->Attribute ("loop");
+
+	object->GetAudioSource ()->SetVolume (std::stof (volume));
+	object->GetAudioSource ()->SetLoop (Extensions::StringExtend::ToBool (loop));
+
+	TiXmlElement* content = xmlElem->FirstChildElement ();
+
+	while (content) 
+	{
+		std::string name = content->Value ();
+
+		if (name == "AudioClip") {
+			ProcessAudioClip (content, object->GetAudioSource ());
+		}
+
+		content = content->NextSiblingElement ();
+	}
+}
+
 void SceneLoader::ProcessCollider (TiXmlElement* xmlElem, Rigidbody* rigidbody)
 {
 	std::string path = xmlElem->Attribute ("path");
@@ -482,4 +540,18 @@ void SceneLoader::ProcessCollider (TiXmlElement* xmlElem, Rigidbody* rigidbody)
 	BulletCollider* collider = Resources::LoadCollider (path);
 
 	rigidbody->SetCollider (collider);
+}
+
+void SceneLoader::ProcessAudioClip (TiXmlElement* xmlElem, AudioSource* audioSource)
+{
+	std::string path = xmlElem->Attribute ("path");
+
+	AudioClip* audioClip = AudioClipManager::Instance ()->GetAudioClip (path);
+
+	if (audioClip == nullptr) {
+		audioClip = Resources::LoadAudioClip (path);
+		AudioClipManager::Instance ()->AddAudioClip (audioClip);
+	}
+
+	audioSource->SetAudioClip (audioClip);
 }

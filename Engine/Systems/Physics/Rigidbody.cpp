@@ -3,8 +3,6 @@
 #include "Systems/Physics/PhysicsManager.h"
 #include "Systems/Physics/MotionState.h"
 
-#include "Systems/Time/Time.h"
-
 Rigidbody::Rigidbody (Transform* transform) :
 	_rigidBody (nullptr),
 	_transform (transform),
@@ -12,7 +10,7 @@ Rigidbody::Rigidbody (Transform* transform) :
 	_collider (nullptr),
 	_isEnabled (true)
 {
-
+	Build ();
 }
 
 Rigidbody::~Rigidbody ()
@@ -24,7 +22,13 @@ void Rigidbody::SetMass (float mass)
 {
 	_mass = mass;
 
-	Rebuild ();
+	btVector3 localInertia = btVector3 (0.0f, 0.0f, 0.0f);
+
+	if (_collider != nullptr) {
+		_collider->GetCollisionShape ()->calculateLocalInertia (_mass, localInertia);
+	}
+
+	_rigidBody->setMassProps (mass, localInertia);
 }
 
 void Rigidbody::SetCollider (BulletCollider* collider)
@@ -38,53 +42,26 @@ void Rigidbody::SetCollider (BulletCollider* collider)
 	}
 
 	_collider = collider;
-
-	Rebuild ();
 }
 
 void Rigidbody::SetVelocity (const glm::vec3& velocity)
 {
-	if (_rigidBody == nullptr) {
-		return;
-	}
-
 	_rigidBody->setLinearVelocity (btVector3 (velocity.x, velocity.y, velocity.z));
 }
 
 void Rigidbody::SetAngularVelocity (const glm::vec3& velocity)
 {
-	if (_rigidBody == nullptr) {
-		return;
-	}
-
 	_rigidBody->setAngularVelocity (btVector3 (velocity.x, velocity.y, velocity.z));
 }
 
 void Rigidbody::Enable (bool isEnabled)
 {
-	if (_isEnabled == isEnabled) {
-		return;
-	}
-
 	_isEnabled = isEnabled;
 
-	if (_isEnabled) {
+	int flags = _rigidBody->getFlags ();
+	flags = _isEnabled ? flags &~ ISLAND_SLEEPING : flags | ISLAND_SLEEPING;
 
-		/*
-		 * Attach rigid body to physics system
-		*/
-
-		PhysicsManager::Instance ()->AttachRigidbody (_rigidBody);
-	}
-
-	if (!_isEnabled) {
-
-		/*
-		 * Detach rigid body from the physics system
-		*/
-
-		PhysicsManager::Instance ()->DetachRigidbody (_rigidBody);
-	}
+	_rigidBody->setFlags (flags);
 }
 
 float Rigidbody::GetMass () const
@@ -99,10 +76,6 @@ BulletCollider* Rigidbody::GetCollider () const
 
 glm::vec3 Rigidbody::GetVelocity () const
 {
-	if (_rigidBody == nullptr) {
-		return glm::vec3 (0.0f);
-	}
-
 	btVector3 velocity = _rigidBody->getLinearVelocity ();
 
 	return glm::vec3 (velocity.getX (), velocity.getY (), velocity.getZ ());
@@ -110,10 +83,6 @@ glm::vec3 Rigidbody::GetVelocity () const
 
 glm::vec3 Rigidbody::GetAngularVelocity () const
 {
-	if (_rigidBody == nullptr) {
-		return glm::vec3 (0.0f);
-	}
-
 	btVector3 velocity = _rigidBody->getAngularVelocity ();
 
 	return glm::vec3 (velocity.getX (), velocity.getY (), velocity.getZ ());
@@ -126,34 +95,108 @@ bool Rigidbody::IsEnabled () const
 
 void Rigidbody::Update ()
 {
-	if (_rigidBody == nullptr) {
-		return;
-	}
-
 	btTransform transform;
 
-	glm::vec3 position = _transform->GetPosition ();
+	glm::vec3 offset = _collider == nullptr ? glm::vec3 (0.0f) : _transform->GetRotation () * _collider->GetOffset ();
+
+	glm::vec3 position = _transform->GetPosition () + offset;
 	glm::quat rotation = _transform->GetRotation ();
 
 	transform.setOrigin (btVector3 (position.x, position.y, position.z));
 	transform.setRotation (btQuaternion (rotation.x, rotation.y, rotation.z, rotation.w));
 
 	_rigidBody->setWorldTransform (transform);
+
+	/*
+	 * Set collision shape scaling
+	*/
+
+	if (_collider != nullptr) {
+		glm::vec3 scale = _transform->GetScale ();
+
+		_collider->GetCollisionShape ()->setLocalScaling (btVector3 (scale.x, scale.y, scale.z));		
+	}
+
+	/*
+	 * Update collider
+	*/
+
+	if (_collider != nullptr && _collider->IsDirty ()) {
+		UpdateCollider ();
+	}
 }
 
-void Rigidbody::Rebuild ()
+void Rigidbody::OnAttachedToScene ()
+{
+	UpdateCollider ();
+
+	/*
+	 * Attach rigid body to physics system
+	*/
+
+	PhysicsManager::Instance ()->AttachRigidbody (_rigidBody);
+}
+
+void Rigidbody::OnDetachedFromScene ()
+{
+	/*
+	 * Detach rigid body from the physics system
+	*/
+
+	PhysicsManager::Instance ()->DetachRigidbody (_rigidBody);
+}
+
+void Rigidbody::Debug (bool isEnabled)
+{
+	int collisionFlags = _rigidBody->getCollisionFlags ();
+
+	int newCollisionFlags = isEnabled ?
+		collisionFlags &~ btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT :
+		collisionFlags | btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT;
+
+	_rigidBody->setCollisionFlags (newCollisionFlags);
+}
+
+void Rigidbody::Build ()
+{
+	btMotionState* motionState = new MotionState (_transform, glm::vec3 (0.0f)); //_collider->GetOffset ());
+
+	/*
+	 * Initialize rigidbody
+	*/
+
+	btVector3 localInertia = btVector3 (0.0f, 0.0f, 0.0f);
+
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI (
+		_mass,
+		motionState,
+		nullptr,
+		localInertia
+	);
+
+	_rigidBody = new btRigidBody (rigidBodyCI);
+
+	/*
+	 * Disable debug data
+	*/
+
+	_rigidBody->setCollisionFlags (_rigidBody->getCollisionFlags ()
+		| btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT);
+}
+
+void Rigidbody::UpdateCollider ()
 {
 	if (_collider == nullptr) {
 		return;
 	}
 
 	/*
-	 * Destroy current rigidbody if exists
+	 * Set collision shape scaling
 	*/
 
-	DestroyRigidbody ();
+	glm::vec3 scale = _transform->GetScale ();
 
-	btMotionState* motionState = new MotionState (_transform, _collider->GetOffset ());
+	_collider->GetCollisionShape ()->setLocalScaling (btVector3 (scale.x, scale.y, scale.z));
 
 	/*
 	 * Compute local inertia based on collision shape
@@ -164,34 +207,19 @@ void Rigidbody::Rebuild ()
 
 	btVector3 localInertia = btVector3 (0.0f, 0.0f, 0.0f);
 
-	if (_collider->GetCollisionShape () != nullptr) {
-		_collider->GetCollisionShape ()->calculateLocalInertia (_mass, localInertia);
-	}
+	_collider->GetCollisionShape ()->calculateLocalInertia (_mass, localInertia);
 
 	/*
-	 * Initialize rigidbody
+	 * Update rigidbody local inertia
 	*/
 
-	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI (
-		_mass,
-		motionState,
-		_collider->GetCollisionShape (),
-		localInertia
-	);
-
-	_rigidBody = new btRigidBody (rigidBodyCI);
+	_rigidBody->setMassProps (_mass, localInertia);
 
 	/*
-	 * Detach rigid body from the physics system
+	 * Update rigidbody collision shape
 	*/
 
-	PhysicsManager::Instance ()->DetachRigidbody (_rigidBody);
-
-	/*
-	 * Attach rigid body to physics system
-	*/
-
-	PhysicsManager::Instance ()->AttachRigidbody (_rigidBody);
+	_rigidBody->setCollisionShape (_collider->GetCollisionShape ());
 }
 
 void Rigidbody::DestroyRigidbody ()

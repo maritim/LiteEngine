@@ -7,7 +7,6 @@
 #include "RenderPasses/VoxelBorderRenderPass.h"
 #include "RenderPasses/VoxelRayTraceRenderPass.h"
 #include "RenderPasses/ForwardRenderPass.h"
-#include "RenderPasses/Editor/EditorRenderPass.h"
 
 void VoxelizationRenderModule::Init ()
 {
@@ -22,5 +21,4 @@ void VoxelizationRenderModule::Init ()
 	_renderPasses.push_back (new VoxelBorderRenderPass ());
 	_renderPasses.push_back (new VoxelRayTraceRenderPass ());
 	_renderPasses.push_back (new ForwardRenderPass ());
-	_renderPasses.push_back (new EditorRenderPass ());
 }

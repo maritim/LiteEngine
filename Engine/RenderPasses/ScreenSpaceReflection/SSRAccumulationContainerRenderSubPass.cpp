@@ -1,79 +1,13 @@
 #include "SSRAccumulationContainerRenderSubPass.h"
 
-#include "Systems/Settings/SettingsManager.h"
-
-#include "Systems/Window/Window.h"
-
-SSRAccumulationContainerRenderSubPass::SSRAccumulationContainerRenderSubPass () :
-	_enabled (false),
-	_intensity (0.0f)
-{
-
-}
-
-SSRAccumulationContainerRenderSubPass::~SSRAccumulationContainerRenderSubPass ()
-{
-
-}
-
-void SSRAccumulationContainerRenderSubPass::Init ()
-{
-	/*
-	 * Initialize screen space ambient occlusion settings
-	*/
-
-	InitSettings ();
-
-	/*
-	 *
-	*/
-
-	PostProcessContainerRenderSubPass::Init ();
-}
-
-bool SSRAccumulationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
+bool SSRAccumulationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Check if screen space ambient occlusion is enabled
 	*/
 
-	return _enabled;
-}
-
-void SSRAccumulationContainerRenderSubPass::Notify (Object* sender, const SettingsObserverArgs& args)
-{
-	std::string name = args.GetName ();
-
-	/*
-	 * Update screen space reflection availability
-	*/
-
-	if (name == "screen_space_reflection") {
-		_enabled = SettingsManager::Instance ()->GetValue<bool> ("screen_space_reflection", _enabled);
-	}
-
-	/*
-	 * Update screen space reflection intensity
-	*/
-
-	if (name == "ssr_intensity") {
-		_intensity = SettingsManager::Instance ()->GetValue<float> ("ssr_intensity", _intensity);
-	}
-}
-
-void SSRAccumulationContainerRenderSubPass::Clear ()
-{
-	/*
-	 *
-	*/
-
-	PostProcessContainerRenderSubPass::Clear ();
-
-	/*
-	 * Clear settings
-	*/
-
-	ClearSettings ();
+	return settings.ssr_enabled;
 }
 
 std::string SSRAccumulationContainerRenderSubPass::GetPostProcessFragmentShaderPath () const
@@ -86,9 +20,9 @@ std::string SSRAccumulationContainerRenderSubPass::GetPostProcessVolumeName () c
 	return "PostProcessMapVolume";
 }
 
-glm::ivec2 SSRAccumulationContainerRenderSubPass::GetPostProcessVolumeResolution () const
+glm::ivec2 SSRAccumulationContainerRenderSubPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	return glm::ivec2 (Window::GetWidth (), Window::GetHeight ());
+	return glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height);
 }
 
 PostProcessMapVolume* SSRAccumulationContainerRenderSubPass::CreatePostProcessVolume () const
@@ -98,13 +32,13 @@ PostProcessMapVolume* SSRAccumulationContainerRenderSubPass::CreatePostProcessVo
 	return postProcessMapVolume;
 }
 
-std::vector<PipelineAttribute> SSRAccumulationContainerRenderSubPass::GetCustomAttributes (RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> SSRAccumulationContainerRenderSubPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach post process volume attributes to pipeline
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessContainerRenderSubPass::GetCustomAttributes (rvc);
+	std::vector<PipelineAttribute> attributes = PostProcessContainerRenderSubPass::GetCustomAttributes (settings, rvc);
 
 	/*
 	 * Attach screen space ambient occlusion attributes to pipeline
@@ -116,41 +50,9 @@ std::vector<PipelineAttribute> SSRAccumulationContainerRenderSubPass::GetCustomA
 
 	ssrIntensity.name = "ssrIntensity";
 
-	ssrIntensity.value.x = _intensity;
+	ssrIntensity.value.x = settings.ssr_intensity;
 
 	attributes.push_back (ssrIntensity);
 
 	return attributes;
-}
-
-void SSRAccumulationContainerRenderSubPass::InitSettings ()
-{
-	/*
-	 * Initialize screen space reflection availability
-	*/
-
-	_enabled = SettingsManager::Instance ()->GetValue<bool> ("screen_space_reflection", _enabled);
-
-	/*
-	 * Initialize screen space reflection intensity
-	*/
-
-	_intensity = SettingsManager::Instance ()->GetValue<float> ("ssr_intensity", _intensity);
-
-	/*
-	 * Attach to settings manager
-	*/
-
-	SettingsManager::Instance ()->Attach ("screen_space_reflection", this);
-	SettingsManager::Instance ()->Attach ("ssr_intensity", this);
-}
-
-void SSRAccumulationContainerRenderSubPass::ClearSettings ()
-{
-	/*
-	 * Detach
-	*/
-
-	SettingsManager::Instance ()->Detach ("screen_space_reflection", this);
-	SettingsManager::Instance ()->Detach ("ssr_intensity", this);
 }

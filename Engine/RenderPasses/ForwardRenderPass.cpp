@@ -2,15 +2,24 @@
 
 #include <algorithm>
 
+#include "RenderPasses/FrameBuffer2DVolume.h"
+
 #include "Wrappers/OpenGL/GL.h"
 
-void ForwardRenderPass::Init ()
+void ForwardRenderPass::Init (const RenderSettings& settings)
 {
 
 }
 
-RenderVolumeCollection* ForwardRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* ForwardRenderPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
+	/*
+	 * Start forward pass
+	*/
+
+	StartForwardPass (rvc);
+
 	/*
 	* Forward Rendering Pass
 	*/
@@ -25,6 +34,16 @@ void ForwardRenderPass::Clear ()
 	/*
 	 * Nothing
 	*/
+}
+
+void ForwardRenderPass::StartForwardPass (RenderVolumeCollection* rvc)
+{
+	/*
+	 * Bind framebuffer for writing
+	*/
+
+	FrameBuffer2DVolume* framebuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("LightAccumulationVolume");
+	framebuffer->BindForWriting ();
 }
 
 bool cmpForwardPass (Renderer* a, Renderer* b) {

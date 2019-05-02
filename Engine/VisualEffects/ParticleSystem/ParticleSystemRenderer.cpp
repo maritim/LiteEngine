@@ -5,13 +5,12 @@
 #include <glm/vec3.hpp>
 #include <glm/gtx/norm.hpp>
 
-#include "Systems/Camera/Camera.h"
-
 #include "Renderer/Pipeline.h"
 #include "Texture/Texture.h"
 #include "Texture/TextureAtlas.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/TextureManager.h"
+#include "Managers/CameraManager.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
@@ -120,7 +119,7 @@ void ParticleSystemRenderer::RemoveMarked ()
 // LE: Can improve this.
 void ParticleSystemRenderer::InsertionSort ()
 {
-	glm::vec3 camPos = Camera::Main ()->GetPosition ();
+	glm::vec3 camPos = CameraManager::Instance ()->GetActive ()->GetPosition ();
 
 	for (std::size_t i=1;i<_particleRenderers.size ();i++) {
 		float dist = glm::distance2 (camPos, 

@@ -7,6 +7,7 @@
 #define F_PI 3.14159f
 
 #define DEG2RAD (float)(F_PI / 180.0f)
+#define RAD2DEG (float)(180.0f / F_PI)
 
 namespace Extensions
 {

@@ -25,8 +25,9 @@ public:
 	VoxelizationRenderPass ();
 	~VoxelizationRenderPass ();
 
-	void Init ();
-	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	void Init (const RenderSettings& settings);
+	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void Notify (Object* sender, const SettingsObserverArgs& args);
 

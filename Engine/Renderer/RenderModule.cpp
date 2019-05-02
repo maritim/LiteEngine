@@ -11,7 +11,7 @@ RenderModule::~RenderModule ()
 
 }
 
-void RenderModule::InitModule ()
+void RenderModule::InitModule (const RenderSettings& settings)
 {
 	/*
 	 * Init specialized render module
@@ -24,7 +24,7 @@ void RenderModule::InitModule ()
 	*/
 
 	for (RenderPassI* renderPass : _renderPasses) {
-		renderPass->Init ();
+		renderPass->Init (settings);
 	}
 
 	/*
@@ -34,15 +34,29 @@ void RenderModule::InitModule ()
 	_rvc = new RenderVolumeCollection ();
 }
 
-void RenderModule::RenderScene (const Scene* scene, const Camera* camera)
+RenderProduct RenderModule::RenderScene (const Scene* scene, const Camera* camera, const RenderSettings& settings)
 {
+	/*
+	 * Create render product
+	*/
+
+	RenderProduct product;
+
 	/*
 	 * Iterate on every pass on associated order to draw scene
 	*/
 
 	for (RenderPassI* renderPass : _renderPasses) {
-		_rvc = renderPass->Execute (scene, camera, _rvc);
+		_rvc = renderPass->Execute (scene, camera, settings, _rvc);
 	}
+
+	/*
+	 * Initialize render product
+	*/
+
+	product.resultVolume = _rvc->GetRenderVolume ("LightAccumulationVolume");
+
+	return product;
 }
 
 void RenderModule::ClearModule ()

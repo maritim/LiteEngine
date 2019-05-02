@@ -6,11 +6,13 @@
 class ForwardRenderPass : public RenderPassI
 {
 public:
-	virtual void Init ();
-	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	virtual void Init (const RenderSettings& settings);
+	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void Clear ();
 protected:
+	void StartForwardPass (RenderVolumeCollection* rvc);
 	void ForwardPass (const Scene*);
 };
 

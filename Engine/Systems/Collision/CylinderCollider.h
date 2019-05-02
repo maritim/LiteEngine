@@ -13,10 +13,10 @@ protected:
 public:
 	CylinderCollider ();
 	CylinderCollider (float radius, float height);
-
-	void Rebuild (Model* mesh, Transform* transform);
 protected:
-	glm::vec3 GetExtents (Model* mesh, Transform* transform);
+	void Rebuild ();
+
+	glm::vec3 GetExtents ();
 };
 
 #endif

@@ -4,7 +4,6 @@
 #include "RenderPasses/DeferredSkyboxRenderPass.h"
 #include "RenderPasses/DeferredBlitRenderPass.h"
 #include "RenderPasses/ForwardRenderPass.h"
-#include "RenderPasses/Editor/EditorRenderPass.h"
 
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/LightMapDirectionalLightContainerRenderSubPass.h"
@@ -20,5 +19,4 @@ void LightMapRenderModule::Init ()
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (new DeferredBlitRenderPass ());
 	_renderPasses.push_back (new ForwardRenderPass ());
-	_renderPasses.push_back (new EditorRenderPass ());
 }

@@ -2,8 +2,6 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
-#include "Systems/Window/Window.h"
-
 GBuffer::GBuffer () :
 	MultipleRenderTargetsVolume (GBUFFER_NUM_TEXTURES)
 {
@@ -36,7 +34,7 @@ std::vector<PipelineAttribute> GBuffer::GetCustomAttributes () const
 	deferredTexture2.value.x = 1;
 	deferredTexture3.value.x = 2;
 	deferredTexture4.value.x = 3;
-	screenSize.value = glm::vec3 (Window::GetWidth (), Window::GetHeight (), 0.0f);
+	screenSize.value = glm::vec3 (_size, 0.0f);
 
 	attributes.push_back (deferredTexture1);
 	attributes.push_back (deferredTexture2);

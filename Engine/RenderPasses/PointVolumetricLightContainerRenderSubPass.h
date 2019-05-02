@@ -8,10 +8,11 @@ class PointVolumetricLightContainerRenderSubPass : public VolumetricLightContain
 public:
 	~PointVolumetricLightContainerRenderSubPass ();
 
-	RenderVolumeCollection* Execute (const Scene*, const Camera*, RenderVolumeCollection* );
+	RenderVolumeCollection* Execute (const Scene*, const Camera*, const RenderSettings&, RenderVolumeCollection* );
 protected:
 	bool IsAvailable (const VolumetricLight*) const;
 
+	void StartPointLightPass (RenderVolumeCollection*);
 	void PointLightPass (const Scene*, const Camera*, RenderVolumeCollection*);
 	void EndPointLightPass ();
 

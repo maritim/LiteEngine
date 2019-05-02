@@ -34,6 +34,16 @@ Model3DRenderer::~Model3DRenderer ()
 
 void Model3DRenderer::Attach (Model* model)
 {
+	/*
+	 * Clear current buffer data if exists
+	*/
+
+	Clear ();
+
+	/*
+	 * Create buffer data
+	*/
+
 	for_each_type (ObjectModel*, objModel, *model) {
 		ProcessObjectModel (model, objModel);
 	}

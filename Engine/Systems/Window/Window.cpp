@@ -33,7 +33,7 @@ bool Window::Init ()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	
-	std::size_t windowFlags = SDL_WINDOW_OPENGL | (_fullscreen ? SDL_WINDOW_FULLSCREEN : 0);
+	std::size_t windowFlags = SDL_WINDOW_OPENGL | (_fullscreen ? SDL_WINDOW_FULLSCREEN : 0) | SDL_WINDOW_RESIZABLE;
 
 	_window = SDL_CreateWindow (_title.c_str (), 0, 0, _width, _height, windowFlags);
 
@@ -47,8 +47,6 @@ bool Window::Init ()
 	*/
 
 	_glContext = SDL_GL_CreateContext(_window);
-
-	Window::UpdateCamera ();
 
 	return true;
 }
@@ -64,8 +62,6 @@ void Window::Resize (const glm::ivec2& dimensions)
 	_height = (std::size_t)dimensions.y;
 
 	SDL_SetWindowSize (_window, _width, _height);
-
-	Window::UpdateCamera ();
 }
 
 void Window::Clear ()
@@ -128,13 +124,4 @@ bool Window::InitSettings ()
 	_title = SettingsManager::Instance ()->GetValue<std::string> ("title", "");
 
 	return true;
-}
-
-/*
- * TODO: Rethink this
-*/
-
-void Window::UpdateCamera ()
-{
-	Camera::Main ()->SetAspect (1.0f * _width / _height);
 }

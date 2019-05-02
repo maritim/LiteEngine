@@ -2,38 +2,19 @@
 #define BRIGHTEXTRACTIONCONTAINERRENDERSUBPASS_H
 
 #include "RenderPasses/PostProcess/PostProcessContainerRenderSubPass.h"
-#include "Core/Observer/ObserverI.h"
 
-#include "Systems/Settings/SettingsObserverArgs.h"
-
-class BrightExtractionContainerRenderSubPass : public PostProcessContainerRenderSubPass, public ObserverI<SettingsObserverArgs>
+class BrightExtractionContainerRenderSubPass : public PostProcessContainerRenderSubPass
 {
-protected:
-	bool _enabled;
-	float _threshold;
-	glm::ivec2 _resolution;
-
 public:
-	BrightExtractionContainerRenderSubPass ();
-	~BrightExtractionContainerRenderSubPass ();
-
-	void Init ();
-
-	bool IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const;
-
-	void Notify (Object* sender, const SettingsObserverArgs& args);
-
-	void Clear ();
+	bool IsAvailable (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 protected:
 	std::string GetPostProcessFragmentShaderPath () const;
 	std::string GetPostProcessVolumeName () const;	
-	glm::ivec2 GetPostProcessVolumeResolution () const;
+	glm::ivec2 GetPostProcessVolumeResolution (const RenderSettings& settings) const;
 	PostProcessMapVolume* CreatePostProcessVolume () const;
 
-	std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection* rvc);
-
-	void InitSettings ();
-	void ClearSettings ();
+	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc);
 };
 
 #endif

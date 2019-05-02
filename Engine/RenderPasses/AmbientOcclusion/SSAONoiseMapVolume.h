@@ -3,6 +3,8 @@
 
 #include "Renderer/RenderVolumeI.h"
 
+#include <glm/vec2.hpp>
+
 #include "Renderer/PipelineAttribute.h"
 
 class SSAONoiseMapVolume : public RenderVolumeI
@@ -21,6 +23,8 @@ public:
 	virtual void BindForReading ();
 	virtual void BindForWriting ();
 	virtual std::vector<PipelineAttribute> GetCustomAttributes () const;
+
+	glm::ivec2 GetSize () const;
 
 	virtual void Clear ();
 };

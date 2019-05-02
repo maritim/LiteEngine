@@ -13,10 +13,10 @@ protected:
 public:
 	CapsuleCollider ();
 	CapsuleCollider (float radius, float height);
-
-	void Rebuild (Model* mesh, Transform* transform);
 protected:
-	std::pair<float, float> GetSize (Model* mesh, Transform* transform);
+	void Rebuild ();
+
+	std::pair<float, float> GetSize ();
 };
 
 #endif

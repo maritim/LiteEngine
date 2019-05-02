@@ -16,13 +16,13 @@ LightAccumulationVolume::~LightAccumulationVolume ()
 
 }
 
-bool LightAccumulationVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight, GBuffer* gBuffer)
+bool LightAccumulationVolume::Init (const glm::ivec2& size, GBuffer* gBuffer)
 {
 	/*
 	 * Initialize framebuffer
 	*/
 
-	if (!FrameBuffer2DVolume::Init (bufferWidth, bufferHeight)) {
+	if (!FrameBuffer2DVolume::Init (size)) {
 		return false;
 	}
 

@@ -90,6 +90,11 @@ std::vector<PipelineAttribute> SSAOSamplesVolume::GetCustomAttributes () const
 	return attributes;
 }
 
+std::size_t SSAOSamplesVolume::GetSamplesCount () const
+{
+	return _samples.size ();
+}
+
 void SSAOSamplesVolume::Clear ()
 {
 	_samples.clear ();

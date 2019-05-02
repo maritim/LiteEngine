@@ -21,6 +21,7 @@ private:
 	Light* GetLight (TiXmlElement* xmlElem);
 
 	void ProcessColor (TiXmlElement* xmlElem, Light* light);
+	void ProcessIntensity (TiXmlElement* xmlElem, Light* light);
 	void ProcessShadows (TiXmlElement* xmlElem, Light* light);
 
 	void ProcessPointLight (TiXmlElement* xmlElem, Light* light);

@@ -102,7 +102,7 @@ void Pipeline::SendCamera (const Camera* camera)
 	_viewMatrix =  glm::translate (_viewMatrix, _cameraPosition * -1.0f);
 }
 
-void Pipeline::SetObjectTransform (Transform* transform)
+void Pipeline::SetObjectTransform (const Transform* transform)
 {
 	glm::vec3 position = transform->GetPosition ();
 	glm::vec3 scalev = transform->GetScale ();

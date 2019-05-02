@@ -2,38 +2,32 @@
 #define SSAONOISESGENERATIONCONTAINERRENDERSUBPASS_H
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
-#include "Core/Observer/ObserverI.h"
 
 #include "SSAONoiseMapVolume.h"
 
-#include "Systems/Settings/SettingsObserverArgs.h"
-
 #define SSAO_NOISE_NOT_INIT 352
 
-class SSAONoiseGenerationContainerRenderSubPass : public ContainerRenderSubPassI, public ObserverI<SettingsObserverArgs>
+class SSAONoiseGenerationContainerRenderSubPass : public ContainerRenderSubPassI
 {
 protected:
-	bool _enabled;
-	glm::vec2 _ssaoNoiseMapResolution;
 	SSAONoiseMapVolume* _ssaoNoiseMapVolume;
 
 public:
 	SSAONoiseGenerationContainerRenderSubPass ();
 	~SSAONoiseGenerationContainerRenderSubPass ();
 
-	void Init ();
-	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	void Init (const RenderSettings& settings);
+	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
-	bool IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const;
-
-	void Notify (Object* sender, const SettingsObserverArgs& args);
+	bool IsAvailable (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 
 	void Clear ();
 protected:
-	void InitSettings ();
-	void ClearSettings ();
+	void InitNoiseMapVolume (const RenderSettings& settings);
 
-	void InitNoiseMapVolume ();
+	void UpdateNoiseMapVolume (const RenderSettings& settings);
 };
 
 #endif

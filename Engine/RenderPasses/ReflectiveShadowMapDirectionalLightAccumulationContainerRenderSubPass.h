@@ -22,8 +22,9 @@ public:
 	ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass ();
 	virtual ~ReflectiveShadowMapDirectionalLightAccumulationContainerRenderSubPass ();
 
-	void Init ();
-	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	void Init (const RenderSettings& settings);
+	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	bool IsAvailable (const VolumetricLight*) const;
 

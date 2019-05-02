@@ -8,10 +8,7 @@
 
 #include "Renderer/Pipeline.h"
 
-#include "Systems/Window/Window.h"
-
 DeferredAmbientLightContainerRenderSubPass::DeferredAmbientLightContainerRenderSubPass () :
-	_aoEnabled (false),
 	_shaderName ("AMBIENT_LIGHT"),
 	_aoShaderName ("AMBIENT_OCCLUSION_AMBIENT_LIGHT")
 {
@@ -23,7 +20,7 @@ DeferredAmbientLightContainerRenderSubPass::~DeferredAmbientLightContainerRender
 
 }
 
-void DeferredAmbientLightContainerRenderSubPass::Init ()
+void DeferredAmbientLightContainerRenderSubPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Shader for ambient light without ambient occlusion
@@ -40,15 +37,10 @@ void DeferredAmbientLightContainerRenderSubPass::Init ()
 	ShaderManager::Instance ()->AddShader (_aoShaderName,
 		"Assets/Shaders/PostProcess/postProcessVertex.glsl",
 		"Assets/Shaders/deferredAmbientOcclusionAmbientLightFragment.glsl");
-
-	/*
-	 * Initialize
-	*/
-
-	InitSettings ();
 }
 
-bool DeferredAmbientLightContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
+bool DeferredAmbientLightContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Always available
@@ -57,32 +49,20 @@ bool DeferredAmbientLightContainerRenderSubPass::IsAvailable (const Scene* scene
 	return true;
 }
 
-void DeferredAmbientLightContainerRenderSubPass::Notify (Object* sender, const SettingsObserverArgs& args)
-{
-	std::string name = args.GetName ();
-
-	/*
-	 * Update ambient occlusion availability
-	*/
-
-	if (name == "ambient_occlusion") {
-		_aoEnabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", _aoEnabled);
-	}
-}
-
-RenderVolumeCollection* DeferredAmbientLightContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* DeferredAmbientLightContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Start ambient light pass
 	*/
 
-	StartAmbientLightPass (rvc);
+	StartAmbientLightPass (settings, rvc);
 
 	/*
 	 * Render ambient light
 	*/
 
-	AmbientLightPass (scene, camera, rvc);
+	AmbientLightPass (scene, camera, settings, rvc);
 
 	/*
 	 * End directional light pass
@@ -96,19 +76,17 @@ RenderVolumeCollection* DeferredAmbientLightContainerRenderSubPass::Execute (con
 void DeferredAmbientLightContainerRenderSubPass::Clear ()
 {
 	/*
-	 * Clear settings
+	 * Do nothing
 	*/
-
-	ClearSettings ();
 }
 
-void DeferredAmbientLightContainerRenderSubPass::StartAmbientLightPass (RenderVolumeCollection* rvc)
+void DeferredAmbientLightContainerRenderSubPass::StartAmbientLightPass (const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Lock ambient light shader
 	*/
 
-	LockShader ();
+	LockShader (settings);
 
 	/*
 	 * Bind light accumulation framebuffer for writing
@@ -119,7 +97,8 @@ void DeferredAmbientLightContainerRenderSubPass::StartAmbientLightPass (RenderVo
 	lightAccumulationVolume->BindForWriting ();
 }
 
-void DeferredAmbientLightContainerRenderSubPass::AmbientLightPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+void DeferredAmbientLightContainerRenderSubPass::AmbientLightPass (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Bind all render volumes
@@ -139,7 +118,14 @@ void DeferredAmbientLightContainerRenderSubPass::AmbientLightPass (const Scene* 
 	 * Set viewport
 	*/
 
-	GL::Viewport (0, 0, Window::GetWidth (), Window::GetHeight ());
+	GL::Viewport (settings.viewport.x, settings.viewport.y,
+		settings.viewport.width, settings.viewport.height);
+
+	/*
+	 * Disable depth test
+	*/
+
+	GL::Disable (GL_DEPTH_TEST);
 
 	/*
 	 * Blend between point lights with same weight.
@@ -171,13 +157,13 @@ void DeferredAmbientLightContainerRenderSubPass::EndAmbientLightPass ()
 	Pipeline::UnlockShader ();
 }
 
-void DeferredAmbientLightContainerRenderSubPass::LockShader ()
+void DeferredAmbientLightContainerRenderSubPass::LockShader (const RenderSettings& settings)
 {
 	/*
 	 * Lock shader without ambient occlusion
 	*/
 
-	if (_aoEnabled == false) {
+	if (settings.ssao_enabled == false) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
 	}
 
@@ -185,7 +171,7 @@ void DeferredAmbientLightContainerRenderSubPass::LockShader ()
 	 * Lock shader with ambient occlusion
 	*/
 
-	if (_aoEnabled == true) {
+	if (settings.ssao_enabled == true) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_aoShaderName));
 	}
 }
@@ -219,28 +205,4 @@ std::vector<PipelineAttribute> DeferredAmbientLightContainerRenderSubPass::GetCu
 	attributes.push_back (ambientLightColor);
 
 	return attributes;
-}
-
-void DeferredAmbientLightContainerRenderSubPass::InitSettings ()
-{
-	/*
-	 * Initialize ambient occlusion availability
-	*/
-
-	_aoEnabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", _aoEnabled);
-
-	/*
-	 * Attach to settings manager
-	*/
-
-	SettingsManager::Instance ()->Attach ("ambient_occlusion", this);
-}
-
-void DeferredAmbientLightContainerRenderSubPass::ClearSettings ()
-{
-	/*
-	 * Detach
-	*/
-
-	SettingsManager::Instance ()->Detach ("ambient_occlusion", this);
 }

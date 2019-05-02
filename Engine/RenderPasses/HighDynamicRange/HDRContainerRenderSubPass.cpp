@@ -1,79 +1,13 @@
 #include "HDRContainerRenderSubPass.h"
 
-#include "Systems/Window/Window.h"
-#include "Systems/Settings/SettingsManager.h"
-
-HDRContainerRenderSubPass::HDRContainerRenderSubPass () :
-	PostProcessContainerRenderSubPass (),
-	_enabled (false),
-	_exposure (0.0f)
-{
-
-}
-
-HDRContainerRenderSubPass::~HDRContainerRenderSubPass ()
-{
-
-}
-
-void HDRContainerRenderSubPass::Init ()
-{
-	/*
-	 * Initialize high dynamic range settings
-	*/
-
-	InitSettings ();
-
-	/*
-	 *
-	*/
-
-	PostProcessContainerRenderSubPass::Init ();
-}
-
-bool HDRContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
+bool HDRContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Check if high dynamic range is enabled
 	*/
 
-	return _enabled;
-}
-
-void HDRContainerRenderSubPass::Notify (Object* sender, const SettingsObserverArgs& args)
-{
-	std::string name = args.GetName ();
-
-	/*
-	 * Update high dynamic range availability
-	*/
-
-	if (name == "high_dynamic_range") {
-		_enabled = SettingsManager::Instance ()->GetValue<bool> ("high_dynamic_range", _enabled);
-	}
-
-	/*
-	 * Update high dynamic range exposure
-	*/
-
-	if (name == "hdr_exposure") {
-		_exposure = SettingsManager::Instance ()->GetValue<float> ("hdr_exposure", _exposure);
-	}
-}
-
-void HDRContainerRenderSubPass::Clear ()
-{
-	/*
-	 *
-	*/
-
-	PostProcessContainerRenderSubPass::Clear ();
-
-	/*
-	 * Clear settings
-	*/
-
-	ClearSettings ();
+	return settings.hdr_enabled;
 }
 
 std::string HDRContainerRenderSubPass::GetPostProcessFragmentShaderPath () const
@@ -86,9 +20,9 @@ std::string HDRContainerRenderSubPass::GetPostProcessVolumeName () const
 	return "PostProcessMapVolume";
 }
 
-glm::ivec2 HDRContainerRenderSubPass::GetPostProcessVolumeResolution () const
+glm::ivec2 HDRContainerRenderSubPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	return glm::ivec2 (Window::GetWidth (), Window::GetHeight ());
+	return glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height);
 }
 
 PostProcessMapVolume* HDRContainerRenderSubPass::CreatePostProcessVolume () const
@@ -98,13 +32,13 @@ PostProcessMapVolume* HDRContainerRenderSubPass::CreatePostProcessVolume () cons
 	return volume;
 }
 
-std::vector<PipelineAttribute> HDRContainerRenderSubPass::GetCustomAttributes (RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> HDRContainerRenderSubPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach post process volume attributes to pipeline
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessContainerRenderSubPass::GetCustomAttributes (rvc);
+	std::vector<PipelineAttribute> attributes = PostProcessContainerRenderSubPass::GetCustomAttributes (settings, rvc);
 
 	/*
 	 * Attach high dynamic range attributes to pipeline
@@ -116,41 +50,9 @@ std::vector<PipelineAttribute> HDRContainerRenderSubPass::GetCustomAttributes (R
 
 	exposure.name = "exposure";
 
-	exposure.value.x = _exposure;
+	exposure.value.x = settings.hdr_exposure;
 
 	attributes.push_back (exposure);
 
 	return attributes;
-}
-
-void HDRContainerRenderSubPass::InitSettings ()
-{
-	/*
-	 * Initialize high dynamic range availability
-	*/
-
-	_enabled = SettingsManager::Instance ()->GetValue<bool> ("high_dynamic_range", _enabled);
-
-	/*
-	 * Initialize high dynamic range exposure
-	*/
-
-	_exposure = SettingsManager::Instance ()->GetValue<float> ("hdr_exposure", _exposure);
-
-	/*
-	 * Attach to settings manager
-	*/
-
-	SettingsManager::Instance ()->Attach ("high_dynamic_range", this);
-	SettingsManager::Instance ()->Attach ("hdr_exposure", this);
-}
-
-void HDRContainerRenderSubPass::ClearSettings ()
-{
-	/*
-	 * Detach
-	*/
-
-	SettingsManager::Instance ()->Detach ("high_dynamic_range", this);
-	SettingsManager::Instance ()->Detach ("hdr_exposure", this);
 }

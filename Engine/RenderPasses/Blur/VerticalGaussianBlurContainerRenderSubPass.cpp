@@ -19,13 +19,13 @@ PostProcessMapVolume* VerticalGaussianBlurContainerRenderSubPass::CreatePostProc
 	return blurMapVolume;
 }
 
-std::vector<PipelineAttribute> VerticalGaussianBlurContainerRenderSubPass::GetCustomAttributes (RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> VerticalGaussianBlurContainerRenderSubPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach post process volume attributes to pipeline
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessContainerRenderSubPass::GetCustomAttributes (rvc);
+	std::vector<PipelineAttribute> attributes = PostProcessContainerRenderSubPass::GetCustomAttributes (settings, rvc);
 
 	/*
 	 * Attach vertical gaussian blur attributes to pipeline
@@ -37,7 +37,7 @@ std::vector<PipelineAttribute> VerticalGaussianBlurContainerRenderSubPass::GetCu
 
 	blurMapResolution.name = "blurMapResolution";
 
-	blurMapResolution.value = glm::vec3 (GetPostProcessVolumeResolution (), 0.0f);
+	blurMapResolution.value = glm::vec3 (GetPostProcessVolumeResolution (settings), 0.0f);
 
 	attributes.push_back (blurMapResolution);
 

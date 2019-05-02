@@ -11,14 +11,16 @@ class VoxelRadianceInjectionRenderPass : public RenderPassI, public ObserverI<Se
 protected:
 	std::size_t _voxelVolumeSize;
 	bool _continuousVoxelization;
+	bool _ambient;
 
 	bool _firstTime;
 
 public:
 	VoxelRadianceInjectionRenderPass ();
 
-	virtual void Init ();
-	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	virtual void Init (const RenderSettings& settings);
+	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void Notify (Object* sender, const SettingsObserverArgs& args);
 
@@ -27,6 +29,8 @@ protected:
 	void StartRadianceInjectionPass ();
 	void RadianceInjectPass (RenderVolumeCollection*);
 	void EndRadianceInjectionPass ();
+
+	std::vector<PipelineAttribute> GetCustomAttributes () const;
 
 	void InitSettings ();
 	void ClearSettings ();

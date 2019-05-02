@@ -2,6 +2,8 @@
 
 #include <glm/geometric.hpp>
 
+#include "BulletDebugDraw.h"
+
 #include "Systems/Time/Time.h"
 
 /*
@@ -67,6 +69,13 @@ void PhysicsManager::Init ()
 	*/
 
 	_dynamicsWorld->setGravity (btVector3 (0.0f, -GRAVITATIONAL_ACCELERATION, 0.0f));
+
+	/*
+	 * Initialize debug mode
+	*/
+
+	btIDebugDraw* debugDraw = new BulletDebugDraw ();
+	_dynamicsWorld->setDebugDrawer (debugDraw);
 }
 
 void PhysicsManager::AttachRigidbody (btRigidBody* rigidbody)
@@ -137,4 +146,6 @@ void PhysicsManager::Update ()
 	float dt = Time::GetDeltaTime ();
 
 	_dynamicsWorld->stepSimulation (dt);
+
+	_dynamicsWorld->debugDrawWorld ();
 }

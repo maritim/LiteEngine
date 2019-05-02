@@ -20,22 +20,26 @@ public:
 	PostProcessContainerRenderSubPass ();
 	virtual ~PostProcessContainerRenderSubPass ();
 
-	void Init ();
-	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	void Init (const RenderSettings& settings);
+	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void Clear ();
 protected:
 	virtual void StartPostProcessPass ();
-	virtual void PostProcessPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	virtual void PostProcessPass (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 	virtual void EndPostProcessPass ();
 
-	virtual std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection* rvc);
+	virtual std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc);
 
-	virtual void ReinitPostProcessVolume ();
+	virtual void ReinitPostProcessVolume (const RenderSettings& settings);
+
+	virtual void UpdatePostProcessSettings (const RenderSettings& settings);
 
 	virtual std::string GetPostProcessFragmentShaderPath () const = 0;
 	virtual std::string GetPostProcessVolumeName () const = 0;
-	virtual glm::ivec2 GetPostProcessVolumeResolution () const = 0;
+	virtual glm::ivec2 GetPostProcessVolumeResolution (const RenderSettings& settings) const = 0;
 	virtual PostProcessMapVolume* CreatePostProcessVolume () const = 0;
 };
 

@@ -1,6 +1,7 @@
 #include "Intersection.h"
 
 #include <cmath>
+#include <algorithm>
 
 Intersection::Intersection ()
 {

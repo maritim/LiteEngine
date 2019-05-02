@@ -12,6 +12,8 @@ public:
 	static std::string GetExtension(const std::string& filename);
 
 	static std::string FormatFilename (const std::string& filename);
+
+	static std::string Relative (const std::string& filename, const std::string& relatedPath);
 private:
 	// TODO: reimplement this when implement platforming
 	static std::string SwitchSlashesWindows (const std::string& filename);

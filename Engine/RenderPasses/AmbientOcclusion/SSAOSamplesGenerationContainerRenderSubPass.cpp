@@ -5,8 +5,6 @@
 #include "Core/Console/Console.h"
 
 SSAOSamplesGenerationContainerRenderSubPass::SSAOSamplesGenerationContainerRenderSubPass () :
-	_enabled (false),
-	_samplesSize (0),
 	_ssaoSamplesVolume (new SSAOSamplesVolume ())
 {
 
@@ -17,66 +15,35 @@ SSAOSamplesGenerationContainerRenderSubPass::~SSAOSamplesGenerationContainerRend
 	delete _ssaoSamplesVolume;
 }
 
-void SSAOSamplesGenerationContainerRenderSubPass::Init ()
+void SSAOSamplesGenerationContainerRenderSubPass::Init (const RenderSettings& settings)
 {
-	/*
-	 * Initialize screen space ambient occlusion samples settings
-	*/
-
-	InitSettings ();
-
 	/*
 	 * Initialize screen space ambient occlusion samples volume
 	*/
 
-	InitSamplesVolume ();
+	InitSamplesVolume (settings);
 }
 
-RenderVolumeCollection* SSAOSamplesGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* SSAOSamplesGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
+	/*
+	 * Update screen space ambient occlusion samples volume
+	*/
+
+	UpdateSamplesVolume (settings);
+
 	return rvc->Insert ("SSAOSamplesVolume", _ssaoSamplesVolume);
 }
 
-bool SSAOSamplesGenerationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
+bool SSAOSamplesGenerationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Check if screen space ambient occlusion is enabled
 	*/
 
-	return _enabled;
-}
-
-void SSAOSamplesGenerationContainerRenderSubPass::Notify (Object* sender, const SettingsObserverArgs& args)
-{
-	std::string name = args.GetName ();
-
-	/*
-	 * Update screen space ambient occlusion availability
-	*/
-
-	if (name == "ambient_occlusion") {
-		_enabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", _enabled);
-	}
-
-	/*
-	 * Update screen space ambient occlusion samples size
-	*/
-
-	if (name == "ssao_samples") {
-		_samplesSize = SettingsManager::Instance ()->GetValue<int> ("ssao_samples", _samplesSize);
-
-		/*
-		 * Clear sceen space ambient occlusion samples volume
-		*/
-
-		_ssaoSamplesVolume->Clear ();
-
-		/*
-		 * Update screen space ambient occlusion samples volume
-		*/
-
-		InitSamplesVolume ();
-	}
+	return settings.ssao_enabled;
 }
 
 void SSAOSamplesGenerationContainerRenderSubPass::Clear ()
@@ -86,49 +53,29 @@ void SSAOSamplesGenerationContainerRenderSubPass::Clear ()
 	*/
 
 	_ssaoSamplesVolume->Clear ();
-
-	/*
-	 * Clear settings
-	*/
-
-	ClearSettings ();
 }
 
-void SSAOSamplesGenerationContainerRenderSubPass::InitSettings ()
+void SSAOSamplesGenerationContainerRenderSubPass::UpdateSamplesVolume (const RenderSettings& settings)
 {
-	/*
-	 * Initialize screen space ambient occlusion availability
-	*/
+	if (_ssaoSamplesVolume->GetSamplesCount () != settings.ssao_samples) {
 
-	_enabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", _enabled);
+		/*
+		 * Clear screen space ambient occlusion samples volume
+		*/
 
-	/*
-	 * Initialize screen space ambient occlusion samples size
-	*/
+		_ssaoSamplesVolume->Clear ();
 
-	_samplesSize = SettingsManager::Instance ()->GetValue<int> ("ssao_samples", _samplesSize);
+		/*
+		 * Initialize screen space ambient occlusion samples volume
+		*/
 
-	/*
-	 * Attach to settings manager
-	*/
-
-	SettingsManager::Instance ()->Attach ("ambient_occlusion", this);
-	SettingsManager::Instance ()->Attach ("ssao_samples", this);
+		InitSamplesVolume (settings);
+	}
 }
 
-void SSAOSamplesGenerationContainerRenderSubPass::ClearSettings ()
+void SSAOSamplesGenerationContainerRenderSubPass::InitSamplesVolume (const RenderSettings& settings)
 {
-	/*
-	 * Detach
-	*/
-
-	SettingsManager::Instance ()->Detach ("ambient_occlusion", this);
-	SettingsManager::Instance ()->Detach ("ssao_samples", this);
-}
-
-void SSAOSamplesGenerationContainerRenderSubPass::InitSamplesVolume ()
-{
-	if (!_ssaoSamplesVolume->Init (_samplesSize)) {
+	if (!_ssaoSamplesVolume->Init (settings.ssao_samples)) {
 		Console::LogError (std::string () + "Screen space ambient occlusion samples cannot be initialized! " +
 			"It is not possible to continue the process. End now!");
 		exit (SSAO_SAMPLES_NOT_INIT);

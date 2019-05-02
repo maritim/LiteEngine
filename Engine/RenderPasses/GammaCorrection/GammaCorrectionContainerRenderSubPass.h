@@ -2,34 +2,17 @@
 #define GAMMACORRECTIONCONTAINERRENDERSUBPASS_H
 
 #include "RenderPasses/PostProcess/PostProcessContainerRenderSubPass.h"
-#include "Core/Observer/ObserverI.h"
 
-#include "Systems/Settings/SettingsObserverArgs.h"
-
-class GammaCorrectionContainerRenderSubPass : public PostProcessContainerRenderSubPass, public ObserverI<SettingsObserverArgs>
+class GammaCorrectionContainerRenderSubPass : public PostProcessContainerRenderSubPass
 {
-protected:
-	bool _enabled;
-
 public:
-	GammaCorrectionContainerRenderSubPass ();
-	~GammaCorrectionContainerRenderSubPass ();
-
-	void Init ();
-
-	bool IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const;
-
-	void Notify (Object* sender, const SettingsObserverArgs& args);
-
-	void Clear ();
+	bool IsAvailable (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 protected:
 	std::string GetPostProcessFragmentShaderPath () const;
 	std::string GetPostProcessVolumeName () const;	
-	glm::ivec2 GetPostProcessVolumeResolution () const;
+	glm::ivec2 GetPostProcessVolumeResolution (const RenderSettings& settings) const;
 	PostProcessMapVolume* CreatePostProcessVolume () const;
-
-	void InitSettings ();
-	void ClearSettings ();
 };
 
 #endif

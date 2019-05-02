@@ -12,10 +12,10 @@ protected:
 
 public:
 	~MeshCollider ();
-
-	void Rebuild (Model* mesh, Transform* transform);
 protected:
-	btTriangleMesh* GetTriangleMesh (Model* mesh, Transform* transform);
+	void Rebuild ();
+
+	btTriangleMesh* GetTriangleMesh ();
 
 	void DestroyTriangleMesh ();
 };

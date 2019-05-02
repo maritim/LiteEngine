@@ -19,8 +19,6 @@ public:
 	void Update ();
 
 	~GameObject ();
-protected:
-	void DestroyCurrentMesh ();
 };
 
 #endif

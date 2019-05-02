@@ -33,7 +33,7 @@ VoxelDirectionalShadowMapRenderPass::~VoxelDirectionalShadowMapRenderPass ()
 	delete _voxelShadowMapVolume;
 }
 
-void VoxelDirectionalShadowMapRenderPass::Init ()
+void VoxelDirectionalShadowMapRenderPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Shader for static objects
@@ -68,7 +68,8 @@ void VoxelDirectionalShadowMapRenderPass::Init ()
 	}
 }
 
-RenderVolumeCollection* VoxelDirectionalShadowMapRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelDirectionalShadowMapRenderPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	if (_firstTime || _continuousVoxelization) {
 

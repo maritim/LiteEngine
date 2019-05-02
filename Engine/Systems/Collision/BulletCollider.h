@@ -14,18 +14,25 @@ class BulletCollider : public Object
 protected:
 	btCollisionShape* _collisionShape;
 	glm::vec3 _offset;
+	Model* _mesh;
+
+	bool _isDirty;
 
 public:
 	BulletCollider ();
 	virtual ~BulletCollider ();
 
-	virtual void Rebuild (Model* mesh, Transform* transform) = 0;
-
+	void SetMesh (Model* model);
 	void SetOffset (const glm::vec3& offset);
+	void SetDirty (bool isDirty);
 
 	btCollisionShape* GetCollisionShape () const;
 	glm::vec3 GetOffset () const;
+	Model* GetMesh () const;
+	bool IsDirty () const;
 protected:
+	virtual void Rebuild () = 0;
+
 	void DestroyCollisionShape ();
 };
 

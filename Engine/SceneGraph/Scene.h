@@ -39,7 +39,8 @@ public:
 	void AttachObject (SceneObject*);
 	void DetachObject (SceneObject*);
 
-	SceneObject* GetObject (const std::string& name);
+	SceneObject* GetObject (const std::string& name) const;
+	SceneObject* GetObject (std::size_t index) const;
 
 	std::size_t GetObjectsCount () const;	
 	AABBVolume* GetBoundingBox () const;

@@ -1,8 +1,5 @@
 #include "SphereCollider.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <algorithm>
-
 SphereCollider::SphereCollider () :
 	_isGenerated (true)
 {
@@ -19,17 +16,23 @@ SphereCollider::SphereCollider (float radius) :
 	_collisionShape = new btSphereShape (radius);
 }
 
-void SphereCollider::Rebuild (Model* mesh, Transform* transform)
+void SphereCollider::Rebuild ()
 {
-	if (!_isGenerated) {
+	if (!_isGenerated || _mesh == nullptr) {
 		return;
 	}
+
+	/*
+	 * Destroy current collision shape if exists
+	*/
+
+	DestroyCollisionShape ();
 
 	/*
 	 * Compute the bounding sphere radius of the mesh
 	*/
 
-	float radius = GetRadius (mesh, transform);
+	float radius = GetRadius ();
 
 	/*
 	 * Bullet sphere shape is created based on radius
@@ -38,50 +41,28 @@ void SphereCollider::Rebuild (Model* mesh, Transform* transform)
 	_collisionShape = new btSphereShape (radius);
 }
 
-float SphereCollider::GetRadius (Model* mesh, Transform* transform)
+float SphereCollider::GetRadius ()
 {
-	float radius = 0.0f;
-
 	/*
-	 * Calculate model matrix
+	 * Get mesh bounding box
 	*/
 
-	glm::vec3 position = transform->GetPosition ();
-	glm::vec3 scalev = transform->GetScale ();
-
-	glm::mat4 translate = glm::translate (glm::mat4 (1.f), glm::vec3 (position.x, position.y, position.z));
-	glm::mat4 scale = glm::scale (glm::mat4 (1.f), glm::vec3 (scalev.x, scalev.y, scalev.z));
-
-	glm::mat4 modelMatrix = translate * scale;
+	BoundingBox* boundingBox = _mesh->GetBoundingBox ();
 
 	/*
-	 * Compute object center
+	 * Compute mesh extents according to its world position
 	*/
 
-	glm::vec3 center = position;
+	glm::vec3 minVertex = glm::vec3 (boundingBox->xmin, boundingBox->ymin, boundingBox->zmin);
+	glm::vec3 maxVertex = glm::vec3 (boundingBox->xmax, boundingBox->ymax, boundingBox->zmax);
+
+	glm::vec3 extents = maxVertex - minVertex;
 
 	/*
-	 * Iterate over all vertices and compute radius
-	 * according to object transform
+	 * Compute sphere height according to its actual size
 	*/
 
-	for_each_type (ObjectModel*, objModel, *mesh) {
-		for (PolygonGroup* polyGroup : *objModel) {
-			for (Polygon* polygon : *polyGroup) {
-				for(std::size_t vertexIndex=0;vertexIndex<polygon->VertexCount();vertexIndex++) {
-					glm::vec3 vertex = mesh->GetVertex (polygon->GetVertex (vertexIndex));
-
-					vertex = glm::vec3 (modelMatrix * glm::vec4 (vertex, 1));
-
-					float vertexDistance = glm::distance (
-						glm::vec2 (center.x, center.z),
-						glm::vec2 (vertex.x, vertex.z)
-					);
-					radius = std::max (radius, vertexDistance);
-				}
-			}
-		}
-	}
+	float radius = glm::length (extents / 2.0f);
 
 	return radius;
 }

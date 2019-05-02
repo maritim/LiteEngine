@@ -1,6 +1,5 @@
 #include "ReflectiveShadowMapDirectionalLightVolume.h"
 
-#include "Systems/Window/Window.h"
 #include "Renderer/Pipeline.h"
 #include "Core/Console/Console.h"
 
@@ -66,7 +65,7 @@ bool ReflectiveShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels
 	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
 		_shadowMapBuffers [index] = new ReflectiveShadowMapBuffer();
 
-		if (_shadowMapBuffers [index]->Init (_shadowMapResolutions [index].first, _shadowMapResolutions [index].second) == false) {
+		if (_shadowMapBuffers [index]->Init (glm::ivec2 (_shadowMapResolutions [index].first, _shadowMapResolutions [index].second)) == false) {
 			return false;
 		}
 	}

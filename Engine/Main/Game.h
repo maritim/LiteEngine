@@ -3,11 +3,14 @@
 
 #include "Core/Singleton/Singleton.h"
 
+#include "GameModule.h"
+
 class Game : public Singleton<Game>
 {
 	friend Singleton<Game>;
 
 private:
+	GameModule* _gameModule;
 
 public:
 	void Start ();
@@ -19,6 +22,8 @@ private:
 
 	void UpdateScene ();
 	void DisplayScene ();
+
+	void LoadGameModule ();
 };
 
 #endif

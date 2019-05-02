@@ -22,11 +22,12 @@ protected:
 public:
 	~ContainerRenderPass ();
 
-	void Init ();
+	void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, 
-		RenderVolumeCollection* rvc);
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
-	bool IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const;
+	bool IsAvailable (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 
 	void Clear ();
 
@@ -37,7 +38,7 @@ protected:
 		ContainerRenderVolumeCollectionI* containerRenderVolumeCollection);
 
 	RenderVolumeCollection* IterateOverSubPasses (RenderVolumeI*, const Scene*, 
-		const Camera*, RenderVolumeCollection*);
+		const Camera*, const RenderSettings&, RenderVolumeCollection*);
 };
 
 #endif

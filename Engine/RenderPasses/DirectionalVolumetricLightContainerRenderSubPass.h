@@ -8,12 +8,12 @@ class DirectionalVolumetricLightContainerRenderSubPass : public VolumetricLightC
 public:
 	~DirectionalVolumetricLightContainerRenderSubPass ();
 
-	RenderVolumeCollection* Execute (const Scene*, const Camera*, RenderVolumeCollection* );
+	RenderVolumeCollection* Execute (const Scene*, const Camera*, const RenderSettings&, RenderVolumeCollection* );
 protected:
 	bool IsAvailable (const VolumetricLight*) const;
 
 	void StartDirectionalLightPass (RenderVolumeCollection*);
-	void DirectionalLightPass (const Scene*, const Camera*, RenderVolumeCollection*);
+	void DirectionalLightPass (const Scene*, const Camera*, const RenderSettings&, RenderVolumeCollection*);
 	void EndDirectionalLightPass ();
 
 	virtual void LockShader (const VolumetricLight*) = 0;

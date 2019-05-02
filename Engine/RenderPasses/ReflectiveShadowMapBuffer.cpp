@@ -6,13 +6,13 @@ ReflectiveShadowMapBuffer::ReflectiveShadowMapBuffer () :
 
 }
 
-bool ReflectiveShadowMapBuffer::Init (std::size_t screenWidth, std::size_t screenHeight)
+bool ReflectiveShadowMapBuffer::Init (const glm::ivec2& size)
 {
 	/*
 	 * Use default initiator
 	*/
 
-	if (!MultipleRenderTargetsVolume::Init (screenWidth, screenHeight)) {
+	if (!MultipleRenderTargetsVolume::Init (size)) {
 		return false;
 	}
 

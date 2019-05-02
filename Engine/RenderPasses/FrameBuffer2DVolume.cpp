@@ -6,7 +6,8 @@
 
 FrameBuffer2DVolume::FrameBuffer2DVolume () :
 	_colorBuffer (0),
-	_fbo (0)
+	_fbo (0),
+	_size (0)
 {
 
 }
@@ -16,8 +17,14 @@ FrameBuffer2DVolume::~FrameBuffer2DVolume ()
 
 }
 
-bool FrameBuffer2DVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
+bool FrameBuffer2DVolume::Init (const glm::ivec2& size)
 {
+	/*
+	 * Keep framebuffer size
+	*/
+
+	_size = size;
+
 	/*
 	 * Create framebuffer
 	*/
@@ -39,7 +46,7 @@ bool FrameBuffer2DVolume::Init (std::size_t bufferWidth, std::size_t bufferHeigh
 	GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	GL::TexImage2D (GL_TEXTURE_2D, 0, GL_RGB16F, bufferWidth, bufferHeight, 0, GL_RGB, GL_FLOAT, 0);
+	GL::TexImage2D (GL_TEXTURE_2D, 0, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, 0);
 		
 	GL::FramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorBuffer, 0);
 
@@ -117,6 +124,16 @@ void FrameBuffer2DVolume::BindToBlit ()
 	*/
 
 	GL::DrawBuffer (GL_COLOR_ATTACHMENT0);
+}
+
+glm::ivec2 FrameBuffer2DVolume::GetSize () const
+{
+	return _size;
+}
+
+unsigned int FrameBuffer2DVolume::GetColorTextureID () const
+{
+	return _colorBuffer;
 }
 
 void FrameBuffer2DVolume::Clear ()

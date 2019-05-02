@@ -5,8 +5,6 @@
 #include "Core/Console/Console.h"
 
 SSAONoiseGenerationContainerRenderSubPass::SSAONoiseGenerationContainerRenderSubPass () :
-	_enabled (false),
-	_ssaoNoiseMapResolution (0.0f),
 	_ssaoNoiseMapVolume (new SSAONoiseMapVolume ())
 {
 
@@ -17,24 +15,45 @@ SSAONoiseGenerationContainerRenderSubPass::~SSAONoiseGenerationContainerRenderSu
 	delete _ssaoNoiseMapVolume;
 }
 
-void SSAONoiseGenerationContainerRenderSubPass::Init ()
+void SSAONoiseGenerationContainerRenderSubPass::Init (const RenderSettings& settings)
 {
-	/*
-	 *
-	*/
-
-	InitSettings ();
-
 	/*
 	 * Initialize screen space ambient occlusion noise map volume
 	*/
 
-	InitNoiseMapVolume ();
+	InitNoiseMapVolume (settings);
 }
 
-RenderVolumeCollection* SSAONoiseGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* SSAONoiseGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
+	/*
+	 * Update screen space ambient occlusion noise map volume
+	*/
+
+	UpdateNoiseMapVolume (settings);
+
 	return rvc->Insert ("SSAONoiseMapVolume", _ssaoNoiseMapVolume);
+}
+
+void SSAONoiseGenerationContainerRenderSubPass::UpdateNoiseMapVolume (const RenderSettings& settings)
+{
+	glm::ivec2 noiseMapResolution = glm::ivec2 (settings.ssao_noise_size);
+
+	if (noiseMapResolution != _ssaoNoiseMapVolume->GetSize ()) {
+
+		/*
+		 * Clear screen space ambient occlusion noise map volume
+		*/
+
+		_ssaoNoiseMapVolume->Clear ();
+
+		/*
+		 * Initialize screen space ambient occlusion noise map volume
+		*/
+
+		InitNoiseMapVolume (settings);
+	}
 }
 
 void SSAONoiseGenerationContainerRenderSubPass::Clear ()
@@ -44,91 +63,21 @@ void SSAONoiseGenerationContainerRenderSubPass::Clear ()
 	*/
 
 	_ssaoNoiseMapVolume->Clear ();
-
-	/*
-	 * Clear settings
-	*/
-
-	ClearSettings ();
 }
 
-bool SSAONoiseGenerationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
+bool SSAONoiseGenerationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Check if screen space ambient occlusion is enabled
 	*/
 
-	return _enabled;
+	return settings.ssao_enabled;
 }
 
-void SSAONoiseGenerationContainerRenderSubPass::Notify (Object* sender, const SettingsObserverArgs& args)
+void SSAONoiseGenerationContainerRenderSubPass::InitNoiseMapVolume (const RenderSettings& settings)
 {
-	std::string name = args.GetName ();
-
-	/*
-	 * Update screen space ambient occlusion availability
-	*/
-
-	if (name == "ambient_occlusion") {
-		_enabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", _enabled);
-	}
-
-	/*
-	 * Update screen space ambient occlusion noise map resolution
-	*/
-
-	if (name == "ssao_noise_resolution") {
-		_ssaoNoiseMapResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssao_noise_resolution", _ssaoNoiseMapResolution);
-
-		/*
-		 * Clear screen space ambient occlusion noise map volume
-		*/
-
-		_ssaoNoiseMapVolume->Clear ();
-
-		/*
-		 * Update screen space ambient occlusion noise map volume
-		*/
-
-		InitNoiseMapVolume ();
-	}
-}
-
-void SSAONoiseGenerationContainerRenderSubPass::InitSettings ()
-{
-	/*
-	 * Initialize screen space ambient occlusion availability
-	*/
-
-	_enabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", _enabled);
-
-	/*
-	 * Initialize screen space ambient occlusion noise map resolution
-	*/
-
-	_ssaoNoiseMapResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssao_noise_resolution", _ssaoNoiseMapResolution);
-
-	/*
-	 * Attach to settings manager
-	*/
-
-	SettingsManager::Instance ()->Attach ("ambient_occlusion", this);
-	SettingsManager::Instance ()->Attach ("ssao_noise_resolution", this);
-}
-
-void SSAONoiseGenerationContainerRenderSubPass::ClearSettings ()
-{
-	/*
-	 * Detach
-	*/
-
-	SettingsManager::Instance ()->Detach ("ambient_occlusion", this);
-	SettingsManager::Instance ()->Detach ("ssao_noise_resolution", this);
-}
-
-void SSAONoiseGenerationContainerRenderSubPass::InitNoiseMapVolume ()
-{
-	if (!_ssaoNoiseMapVolume->Init (_ssaoNoiseMapResolution.x, _ssaoNoiseMapResolution.y)) {
+	if (!_ssaoNoiseMapVolume->Init (settings.ssao_noise_size, settings.ssao_noise_size)) {
 		Console::LogError (std::string () + "Screen space ambient occlusion samples cannot be initialized! " +
 			"It is not possible to continue the process. End now!");
 		exit (SSAO_NOISE_NOT_INIT);

@@ -11,7 +11,7 @@ DeferredPointLightContainerRenderSubPass::DeferredPointLightContainerRenderSubPa
 
 }
 
-void DeferredPointLightContainerRenderSubPass::Init ()
+void DeferredPointLightContainerRenderSubPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Shader for general directional light with no shadow casting

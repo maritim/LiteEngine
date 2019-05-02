@@ -16,7 +16,7 @@ PostProcessContainerRenderSubPass::~PostProcessContainerRenderSubPass ()
 	delete _postProcessMapVolume;
 }
 
-void PostProcessContainerRenderSubPass::Init ()
+void PostProcessContainerRenderSubPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Initialize post processing shader
@@ -32,9 +32,9 @@ void PostProcessContainerRenderSubPass::Init ()
 
 	_postProcessMapVolume = CreatePostProcessVolume ();
 
-	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution ();
+	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution (settings);
 
-	if (!_postProcessMapVolume->Init (volumeResolution.x, volumeResolution.y)) {
+	if (!_postProcessMapVolume->Init (volumeResolution)) {
 		Console::LogError (std::string () + "Post-process volume cannot be initialized!" +
 			"It is not possible to continue the process. End now!");
 		exit (POST_PROCESS_MAP_VOLUME_NOT_INIT);
@@ -50,8 +50,15 @@ void PostProcessContainerRenderSubPass::Clear ()
 	_postProcessMapVolume->Clear ();
 }
 
-RenderVolumeCollection* PostProcessContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* PostProcessContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
+	/*
+	 * Update settings
+	*/
+
+	UpdatePostProcessSettings (settings);
+
 	/*
 	 * Bind all render volumes
 	*/
@@ -70,7 +77,7 @@ RenderVolumeCollection* PostProcessContainerRenderSubPass::Execute (const Scene*
 	 * Screen space ambient occlusion generation pass
 	*/
 
-	PostProcessPass (scene, camera, rvc);
+	PostProcessPass (scene, camera, settings, rvc);
 
 	/*
 	 * End screen space ambient occlusion generation pass
@@ -90,13 +97,14 @@ void PostProcessContainerRenderSubPass::StartPostProcessPass ()
 	_postProcessMapVolume->BindForWriting ();
 }
 
-void PostProcessContainerRenderSubPass::PostProcessPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+void PostProcessContainerRenderSubPass::PostProcessPass (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Set viewport
 	*/
 
-	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution ();
+	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution (settings);
 
 	GL::Viewport (0, 0, volumeResolution.x, volumeResolution.y);
 
@@ -133,7 +141,7 @@ void PostProcessContainerRenderSubPass::PostProcessPass (const Scene* scene, con
 	 * Send custom uniforms
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes (rvc));
+	Pipeline::SendCustomAttributes ("", GetCustomAttributes (settings, rvc));
 
 	/*
 	 * Draw a screen covering triangle
@@ -151,7 +159,23 @@ void PostProcessContainerRenderSubPass::EndPostProcessPass ()
 	Pipeline::UnlockShader ();
 }
 
-std::vector<PipelineAttribute> PostProcessContainerRenderSubPass::GetCustomAttributes (RenderVolumeCollection* rvc)
+void PostProcessContainerRenderSubPass::UpdatePostProcessSettings (const RenderSettings& settings)
+{
+	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution (settings);
+
+	glm::ivec2 fbSize = _postProcessMapVolume->GetSize ();
+
+	if (volumeResolution != fbSize) {
+
+		/*
+		 * Update post process map volume resolution
+		*/
+
+		ReinitPostProcessVolume (settings);
+	}
+}
+
+std::vector<PipelineAttribute> PostProcessContainerRenderSubPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach all volume attributes to pipeline
@@ -168,7 +192,7 @@ std::vector<PipelineAttribute> PostProcessContainerRenderSubPass::GetCustomAttri
 	return attributes;
 }
 
-void PostProcessContainerRenderSubPass::ReinitPostProcessVolume ()
+void PostProcessContainerRenderSubPass::ReinitPostProcessVolume (const RenderSettings& settings)
 {
 	/*
 	 * Clear current post process volume
@@ -180,9 +204,9 @@ void PostProcessContainerRenderSubPass::ReinitPostProcessVolume ()
 	 * Initialize post process volume
 	*/
 
-	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution ();
+	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution (settings);
 
-	if (!_postProcessMapVolume->Init (volumeResolution.x, volumeResolution.y)) {
+	if (!_postProcessMapVolume->Init (volumeResolution)) {
 		Console::LogError (std::string () + "Post-process volume cannot be initialized!" +
 			"It is not possible to continue the process. End now!");
 		exit (POST_PROCESS_MAP_VOLUME_NOT_INIT);

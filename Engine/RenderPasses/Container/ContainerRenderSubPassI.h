@@ -6,7 +6,8 @@
 class ContainerRenderSubPassI : public RenderPassI
 {
 public:
-	virtual bool IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const = 0;
+	virtual bool IsAvailable (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const = 0;
 };
 
 #endif

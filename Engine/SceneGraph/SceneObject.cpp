@@ -9,6 +9,7 @@ SceneObject::SceneObject () :
 	_renderer (new Renderer (_transform)),
 	_rigidbody (new Rigidbody (_transform)),
 	_collider (nullptr),
+	_audioSource (new AudioSource (_transform)),
 	_sceneLayers ((int) SceneLayer::STATIC),
 	_isActive (true)
 {
@@ -45,6 +46,11 @@ Rigidbody* SceneObject::GetRigidbody () const
 Collider* SceneObject::GetCollider () const
 {
 	return _collider;
+}
+
+AudioSource* SceneObject::GetAudioSource () const
+{
+	return _audioSource;
 }
 
 int SceneObject::GetLayers() const
@@ -88,10 +94,10 @@ void SceneObject::SetActive (bool isActive)
 
 void SceneObject::OnAttachedToScene ()
 {
-
+	_rigidbody->OnAttachedToScene ();
 }
 
 void SceneObject::OnDetachedFromScene ()
 {
-
+	_rigidbody->OnDetachedFromScene ();
 }

@@ -9,6 +9,7 @@
 #include "Renderer/Renderer.h"
 #include "Systems/Physics/Rigidbody.h"
 #include "Systems/Collision/Collider.h"
+#include "Audio/AudioSource.h"
 
 class SceneObject : public Object
 {
@@ -19,6 +20,7 @@ protected:
 	Renderer* _renderer;
 	Rigidbody* _rigidbody;
 	Collider* _collider;
+	AudioSource* _audioSource;
 	int _sceneLayers;
 	bool _isActive;
 
@@ -37,6 +39,7 @@ public:
 	Renderer* GetRenderer () const;
 	Rigidbody* GetRigidbody () const;
 	Collider* GetCollider () const;
+	AudioSource* GetAudioSource () const;
 	int GetLayers () const;
 
 	virtual void Update () = 0;

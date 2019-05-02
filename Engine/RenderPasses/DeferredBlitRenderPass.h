@@ -10,12 +10,14 @@ class DeferredBlitRenderPass : public RenderPassI
 public:
 	virtual ~DeferredBlitRenderPass ();
 
-	virtual void Init ();
-	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	virtual void Init (const RenderSettings& settings);
+	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void Clear ();
 protected:
-	void EndDrawing (FrameBuffer2DVolume* frameBufferVolume, FrameBuffer2DVolume* depthBufferVolume);
+	void EndDrawing (FrameBuffer2DVolume* frameBufferVolume, FrameBuffer2DVolume* resultFramebuffer,
+		const RenderSettings& settings);
 };
 
 #endif

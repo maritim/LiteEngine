@@ -7,8 +7,11 @@
 
 #include "RenderPassI.h"
 
+#include "RenderProduct.h"
+
 #include "SceneGraph/Scene.h"
 #include "Systems/Camera/Camera.h"
+#include "RenderSettings.h"
 
 class RenderModule : public Object
 {
@@ -20,8 +23,8 @@ public:
 	RenderModule ();
 	virtual ~RenderModule ();
 
-	virtual void InitModule ();
-	virtual void RenderScene (const Scene*, const Camera*);
+	virtual void InitModule (const RenderSettings&);
+	virtual RenderProduct RenderScene (const Scene*, const Camera*, const RenderSettings&);
 
 	virtual void ClearModule ();
 protected:

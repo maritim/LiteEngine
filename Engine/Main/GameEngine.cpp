@@ -4,8 +4,10 @@
 #include "Systems/Window/Window.h"
 #include "Systems/Screen/Screen.h"
 #include "Systems/Input/Input.h"
+#include "Systems/Cursor/Cursor.h"
 #include "Systems/Time/Time.h"
 #include "Systems/Physics/Physics.h"
+#include "Systems/GUI/GUI.h"
 
 #include "Managers/ShaderManager.h"
 #include "Managers/SceneManager.h"
@@ -20,8 +22,7 @@
 // #include "Debug/Debugger.h"
 
 #include "Modules/SDLModule.h"
-
-#include "Editor/Editor.h"
+#include "Modules/OpenALModule.h"
 
 #define ENGINE_SETTINGS_PATH "Assets/LiteEngine.ini"
 
@@ -34,6 +35,7 @@ void GameEngine::Init ()
 	InitSettings ();
 
 	SDLModule::Init ();
+	OpenALModule::Init ();
 
 	Window::Init ();
 
@@ -43,11 +45,12 @@ void GameEngine::Init ()
 
 	Input::Init ();
 
+	Cursor::Init ();
+
 	Physics::Init ();
 
-	Editor::Init ();
+	GUI::Init ();
 
-	InitRenderer ();
 	InitScene ();
 }
 
@@ -57,10 +60,13 @@ void GameEngine::Clear ()
 	SceneManager::Instance()->Clear();
 	RenderManager::Instance()->Clear();
 
-	Editor::Clear ();
+	GUI::Clear ();
+
+	Cursor::Clear ();
 
 	Window::Close ();
 
+	OpenALModule::Quit ();
 	SDLModule::Quit ();
 }
 
@@ -109,19 +115,6 @@ void GameEngine::InitOpenGL ()
 	} else {
 		Console::LogError ("OpenGL 4.5 not supported");
 	}
-}
-
-void GameEngine::InitRenderer ()
-{
-	RenderManager::Instance ()->Init ();
-
-	Argument* arg = ArgumentsAnalyzer::Instance ()->GetArgument ("rendermode");
-
-	if (arg == nullptr) {
-		return;
-	}
-
-	RenderManager::Instance ()->SetRenderMode ((RenderMode) std::stoi (arg->GetArgs () [0]));
 }
 
 void GameEngine::InitScene ()

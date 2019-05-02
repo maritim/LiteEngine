@@ -57,6 +57,17 @@ std::string FileSystem::FormatFilename (const std::string& filename)
 	return formated;
 }
 
+std::string FileSystem::Relative (const std::string& filename, const std::string& relatedPath)
+{
+	std::string formated = filename;
+
+	Extensions::StringExtend::Replace (formated, relatedPath, "");
+
+	Extensions::StringExtend::Trim (formated, '/');
+
+	return formated;
+}
+
 // TODO: Implement this
 std::string FileSystem::SwitchSlashesWindows (const std::string& filename)
 {

@@ -1,7 +1,6 @@
 #include "AnimationModel3DRenderer.h"
 
 #include <glm/vec3.hpp>
-#include <glm/gtx/transform.hpp>
 #include <vector>
 
 #include "Renderer/Pipeline.h"

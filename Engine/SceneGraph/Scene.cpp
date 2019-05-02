@@ -62,7 +62,7 @@ void Scene::DetachObject (SceneObject* object)
 	// TODO: Recalculate Bounding Box when detach object
 }
 
-SceneObject* Scene::GetObject (const std::string& name)
+SceneObject* Scene::GetObject (const std::string& name) const
 {
 	for (SceneObject* sceneObject : *this) {
 		if (sceneObject->GetName () == name) {
@@ -73,6 +73,18 @@ SceneObject* Scene::GetObject (const std::string& name)
 	Console::LogError ("There is no object with name " + name + " in scene.");
 
 	return nullptr;
+}
+
+SceneObject* Scene::GetObject (std::size_t index) const
+{
+	if (index >= _sceneObjects.size ()) {
+		Console::LogWarning ("Scene object index exceed objects count for " + _name + ". " +
+			std::to_string (_sceneObjects.size ()) + " < " + std::to_string (index));
+
+		return nullptr;
+	}
+
+	return _sceneObjects [index];
 }
 
 std::size_t Scene::GetObjectsCount () const
@@ -114,9 +126,6 @@ Scene::~Scene ()
 	_sceneObjects.shrink_to_fit ();
 }
 
-#include "Debug/Logger/Logger.h"
-#include <glm/gtx/string_cast.hpp>
-
 void Scene::UpdateBoundingBox (SceneObject* sceneObject)
 {
 	/*
@@ -139,9 +148,6 @@ void Scene::UpdateBoundingBox (SceneObject* sceneObject)
 	volume->maxVertex = glm::vec3 (std::max (volume->maxVertex.x, sceneObjectVolume->maxVertex.x),
 		std::max (volume->maxVertex.y, sceneObjectVolume->maxVertex.y),
 		std::max (volume->maxVertex.z, sceneObjectVolume->maxVertex.z));
-
-	DEBUG_LOG ("Min vertex: " + glm::to_string (volume->minVertex));
-	DEBUG_LOG ("Max vertex: " + glm::to_string (volume->maxVertex));
 }
 
 SceneIterator Scene::begin () const

@@ -4,6 +4,8 @@
 
 #include "Renderer/Pipeline.h"
 
+#include "Lighting/LightsManager.h"
+
 #include "Systems/Settings/SettingsManager.h"
 
 VoxelConeTraceDirectionalLightRenderPass::VoxelConeTraceDirectionalLightRenderPass () :
@@ -13,7 +15,7 @@ VoxelConeTraceDirectionalLightRenderPass::VoxelConeTraceDirectionalLightRenderPa
 
 }
 
-void VoxelConeTraceDirectionalLightRenderPass::Init ()
+void VoxelConeTraceDirectionalLightRenderPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Shader for general directional light with no shadow casting
@@ -71,14 +73,19 @@ std::vector<PipelineAttribute> VoxelConeTraceDirectionalLightRenderPass::GetCust
 {
 	std::vector<PipelineAttribute> attributes;
 
+	PipelineAttribute ambientLightColor;
 	PipelineAttribute indirectIntensity;
 
+	ambientLightColor.type = PipelineAttribute::AttrType::ATTR_3F;
 	indirectIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 
+	ambientLightColor.name = "ambientLightColor";
 	indirectIntensity.name = "indirectIntensity";
 
+	ambientLightColor.value = LightsManager::Instance ()->GetAmbientLightColor ().ToVector3 ();
 	indirectIntensity.value.x = _indirectIntensity;
 
+	attributes.push_back (ambientLightColor);
 	attributes.push_back (indirectIntensity);
 
 	return attributes;

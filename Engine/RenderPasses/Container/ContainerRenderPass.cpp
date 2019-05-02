@@ -26,19 +26,19 @@ ContainerRenderPass::~ContainerRenderPass ()
 	}
 }
 
-void ContainerRenderPass::Init ()
+void ContainerRenderPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Iterate over every sub pass and initialize it
 	*/
 
 	for (auto renderSubPass : _renderSubPasses) {
-		renderSubPass->Init ();
+		renderSubPass->Init (settings);
 	}
 }
 
-RenderVolumeCollection* ContainerRenderPass::Execute (const Scene* scene, 
-	const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* ContainerRenderPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	rvc->StartScope ();
 
@@ -60,13 +60,14 @@ RenderVolumeCollection* ContainerRenderPass::Execute (const Scene* scene,
 		 * Execute all sub passes using provided volume
 		*/
 
-		IterateOverSubPasses (volume, scene, camera, rvc);
+		IterateOverSubPasses (volume, scene, camera, settings, rvc);
 	}
 
 	return rvc->ReleaseScope ();
 }
 
-bool ContainerRenderPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
+bool ContainerRenderPass::IsAvailable (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Always execute container render pass
@@ -95,7 +96,7 @@ ContainerRenderPassBuilder ContainerRenderPass::Builder ()
 
 RenderVolumeCollection* ContainerRenderPass::IterateOverSubPasses (
 	RenderVolumeI* volume, const Scene* scene, const Camera* camera,
-	RenderVolumeCollection* rvc)
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Insert volume in render volume collection
@@ -114,7 +115,7 @@ RenderVolumeCollection* ContainerRenderPass::IterateOverSubPasses (
 		 * Check if sub pass admits current volume
 		*/
 
-		if (!renderSubPass->IsAvailable (scene, camera, rvc)) {
+		if (!renderSubPass->IsAvailable (scene, camera, settings, rvc)) {
 			continue;
 		}
 
@@ -122,7 +123,7 @@ RenderVolumeCollection* ContainerRenderPass::IterateOverSubPasses (
 		 * Execute render sub pass
 		*/
 
-		rvc = renderSubPass->Execute (scene, camera, rvc);
+		rvc = renderSubPass->Execute (scene, camera, settings, rvc);
 	}
 
 	return rvc;

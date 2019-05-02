@@ -28,6 +28,12 @@ public:
 	static void Viewport(GLint x,  GLint y,  GLsizei width,  GLsizei height); 
 
 	/*
+	 * Scissor
+	*/
+
+	static void Scissor(GLint x, GLint y, GLsizei width, GLsizei height);
+
+	/*
 	 * Frame Buffer
 	*/
 

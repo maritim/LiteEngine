@@ -5,11 +5,23 @@
 
 MeshCollider::~MeshCollider ()
 {
+	DestroyCollisionShape ();
+
 	DestroyTriangleMesh ();
 }
 
-void MeshCollider::Rebuild (Model* mesh, Transform* transform)
+void MeshCollider::Rebuild ()
 {
+	if (_mesh == nullptr) {
+		return;
+	}
+
+	/*
+	 * Destroy current collision shape if exists
+	*/
+
+	DestroyCollisionShape ();
+
 	/*
 	 * Destroy current triangle mesh if exists
 	*/
@@ -20,48 +32,26 @@ void MeshCollider::Rebuild (Model* mesh, Transform* transform)
 	 * Compute collision triangle mesh based on object's mesh
 	*/
 
-	_triangleMesh = GetTriangleMesh (mesh, transform);
-
-
-	/*
-	 * Destroy current collision shape if exists
-	*/
-
-	DestroyCollisionShape ();
+	_triangleMesh = GetTriangleMesh ();
 
 	_collisionShape = new btBvhTriangleMeshShape (_triangleMesh, true, true);
 }
 
-btTriangleMesh* MeshCollider::GetTriangleMesh (Model* mesh, Transform* transform)
+btTriangleMesh* MeshCollider::GetTriangleMesh ()
 {
 	btTriangleMesh* triangleMesh = new btTriangleMesh ();
 
 	/*
-	 * Calculate model matrix
-	*/
-
-	glm::vec3 position = transform->GetPosition ();
-	glm::vec3 scalev = transform->GetScale ();
-
-	glm::mat4 translate = glm::translate (glm::mat4 (1.f), glm::vec3 (position.x, position.y, position.z));
-	glm::mat4 scale = glm::scale (glm::mat4 (1.f), glm::vec3 (scalev.x, scalev.y, scalev.z));
-
-	glm::mat4 modelMatrix = translate * scale;
-
-	/*
 	 * Iterate over all vertices and create triangle mesh collider
-	 * according to object transform
 	*/
 
-	for_each_type (ObjectModel*, objModel, *mesh) {
+	for_each_type (ObjectModel*, objModel, *_mesh) {
 		for (PolygonGroup* polyGroup : *objModel) {
 			for (Polygon* polygon : *polyGroup) {
 				btVector3 vertices [3];
 
 				for(std::size_t vertexIndex=0;vertexIndex<polygon->VertexCount();vertexIndex++) {
-					glm::vec3 vertex = mesh->GetVertex (polygon->GetVertex (vertexIndex));
-
-					vertex = glm::vec3 (modelMatrix * glm::vec4 (vertex, 1));
+					glm::vec3 vertex = _mesh->GetVertex (polygon->GetVertex (vertexIndex));
 
 					vertices [vertexIndex].setX (vertex.x);
 					vertices [vertexIndex].setY (vertex.y);

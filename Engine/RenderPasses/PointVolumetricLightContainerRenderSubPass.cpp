@@ -8,15 +8,14 @@ PointVolumetricLightContainerRenderSubPass::~PointVolumetricLightContainerRender
 
 }
 
-RenderVolumeCollection* PointVolumetricLightContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* PointVolumetricLightContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
-	 * Bind all render volumes
+	 * Bind light accumulation volume
 	*/
 
-	for (RenderVolumeI* renderVolume : *rvc) {
-		renderVolume->BindForReading ();
-	}
+	StartPointLightPass (rvc);
 
 	/*
 	 * Draw volumetric lights
@@ -40,6 +39,17 @@ bool PointVolumetricLightContainerRenderSubPass::IsAvailable (const VolumetricLi
 	*/
 
 	return true;
+}
+
+void PointVolumetricLightContainerRenderSubPass::StartPointLightPass (RenderVolumeCollection* rvc)
+{
+	/*
+	 * Bind light accumulation framebuffer for writing
+	*/
+
+	auto lightAccumulationVolume = rvc->GetRenderVolume ("LightAccumulationVolume");
+
+	lightAccumulationVolume->BindForWriting ();
 }
 
 void PointVolumetricLightContainerRenderSubPass::PointLightPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
@@ -132,6 +142,14 @@ void PointVolumetricLightContainerRenderSubPass::PointLightDrawPass (const Scene
 	}
 
 	/*
+	 * Bind light accumulation framebuffer for writing
+	*/
+
+	auto lightAccumulationVolume = rvc->GetRenderVolume ("LightAccumulationVolume");
+
+	lightAccumulationVolume->BindForWriting ();
+
+	/*
 	 * Don't need to write the light on depth buffer.
 	*/
 
@@ -172,5 +190,5 @@ void PointVolumetricLightContainerRenderSubPass::PointLightDrawPass (const Scene
 	 * Draw the volumetric light.
 	*/
 
-	volumetricLight->GetLightRenderer ()->Draw (scene, camera);
+	volumetricLight->GetLightRenderer ()->Draw (scene, camera, rvc);
 }

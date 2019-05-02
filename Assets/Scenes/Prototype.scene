@@ -16,10 +16,6 @@
 		</Transform>
 		<Components>
 			<Component name="FlyCameraController" />
-      <!--<Component name="StatisticsView" />-->
-			<Component name="DebugViewController" />
-			<Component name="EditorGizmosManager" />
-			<Component name="StatsView" />
 		</Components>
 	</GameObject>
 

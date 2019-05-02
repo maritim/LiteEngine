@@ -16,7 +16,7 @@ public:
 	LightAccumulationVolume ();
 	virtual ~LightAccumulationVolume ();
 
-	virtual bool Init (std::size_t screenWidth, std::size_t screenHeight, GBuffer* gBuffer);
+	virtual bool Init (const glm::ivec2& size, GBuffer* gBuffer);
 
 	void BindForReading ();
 	void BindForWriting ();

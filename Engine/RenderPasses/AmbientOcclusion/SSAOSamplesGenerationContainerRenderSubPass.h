@@ -2,36 +2,30 @@
 #define SSAOSAMPLESGENERATIONCONTAINERRENDERSUBPASS_H
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
-#include "Core/Observer/ObserverI.h"
 
 #include "SSAOSamplesVolume.h"
 
-#include "Systems/Settings/SettingsObserverArgs.h"
-
-class SSAOSamplesGenerationContainerRenderSubPass : public ContainerRenderSubPassI, ObserverI<SettingsObserverArgs>
+class SSAOSamplesGenerationContainerRenderSubPass : public ContainerRenderSubPassI
 {
 protected:
-	bool _enabled;
-	std::size_t _samplesSize;
 	SSAOSamplesVolume* _ssaoSamplesVolume;
 
 public:
 	SSAOSamplesGenerationContainerRenderSubPass ();
 	virtual ~SSAOSamplesGenerationContainerRenderSubPass ();
 
-	virtual void Init ();
-	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	virtual void Init (const RenderSettings& settings);
+	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
-	bool IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const;
-
-	void Notify (Object* sender, const SettingsObserverArgs& args);
+	bool IsAvailable (const Scene* scene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 
 	void Clear ();
 protected:
-	void InitSettings ();
-	void ClearSettings ();
+	void UpdateSamplesVolume (const RenderSettings& settings);
 
-	void InitSamplesVolume ();
+	void InitSamplesVolume (const RenderSettings& settings);
 };
 
 #endif

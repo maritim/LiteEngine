@@ -16,7 +16,7 @@ ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::~ReflectiveShadowMap
 	delete _reflectiveShadowMapSamplesVolume;
 }
 
-void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Init ()
+void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Initialize reflective shadow map samples settings
@@ -31,7 +31,8 @@ void ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Init ()
 	InitRSMSamplesVolume ();
 }
 
-RenderVolumeCollection* ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* ReflectiveShadowMapSamplesGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	return rvc->Insert ("ReflectiveShadowMapSamplesVolume", _reflectiveShadowMapSamplesVolume);
 }

@@ -2,120 +2,14 @@
 
 #include "SSRMapVolume.h"
 
-#include "Systems/Settings/SettingsManager.h"
-
-SSRContainerRenderSubPass::SSRContainerRenderSubPass () :
-	_enabled (false),
-	_iterations (0),
-	_roughness (0.0f),
-	_sampleSkip (0.0f),
-	_spatialBias (0.0f),
-	_resolution (0)
-{
-
-}
-
-SSRContainerRenderSubPass::~SSRContainerRenderSubPass ()
-{
-
-}
-
-void SSRContainerRenderSubPass::Init ()
-{
-	/*
-	 * Initialize screen space reflection settings
-	*/
-
-	InitSettings ();
-
-	/*
-	 *
-	*/
-
-	PostProcessContainerRenderSubPass::Init ();
-}
-
-bool SSRContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera, const RenderVolumeCollection* rvc) const
+bool SSRContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Check if screen space reflection is enabled
 	*/
 
-	return _enabled;
-}
-
-void SSRContainerRenderSubPass::Notify (Object* sender, const SettingsObserverArgs& args)
-{
-	std::string name = args.GetName ();
-
-	/*
-	 * Update screen space reflection availability
-	*/
-
-	if (name == "screen_space_reflection") {
-		_enabled = SettingsManager::Instance ()->GetValue<bool> ("screen_space_reflection", _enabled);
-	}
-
-	/*
-	 * Update screen space reflection iterations
-	*/
-
-	if (name == "ssr_iterations") {
-		_iterations = SettingsManager::Instance ()->GetValue<int> ("ssr_iterations", _iterations);
-	}
-
-	/*
-	 * Update screen space reflection roughness
-	*/
-
-	if (name == "ssr_roughness") {
-		_roughness = SettingsManager::Instance ()->GetValue<float> ("ssr_roughness", _roughness);
-	}
-
-	/*
-	 * Update screen space reflection sample skip
-	*/
-
-	if (name == "ssr_sample_skip") {
-		_sampleSkip = SettingsManager::Instance ()->GetValue<float> ("ssr_sample_skip", _sampleSkip);
-	}
-
-	/*
-	 * Update screen space reflection spatial bias
-	*/
-
-	if (name == "ssr_spatial_bias") {
-		_spatialBias = SettingsManager::Instance ()->GetValue<float> ("ssr_spatial_bias", _spatialBias);
-	}
-
-	/*
-	 * Update screen space reflection resolution
-	*/
-
-	if (name == "ssr_resolution") {
-		_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssr_resolution", (glm::vec2) _resolution);
-
-		/*
-		 * Initialize screen space reflection map
-		*/
-
-		ReinitPostProcessVolume ();
-	}
-}
-
-void SSRContainerRenderSubPass::Clear ()
-{
-	/*
-	 *
-	*/
-
-	PostProcessContainerRenderSubPass::Clear ();
-
-	/*
-	 * Clear settings
-	*/
-
-	ClearSettings ();
+	return settings.ssr_enabled;
 }
 
 std::string SSRContainerRenderSubPass::GetPostProcessFragmentShaderPath () const
@@ -128,9 +22,9 @@ std::string SSRContainerRenderSubPass::GetPostProcessVolumeName () const
 	return "SSRMapVolume";
 }
 
-glm::ivec2 SSRContainerRenderSubPass::GetPostProcessVolumeResolution () const
+glm::ivec2 SSRContainerRenderSubPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	return _resolution;
+	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssr_scale);
 }
 
 PostProcessMapVolume* SSRContainerRenderSubPass::CreatePostProcessVolume () const
@@ -140,13 +34,13 @@ PostProcessMapVolume* SSRContainerRenderSubPass::CreatePostProcessVolume () cons
 	return ssrMapVolume;
 }
 
-std::vector<PipelineAttribute> SSRContainerRenderSubPass::GetCustomAttributes (RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> SSRContainerRenderSubPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach post process volume attributes to pipeline
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessContainerRenderSubPass::GetCustomAttributes (rvc);
+	std::vector<PipelineAttribute> attributes = PostProcessContainerRenderSubPass::GetCustomAttributes (settings, rvc);
 
 	/*
 	 * Attach screen space ambient occlusion attributes to pipeline
@@ -170,11 +64,13 @@ std::vector<PipelineAttribute> SSRContainerRenderSubPass::GetCustomAttributes (R
 	ssrSampleSkip.name = "ssrSampleSkip";
 	ssrSpatialBias.name = "ssrSpatialBias";
 
-	ssrResolution.value = glm::vec3 (_resolution, 0.0f);
-	ssrIterations.value.x = _iterations;
-	ssrRoughness.value.x = _roughness;
-	ssrSampleSkip.value.x = _sampleSkip;
-	ssrSpatialBias.value.x = _spatialBias;
+	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssr_scale);
+
+	ssrResolution.value = glm::vec3 (resolution, 0.0f);
+	ssrIterations.value.x = settings.ssr_iterations;
+	ssrRoughness.value.x = settings.ssr_roughness;
+	ssrSampleSkip.value.x = settings.ssr_sample_skip;
+	ssrSpatialBias.value.x = settings.ssr_spatial_bias;
 
 	attributes.push_back (ssrResolution);
 	attributes.push_back (ssrIterations);
@@ -183,68 +79,4 @@ std::vector<PipelineAttribute> SSRContainerRenderSubPass::GetCustomAttributes (R
 	attributes.push_back (ssrSpatialBias);
 
 	return attributes;
-}
-
-void SSRContainerRenderSubPass::InitSettings ()
-{
-	/*
-	 * Initialize screen space reflection availability
-	*/
-
-	_enabled = SettingsManager::Instance ()->GetValue<bool> ("screen_space_reflection", _enabled);
-
-	/*
-	 * Initialize screen space reflection iterations
-	*/
-
-	_iterations = SettingsManager::Instance ()->GetValue<int> ("ssr_iterations", _iterations);
-
-	/*
-	 * Initialize screen space reflection roughness
-	*/
-
-	_roughness = SettingsManager::Instance ()->GetValue<float> ("ssr_roughness", _roughness);
-
-	/*
-	 * Initialize screen space reflection sample skip
-	*/
-
-	_sampleSkip = SettingsManager::Instance ()->GetValue<float> ("ssr_sample_skip", _sampleSkip);
-
-	/*
-	 * Initialize screen space reflection spatial bias
-	*/
-
-	_spatialBias = SettingsManager::Instance ()->GetValue<float> ("ssr_spatial_bias", _spatialBias);
-
-	/*
-	 * Initialize screen space reflection resolution
-	*/
-
-	_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("ssr_resolution", (glm::vec2) _resolution);
-
-	/*
-	 * Attach to settings manager
-	*/
-
-	SettingsManager::Instance ()->Attach ("screen_space_reflection", this);
-	SettingsManager::Instance ()->Attach ("ssr_iterations", this);
-	SettingsManager::Instance ()->Attach ("ssr_roughness", this);
-	SettingsManager::Instance ()->Attach ("ssr_sample_skip", this);
-	SettingsManager::Instance ()->Attach ("ssr_spatial_bias", this);
-	SettingsManager::Instance ()->Attach ("ssr_resolution", this);
-}
-
-void SSRContainerRenderSubPass::ClearSettings ()
-{
-	/*
-	 * Detach
-	*/
-
-	SettingsManager::Instance ()->Detach ("screen_space_reflection", this);
-	SettingsManager::Instance ()->Detach ("ssr_iterations", this);
-	SettingsManager::Instance ()->Detach ("ssr_roughness", this);
-	SettingsManager::Instance ()->Detach ("ssr_sample_skip", this);
-	SettingsManager::Instance ()->Detach ("ssr_spatial_bias", this);
-	SettingsManager::Instance ()->Detach ("ssr_resolution", this);
 }

@@ -33,8 +33,6 @@ public:
 	static void Close ();
 private:
 	static bool InitSettings ();
-
-	static void UpdateCamera ();
 };
 
 #endif

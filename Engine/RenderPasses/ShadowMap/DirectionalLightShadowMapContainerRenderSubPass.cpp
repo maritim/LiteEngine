@@ -33,7 +33,7 @@ DirectionalLightShadowMapContainerRenderSubPass::~DirectionalLightShadowMapConta
 	delete _volume;
 }
 
-void DirectionalLightShadowMapContainerRenderSubPass::Init ()
+void DirectionalLightShadowMapContainerRenderSubPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Shader for animated objects
@@ -64,7 +64,8 @@ void DirectionalLightShadowMapContainerRenderSubPass::Init ()
 	InitShadowMapVolume ();
 }
 
-RenderVolumeCollection* DirectionalLightShadowMapContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* DirectionalLightShadowMapContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Get volumetric light from render volume collection

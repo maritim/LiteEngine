@@ -4,9 +4,9 @@
 
 PerspectiveCamera::PerspectiveCamera () :
 	Camera (),
-	_fieldOfViewAngle (45)
+	_fieldOfViewAngle (0.0f)
 {
-	_aspect = 0.75f;
+	_aspect = 0.0f;
 	_zNear = 0.3f;
 	_zFar = 100.0f;
 }
@@ -18,7 +18,7 @@ float PerspectiveCamera::GetFieldOfView () const
 
 void PerspectiveCamera::SetFieldOfView (float FOV)
 {
-	_fieldOfViewAngle = FOV;
+	_fieldOfViewAngle = FOV * 3.14 / 180;
 }
 
 FrustumVolume* PerspectiveCamera::GetFrustumVolume () const

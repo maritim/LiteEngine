@@ -14,7 +14,7 @@ ReflectiveShadowMapDirectionalLightContainerRenderSubPass::ReflectiveShadowMapDi
 
 }
 
-void ReflectiveShadowMapDirectionalLightContainerRenderSubPass::Init ()
+void ReflectiveShadowMapDirectionalLightContainerRenderSubPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Shader for directional light with shadow casting

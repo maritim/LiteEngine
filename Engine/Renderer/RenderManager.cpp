@@ -1,19 +1,12 @@
 #include "RenderManager.h"
 
-#include "RenderModules/DirectLightingRenderModule.h"
-#include "RenderModules/LightMapRenderModule.h"
-#include "RenderModules/VoxelizationRenderModule.h"
-#include "RenderModules/VoxelConeTraceRenderModule.h"
-#include "RenderModules/ReflectiveShadowMapRenderModule.h"
+#include "RenderModuleManager.h"
 
 /*
  * Singleton Part
 */
 
-RenderManager::RenderManager () :
-	_currentRenderModule (nullptr),
-	_currentRenderMode (RENDER_MODE_DIRECT_LIGHTING),
-	_needToChangeRenderMode (false)
+RenderManager::RenderManager ()
 {
 
 }
@@ -29,57 +22,31 @@ RenderManager::~RenderManager ()
 
 void RenderManager::Init ()
 {
-	_renderModules.push_back (new DirectLightingRenderModule ());
-	_renderModules.push_back (new LightMapRenderModule ());
-	_renderModules.push_back (new VoxelizationRenderModule ());
-	_renderModules.push_back (new VoxelConeTraceRenderModule ());
-	_renderModules.push_back (new ReflectiveShadowMapRenderModule ());
 
-	_renderModules [(std::size_t) _currentRenderMode]->InitModule ();
-
-	_currentRenderModule = _renderModules [(std::size_t) _currentRenderMode];
 }
 
-void RenderManager::SetRenderMode (RenderMode renderMode)
+//TODO: Remove this
+#include <set>
+
+RenderProduct RenderManager::RenderScene (const Scene* scene, const Camera* camera, const RenderSettings& settings)
 {
-	_needToChangeRenderMode = true;
+	RenderModule* renderModule = RenderModuleManager::Instance ()->GetRenderModule (settings.renderMode);
 
-	_currentRenderMode = renderMode;
-}
+	static std::set<RenderModule*> initalized;
 
-RenderMode RenderManager::GetRenderMode () const
-{
-	return _currentRenderMode;
-}
+	if (initalized.find (renderModule) == initalized.end ()) {
 
-void RenderManager::RenderScene (const Scene* scene, const Camera* camera)
-{
-	_currentRenderModule->RenderScene (scene, camera);
+		renderModule->InitModule (settings);
 
-	if (_needToChangeRenderMode) {
-
-		SwitchRenderModule ();
-
-		_needToChangeRenderMode = false;
+		initalized.insert (renderModule);
 	}
+
+	RenderProduct result = renderModule->RenderScene (scene, camera, settings);
+
+	return result;
 }
 
 void RenderManager::Clear ()
 {
-	_currentRenderModule->ClearModule ();
 
-	for (auto renderModule : _renderModules) {
-		delete renderModule;
-	}
-
-	_renderModules.clear ();
-}
-
-void RenderManager::SwitchRenderModule ()
-{
-	_currentRenderModule->ClearModule ();
-
-	_renderModules [(std::size_t) _currentRenderMode]->InitModule ();
-
-	_currentRenderModule = _renderModules [(std::size_t) _currentRenderMode];
 }

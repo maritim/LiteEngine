@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<RenderSettings>
+	<RenderMode mode="0" />
+
+	<SSAO enabled="true" scale="0.5" samples="32" noiseSize="4" radius="0.2" bias="0.025" blurEnabled="true" />
+	<SSR enabled="false" scale="0.5" iterations="500" roughness="0.035" sampleSkip="0.3" spatialBias="0.5" intensity="5" />
+
+	<Bloom enabled="false" scale="0.5" threshold="0.5" intensity="0.4" />
+
+	<HDR enabled="false" exposure="2" />
+	<LUT enabled="false" path="Assets/Textures/LUTDefault.png" />
+
+	<Gamma enabled="false" />
+</RenderSettings>

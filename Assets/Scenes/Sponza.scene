@@ -11,8 +11,6 @@
 		</Transform>
 		<Components>
 			<Component name="FlyCameraController" />
-			<Component name="DebugViewController" />
-			<Component name="EditorGizmosManager" />
 		</Components>
 	</NormalMapGameObject>
 

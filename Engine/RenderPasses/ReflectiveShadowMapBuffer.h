@@ -17,7 +17,7 @@ protected:
 public:
 	ReflectiveShadowMapBuffer ();
 	
-	bool Init(std::size_t screenWidth, std::size_t screenHeight);
+	bool Init(const glm::ivec2& size);
 
 	void BindForReading ();
 };

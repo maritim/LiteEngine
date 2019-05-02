@@ -6,14 +6,12 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
-#include "Systems/Window/Window.h"
-
 VoxelRayTraceRenderPass::~VoxelRayTraceRenderPass ()
 {
 
 }
 
-void VoxelRayTraceRenderPass::Init ()
+void VoxelRayTraceRenderPass::Init (const RenderSettings& settings)
 {
 	/*
 	* Load voxel ray trace shader
@@ -25,7 +23,8 @@ void VoxelRayTraceRenderPass::Init ()
 		"Assets/Shaders/Voxelize/voxelRayTraceGeometry.glsl");
 }
 
-RenderVolumeCollection* VoxelRayTraceRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelRayTraceRenderPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	* Start Ray Trace Pass
@@ -37,7 +36,7 @@ RenderVolumeCollection* VoxelRayTraceRenderPass::Execute (const Scene* scene, co
 	* Ray Trace Rendering Pass
 	*/
 
-	VoxelRenderingRayTracePass (camera, rvc);
+	VoxelRenderingRayTracePass (camera, settings, rvc);
 
 	return rvc;
 }
@@ -58,13 +57,14 @@ void VoxelRayTraceRenderPass::StartRayTrace ()
 	Pipeline::SetShader (ShaderManager::Instance ()->GetShader ("VOXEL_RAY_TRACE_PASS_SHADER"));
 }
 
-void VoxelRayTraceRenderPass::VoxelRenderingRayTracePass (const Camera* camera, RenderVolumeCollection* rvc)
+void VoxelRayTraceRenderPass::VoxelRenderingRayTracePass (const Camera* camera, const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Set viewport
 	*/
 
-	GL::Viewport (0, 0, Window::GetWidth (), Window::GetHeight ());
+	GL::Viewport (settings.viewport.x, settings.viewport.y,
+		settings.viewport.width, settings.viewport.height);
 
 	/*
 	 * Bind voxel volume for reading

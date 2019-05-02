@@ -12,7 +12,8 @@ MultipleRenderTargetsVolume::MultipleRenderTargetsVolume(std::size_t numTextures
 	m_fbo (0),
 	m_textures (new GLuint [numTextures]),
 	m_depthTexture (0),
-	m_texturesCount (numTextures)
+	m_texturesCount (numTextures),
+	_size (0)
 {
 
 }
@@ -22,8 +23,14 @@ MultipleRenderTargetsVolume::~MultipleRenderTargetsVolume ()
 	delete[] m_textures;
 }
 
-bool MultipleRenderTargetsVolume::Init(std::size_t bufferWidth, std::size_t bufferHeight)
+bool MultipleRenderTargetsVolume::Init(const glm::ivec2& size)
 {
+	/*
+	 * Keep framebuffer size
+	*/
+
+	_size = size;
+
 	/*
 	 * Create the FBO
 	*/
@@ -49,7 +56,7 @@ bool MultipleRenderTargetsVolume::Init(std::size_t bufferWidth, std::size_t buff
 		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-		GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, bufferWidth, bufferHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+		GL::TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, _size.x, _size.y, 0, GL_RGBA, GL_FLOAT, NULL);
 		
 		GL::FramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, m_textures[index], 0);
 	}
@@ -59,7 +66,7 @@ bool MultipleRenderTargetsVolume::Init(std::size_t bufferWidth, std::size_t buff
 	*/
 
 	GL::BindTexture(GL_TEXTURE_2D, m_depthTexture);
-	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, bufferWidth, bufferHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, _size.x, _size.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	GL::FramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthTexture, 0);
 
 	/*
@@ -181,4 +188,9 @@ std::vector<PipelineAttribute> MultipleRenderTargetsVolume::GetCustomAttributes 
 unsigned int MultipleRenderTargetsVolume::GetDepthBuffer () const
 {
 	return m_depthTexture;
+}
+
+glm::ivec2 MultipleRenderTargetsVolume::GetSize () const
+{
+	return _size;
 }

@@ -10,7 +10,7 @@ LightMapDirectionalLightContainerRenderSubPass::LightMapDirectionalLightContaine
 
 }
 
-void LightMapDirectionalLightContainerRenderSubPass::Init ()
+void LightMapDirectionalLightContainerRenderSubPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Shader for general directional light with no shadow casting

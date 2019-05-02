@@ -14,9 +14,14 @@ class SceneManager : public Singleton<SceneManager>
 private:
 	Scene* _current;
 
+	bool _needToLoad;
+	std::string _nextSceneName;
+
 public:
+	void Update ();
+
 	Scene* Current ();
-	Scene* Load (const std::string&);
+	void Load (const std::string&);
 	void Clear();
 
 private:
@@ -24,6 +29,8 @@ private:
 	~SceneManager ();
 	SceneManager (const SceneManager&);
 	SceneManager& operator=(const SceneManager&);
+
+	void LoadNextScene (const std::string&);
 };
 
 #endif

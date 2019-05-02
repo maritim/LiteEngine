@@ -21,6 +21,8 @@ public:
 	void BindForWriting ();
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
 
+	std::size_t GetSamplesCount () const;
+
 	void Clear ();
 };
 

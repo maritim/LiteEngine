@@ -9,12 +9,13 @@ DeferredSkyboxRenderPass::~DeferredSkyboxRenderPass ()
 
 }
 
-void DeferredSkyboxRenderPass::Init ()
+void DeferredSkyboxRenderPass::Init (const RenderSettings& settings)
 {
 
 }
 
-RenderVolumeCollection* DeferredSkyboxRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* DeferredSkyboxRenderPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Start skybox pass

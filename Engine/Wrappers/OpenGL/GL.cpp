@@ -36,6 +36,17 @@ void GL::Viewport(GLint x,  GLint y,  GLsizei width,  GLsizei height)
 }
 
 /*
+ * Scissor
+*/
+
+void GL::Scissor(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+	glScissor(x, y, width, height);
+
+	ErrorCheck ("glScissor");
+}
+
+/*
  * Frame Buffer
 */
 

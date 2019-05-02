@@ -16,7 +16,7 @@ VoxelMipmapRenderPass::VoxelMipmapRenderPass () :
 
 }
 
-void VoxelMipmapRenderPass::Init ()
+void VoxelMipmapRenderPass::Init (const RenderSettings& settings)
 {
 	ShaderManager::Instance ()->AddComputeShader ("VOXEL_MIPMAP_PASS_COMPUTE_SHADER",
 		"Assets/Shaders/Voxelize/voxelMipmapCompute.glsl");
@@ -28,7 +28,8 @@ void VoxelMipmapRenderPass::Init ()
 	InitSettings ();
 }
 
-RenderVolumeCollection* VoxelMipmapRenderPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* VoxelMipmapRenderPass::Execute (const Scene* scene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	if (_firstTime || _continuousVoxelization) {
 

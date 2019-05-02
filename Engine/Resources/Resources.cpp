@@ -5,17 +5,20 @@
 #include "Utils/Files/FileSystem.h"
 
 #include "SettingsLoader.h"
+#include "RenderSettingsLoader.h"
 #include "WavefrontObjectLoader.h"
 #include "StanfordObjectLoader.h"
 #include "GenericObjectModelLoader.h"
 #include "AnimationModelLoader.h"
 #include "AnimationSkinLoader.h"
 #include "AnimationClipLoader.h"
+#include "WAVLoader.h"
 #include "ShaderContentLoader.h"
 #include "MaterialLibraryLoader.h"
 #include "TextureLoader.h"
 #include "TextureAtlasLoader.h"
 #include "CubeMapLoader.h"
+#include "TextureLUTLoader.h"
 #include "ParticleSystemLoader.h"
 #include "SkyboxLoader.h"
 #include "BitmapFontLoader.h"
@@ -31,6 +34,17 @@ SettingsContainer* Resources::LoadSettings (const std::string& filename)
 	delete settingsLoader;
 
 	return settingsContainer;
+}
+
+RenderSettings* Resources::LoadRenderSettings (const std::string& filename)
+{
+	RenderSettingsLoader* settingsLoader = new RenderSettingsLoader ();
+
+	RenderSettings* settings = (RenderSettings*)settingsLoader->Load (filename);
+
+	delete settingsLoader;
+
+	return settings;
 }
 
 Model* Resources::LoadModel (const std::string& filename)
@@ -117,6 +131,30 @@ AnimationContainer* Resources::LoadAnimationClip (const std::string& filename)
 	return animContainer;
 }
 
+AudioClip* Resources::LoadAudioClip (const std::string& filename)
+{
+	std::string extension = FileSystem::GetExtension(filename);
+
+	if (extension == ".wav") {
+		return LoadWAV (filename);
+	}
+
+	Console::LogError ("The File Format for " + extension + " is not recognized.");
+
+	return nullptr;
+}
+
+AudioClip* Resources::LoadWAV (const std::string& filename)
+{
+	WAVLoader* wavLoader = new WAVLoader ();
+
+	AudioClip* audioClip = (AudioClip*)wavLoader->Load (filename);
+
+	delete wavLoader;
+
+	return audioClip;
+}
+
 ShaderContent* Resources::LoadShaderContent (const std::string& filename)
 {
 	ShaderContentLoader* shaderContentLoader = new ShaderContentLoader ();
@@ -160,6 +198,17 @@ TextureAtlas* Resources::LoadTextureAtlas (const std::string& filename)
 	delete texAtlasLoader;
 
 	return texAtlas;
+}
+
+TextureLUT* Resources::LoadTextureLUT (const std::string& filename)
+{
+	TextureLUTLoader* textureLUTLoader = new TextureLUTLoader ();
+
+	TextureLUT* lutTexture = (TextureLUT*) textureLUTLoader->Load (filename);
+
+	delete textureLUTLoader;
+
+	return lutTexture;
 }
 
 BitmapFont* Resources::LoadBitmapFont (const std::string& filename)
