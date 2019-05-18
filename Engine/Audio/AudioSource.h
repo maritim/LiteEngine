@@ -7,7 +7,7 @@
 
 #include "AudioClip.h"
 
-class AudioSource : public Object
+class ENGINE_API AudioSource : public Object
 {
 protected:
 	Transform* _transform;

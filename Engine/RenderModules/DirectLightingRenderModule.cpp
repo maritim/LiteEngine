@@ -84,9 +84,8 @@ void DirectLightingRenderModule::Init ()
 		.Attach (new HDRContainerRenderSubPass ())
 		.Attach (new GammaCorrectionContainerRenderSubPass ())
 		.Build ());
-	_renderPasses.push_back (new DeferredBlitRenderPass ());
+	_renderPasses.push_back (new WindowBlitRenderPass());
 	_renderPasses.push_back (new ForwardRenderPass ());
 	_renderPasses.push_back (new GUIGizmosRenderPass ());
 	_renderPasses.push_back (new GUIRenderPass ());
-	_renderPasses.push_back (new WindowBlitRenderPass ());
 }

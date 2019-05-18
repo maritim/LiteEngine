@@ -11,7 +11,7 @@
 
 class ContainerRenderPass;
 
-class ContainerRenderPassBuilder : public Object
+class ENGINE_API ContainerRenderPassBuilder : public Object
 {
 protected:
 	std::vector<ContainerRenderSubPassI*> _renderSubPasses;

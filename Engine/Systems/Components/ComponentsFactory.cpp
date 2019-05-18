@@ -10,6 +10,8 @@ ComponentsFactory::~ComponentsFactory ()
 
 }
 
+SPECIALIZE_SINGLETON(ComponentsFactory)
+
 Component* ComponentsFactory::Create (const std::string& name)
 {
 	std::map<std::string, CreateCompFn>::iterator it = _workers.find (name);

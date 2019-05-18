@@ -8,11 +8,11 @@ RenderModuleManager::RenderModuleManager ()
 RenderModuleManager::~RenderModuleManager ()
 {
 	for (auto renderModule : _renderModules) {
-		renderModule.second->ClearModule ();
-
 		delete renderModule.second;
 	}
 }
+
+SPECIALIZE_SINGLETON(RenderModuleManager)
 
 void RenderModuleManager::RegisterRenderModule (const std::string& name, RenderModule* renderModule)
 {
@@ -34,4 +34,11 @@ RenderModule* RenderModuleManager::GetRenderModule (const std::string& name)
 	}
 
 	return _renderModules [name];
+}
+
+void RenderModuleManager::Clear ()
+{
+	for (auto renderModule : _renderModules) {
+		renderModule.second->ClearModule();
+	}
 }

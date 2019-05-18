@@ -9,7 +9,7 @@
 #include "Mesh/Model.h"
 #include "SceneGraph/Transform.h"
 
-class BulletCollider : public Object
+class ENGINE_API BulletCollider : public Object
 {
 protected:
 	btCollisionShape* _collisionShape;

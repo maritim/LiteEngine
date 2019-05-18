@@ -18,7 +18,7 @@ struct AnimatedVertexData : VertexData
 	AnimatedVertexData ();
 };
 
-class AnimationModel3DRenderer : public Model3DRenderer
+class ENGINE_API AnimationModel3DRenderer : public Model3DRenderer
 {
 protected:
 	AnimationModel* _animationModel;

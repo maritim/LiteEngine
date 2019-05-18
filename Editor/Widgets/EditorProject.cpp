@@ -71,7 +71,7 @@ void EditorProject::ShowFolders (const std::string& path)
 		node_flags |= ImGuiTreeNodeFlags_Leaf;
 	}
 
-	bool node_open = ImGui::TreeNodeEx(fspath.filename ().c_str (), node_flags);
+	bool node_open = ImGui::TreeNodeEx(fspath.filename ().string ().c_str (), node_flags);
 
 	if (ImGui::IsItemClicked()) {
 		_selectedPath = path;
@@ -81,7 +81,7 @@ void EditorProject::ShowFolders (const std::string& path)
 		if (fs::exists(fspath) && fs::is_directory(fspath)) {
 			for (const auto& entry : fs::directory_iterator(fspath)) {
 				if (fs::is_directory(entry.status())) {
-					ImGui::PushID (entry.path ().c_str ());
+					ImGui::PushID (entry.path ().string ().c_str ());
 					ShowFolders(entry.path ().string ());
 					ImGui::PopID ();
 				}
@@ -114,11 +114,11 @@ void EditorProject::ShowFiles (const std::string& path)
         ImGui::BeginGroup();
         // ImGui::ImageButton(thumb.Get(), { itemSize - 20, itemSize - 16 });// , { 0, 1 }, { 1,0 });
 
-		if (ImGui::Button (entry.path ().filename ().c_str (), ImVec2 (100, 100))) {
+		if (ImGui::Button (entry.path ().filename ().string ().c_str (), ImVec2 (100, 100))) {
 			Open (entry.path ().string ());
 		}
 
-        ImGui::TextWrapped("%s", entry.path ().filename ().c_str ());
+        ImGui::TextWrapped("%ws", entry.path ().filename ().c_str ());
 
         ImGui::EndGroup();
 

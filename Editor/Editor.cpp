@@ -1,6 +1,6 @@
 #include "Editor.h"
 
-#include "ImGuizmo/ImGuizmo.h"
+#include "Systems/GUI/ImGuizmo/ImGuizmo.h"
 
 #include "Managers/SceneManager.h"
 #include "Managers/RenderSettingsManager.h"
@@ -8,12 +8,12 @@
 #include "EditorManager.h"
 #include "EditorScene.h"
 
-extern "C" GameModule* CreateGameModule ()
+extern "C" __declspec(dllexport) GameModule* CreateGameModule ()
 {
 	return new Editor;
 }
 
-extern "C" void DestroyGameModule (GameModule* gameModule)
+extern "C" __declspec(dllexport) void DestroyGameModule (GameModule* gameModule)
 {
 	delete gameModule;
 }

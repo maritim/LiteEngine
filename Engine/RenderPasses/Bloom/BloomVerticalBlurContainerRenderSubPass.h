@@ -3,7 +3,7 @@
 
 #include "RenderPasses/Blur/VerticalGaussianBlurContainerRenderSubPass.h"
 
-class BloomVerticalBlurContainerRenderSubPass : public VerticalGaussianBlurContainerRenderSubPass
+class ENGINE_API BloomVerticalBlurContainerRenderSubPass : public VerticalGaussianBlurContainerRenderSubPass
 {
 public:
 	bool IsAvailable (const Scene* scene, const Camera* camera,

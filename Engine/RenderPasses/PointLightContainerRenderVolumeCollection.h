@@ -8,7 +8,7 @@
 #include "RenderPasses/VolumetricLightVolume.h"
 #include "Lighting/PointLight.h"
 
-class PointLightContainerRenderVolumeCollection : public ContainerRenderVolumeCollectionI
+class ENGINE_API PointLightContainerRenderVolumeCollection : public ContainerRenderVolumeCollectionI
 {
 protected:
 	std::vector<PointLight*>::iterator _pointLightsIterator;

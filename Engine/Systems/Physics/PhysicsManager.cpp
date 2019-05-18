@@ -27,6 +27,8 @@ PhysicsManager::~PhysicsManager ()
 	delete _dynamicsWorld;
 }
 
+SPECIALIZE_SINGLETON(PhysicsManager)
+
 void PhysicsManager::Init ()
 {
 	/*

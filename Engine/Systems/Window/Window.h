@@ -7,7 +7,7 @@
 #include <glm/vec2.hpp>
 #include <string>
 
-class Window
+class ENGINE_API Window
 {
 private:
 	static std::size_t _width;

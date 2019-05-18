@@ -27,9 +27,11 @@
 #include "Systems/Camera/Camera.h"
 #include "RenderSettings.h"
 
-class RenderManager : public Singleton<RenderManager>
+class ENGINE_API RenderManager : public Singleton<RenderManager>
 {
 	friend class Singleton<RenderManager>;
+
+	DECLARE_SINGLETON(RenderManager)
 
 public:
 	void Init ();

@@ -10,9 +10,11 @@
 
 #define REGISTER_RENDER_MODULE(RENDER_MODULE) static RenderModuleRegister<RENDER_MODULE> dummy (#RENDER_MODULE);
 
-class RenderModuleManager : public Singleton<RenderModuleManager>
+class ENGINE_API RenderModuleManager : public Singleton<RenderModuleManager>
 {
 	friend Singleton<RenderModuleManager>;
+
+	DECLARE_SINGLETON(RenderModuleManager)
 
 private:
 	std::map<std::string, RenderModule*> _renderModules;
@@ -20,6 +22,8 @@ private:
 public:
 	void RegisterRenderModule (const std::string& name, RenderModule* renderModule);
 	RenderModule* GetRenderModule (const std::string& name);
+
+	void Clear ();
 private:
 	RenderModuleManager ();
 	~RenderModuleManager ();

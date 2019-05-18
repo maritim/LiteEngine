@@ -7,11 +7,11 @@ FrustumVolume::FrustumVolume (FrustumVolumeInformation* data) :
 
 }
 
-FrustumVolume::FrustumVolume (const glm::mat4& MVP1)
+void FrustumVolume::SetVolume (const glm::mat4& mvpMatrix)
 {
-	FrustumVolumeInformation* frustum = new FrustumVolumeInformation ();
+	FrustumVolumeInformation* frustum = (FrustumVolumeInformation*) _data;
 
-	glm::mat4 MVP = glm::transpose (MVP1);
+	glm::mat4 MVP = glm::transpose (mvpMatrix);
 
 	frustum->plane [0].x = MVP [0][0] + MVP [3][0];
 	frustum->plane [0].y = MVP [0][1] + MVP [3][1];
@@ -46,8 +46,6 @@ FrustumVolume::FrustumVolume (const glm::mat4& MVP1)
 	for (std::size_t i=0;i<6;i++) {
 		frustum->plane [i] = glm::normalize (frustum->plane [i]);
 	}
-
-	_data = frustum;
 }
 
 FrustumVolume::FrustumVolumeInformation* FrustumVolume::GetVolumeInformation () const

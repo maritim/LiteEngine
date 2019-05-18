@@ -8,7 +8,7 @@
 
 #include "AnimationNode.h"
 
-class AnimationContainer : public Object
+class ENGINE_API AnimationContainer : public Object
 {
 protected:
 	std::string _name;

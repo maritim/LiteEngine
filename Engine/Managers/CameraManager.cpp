@@ -18,6 +18,8 @@ CameraManager::~CameraManager ()
 
 }
 
+SPECIALIZE_SINGLETON(CameraManager)
+
 void CameraManager::Update ()
 {
 	_active->Update ();

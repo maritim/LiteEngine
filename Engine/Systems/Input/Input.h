@@ -8,7 +8,7 @@
 
 #include "Systems/Input/InputKey.h"
 
-class Input
+class ENGINE_API Input
 {
 private:
 

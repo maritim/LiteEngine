@@ -19,7 +19,7 @@
 #include "Polygon.h"
 #include "ObjectModel.h"
 
-class Model : public Object
+class ENGINE_API Model : public Object
 {
 protected:
 	bool _haveUV;

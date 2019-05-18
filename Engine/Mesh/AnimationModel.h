@@ -11,7 +11,7 @@
 #include "BoneTree.h"
 #include "BoneInfo.h"
 
-class AnimationModel : public Model
+class ENGINE_API AnimationModel : public Model
 {
 protected:
 	std::map<std::string, std::size_t> _boneMapping;

@@ -13,7 +13,7 @@
 #include "Systems/Camera/Camera.h"
 #include "RenderSettings.h"
 
-class RenderModule : public Object
+class ENGINE_API RenderModule : public Object
 {
 protected:
 	RenderVolumeCollection* _rvc;

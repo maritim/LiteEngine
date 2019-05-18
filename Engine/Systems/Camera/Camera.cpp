@@ -12,7 +12,8 @@ Camera::Camera(void) :
 	_aspect (0.0f),
 	_zNear (0.0f),
 	_zFar (1.0f),
-	_constraintAspect (true)
+	_constraintAspect (true),
+	_frustumVolume (new FrustumVolume (new FrustumVolume::FrustumVolumeInformation ()))
 {
 
 }

@@ -5,7 +5,7 @@
 
 #include "RenderPasses/FrameBuffer2DVolume.h"
 
-class DeferredBlitRenderPass : public RenderPassI
+class ENGINE_API DeferredBlitRenderPass : public RenderPassI
 {
 public:
 	virtual ~DeferredBlitRenderPass ();

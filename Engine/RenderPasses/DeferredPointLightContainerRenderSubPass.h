@@ -5,7 +5,7 @@
 
 #include <string>
 
-class DeferredPointLightContainerRenderSubPass : public PointVolumetricLightContainerRenderSubPass
+class ENGINE_API DeferredPointLightContainerRenderSubPass : public PointVolumetricLightContainerRenderSubPass
 {
 protected:
 	std::string _shaderName;

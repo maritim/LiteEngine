@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-class CubeMap : public Texture
+class ENGINE_API CubeMap : public Texture
 {
 private:
 	std::string _filenames[6];

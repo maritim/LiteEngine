@@ -3,7 +3,7 @@
 
 #include "GameObject.h"
 
-class AnimationGameObject : public GameObject
+class ENGINE_API AnimationGameObject : public GameObject
 {
 protected:
 

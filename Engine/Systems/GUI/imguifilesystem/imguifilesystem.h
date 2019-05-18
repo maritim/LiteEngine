@@ -81,7 +81,7 @@ x> Never tested on a real Windows OS and on MacOS.
 #       define FILENAME_MAX PATH_MAX
 #   endif //FILENAME_MAX
 #   ifdef _WIN32
-#   include <windef.h> // On Windows we have MAX_PATH too
+//#   include <windows.h> // On Windows we have MAX_PATH too
 #   endif //_WIN32
 #   if (defined(MAX_PATH) && MAX_PATH>PATH_MAX)
 #       define DIRENT_MAX_PATH MAX_PATH

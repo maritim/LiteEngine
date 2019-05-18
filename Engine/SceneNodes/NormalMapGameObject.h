@@ -3,7 +3,7 @@
 
 #include "GameObject.h"
 
-class NormalMapGameObject : public GameObject
+class ENGINE_API NormalMapGameObject : public GameObject
 {
 protected:
 

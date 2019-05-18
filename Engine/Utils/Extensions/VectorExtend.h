@@ -5,7 +5,7 @@
 
 namespace Extensions
 {
-	class VectorExtend
+	class ENGINE_API VectorExtend
 	{
 	public:
 		static glm::vec3 Cross (const glm::vec3&, const glm::vec3&, const glm::vec3&);

@@ -14,7 +14,7 @@
 #include "Renderer/BufferAttribute.h"
 #include "Renderer/PipelineAttribute.h"
 
-class TextGUIRenderer : public Model3DRenderer
+class ENGINE_API TextGUIRenderer : public Model3DRenderer
 {
 protected:
 	bool _isDirty;

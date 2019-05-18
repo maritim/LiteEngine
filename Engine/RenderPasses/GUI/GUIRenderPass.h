@@ -3,7 +3,7 @@
 
 #include "Renderer/RenderPassI.h"
 
-class GUIRenderPass : public RenderPassI
+class ENGINE_API GUIRenderPass : public RenderPassI
 {
 protected:
 	std::string _shaderName;

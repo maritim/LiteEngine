@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 
-class Time
+class ENGINE_API Time
 {
 private:
 	static uint32_t _currentTimeMS;

@@ -8,9 +8,11 @@
 
 #include "Mesh/Model.h"
 
-class ModelManager : public Singleton<ModelManager>
+class ENGINE_API ModelManager : public Singleton<ModelManager>
 {
 	friend Singleton<ModelManager>;
+
+	DECLARE_SINGLETON(ModelManager)
 
 private:
 	std::map<std::string, Model*> _models;

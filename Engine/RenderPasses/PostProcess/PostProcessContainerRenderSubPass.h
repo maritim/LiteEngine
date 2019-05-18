@@ -11,7 +11,7 @@
 
 #include "Renderer/PipelineAttribute.h"
 
-class PostProcessContainerRenderSubPass : public ContainerRenderSubPassI
+class ENGINE_API PostProcessContainerRenderSubPass : public ContainerRenderSubPassI
 {
 protected:
 	PostProcessMapVolume* _postProcessMapVolume;

@@ -34,7 +34,7 @@ struct VertexData
 	VertexData ();
 };
 
-class Model3DRenderer : public Renderer
+class ENGINE_API Model3DRenderer : public Renderer
 {
 protected:
 	std::vector<BufferObject> _drawableObjects;

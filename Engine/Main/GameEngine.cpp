@@ -12,6 +12,7 @@
 #include "Managers/ShaderManager.h"
 #include "Managers/SceneManager.h"
 #include "Renderer/RenderManager.h"
+#include "Renderer/RenderModuleManager.h"
 
 #include "Arguments/ArgumentsAnalyzer.h"
 
@@ -59,6 +60,7 @@ void GameEngine::Clear ()
 	ShaderManager::Instance()->Clear();
 	SceneManager::Instance()->Clear();
 	RenderManager::Instance()->Clear();
+	RenderModuleManager::Instance ()->Clear ();
 
 	GUI::Clear ();
 

@@ -6,7 +6,7 @@
 #include "Mesh/Model.h"
 #include "SceneGraph/Transform.h"
 
-class Collider
+class ENGINE_API Collider
 {
 protected:
 	GeometricPrimitive* _primitive;

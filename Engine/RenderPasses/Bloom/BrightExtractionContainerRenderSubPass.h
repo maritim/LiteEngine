@@ -3,7 +3,7 @@
 
 #include "RenderPasses/PostProcess/PostProcessContainerRenderSubPass.h"
 
-class BrightExtractionContainerRenderSubPass : public PostProcessContainerRenderSubPass
+class ENGINE_API BrightExtractionContainerRenderSubPass : public PostProcessContainerRenderSubPass
 {
 public:
 	bool IsAvailable (const Scene* scene, const Camera* camera,

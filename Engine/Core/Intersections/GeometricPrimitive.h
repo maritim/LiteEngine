@@ -3,7 +3,7 @@
 
 #include "Core/Interfaces/Object.h"
 
-class GeometricPrimitive : public Object
+class ENGINE_API GeometricPrimitive : public Object
 {
 public:
 	GeometricPrimitive ();

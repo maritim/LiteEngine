@@ -9,7 +9,7 @@
 
 #include "Core/Intersections/FrustumVolume.h"
 
-class Camera : public Object
+class ENGINE_API Camera : public Object
 {
 protected:
 	glm::vec3 _position;
@@ -20,6 +20,8 @@ protected:
 	float _zFar;
 
 	bool _constraintAspect;
+
+	FrustumVolume* _frustumVolume;
 
 public:
 	Camera(void);

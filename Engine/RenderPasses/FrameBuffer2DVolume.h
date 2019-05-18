@@ -5,7 +5,7 @@
 
 #include <glm/vec3.hpp>
 
-class FrameBuffer2DVolume : public RenderVolumeI
+class ENGINE_API FrameBuffer2DVolume : public RenderVolumeI
 {
 protected:
 	unsigned int _colorBuffer;

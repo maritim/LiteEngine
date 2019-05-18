@@ -9,7 +9,7 @@
 #include "Emiter.h"
 #include "Particle.h"
 
-class ParticleSystem : public SceneObject
+class ENGINE_API ParticleSystem : public SceneObject
 {
 protected:
 	Emiter* _emiter;

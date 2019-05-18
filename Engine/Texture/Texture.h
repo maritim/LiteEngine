@@ -8,7 +8,7 @@
 #define MAX_TEXTURE_MIPMAP_LEVEL 16
 
 // TODO: Extend this
-class Texture : public Object
+class ENGINE_API Texture : public Object
 {
 protected:
 	unsigned int _gpuIndex;

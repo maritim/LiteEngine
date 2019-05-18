@@ -5,7 +5,7 @@
 
 #include <cstddef>
 
-class DrawnObjectsCountStat : public StatisticsObject
+class ENGINE_API DrawnObjectsCountStat : public StatisticsObject
 {
 private:
 	std::size_t _drawnObjectsCount;

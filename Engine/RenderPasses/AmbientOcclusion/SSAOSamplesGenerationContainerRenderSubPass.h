@@ -5,7 +5,7 @@
 
 #include "SSAOSamplesVolume.h"
 
-class SSAOSamplesGenerationContainerRenderSubPass : public ContainerRenderSubPassI
+class ENGINE_API SSAOSamplesGenerationContainerRenderSubPass : public ContainerRenderSubPassI
 {
 protected:
 	SSAOSamplesVolume* _ssaoSamplesVolume;

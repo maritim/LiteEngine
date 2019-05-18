@@ -7,7 +7,7 @@
 
 #include "Utils/Color/Color.h"
 
-class Gizmo
+class ENGINE_API Gizmo
 {
 private:
 	static std::vector<GizmoLine> _lines;

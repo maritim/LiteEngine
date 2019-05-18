@@ -5,7 +5,7 @@
 
 #include "IdleRenderVolume.h"
 
-class IterateOverRenderVolumeCollection : public ContainerRenderVolumeCollectionI
+class ENGINE_API IterateOverRenderVolumeCollection : public ContainerRenderVolumeCollectionI
 {
 protected:
 	std::size_t _iterations;

@@ -1,7 +1,7 @@
 #ifndef STATISTICSOBJECT_H
 #define STATISTICSOBJECT_H
 
-class StatisticsObject
+class ENGINE_API StatisticsObject
 {
 public:
 	StatisticsObject();

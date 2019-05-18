@@ -8,9 +8,11 @@
 
 #include "Texture/Texture.h"
 
-class TextureManager : public Singleton<TextureManager>
+class ENGINE_API TextureManager : public Singleton<TextureManager>
 {
 	friend Singleton<TextureManager>;
+
+	DECLARE_SINGLETON(TextureManager)
 
 private:
 	std::map<std::string, Texture*> _textures;

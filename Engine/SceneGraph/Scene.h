@@ -13,7 +13,7 @@
 
 class SceneIterator;
 
-class Scene
+class ENGINE_API Scene
 {
 	friend class SceneIterator;
 
@@ -42,7 +42,7 @@ public:
 	SceneObject* GetObject (const std::string& name) const;
 	SceneObject* GetObject (std::size_t index) const;
 
-	std::size_t GetObjectsCount () const;	
+	std::size_t GetObjectsCount () const;
 	AABBVolume* GetBoundingBox () const;
 
 	SceneIterator begin () const;

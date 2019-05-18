@@ -16,6 +16,8 @@ AudioClipManager::~AudioClipManager ()
 	}
 }
 
+SPECIALIZE_SINGLETON(AudioClipManager)
+
 void AudioClipManager::AddAudioClip (AudioClip* audioClip)
 {
 	if (audioClip == nullptr) {

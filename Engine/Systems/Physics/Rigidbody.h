@@ -9,7 +9,7 @@
 
 #include "Systems/Collision/BulletCollider.h"
 
-class Rigidbody : public Object
+class ENGINE_API Rigidbody : public Object
 {
 protected:
 	btRigidBody* _rigidBody;

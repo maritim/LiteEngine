@@ -4,7 +4,7 @@
 #include "EditorWidget.h"
 #include "EditorManager.h"
 
-#include "ImGuizmo/ImGuizmo.h"
+#include "Systems/GUI/ImGuizmo/ImGuizmo.h"
 
 #include "SceneGraph/SceneObject.h"
 

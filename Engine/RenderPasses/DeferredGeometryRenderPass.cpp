@@ -239,7 +239,10 @@ void DeferredGeometryRenderPass::GeometryPass (const Scene* scene, const Camera*
 		sceneObject->GetRenderer ()->Draw ();
 	}
 
-	StatisticsManager::Instance ()->SetStatisticsObject ("DrawnObjectsCount", new DrawnObjectsCountStat (drawnObjectsCount));
+	static DrawnObjectsCountStat* drawnObjectsCountStat = new DrawnObjectsCountStat ();
+	drawnObjectsCountStat->SetDrawnObjectsCount (drawnObjectsCount);
+
+	StatisticsManager::Instance ()->SetStatisticsObject ("DrawnObjectsCount", drawnObjectsCountStat);
 
 	/*
 	* Disable Stecil Test for further rendering

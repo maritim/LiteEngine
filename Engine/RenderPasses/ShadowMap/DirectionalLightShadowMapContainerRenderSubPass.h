@@ -12,7 +12,7 @@
 
 #include "Systems/Settings/SettingsObserverArgs.h"
 
-class DirectionalLightShadowMapContainerRenderSubPass : public VolumetricLightContainerRenderSubPassI, public ObserverI<SettingsObserverArgs>
+class ENGINE_API DirectionalLightShadowMapContainerRenderSubPass : public VolumetricLightContainerRenderSubPassI, public ObserverI<SettingsObserverArgs>
 {
 protected:
 	std::string _staticShaderName;

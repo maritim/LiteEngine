@@ -1,11 +1,13 @@
 #include "EditorMainMenu.h"
 
 #include "Systems/GUI/ImGui/imgui.h"
-#include "imguifilesystem/imguifilesystem.h"
+#include "Systems/GUI/imguifilesystem/imguifilesystem.h"
 
 #include "Managers/SceneManager.h"
 
 #include "Systems/Settings/SettingsManager.h"
+
+#include "EditorSelection.h"
 
 void EditorMainMenu::Show ()
 {
@@ -36,6 +38,7 @@ void EditorMainMenu::ShowMainMenu ()
 		const char* path = dialog.chooseFileDialog (openScene, nullptr, ".scene");
 
 		if (strlen (path) > 0) {
+			EditorSelection::Instance ()->SetActive (nullptr);
 			SceneManager::Instance ()->Load (std::string (path));
 		}
 

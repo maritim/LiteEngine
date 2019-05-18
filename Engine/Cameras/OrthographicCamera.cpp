@@ -54,9 +54,9 @@ FrustumVolume* OrthographicCamera::GetFrustumVolume () const
 
 	glm::mat4 mvp = projection * view;
 
-	FrustumVolume* frustum = new FrustumVolume (mvp);
+	_frustumVolume->SetVolume (mvp);
 
-	return frustum;
+	return _frustumVolume;
 }
 
 glm::mat4 OrthographicCamera::GetProjectionMatrix () const

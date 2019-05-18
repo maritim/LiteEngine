@@ -7,7 +7,7 @@
 
 #define SSAO_SAMPLES_NOT_INIT 351
 
-class SSAOSamplesVolume : public RenderVolumeI
+class ENGINE_API SSAOSamplesVolume : public RenderVolumeI
 {
 protected:
 	std::vector<glm::vec3> _samples;

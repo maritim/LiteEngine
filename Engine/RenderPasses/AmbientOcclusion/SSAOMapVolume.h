@@ -3,7 +3,7 @@
 
 #include "RenderPasses/PostProcess/PostProcessMapVolume.h"
 
-class SSAOMapVolume : public PostProcessMapVolume
+class ENGINE_API SSAOMapVolume : public PostProcessMapVolume
 {
 public:
 	bool Init (std::size_t bufferWidth, std::size_t bufferHeight);

@@ -5,7 +5,7 @@
 
 #include <string>
 
-class DeferredAmbientLightContainerRenderSubPass : public ContainerRenderSubPassI
+class ENGINE_API DeferredAmbientLightContainerRenderSubPass : public ContainerRenderSubPassI
 {
 protected:
 	std::string _shaderName;

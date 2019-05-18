@@ -13,6 +13,8 @@ Intersection::~Intersection ()
 
 }
 
+SPECIALIZE_SINGLETON(Intersection)
+
 bool Intersection::CheckFrustumVsPrimitive (FrustumVolume* frustum, GeometricPrimitive* primitive)
 {
 	AABBVolume* aabb = dynamic_cast<AABBVolume*> (primitive);

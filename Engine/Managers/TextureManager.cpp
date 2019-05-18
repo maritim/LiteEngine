@@ -18,6 +18,8 @@ TextureManager::~TextureManager ()
 
 }
 
+SPECIALIZE_SINGLETON(TextureManager)
+
 void TextureManager::AddTexture (Texture* texture)
 {
 	if (_textures.find (texture->GetName()) != _textures.end ()) {

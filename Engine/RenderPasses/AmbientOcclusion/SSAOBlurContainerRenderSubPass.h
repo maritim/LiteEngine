@@ -3,7 +3,7 @@
 
 #include "RenderPasses/PostProcess/PostProcessContainerRenderSubPass.h"
 
-class SSAOBlurContainerRenderSubPass : public PostProcessContainerRenderSubPass
+class ENGINE_API SSAOBlurContainerRenderSubPass : public PostProcessContainerRenderSubPass
 {
 public:
 	bool IsAvailable (const Scene* scene, const Camera* camera,

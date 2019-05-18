@@ -3,7 +3,7 @@
 
 #include "Core/Interfaces/Object.h"
 
-class Component : public Object
+class ENGINE_API Component : public Object
 {
 public:
 	Component ();

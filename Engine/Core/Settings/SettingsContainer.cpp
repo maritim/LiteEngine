@@ -1,7 +1,5 @@
 #include "SettingsContainer.h"
 
-#include <glm/vec2.hpp>
-
 #include "Utils/Extensions/StringExtend.h"
 
 void SettingsContainer::SetValue (const std::string& key, const std::string& value)

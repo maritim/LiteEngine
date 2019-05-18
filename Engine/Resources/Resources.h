@@ -21,7 +21,7 @@
 #include "Fonts/BitmapFont.h"
 #include "Lighting/Light.h"
 
-class Resources
+class ENGINE_API Resources
 {
 public:
 	static SettingsContainer* LoadSettings (const std::string& filename);

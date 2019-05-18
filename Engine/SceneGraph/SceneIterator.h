@@ -8,7 +8,7 @@
 
 class Scene;
 
-class SceneIterator : public Object
+class ENGINE_API SceneIterator : public Object
 {
 	friend class Scene;
 

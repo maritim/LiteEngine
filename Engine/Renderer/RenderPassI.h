@@ -9,7 +9,7 @@
 #include "Systems/Camera/Camera.h"
 #include "RenderSettings.h"
 
-class RenderPassI : public Object
+class ENGINE_API RenderPassI : public Object
 {
 public:
 	virtual ~RenderPassI () = 0;

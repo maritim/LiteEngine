@@ -8,7 +8,7 @@
 #include "RenderPasses/VolumetricLightVolume.h"
 #include "Lighting/DirectionalLight.h"
 
-class DirectionalLightContainerRenderVolumeCollection : public ContainerRenderVolumeCollectionI
+class ENGINE_API DirectionalLightContainerRenderVolumeCollection : public ContainerRenderVolumeCollectionI
 {
 protected:
 	std::vector<DirectionalLight*>::iterator _directionalLightsIterator;

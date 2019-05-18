@@ -21,6 +21,8 @@ SceneManager::~SceneManager ()
 	Clear ();
 }
 
+SPECIALIZE_SINGLETON(SceneManager)
+
 Scene* SceneManager::Current ()
 {
 	return _current;

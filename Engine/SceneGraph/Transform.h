@@ -5,7 +5,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <vector>
 
-class Transform
+class ENGINE_API Transform
 {
 private:
 	glm::vec3 _position;

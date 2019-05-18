@@ -11,6 +11,8 @@ ModelManager::~ModelManager ()
 
 }
 
+SPECIALIZE_SINGLETON(ModelManager)
+
 void ModelManager::AddModel (Model* model)
 {
 	if (_models.find (model->GetName()) != _models.end ()) {

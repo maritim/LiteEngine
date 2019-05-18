@@ -5,7 +5,7 @@
 
 #include <glm/vec3.hpp>
 
-class Color : public Object
+class ENGINE_API Color : public Object
 {
 public:
 	static Color White;

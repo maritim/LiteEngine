@@ -11,7 +11,7 @@
 
 class ContainerRenderPassBuilder;
 
-class ContainerRenderPass : public ContainerRenderSubPassI
+class ENGINE_API ContainerRenderPass : public ContainerRenderSubPassI
 {
 	friend ContainerRenderPassBuilder;
 

@@ -3,7 +3,7 @@
 
 #include "CursorType.h"
 
-class Cursor
+class ENGINE_API Cursor
 {
 private:
 	static SDL_Cursor* _cursors [CURSOR_TYPE_COUNT];

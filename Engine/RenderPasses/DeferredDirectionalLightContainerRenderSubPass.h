@@ -5,7 +5,7 @@
 
 #include <string>
 
-class DeferredDirectionalLightContainerRenderSubPass : public DirectionalVolumetricLightContainerRenderSubPass
+class ENGINE_API DeferredDirectionalLightContainerRenderSubPass : public DirectionalVolumetricLightContainerRenderSubPass
 {
 protected:
 	std::string _shaderName;

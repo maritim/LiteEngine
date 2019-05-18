@@ -3,7 +3,7 @@
 
 #include "Core/Interfaces/Object.h"
 
-class AudioClip : public Object
+class ENGINE_API AudioClip : public Object
 {
 protected:
 	std::string _name;

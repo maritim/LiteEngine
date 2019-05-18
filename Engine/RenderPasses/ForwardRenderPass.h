@@ -3,7 +3,7 @@
 
 #include "Renderer/RenderPassI.h"
 
-class ForwardRenderPass : public RenderPassI
+class ENGINE_API ForwardRenderPass : public RenderPassI
 {
 public:
 	virtual void Init (const RenderSettings& settings);

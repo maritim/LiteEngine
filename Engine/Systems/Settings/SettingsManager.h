@@ -12,9 +12,11 @@
 
 #include "SettingsObserverArgs.h"
 
-class SettingsManager : public Singleton<SettingsManager>
+class ENGINE_API SettingsManager : public Singleton<SettingsManager>
 {
 	friend Singleton<SettingsManager>;
+
+	DECLARE_SINGLETON(SettingsManager)
 
 private:
 	SettingsContainer* _settingsContainer;

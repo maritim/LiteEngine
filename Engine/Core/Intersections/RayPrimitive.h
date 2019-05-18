@@ -5,7 +5,7 @@
 
 #include <glm/glm.hpp>
 
-class RayPrimitive : public GeometricPrimitive
+class ENGINE_API RayPrimitive : public GeometricPrimitive
 {
 public:
 	struct RayPrimitiveInformation

@@ -8,7 +8,7 @@
 #include "GBuffer.h"
 #include "LightAccumulationVolume.h"
 
-class DeferredGeometryRenderPass : public RenderPassI
+class ENGINE_API DeferredGeometryRenderPass : public RenderPassI
 {
 protected:
 	std::string _shaderName;

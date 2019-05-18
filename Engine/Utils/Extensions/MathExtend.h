@@ -12,7 +12,7 @@
 namespace Extensions
 {
 
-	class MathExtend
+	class ENGINE_API MathExtend
 	{
 	public:
 		template <class T>

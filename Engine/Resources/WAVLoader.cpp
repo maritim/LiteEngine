@@ -1,6 +1,10 @@
 #include "WAVLoader.h"
 
-#include <SDL/SDL_audio.h>
+#ifdef _WIN32
+	#include <SDL2/SDL_audio.h>
+#elif defined(__linux__)
+	#include <SDL/SDL_audio.h>
+#endif
 
 #include "Audio/AudioClip.h"
 

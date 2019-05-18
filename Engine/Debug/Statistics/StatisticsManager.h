@@ -8,9 +8,11 @@
 
 #include "StatisticsObject.h"
 
-class StatisticsManager : public Singleton<StatisticsManager>
+class ENGINE_API StatisticsManager : public Singleton<StatisticsManager>
 {
 	friend class Singleton<StatisticsManager>;
+
+	DECLARE_SINGLETON(StatisticsManager)
 
 private:
 	std::map<std::string, StatisticsObject*> _statistics;

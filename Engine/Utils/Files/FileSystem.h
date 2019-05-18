@@ -3,7 +3,7 @@
 
 #include <string>
 
-class FileSystem
+class ENGINE_API FileSystem
 {
 public:
 	static std::string GetDirectory(const std::string& filename);

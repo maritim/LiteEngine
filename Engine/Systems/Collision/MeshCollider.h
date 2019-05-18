@@ -5,7 +5,7 @@
 
 #include <bullet/BulletCollision/CollisionShapes/btTriangleMesh.h>
 
-class MeshCollider : public BulletCollider
+class ENGINE_API MeshCollider : public BulletCollider
 {
 protected:
 	btTriangleMesh* _triangleMesh;

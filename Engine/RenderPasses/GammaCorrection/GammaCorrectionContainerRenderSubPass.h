@@ -3,7 +3,7 @@
 
 #include "RenderPasses/PostProcess/PostProcessContainerRenderSubPass.h"
 
-class GammaCorrectionContainerRenderSubPass : public PostProcessContainerRenderSubPass
+class ENGINE_API GammaCorrectionContainerRenderSubPass : public PostProcessContainerRenderSubPass
 {
 public:
 	bool IsAvailable (const Scene* scene, const Camera* camera,

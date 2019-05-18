@@ -21,6 +21,8 @@ MaterialManager::~MaterialManager ()
 	}
 }
 
+SPECIALIZE_SINGLETON(MaterialManager)
+
 void MaterialManager::AddMaterial (Material* material)
 {
 	if (material == nullptr) {

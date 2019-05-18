@@ -120,7 +120,7 @@ void GUIRenderPass::EditorPass (const RenderSettings& settings)
 	GL::Viewport (settings.viewport.x, settings.viewport.y,
 		settings.viewport.width, settings.viewport.height);
 
-	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	//GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	/*
 	 * Activate font texture
@@ -237,13 +237,6 @@ void GUIRenderPass::LockShader ()
 
 void GUIRenderPass::Clear ()
 {
-	ImGuiIO& io = ImGui::GetIO();
-
-	unsigned int fontTextureID = (intptr_t) io.Fonts->TexID;
-	GL::DeleteTextures (1, &fontTextureID);
-
-	io.Fonts->TexID = 0;
-
 	/*
 	 * Delete buffers
 	*/

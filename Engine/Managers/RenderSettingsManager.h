@@ -8,9 +8,11 @@
 
 #include "Renderer/RenderSettings.h"
 
-class RenderSettingsManager : public Singleton<RenderSettingsManager>
+class ENGINE_API RenderSettingsManager : public Singleton<RenderSettingsManager>
 {
 	friend Singleton<RenderSettingsManager>;
+
+	DECLARE_SINGLETON(RenderSettingsManager)
 
 private:
 	std::map<std::string, RenderSettings*> _settings;

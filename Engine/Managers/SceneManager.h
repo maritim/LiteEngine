@@ -7,9 +7,11 @@
 
 #include "SceneGraph/Scene.h"
 
-class SceneManager : public Singleton<SceneManager>
+class ENGINE_API SceneManager : public Singleton<SceneManager>
 {
 	friend Singleton<SceneManager>;
+
+	DECLARE_SINGLETON(SceneManager)
 
 private:
 	Scene* _current;

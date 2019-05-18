@@ -5,7 +5,7 @@
 
 #include <vector>
 
-class ComponentObjectI
+class ENGINE_API ComponentObjectI
 {
 protected:	
 	std::vector<Component*> _components;

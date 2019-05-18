@@ -2,7 +2,7 @@
 
 #include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "ImGuizmo/ImGuizmo.h"
+#include "Systems/GUI/ImGuizmo/ImGuizmo.h"
 
 #include "EditorScene.h"
 #include "EditorSelection.h"

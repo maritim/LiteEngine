@@ -7,9 +7,11 @@
 
 #include "Systems/Camera/Camera.h"
 
-class CameraManager : public Singleton<CameraManager>
+class ENGINE_API CameraManager : public Singleton<CameraManager>
 {
 	friend Singleton<CameraManager>;
+
+	DECLARE_SINGLETON(CameraManager)
 
 private:
 	Camera* _active;

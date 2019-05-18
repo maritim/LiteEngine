@@ -7,7 +7,7 @@
 
 #define SSAO_NOISE_NOT_INIT 352
 
-class SSAONoiseGenerationContainerRenderSubPass : public ContainerRenderSubPassI
+class ENGINE_API SSAONoiseGenerationContainerRenderSubPass : public ContainerRenderSubPassI
 {
 protected:
 	SSAONoiseMapVolume* _ssaoNoiseMapVolume;

@@ -5,7 +5,7 @@
 
 #include <glm/glm.hpp>
 
-class AABBVolume : public GeometricPrimitive
+class ENGINE_API AABBVolume : public GeometricPrimitive
 {
 public:
 	struct AABBVolumeInformation

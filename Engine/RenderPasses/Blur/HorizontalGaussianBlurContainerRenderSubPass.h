@@ -3,7 +3,7 @@
 
 #include "RenderPasses/PostProcess/PostProcessContainerRenderSubPass.h"
 
-class HorizontalGaussianBlurContainerRenderSubPass : public PostProcessContainerRenderSubPass
+class ENGINE_API HorizontalGaussianBlurContainerRenderSubPass : public PostProcessContainerRenderSubPass
 {
 protected:
 	std::string GetPostProcessFragmentShaderPath () const;

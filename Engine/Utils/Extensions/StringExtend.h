@@ -7,7 +7,7 @@
 namespace Extensions
 {
 
-class StringExtend
+class ENGINE_API StringExtend
 {
 public:
 	static bool Replace (std::string&, const std::string&, const std::string&);

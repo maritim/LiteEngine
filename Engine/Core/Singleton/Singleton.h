@@ -38,10 +38,29 @@
 #include <utility>
 #include <cstdlib>
 
+#define DECLARE_SINGLETON(T) \
+public: \
+static T* Instance();
+
+#define SPECIALIZE_SINGLETON(T) \
+template T* Singleton<T>::_instance; \
+T* T::Instance() \
+{ \
+	if (_instance == nullptr) { \
+		if (_isDestroyed) { \
+			OnDeadReference(); \
+		} \
+		else { \
+			CreateSingleton(); \
+		} \
+	} \
+	return _instance; \
+} \
+
 template <typename T>
 class Singleton : public Object
 {
-private:
+protected:
 	static T* _instance;
 	static bool _isDestroyed;
 

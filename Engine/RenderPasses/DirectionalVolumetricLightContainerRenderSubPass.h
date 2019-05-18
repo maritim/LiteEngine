@@ -3,7 +3,7 @@
 
 #include "RenderPasses/VolumetricLightContainerRenderSubPassI.h"
 
-class DirectionalVolumetricLightContainerRenderSubPass : public VolumetricLightContainerRenderSubPassI
+class ENGINE_API DirectionalVolumetricLightContainerRenderSubPass : public VolumetricLightContainerRenderSubPassI
 {
 public:
 	~DirectionalVolumetricLightContainerRenderSubPass ();

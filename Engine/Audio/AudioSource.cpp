@@ -49,6 +49,10 @@ bool AudioSource::IsPlaying () const
 
 void AudioSource::Update ()
 {
+	if (_audioClip == nullptr) {
+		return;
+	}
+
 	glm::vec3 position = _transform->GetPosition ();
 
 	AL::Source3f(_sourceID, AL_POSITION, position.x, position.y, position.z);

@@ -3,7 +3,7 @@
 
 #include <string>
 
-class Object
+class ENGINE_API Object
 {
 public:
 	virtual ~Object ();

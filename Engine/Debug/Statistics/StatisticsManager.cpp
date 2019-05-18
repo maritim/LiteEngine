@@ -17,6 +17,8 @@ StatisticsManager::~StatisticsManager ()
 	}
 }
 
+SPECIALIZE_SINGLETON(StatisticsManager)
+
 StatisticsObject* StatisticsManager::GetStatisticsObject (const std::string& name) const
 {
 	auto it = _statistics.find (name);
@@ -30,11 +32,5 @@ StatisticsObject* StatisticsManager::GetStatisticsObject (const std::string& nam
 
 void StatisticsManager::SetStatisticsObject (const std::string& name, StatisticsObject* object)
 {
-	auto it = _statistics.find (name);
-
-	if (it != _statistics.end ()) {
-		delete it->second;
-	}
-
 	_statistics [name] = object;
 }

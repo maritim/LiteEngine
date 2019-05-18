@@ -7,7 +7,7 @@
 
 #include "Systems/GUI/Gizmo/Gizmo.h"
 
-class GUIGizmosRenderPass : public RenderPassI
+class ENGINE_API GUIGizmosRenderPass : public RenderPassI
 {
 protected:
 	std::string _shaderName;

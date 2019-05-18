@@ -10,7 +10,7 @@
 
 class AnimationsContainerIterator;
 
-class AnimationsController : public Object
+class ENGINE_API AnimationsController : public Object
 {
 protected:
 	std::map<std::string, AnimationContainer*> _animations;
@@ -23,7 +23,7 @@ public:
 	AnimationsContainerIterator end ();
 };
 
-class AnimationsContainerIterator
+class ENGINE_API AnimationsContainerIterator
 {
 	friend AnimationsController;
 

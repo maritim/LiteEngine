@@ -6,7 +6,7 @@
 
 #include "Mesh/Model.h"
 
-class GameObject : public SceneObject, public ComponentObjectI
+class ENGINE_API GameObject : public SceneObject, public ComponentObjectI
 {
 protected:
 	Model* _mesh;

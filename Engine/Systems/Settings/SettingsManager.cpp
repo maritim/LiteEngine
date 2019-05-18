@@ -15,6 +15,8 @@ SettingsManager::~SettingsManager ()
 	delete _settingsContainer;
 }
 
+SPECIALIZE_SINGLETON(SettingsManager)
+
 void SettingsManager::Init (const std::string& settingsPath)
 {
 	_settingsContainer = Resources::LoadSettings (settingsPath);

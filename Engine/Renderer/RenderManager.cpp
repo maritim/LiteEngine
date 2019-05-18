@@ -16,6 +16,8 @@ RenderManager::~RenderManager ()
 
 }
 
+SPECIALIZE_SINGLETON(RenderManager)
+
 /*
  * Render Part
 */

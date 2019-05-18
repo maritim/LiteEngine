@@ -16,7 +16,7 @@
 
 // TODO: Refactor this
 
-class Pipeline
+class ENGINE_API Pipeline
 {
 private:
 	static glm::mat4 _modelMatrix;

@@ -5,7 +5,7 @@
 
 #include <bullet/BulletCollision/CollisionShapes/btCylinderShape.h>
 
-class CylinderCollider : public BulletCollider
+class ENGINE_API CylinderCollider : public BulletCollider
 {
 protected:
 	bool _isGenerated;

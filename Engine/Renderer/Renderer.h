@@ -3,7 +3,7 @@
 
 #include "SceneGraph/Transform.h"
 
-class Renderer
+class ENGINE_API Renderer
 {
 public:
 	enum StageType {DEFERRED_STAGE, FORWARD_STAGE};

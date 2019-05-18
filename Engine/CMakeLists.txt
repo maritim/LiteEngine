@@ -16,6 +16,7 @@ if(NOT MSVC)
 else(NOT MSVC)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /nologo /DNOMINMAX /D_CRT_SECURE_NO_WARNINGS /D_DEBUG /GS /Zi /debug")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /nologo /DNOMINMAX /D_CRT_SECURE_NO_WARNINGS /GS /GL /Gm /O2 /Od /Ox")
+	add_compile_options(/MP)
 endif(NOT MSVC)
 
 file (GLOB_RECURSE LiteEngineSourceFiles *)
@@ -26,7 +27,7 @@ set (OpenGL_GL_PREFERENCE GLVND)
 
 set (LIBS_DIR ${PROJECT_SOURCE_DIR}/3rdparty/lib)
 find_package (OpenGL REQUIRED)
-find_package (OpenAL REQUIRED)
+find_library (OpenAL NAMES OpenAL OpenAL32 HINTS ${LIBS_DIR})
 find_library (GLEW NAMES GLEW glew32 HINTS ${LIBS_DIR})
 find_library (SDL2 NAMES SDL2 HINTS ${LIBS_DIR})
 find_library (SDL2_image NAMES SDL2_image HINTS ${LIBS_DIR})
@@ -55,6 +56,40 @@ if(MSVC)
 	include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include)
 endif(MSVC)
 
-target_link_libraries (LiteEngine ${OPENGL_LIBRARIES} ${GLEW} ${SDL2} ${SDL2_image} ${SDL_SOUND_LIBRARIES} ${OPENAL_LIBRARY} ${assimp} ${BULLET_LIBRARIES} dl)
+if(MSVC)
+	MACRO(GROUP_SRC SRCS)
+	  foreach(FILE ${LiteEngineSourceFiles}) 
+		#convert source file to absolute
+		get_filename_component(ABSOLUTE_PATH "${FILE}" ABSOLUTE)
+		# Get the directory of the absolute source file
+		get_filename_component(PARENT_DIR "${ABSOLUTE_PATH}" DIRECTORY)
+		# Remove common directory prefix to make the group
+		string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}" "" GROUP "${PARENT_DIR}")
+		# Make sure we are using windows slashes
+		string(REPLACE "/" "\\" GROUP "${GROUP}")
+		# Group into "Source Files" and "Header Files"
+		if ("${FILE}" MATCHES ".*\\.cpp")
+	      set(GROUP "Source Files${GROUP}")
+	    elseif("${FILE}" MATCHES ".*\\.h")
+	      set(GROUP "Header Files${GROUP}")
+	    endif()
+	    source_group("${GROUP}" FILES "${FILE}")
+	  endforeach()
+	ENDMACRO(GROUP_SRC)
+
+	group_src (${LiteEngineSourceFiles})
+endif(MSVC)
+
+target_link_libraries (LiteEngine ${OPENGL_LIBRARIES} ${GLEW} ${SDL2} ${SDL2_image} ${SDL_SOUND_LIBRARIES} ${OpenAL} ${assimp} ${BULLET_LIBRARIES})
+
+if(NOT MSVC)
+	target_link_libraries (LiteEngine dl)
+endif(NOT MSVC)
+
+if(MSVC)
+	SET_TARGET_PROPERTIES(LiteEngine PROPERTIES ENABLE_EXPORTS TRUE)
+
+	target_compile_definitions (LiteEngine PRIVATE "ENGINE_API=__declspec(dllexport)")
+endif(MSVC)
 
 target_compile_definitions (LiteEngine PRIVATE GLM_ENABLE_EXPERIMENTAL)

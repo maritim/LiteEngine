@@ -3,7 +3,7 @@
 
 #include "Renderer/RenderPassI.h"
 
-class ContainerRenderSubPassI : public RenderPassI
+class ENGINE_API ContainerRenderSubPassI : public RenderPassI
 {
 public:
 	virtual bool IsAvailable (const Scene* scene, const Camera* camera,

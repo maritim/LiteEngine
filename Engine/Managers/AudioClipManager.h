@@ -7,9 +7,11 @@
 
 #include "Audio/AudioClip.h"
 
-class AudioClipManager : public Singleton<AudioClipManager>
+class ENGINE_API AudioClipManager : public Singleton<AudioClipManager>
 {
 	friend Singleton<AudioClipManager>;
+
+	DECLARE_SINGLETON(AudioClipManager)
 
 private:
 	std::map<std::string, AudioClip*> _audioClips;

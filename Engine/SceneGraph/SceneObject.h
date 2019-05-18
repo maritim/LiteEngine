@@ -11,7 +11,7 @@
 #include "Systems/Collision/Collider.h"
 #include "Audio/AudioSource.h"
 
-class SceneObject : public Object
+class ENGINE_API SceneObject : public Object
 {
 protected:
 	std::string _name;

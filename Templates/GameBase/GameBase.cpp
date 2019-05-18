@@ -4,12 +4,12 @@
 
 #include "Resources/Resources.h"
 
-extern "C" GameModule* CreateGameModule ()
+extern "C" __declspec(dllexport) GameModule* CreateGameModule ()
 {
 	return new GameBase;
 }
 
-extern "C" void DestroyGameModule (GameModule* gameModule)
+extern "C" __declspec(dllexport) void DestroyGameModule (GameModule* gameModule)
 {
 	delete gameModule;
 }

@@ -1,7 +1,5 @@
 #include "Game.h"
 
-#include <dlfcn.h>
-
 #include "Systems/Time/Time.h"
 #include "Systems/Input/Input.h"
 #include "Systems/Window/Window.h"
@@ -21,6 +19,8 @@
 #include "Managers/RenderSettingsManager.h"
 
 #include "GameModule.h"
+
+#include "GameModuleLoader.h"
 
 #define FRAMES_PER_SECOND 60
 #define TICKS_PER_FRAME (1000 / FRAMES_PER_SECOND)
@@ -93,26 +93,7 @@ void Game::LoadGameModule ()
 
 	std::string gameModulePath = arg->GetArgs () [0];
 
-#ifdef _WIN32
-	HMODULE handle = LoadLibrary(gameModulePath.c_str ());
-#else
-	void* handle = dlopen(gameModulePath.c_str (), RTLD_LAZY);
-#endif
-
-	GameModule* (*createGameModule)();
-	// void (*destroyGameModule)(GameModule*);
-
-
-#ifdef _WIN32
-    FARPROC createGameModule = (GameModule* (*)())GetProcAddress(handle, "CreateGameModule");
-    FARPROC destroyGameModule = GetProcAddress(handle, "DestroyGameModule");
-#else
-	createGameModule = (GameModule* (*)())dlsym(handle, "CreateGameModule");
-	// destroyGameModule = (void (*)(GameModule*))dlsym(handle, "DestroyGameModule");
-#endif
-
-
-	_gameModule = (GameModule*) createGameModule ();
+	_gameModule = GameModuleLoader::LoadGameModule (gameModulePath);
 }
 
 void Game::UpdateScene() 

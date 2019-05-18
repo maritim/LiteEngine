@@ -3,7 +3,7 @@
 
 #include "GameObject.h"
 
-class LightMapGameObject : public GameObject
+class ENGINE_API LightMapGameObject : public GameObject
 {
 protected:
 

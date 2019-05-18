@@ -3,7 +3,7 @@
 
 #include "Renderer/RenderPassI.h"
 
-class DeferredSkyboxRenderPass : public RenderPassI
+class ENGINE_API DeferredSkyboxRenderPass : public RenderPassI
 {
 public:
 	virtual ~DeferredSkyboxRenderPass ();

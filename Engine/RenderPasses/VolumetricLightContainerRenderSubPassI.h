@@ -5,7 +5,7 @@
 
 #include "Lighting/VolumetricLight.h"
 
-class VolumetricLightContainerRenderSubPassI : public ContainerRenderSubPassI
+class ENGINE_API VolumetricLightContainerRenderSubPassI : public ContainerRenderSubPassI
 {
 protected:
 	VolumetricLight* GetVolumetricLight (const RenderVolumeCollection* rvc) const;

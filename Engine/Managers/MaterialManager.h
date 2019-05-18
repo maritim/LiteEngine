@@ -8,9 +8,11 @@
 
 #include "Material/Material.h"
 
-class MaterialManager : public Singleton<MaterialManager>
+class ENGINE_API MaterialManager : public Singleton<MaterialManager>
 {
 	friend Singleton<MaterialManager>;
+
+	DECLARE_SINGLETON(MaterialManager)
 
 private:
 	std::map<std::string, Material*> _materials;

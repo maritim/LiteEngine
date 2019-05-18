@@ -3,7 +3,7 @@
 
 #include "Collider.h"
 
-class AABBCollider : public Collider
+class ENGINE_API AABBCollider : public Collider
 {
 public:
 	~AABBCollider ();

@@ -12,6 +12,8 @@ RenderSettingsManager::~RenderSettingsManager ()
 
 }
 
+SPECIALIZE_SINGLETON(RenderSettingsManager)
+
 void RenderSettingsManager::AddRenderSettings (RenderSettings* settings)
 {
 	if (_settings.find (settings->name) != _settings.end ()) {

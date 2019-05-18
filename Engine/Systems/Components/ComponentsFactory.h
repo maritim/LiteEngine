@@ -15,9 +15,11 @@
 
 #define REGISTER_COMPONENT(COMPONENT) static RegisterComponent<COMPONENT> dummy (#COMPONENT);
 
-class ComponentsFactory : public Singleton<ComponentsFactory>
+class ENGINE_API ComponentsFactory : public Singleton<ComponentsFactory>
 {
 	friend Singleton<ComponentsFactory>;
+
+	DECLARE_SINGLETON(ComponentsFactory)
 
 private:
 	typedef Component* (*CreateCompFn) ();

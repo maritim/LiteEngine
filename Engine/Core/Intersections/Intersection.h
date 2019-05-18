@@ -11,9 +11,11 @@
 
 #include "Mesh/Model.h"
 
-class Intersection : public Singleton<Intersection>
+class ENGINE_API Intersection : public Singleton<Intersection>
 {
 	friend class Singleton<Intersection>;
+
+	DECLARE_SINGLETON(Intersection)
 
 public:
 	bool CheckFrustumVsPrimitive (FrustumVolume* frustum, GeometricPrimitive* primitive);

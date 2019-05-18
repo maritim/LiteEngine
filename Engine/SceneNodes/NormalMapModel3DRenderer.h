@@ -13,7 +13,7 @@ struct NormalMapVertexData : VertexData
 	NormalMapVertexData ();
 };
 
-class NormalMapModel3DRenderer : public Model3DRenderer
+class ENGINE_API NormalMapModel3DRenderer : public Model3DRenderer
 {
 public:
 	using Model3DRenderer::Model3DRenderer;

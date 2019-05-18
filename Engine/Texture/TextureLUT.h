@@ -3,7 +3,7 @@
 
 #include "Texture.h"
 
-class TextureLUT : public Texture
+class ENGINE_API TextureLUT : public Texture
 {
 protected:
 	std::size_t _depth;

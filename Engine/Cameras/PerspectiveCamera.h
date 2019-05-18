@@ -3,7 +3,7 @@
 
 #include "Systems/Camera/Camera.h"
 
-class PerspectiveCamera : public Camera
+class ENGINE_API PerspectiveCamera : public Camera
 {
 protected:
 	float _fieldOfViewAngle;

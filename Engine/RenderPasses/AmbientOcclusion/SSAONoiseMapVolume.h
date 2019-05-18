@@ -7,7 +7,7 @@
 
 #include "Renderer/PipelineAttribute.h"
 
-class SSAONoiseMapVolume : public RenderVolumeI
+class ENGINE_API SSAONoiseMapVolume : public RenderVolumeI
 {
 protected:
 	unsigned int _noiseMap;

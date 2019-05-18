@@ -13,7 +13,7 @@ struct LightMapVertexData : VertexData
 	LightMapVertexData ();
 };
 
-class LightMapModel3DRenderer : public Model3DRenderer
+class ENGINE_API LightMapModel3DRenderer : public Model3DRenderer
 {
 public:
 	using Model3DRenderer::Model3DRenderer;

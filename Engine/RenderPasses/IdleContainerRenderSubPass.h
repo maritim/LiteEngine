@@ -5,7 +5,7 @@
 
 #include "RenderPasses/PostProcess/PostProcessMapVolume.h"
 
-class IdleContainerRenderSubPass : public ContainerRenderSubPassI
+class ENGINE_API IdleContainerRenderSubPass : public ContainerRenderSubPassI
 {
 protected:
 	PostProcessMapVolume* _postProcessMapVolume;

@@ -7,9 +7,11 @@
 
 #include "RaycastProduct.h"
 
-class PhysicsManager : public Singleton<PhysicsManager>
+class ENGINE_API PhysicsManager : public Singleton<PhysicsManager>
 {
 	friend Singleton<PhysicsManager>;
+
+	DECLARE_SINGLETON(PhysicsManager)
 
 private:
 	btDiscreteDynamicsWorld* _dynamicsWorld;

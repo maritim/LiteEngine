@@ -10,7 +10,7 @@
 
 #include "TextGUIRenderer.h"
 
-class TextGUI : public SceneObject
+class ENGINE_API TextGUI : public SceneObject
 {
 private:
 	std::string _text;

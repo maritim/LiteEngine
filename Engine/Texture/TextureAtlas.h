@@ -6,7 +6,7 @@
 #include <glm/vec2.hpp>
 #include <vector>
 
-class TextureAtlas : public Texture
+class ENGINE_API TextureAtlas : public Texture
 {
 protected:
 
