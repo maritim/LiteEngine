@@ -128,7 +128,7 @@ SceneObject* EditorSelector::GetSelectedObject (const glm::ivec2& pos)
 		 * Compute model space ray primitive
 		*/
 
-		Model* model = dynamic_cast<GameObject*> (sceneObject)->GetMesh ();
+		Resource<Model> model = dynamic_cast<GameObject*> (sceneObject)->GetMesh ();
 		Transform* transform = sceneObject->GetTransform ();
 
 		glm::vec3 position = transform->GetPosition ();

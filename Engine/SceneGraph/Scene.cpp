@@ -122,6 +122,9 @@ Scene::~Scene ()
 		delete _sceneObjects [i];
 	}
 
+	delete _skybox;
+	delete _boundingBox;
+
 	_sceneObjects.clear ();
 	_sceneObjects.shrink_to_fit ();
 }

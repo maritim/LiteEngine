@@ -8,7 +8,7 @@
 
 GameObject::GameObject () :
 	SceneObject (),
-	_mesh (NULL)
+	_mesh (nullptr)
 {
 	delete _renderer;
 	_renderer = new Model3DRenderer (_transform);
@@ -17,7 +17,7 @@ GameObject::GameObject () :
 	_collider = new AABBCollider ();
 }
 
-void GameObject::AttachMesh (Model * mesh)
+void GameObject::AttachMesh (const Resource<Model>& mesh)
 {
 	_mesh = mesh;
 
@@ -31,7 +31,7 @@ void GameObject::AttachMesh (Model * mesh)
 	_collider->Rebuild (_mesh, _transform);
 }
 
-Model* GameObject::GetMesh () const
+Resource<Model> GameObject::GetMesh () const
 {
 	return _mesh;
 }

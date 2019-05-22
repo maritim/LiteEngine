@@ -3,6 +3,7 @@
 
 #include "Core/Intersections/GeometricPrimitive.h"
 
+#include "Core/Resources/Resource.h"
 #include "Mesh/Model.h"
 #include "SceneGraph/Transform.h"
 
@@ -15,7 +16,7 @@ public:
 	Collider ();
 	virtual ~Collider ();
 
-	void virtual Rebuild (Model* mesh, Transform* transform) = 0;
+	void virtual Rebuild (const Resource<Model>& mesh, Transform* transform) = 0;
 
 	GeometricPrimitive* GetGeometricPrimitive () const;
 protected:

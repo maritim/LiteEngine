@@ -45,7 +45,7 @@ public:
 	bool HaveUV () const;
 
 	void AddNormal (const glm::vec3& normal);
-	void AddVertex (const glm::vec3& vertex);
+	virtual void AddVertex (const glm::vec3& vertex);
 	void AddTexcoord (const glm::vec2& texcoord);
 	void AddObjectModel (ObjectModel* object);
 
@@ -65,7 +65,7 @@ public:
 	glm::vec2 GetTexcoord (std::size_t position) const;
 	ObjectModel* GetObject (std::string objectName) const;
 
-	BoundingBox* GetBoundingBox ();
+	BoundingBox* GetBoundingBox () const;
 
 	void SetVertex (const glm::vec3& vertex, std::size_t position);
 	void ClearObjects ();
@@ -81,7 +81,7 @@ public:
 protected:
 	glm::vec3 CalculateNormal(Polygon* poly);
 
-	BoundingBox* CalculateBoundingBox ();
+	void CalculateBoundingBox (const glm::vec3& vertex);
 };
 
 MULTIPLE_CONTAINER_SPECIALIZATION (ObjectModel*, Model, _objectModels);

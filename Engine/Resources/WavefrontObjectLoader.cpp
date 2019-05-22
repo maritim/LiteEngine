@@ -22,12 +22,8 @@ Object* WavefrontObjectLoader::Load(const std::string& filename)
 {
 	Model * model = new Model ();
 
-	// Add default object models (the syntax can miss)
-	ObjectModel* currentObjModel = new ObjectModel ("DEFAULT");
-	PolygonGroup* currentPolyGroup = new PolygonGroup ("DEFAULT");
-
-	model->AddObjectModel (currentObjModel);
-	currentObjModel->AddPolygonGroup (currentPolyGroup);
+	ObjectModel* currentObjModel = nullptr;
+	PolygonGroup* currentPolyGroup = nullptr;
 
 	// Initialization part
 	std::string currentMatName, lineType;
@@ -67,6 +63,14 @@ Object* WavefrontObjectLoader::Load(const std::string& filename)
 			ReadCurrentMtlName (objFile, currentMatName);
 		}
 		else if (lineType == "f") {
+			if (currentPolyGroup == nullptr) {
+				currentObjModel = new ObjectModel ("DEFAULT");
+				currentPolyGroup = new PolygonGroup ("DEFAULT");
+
+				model->AddObjectModel (currentObjModel);
+				currentObjModel->AddPolygonGroup (currentPolyGroup);
+			}
+
 			ReadFace (objFile, model, currentPolyGroup, indexNormalization, currentMatName);
 		}
 		else if (lineType == "o") {
@@ -76,6 +80,12 @@ Object* WavefrontObjectLoader::Load(const std::string& filename)
 			currentPolyGroup = result.second;
 		}
 		else if (lineType == "g") {
+			if (currentObjModel == nullptr) {
+				currentObjModel = new ObjectModel ("DEFAULT");
+
+				model->AddObjectModel (currentObjModel);
+			}
+
 			currentPolyGroup = ReadPolygonGroup (objFile, currentObjModel);
 		} else {
 			ProcessComment (objFile);

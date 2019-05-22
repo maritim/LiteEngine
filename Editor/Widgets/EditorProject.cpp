@@ -118,7 +118,7 @@ void EditorProject::ShowFiles (const std::string& path)
 			Open (entry.path ().string ());
 		}
 
-        ImGui::TextWrapped("%ws", entry.path ().filename ().c_str ());
+        ImGui::TextWrapped("%s", entry.path ().filename ().string ().c_str ());
 
         ImGui::EndGroup();
 

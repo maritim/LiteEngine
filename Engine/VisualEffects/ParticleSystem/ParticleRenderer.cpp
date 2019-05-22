@@ -30,7 +30,7 @@ std::vector<PipelineAttribute> ParticleRenderer::GetUniformAttributes ()
 	return attributes;
 }
 
-void ParticleRenderer::Attach (Model* model)
+void ParticleRenderer::Attach (const Resource<Model>& model)
 {
 	// Do nothing
 }

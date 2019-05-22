@@ -10,7 +10,7 @@ AABBCollider::~AABBCollider ()
 
 }
 
-void AABBCollider::Rebuild (Model* mesh, Transform* transform)
+void AABBCollider::Rebuild (const Resource<Model>& mesh, Transform* transform)
 {
 	BoundingBox* boundingBox = mesh->GetBoundingBox ();
 

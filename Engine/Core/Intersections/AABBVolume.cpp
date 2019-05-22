@@ -7,6 +7,11 @@ AABBVolume::AABBVolume (AABBVolumeInformation* data) :
 
 }
 
+AABBVolume::~AABBVolume ()
+{
+	delete _data;
+}
+
 AABBVolume::AABBVolumeInformation* AABBVolume::GetVolumeInformation () const
 {
 	return _data;

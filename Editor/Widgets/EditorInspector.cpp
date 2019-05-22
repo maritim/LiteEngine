@@ -6,7 +6,6 @@
 
 #include "EditorSelection.h"
 
-#include "Managers/ModelManager.h"
 #include "Managers/AudioClipManager.h"
 
 #include "Mesh/Model.h"
@@ -140,7 +139,7 @@ void EditorInspector::ShowRenderer (SceneObject* object)
 	if (ImGui::CollapsingHeader ("Renderer", ImGuiTreeNodeFlags_DefaultOpen)) {
 		GameObject* gameObject = dynamic_cast<GameObject*> (object);
 
-		Model* model = gameObject->GetMesh ();
+		Resource<Model> model = gameObject->GetMesh ();
 
 		std::string modelPath = model->GetName ();
 
@@ -157,12 +156,7 @@ void EditorInspector::ShowRenderer (SceneObject* object)
 
 		if (meshPath != std::string ()) {
 
-			Model* mesh = ModelManager::Instance ()->GetModel (meshPath);
-
-			if (mesh == nullptr) {
-				mesh = Resources::LoadModel (meshPath);
-				ModelManager::Instance ()->AddModel (mesh);
-			}
+			Resource<Model> mesh = Resources::LoadModel (meshPath);
 
 			gameObject->AttachMesh (mesh);
 		}

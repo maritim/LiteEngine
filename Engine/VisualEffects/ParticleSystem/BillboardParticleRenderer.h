@@ -27,7 +27,7 @@ public:
 	void SetLifetime (unsigned int* lifetime);
 	void SetTimeAlive (unsigned int* timeAlive);
 
-	void Attach (Model* mesh);
+	void Attach (const Resource<Model>& mesh);
 private:
 	void ManageAtlasTexcoord (Material* mat, Buffer<float>* data);
 	void ManageCustomAttributes (Buffer<float>* data);

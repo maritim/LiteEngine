@@ -5,7 +5,7 @@ MeshParticleRenderer::~MeshParticleRenderer ()
 	// Keep nothing, do nothing
 }
 
-void MeshParticleRenderer::Attach (Model* mesh)
+void MeshParticleRenderer::Attach (const Resource<Model>& mesh)
 {
 	// Do nothing
 }

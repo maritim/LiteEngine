@@ -19,6 +19,7 @@ private:
 
 public:
 	AABBVolume (AABBVolumeInformation* data);
+	~AABBVolume ();
 
 	AABBVolumeInformation* GetVolumeInformation () const;
 };

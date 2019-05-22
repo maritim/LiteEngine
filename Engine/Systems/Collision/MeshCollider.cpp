@@ -5,8 +5,6 @@
 
 MeshCollider::~MeshCollider ()
 {
-	DestroyCollisionShape ();
-
 	DestroyTriangleMesh ();
 }
 

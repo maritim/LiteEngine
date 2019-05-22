@@ -37,7 +37,7 @@ void NormalMapModel3DRenderer::Draw ()
 
 // For the moment I clone the vertex/normal/texture tuple for every one
 // Maybe will be a good idea to delete the duplicates, low priority TODO:
-BufferObject NormalMapModel3DRenderer::ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup)
+BufferObject NormalMapModel3DRenderer::ProcessPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup)
 {
 	std::vector<NormalMapVertexData> vertexBuffer;
 	std::vector<unsigned int> indexBuffer;
@@ -137,7 +137,7 @@ BufferObject NormalMapModel3DRenderer::BindVertexData (const std::vector<NormalM
 	return bufferObject;
 }
 
-glm::vec3 NormalMapModel3DRenderer::CalculateNormal (Model* model, Polygon* polygon)
+glm::vec3 NormalMapModel3DRenderer::CalculateNormal (const Resource<Model>& model, Polygon* polygon)
 {
 	glm::vec3 normal = Extensions::VectorExtend::Cross(
 		model->GetVertex (polygon->GetVertex (0)),
@@ -154,7 +154,7 @@ glm::vec3 NormalMapModel3DRenderer::CalculateNormal (Model* model, Polygon* poly
  * Calculate vertex tangent based on explanation from the link above;
 */
 
-glm::vec3 NormalMapModel3DRenderer::CalculateTangent (Model* model, Polygon* poly)
+glm::vec3 NormalMapModel3DRenderer::CalculateTangent (const Resource<Model>& model, Polygon* poly)
 {
 	/*
 	 * Tangents are generated only when texcoords are present

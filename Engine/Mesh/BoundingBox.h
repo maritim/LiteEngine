@@ -10,12 +10,12 @@ struct BoundingBox
 	float zmin, zmax;
 
 	BoundingBox () :
-		xmin (std::numeric_limits<float>::max()),
-		xmax (std::numeric_limits<float>::min()),
-		ymin (std::numeric_limits<float>::max()),
-		ymax (std::numeric_limits<float>::min()),
-		zmin (std::numeric_limits<float>::max()),
-		zmax (std::numeric_limits<float>::min())
+		xmin (std::numeric_limits<float>::infinity()),
+		xmax (-std::numeric_limits<float>::infinity()),
+		ymin (std::numeric_limits<float>::infinity()),
+		ymax (-std::numeric_limits<float>::infinity()),
+		zmin (std::numeric_limits<float>::infinity()),
+		zmax (-std::numeric_limits<float>::infinity())
 	{
 	}
 };

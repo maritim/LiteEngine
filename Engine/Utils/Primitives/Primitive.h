@@ -5,6 +5,7 @@
 
 #include <vector>
 
+#include "Core/Resources/Resource.h"
 #include "Mesh/Model.h"
 
 class Primitive : public Singleton<Primitive>
@@ -15,10 +16,10 @@ public:
 	enum Type { QUAD = 0, CUBE, SPHERE, TRIANGULAR_PYRAMID, SQUARE_PYRAMID, CYLINDER, CONE };
 
 private:
-	std::vector<Model*> _primitives;
+	std::vector<Resource<Model>> _primitives;
 
 public:
-	Model* Create (Type type);
+	Resource<Model> Create (Type type);
 private:
 	Primitive ();
 	Primitive (const Primitive& other);

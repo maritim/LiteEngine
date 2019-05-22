@@ -12,6 +12,7 @@
 class ENGINE_API Rigidbody : public Object
 {
 protected:
+	btMotionState* _motionState;
 	btRigidBody* _rigidBody;
 	Transform* _transform;
 	bool _isAttached;

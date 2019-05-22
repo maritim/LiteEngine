@@ -15,17 +15,14 @@ Skybox::Skybox () :
     delete _renderer;
     _renderer = new SkyboxRenderer (this);
 
-    Model* cube = Primitive::Instance ()->Create (Primitive::Type::CUBE);
+    Resource<Model> cube = Primitive::Instance ()->Create (Primitive::Type::CUBE);
     AttachMesh (cube);
-    delete cube;
 }
 
 Skybox::~Skybox ()
 {
     unsigned int texture[] = { _cubemap->GetGPUIndex () };
     GL::DeleteTextures(1,texture);
-
-    delete _renderer;
 }
 
 void Skybox::SetCubeMap (CubeMap* cubemap)

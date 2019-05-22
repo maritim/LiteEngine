@@ -18,7 +18,7 @@ Model::Model() :
 	_objectModels (),
 	_normals (),
 	_texcoords (),
-	_boundingBox (nullptr)
+	_boundingBox (new BoundingBox ())
 {
 }
 
@@ -30,7 +30,7 @@ Model::Model(const Model& other) :
 	_objectModels (),
 	_normals (other._normals),
 	_texcoords (other._texcoords),
-	_boundingBox (nullptr)
+	_boundingBox (other._boundingBox)
 {
 	for (std::size_t i=0;i<other._objectModels.size();i++) {
 		_objectModels.push_back (new ObjectModel (*other._objectModels [i]));
@@ -43,14 +43,14 @@ Model::~Model()
 		delete _objectModels[i];
 	}
 
-	if (_boundingBox != nullptr) {
-		delete _boundingBox;
-	}
+	delete _boundingBox;
 }
 
 void Model::AddVertex (const glm::vec3& vertex)
 {
 	_vertices.push_back (vertex);
+
+	CalculateBoundingBox (vertex);
 }
 
 void Model::AddNormal (const glm::vec3& normal)
@@ -178,12 +178,8 @@ std::string Model::GetMaterialLibrary (void) const
 	return _mtllib;
 }
 
-BoundingBox* Model::GetBoundingBox ()
+BoundingBox* Model::GetBoundingBox () const
 {
-	if (_boundingBox == nullptr) {
-		_boundingBox = CalculateBoundingBox ();
-	}
-
 	return _boundingBox;
 }
 
@@ -381,28 +377,14 @@ glm::vec3 Model::CalculateNormal (Polygon* polygon)
 	return glm::normalize (normal);
 }
 
-BoundingBox* Model::CalculateBoundingBox ()
+void Model::CalculateBoundingBox (const glm::vec3& vertex)
 {
-	BoundingBox* boundingBox = new BoundingBox ();
+	_boundingBox->xmin = std::min (_boundingBox->xmin, vertex.x);
+	_boundingBox->xmax = std::max (_boundingBox->xmax, vertex.x);
 
-	for (auto objModel : _objectModels) {
-		for (auto polyGroup : *objModel) {
-			for (auto polygon : *polyGroup) {
-				for (std::size_t k=0;k<polygon->VertexCount ();k++) {
-					glm::vec3 vertex = _vertices [polygon->GetVertex (k)];
+	_boundingBox->ymin = std::min (_boundingBox->ymin, vertex.y);
+	_boundingBox->ymax = std::max (_boundingBox->ymax, vertex.y);
 
-					boundingBox->xmin = std::min (boundingBox->xmin, vertex.x);
-					boundingBox->xmax = std::max (boundingBox->xmax, vertex.x);
-
-					boundingBox->ymin = std::min (boundingBox->ymin, vertex.y);
-					boundingBox->ymax = std::max (boundingBox->ymax, vertex.y);
-
-					boundingBox->zmin = std::min (boundingBox->zmin, vertex.z);
-					boundingBox->zmax = std::max (boundingBox->zmax, vertex.z);
-				}
-			}
-		}
-	}
-
-	return boundingBox;	
+	_boundingBox->zmin = std::min (_boundingBox->zmin, vertex.z);
+	_boundingBox->zmax = std::max (_boundingBox->zmax, vertex.z);
 }

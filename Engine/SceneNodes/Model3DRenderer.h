@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include "Core/Resources/Resource.h"
 #include "Mesh/Model.h"
 #include "Mesh/ObjectModel.h"
 #include "Mesh/PolygonGroup.h"
@@ -44,15 +45,15 @@ public:
 
 	virtual ~Model3DRenderer ();
 
-	virtual void Attach (Model* mesh);
+	virtual void Attach (const Resource<Model>& mesh);
 
 	virtual void Draw ();
 	virtual void DrawGeometry ();
 
 	void Clear ();
 protected:
-	void ProcessObjectModel (Model* model, ObjectModel* objModel);
-	virtual BufferObject ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup);
+	void ProcessObjectModel (const Resource<Model>& model, ObjectModel* objModel);
+	virtual BufferObject ProcessPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup);
 
 	virtual BufferObject BindVertexData (const std::vector<VertexData>& vBuf, const std::vector<unsigned int>& iBuf);
 

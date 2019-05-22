@@ -24,7 +24,7 @@ private:
 	Emiter* CreateEmiter (TiXmlElement* xmlElem, const std::string& filename);
 	void ProcessParticle (TiXmlElement* xmlElem, Emiter* emiter, const std::string& filename);
 	void ProcessParticleMesh (TiXmlElement* xmlElem, Particle* particle, const std::string& filename);
-	void ProcessMeshMaterial (TiXmlElement* xmlElem, Model* mesh, const std::string& filename);
+	void ProcessMeshMaterial (TiXmlElement* xmlElem, Resource<Model>& mesh, const std::string& filename);
 	void ProcessParticleRigidbody (TiXmlElement* xmlElem, Particle* particle);
 	void ProcessParticleGravity (TiXmlElement* xmlElem, Rigidbody* rigidbody);
 	void ProcessTransform (TiXmlElement* xmlElem, Emiter* emiter);

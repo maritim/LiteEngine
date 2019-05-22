@@ -17,7 +17,7 @@ Particle::Particle () :
 	_tweenCurve (NULL),
 	_alive (true),
 	_timeAlive (0),
-	_mesh (NULL)
+	_mesh (nullptr)
 {
 	delete _renderer;
 	_renderer = new ParticleRenderer (_transform);
@@ -63,7 +63,7 @@ void Particle::Init ()
 	_finalDestination = _initialPosition + (*_direction) * _speed * (_lifetime / 1000.0f);
 }
 
-void Particle::SetMesh (Model* mesh)
+void Particle::SetMesh (const Resource<Model>& mesh)
 {
 	ParticleRenderer* particleRenderer = dynamic_cast<ParticleRenderer*>(_renderer);
 	particleRenderer->Attach (mesh);
@@ -71,7 +71,7 @@ void Particle::SetMesh (Model* mesh)
 	_mesh = mesh;
 }
 
-Model* Particle::GetMesh () const
+Resource<Model> Particle::GetMesh () const
 {
 	return _mesh;
 }

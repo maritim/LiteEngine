@@ -20,7 +20,7 @@
 
 #include "Core/Random/Random.h"
 
-MeshEmiter::MeshEmiter (Model* mesh) :
+MeshEmiter::MeshEmiter (const Resource<Model>& mesh) :
 	_mesh (mesh)
 {
 	for_each_type (ObjectModel*, objModel, *mesh) {
@@ -32,8 +32,6 @@ MeshEmiter::~MeshEmiter ()
 {
 	_meshSamples.clear ();
 	_meshSamples.shrink_to_fit ();
-
-	delete _mesh;
 }
 
 glm::vec3 MeshEmiter::GetParticlePosition ()
@@ -51,14 +49,14 @@ glm::vec3 MeshEmiter::GetParticlePosition ()
 	return position;
 }
 
-void MeshEmiter::ProcessObjectModel (Model* mesh, ObjectModel* objModel)
+void MeshEmiter::ProcessObjectModel (const Resource<Model>& mesh, ObjectModel* objModel)
 {
 	for (PolygonGroup* polyGroup : *objModel) {
 		ProcessPolygonGroup (mesh, polyGroup);
 	}
 }
 
-void MeshEmiter::ProcessPolygonGroup (Model* mesh, PolygonGroup* polyGroup)
+void MeshEmiter::ProcessPolygonGroup (const Resource<Model>& mesh, PolygonGroup* polyGroup)
 {
 	for (Polygon* polygon : *polyGroup) {
 		MeshSample sample;

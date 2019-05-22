@@ -21,7 +21,7 @@ struct AnimatedVertexData : VertexData
 class ENGINE_API AnimationModel3DRenderer : public Model3DRenderer
 {
 protected:
-	AnimationModel* _animationModel;
+	Resource<Model> _animationModel;
 	std::string _currentAnimClipName;
 	float _currAnimStartTime;
 
@@ -33,7 +33,7 @@ protected:
 public:
 	using Model3DRenderer::Model3DRenderer;	
 
-	void Attach (Model* model);
+	void Attach (const Resource<Model>& model);
 
 	void Draw ();
 	void DrawGeometry ();
@@ -42,7 +42,7 @@ public:
 	void Blend (const std::string& nextAnimName, float duration);
 
 protected:
-	BufferObject ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup);
+	BufferObject ProcessPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup);
 
 	std::vector<PipelineAttribute> GetCustomAttributes ();
 

@@ -83,7 +83,7 @@ std::vector<PipelineAttribute> BillboardParticleRenderer::GetUniformAttributes (
 	return attributes;
 }
 
-void BillboardParticleRenderer::Attach (Model* model)
+void BillboardParticleRenderer::Attach (const Resource<Model>& model)
 {
 	for_each_type (ObjectModel*, objModel, *model) {
 		for (PolygonGroup* polyGroup : *objModel) {

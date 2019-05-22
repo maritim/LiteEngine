@@ -265,18 +265,18 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 
 	float shadow = CalcDirectionalShadowContribution (in_position);
 
-	directDiffuseColor = (1.0 - shadow) * (directDiffuseColor);
-	directSpecularColor = (1.0 - shadow) * directSpecularColor;
+	directDiffuseColor = shadow * directDiffuseColor;
+	directSpecularColor = shadow * directSpecularColor;
 
 	vec3 indirectDiffuseColor = CalcIndirectDiffuseLight (worldPosition, worldNormal);
 	vec3 indirectSpecularColor = CalcIndirectSpecularLight (worldPosition, worldNormal);
 
 	float ambientOcclusion = CalcOcclusion (worldPosition, worldNormal);
 
-	return vec3 (ambientOcclusion);
+	// return vec3 (ambientOcclusion);
 	// return indirectSpecularColor;
-	// return (directDiffuseColor + indirectDiffuseColor * indirectIntensity) * in_diffuse
-	// 	   + (directSpecularColor + indirectSpecularColor * indirectIntensity) * in_specular;
+	return (directDiffuseColor + indirectDiffuseColor * indirectIntensity) * in_diffuse
+		   + (directSpecularColor + indirectSpecularColor * indirectIntensity) * in_specular;
 }
 
 void main()

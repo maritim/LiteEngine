@@ -66,6 +66,8 @@ endif(MSVC)
 
 if(NOT MSVC)
 	target_link_libraries (LiteEditor stdc++fs)
+
+	target_compile_definitions (LiteEditor PRIVATE "ENGINE_API=")
 else(NOT MSVC)
 	target_link_libraries (LiteEditor LiteEngine)
 

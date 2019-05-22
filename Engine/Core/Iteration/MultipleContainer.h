@@ -16,7 +16,11 @@ public: \
 	template<typename T> \
 	typename std::vector<T>::iterator begin (); \
 	template<typename T> \
-	typename std::vector<T>::iterator end ();
+	typename std::vector<T>::iterator end (); \
+	template<typename T> \
+	typename std::vector<T>::const_iterator begin () const; \
+	template<typename T> \
+	typename std::vector<T>::const_iterator end () const;
 
 /*
  *
@@ -32,6 +36,16 @@ template<> \
 inline std::vector<type>::iterator class::end<type> () \
 { \
 	return container.end (); \
+} \
+template<> \
+inline std::vector<type>::const_iterator class::begin<type> () const \
+{ \
+	return container.begin (); \
+} \
+template<> \
+inline std::vector<type>::const_iterator class::end<type> () const \
+{ \
+	return container.end (); \
 }
 
 /*
@@ -44,7 +58,7 @@ inline std::vector<type>::iterator class::end<type> () \
 // TODO: Fix scope
 
 #define for_each_type(type, name, container) \
-	std::vector<type>::iterator name##_it; \
+	std::vector<type>::const_iterator name##_it; \
 	type name; \
 	for (name##_it = (container).begin<type> (), name = *name##_it; \
 		name##_it != (container).end<type> (); \

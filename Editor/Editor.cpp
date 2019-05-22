@@ -8,16 +8,6 @@
 #include "EditorManager.h"
 #include "EditorScene.h"
 
-extern "C" __declspec(dllexport) GameModule* CreateGameModule ()
-{
-	return new Editor;
-}
-
-extern "C" __declspec(dllexport) void DestroyGameModule (GameModule* gameModule)
-{
-	delete gameModule;
-}
-
 void Editor::Init ()
 {
 	EditorScene::Instance ()->Init ();

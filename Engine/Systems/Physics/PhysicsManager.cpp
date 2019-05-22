@@ -20,11 +20,7 @@ PhysicsManager::PhysicsManager () :
 
 PhysicsManager::~PhysicsManager ()
 {
-	if (_dynamicsWorld == nullptr) {
-		return;
-	}
 
-	delete _dynamicsWorld;
 }
 
 SPECIALIZE_SINGLETON(PhysicsManager)
@@ -35,35 +31,35 @@ void PhysicsManager::Init ()
 	 * Create collision configuration
 	*/
 
-	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration ();
+	_collisionConfiguration = new btDefaultCollisionConfiguration ();
 
 	/*
 	 * Create collision dispatcher
 	*/
 
-	btCollisionDispatcher* collisionDispatcher = new btCollisionDispatcher (collisionConfiguration);
+	_collisionDispatcher = new btCollisionDispatcher (_collisionConfiguration);
 
 	/*
 	 * Create broadphase
 	*/
 
-	btBroadphaseInterface* broadphaseInterface = new btDbvtBroadphase ();
+	_broadphaseInterface = new btDbvtBroadphase ();
 
 	/*
 	 * Create solver
 	*/
 
-	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver ();
+	_solver = new btSequentialImpulseConstraintSolver ();
 
 	/*
 	 * Initialize dynamics world
 	*/
 
 	_dynamicsWorld = new btDiscreteDynamicsWorld (
-		collisionDispatcher,
-		broadphaseInterface,
-		solver,
-		collisionConfiguration
+		_collisionDispatcher,
+		_broadphaseInterface,
+		_solver,
+		_collisionConfiguration
 	);
 
 	/*
@@ -78,6 +74,16 @@ void PhysicsManager::Init ()
 
 	btIDebugDraw* debugDraw = new BulletDebugDraw ();
 	_dynamicsWorld->setDebugDrawer (debugDraw);
+}
+
+void PhysicsManager::Clear ()
+{
+	delete _dynamicsWorld;
+
+	delete _solver;
+	delete _broadphaseInterface;
+	delete _collisionDispatcher;
+	delete _collisionConfiguration;
 }
 
 void PhysicsManager::AttachRigidbody (btRigidBody* rigidbody)

@@ -1,5 +1,12 @@
 #include "AnimationsController.h"
 
+AnimationsController::~AnimationsController ()
+{
+	for (auto animContainer : _animations) {
+		delete animContainer.second;
+	}
+}
+
 AnimationContainer* AnimationsController::GetAnimationContainer (const std::string& animationName)
 {
 	auto animContainer = _animations.find (animationName);

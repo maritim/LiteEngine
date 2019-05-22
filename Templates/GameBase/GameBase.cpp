@@ -4,16 +4,6 @@
 
 #include "Resources/Resources.h"
 
-extern "C" __declspec(dllexport) GameModule* CreateGameModule ()
-{
-	return new GameBase;
-}
-
-extern "C" __declspec(dllexport) void DestroyGameModule (GameModule* gameModule)
-{
-	delete gameModule;
-}
-
 void GameBase::Init ()
 {
 	std::string renderSettingsPath = "Assets/RenderSettings/Default.rsettings";

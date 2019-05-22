@@ -16,6 +16,8 @@ protected:
 	std::map<std::string, AnimationContainer*> _animations;
 
 public:
+	~AnimationsController ();
+
 	AnimationContainer* GetAnimationContainer (const std::string& animationName);
 	void AddAnimationContainer (AnimationContainer* animContainer);
 

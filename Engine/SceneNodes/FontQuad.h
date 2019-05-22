@@ -3,12 +3,13 @@
 
 #include "Core/Interfaces/Object.h"
 
+#include "Core/Resources/Resource.h"
 #include "Mesh/Model.h"
 
 class FontQuad
 {
 private:
-	Model* _quad;
+	Resource<Model> _quad;
 
 public:
 	FontQuad ();

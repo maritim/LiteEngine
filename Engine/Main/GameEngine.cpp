@@ -64,6 +64,8 @@ void GameEngine::Clear ()
 
 	GUI::Clear ();
 
+	Physics::Quit ();
+
 	Cursor::Clear ();
 
 	Window::Close ();

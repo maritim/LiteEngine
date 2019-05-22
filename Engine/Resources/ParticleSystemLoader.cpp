@@ -176,7 +176,7 @@ Emiter* ParticleSystemLoader::CreateEmiter (TiXmlElement* xmlElem, const std::st
 		std::string path = xmlElem->Attribute ("path");
 		path = FileSystem::GetDirectory (filename) + path;
 
-		Model* mesh = Resources::LoadModel (path);
+		Resource<Model> mesh = Resources::LoadModel (path);
 
 		emiter = new MeshEmiter (mesh);
 	}
@@ -216,7 +216,7 @@ void ParticleSystemLoader::ProcessParticle (TiXmlElement* xmlElem, Emiter* emite
 void ParticleSystemLoader::ProcessParticleMesh (TiXmlElement* xmlElem, Particle* prototype, 
 	const std::string& filename)
 {
-	Model* mesh = NULL; 
+	Resource<Model> mesh = nullptr;
 
 	std::string type = xmlElem->Attribute ("type");
 
@@ -248,7 +248,7 @@ void ParticleSystemLoader::ProcessParticleMesh (TiXmlElement* xmlElem, Particle*
 	prototype->SetMesh (mesh);
 }
 
-void ParticleSystemLoader::ProcessMeshMaterial (TiXmlElement* xmlElem, Model* mesh, 
+void ParticleSystemLoader::ProcessMeshMaterial (TiXmlElement* xmlElem, Resource<Model>& mesh,
 	const std::string& filename)
 {
 	std::string matLbName = xmlElem->FirstChildElement ("MaterialLibrary")->GetText ();

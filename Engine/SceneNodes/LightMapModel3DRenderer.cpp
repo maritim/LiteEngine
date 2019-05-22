@@ -23,9 +23,9 @@ LightMapVertexData::LightMapVertexData () : VertexData ()
 
 // For the moment I clone the vertex/normal/texture tuple for every one
 // Maybe will be a good idea to delete the duplicates, low priority TODO:
-BufferObject LightMapModel3DRenderer::ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup)
+BufferObject LightMapModel3DRenderer::ProcessPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup)
 {
-	LightMapModel* lmModel = dynamic_cast<LightMapModel*> (model);
+	const LightMapModel* lmModel = dynamic_cast<const LightMapModel*> (&*model);
 
 	std::vector<LightMapVertexData> vertexBuffer;
 	std::vector<unsigned int> indexBuffer;

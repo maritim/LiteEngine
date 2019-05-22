@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "Core/Resources/Resource.h"
+
 #include "SceneNodes/GameObject.h"
 #include "SceneNodes/AnimationGameObject.h"
 #include "SceneNodes/NormalMapGameObject.h"
@@ -13,7 +15,6 @@
 #include "Systems/Components/ComponentsFactory.h"
 #include "Systems/Components/Component.h"
 
-#include "Managers/ModelManager.h"
 #include "Managers/AudioClipManager.h"
 
 #include "Resources/Resources.h"
@@ -108,12 +109,7 @@ void SceneLoader::ProcessGameObject (TiXmlElement* xmlElem, Scene* scene)
 	gameObject->SetInstanceID (std::stoi (instanceID));
 	gameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
-	Model* mesh = ModelManager::Instance ()->GetModel (meshPath);
-
-	if (mesh == nullptr) {
-		mesh = Resources::LoadModel (meshPath);
-		ModelManager::Instance ()->AddModel (mesh);
-	}
+	Resource<Model> mesh = Resources::LoadModel (meshPath);
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -159,12 +155,7 @@ void SceneLoader::ProcessAnimationGameObject (TiXmlElement* xmlElem, Scene* scen
 	animGameObject->SetInstanceID (std::stoi (instanceID));
 	animGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
-	Model* mesh = ModelManager::Instance ()->GetModel (meshPath);
-
-	if (mesh == nullptr) {
-		mesh = Resources::LoadAnimatedModel (meshPath);
-		ModelManager::Instance ()->AddModel (mesh);
-	}
+	Resource<Model> mesh = Resources::LoadAnimatedModel (meshPath);
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -212,12 +203,7 @@ void SceneLoader::ProcessNormalMapGameObject (TiXmlElement* xmlElem, Scene* scen
 	normalMapGameObject->SetInstanceID (std::stoi (instanceID));
 	normalMapGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
-	Model* mesh = ModelManager::Instance ()->GetModel (meshPath);
-
-	if (mesh == nullptr) {
-		mesh = Resources::LoadModel (meshPath);
-		ModelManager::Instance ()->AddModel (mesh);
-	}
+	Resource<Model> mesh = Resources::LoadModel (meshPath);
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -263,12 +249,7 @@ void SceneLoader::ProcessLightMapGameObject (TiXmlElement* xmlElem, Scene* scene
 	lightMapGameObject->SetInstanceID (std::stoi (instanceID));
 	lightMapGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
-	Model* mesh = ModelManager::Instance ()->GetModel (meshPath);
-
-	if (mesh == nullptr) {
-		mesh = Resources::LoadModel (meshPath);
-		ModelManager::Instance ()->AddModel (mesh);
-	}
+	Resource<Model> mesh = Resources::LoadModel (meshPath);
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 

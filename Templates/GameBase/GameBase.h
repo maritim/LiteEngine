@@ -12,4 +12,6 @@ public:
 	void RenderScene ();
 };
 
+REGISTER_GAME_MODULE(GameBase)
+
 #endif

@@ -47,22 +47,28 @@ RenderSettings* Resources::LoadRenderSettings (const std::string& filename)
 	return settings;
 }
 
-Model* Resources::LoadModel (const std::string& filename)
+Resource<Model> Resources::LoadModel (const std::string& filename)
 {
 	std::string extension = FileSystem::GetExtension(filename);
 
+	if (Resource<Model>::GetResource (filename) != nullptr) {
+		return Resource<Model>::GetResource (filename);
+	}
+
+	Model* mesh = nullptr;
+
 	if (extension == ".obj") {
-		return LoadWavefrontModel (filename);
+		mesh = LoadWavefrontModel (filename);
 	}
 	else if (extension == ".ply") {
-		return LoadStanfordModel (filename);
+		mesh = LoadStanfordModel (filename);
 	} else {
-		return LoadGenericModel (filename);
+		mesh = LoadGenericModel (filename);
 	}
 
 	Console::LogError ("The File Format for " + extension + " is not recognized.");
 
-	return NULL;
+	return Resource<Model> (mesh, filename);
 }
 
 Model* Resources::LoadWavefrontModel(const std::string& filename)
@@ -98,15 +104,19 @@ Model* Resources::LoadGenericModel (const std::string& filename)
 	return model;
 }
 
-AnimationModel* Resources::LoadAnimatedModel (const std::string& filename)
+Resource<Model> Resources::LoadAnimatedModel (const std::string& filename)
 {
+	if (Resource<Model>::GetResource (filename) != nullptr) {
+		return Resource<Model>::GetResource (filename);
+	}
+
 	AnimationModelLoader* animatedModelLoader = new AnimationModelLoader ();
 
 	AnimationModel* animatedModel = (AnimationModel*)animatedModelLoader->Load (filename);
 
 	delete animatedModelLoader;
 
-	return animatedModel;
+	return Resource<Model> (animatedModel, filename);
 }
 
 AnimationModel* Resources::LoadSkinModel (const std::string& filename)

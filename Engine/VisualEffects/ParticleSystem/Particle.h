@@ -5,6 +5,7 @@
 
 #include <glm/vec3.hpp>
 
+#include "Core/Resources/Resource.h"
 #include "Mesh/Model.h"
 #include "SceneGraph/Transform.h"
 
@@ -30,7 +31,7 @@ protected:
 	glm::vec3 _initialScale;
 	unsigned int _timeAlive;
 
-	Model* _mesh;
+	Resource<Model> _mesh;
 
 public:
 	Particle ();
@@ -45,8 +46,8 @@ public:
 
 	void Init ();
 
-	void SetMesh (Model* mesh);
-	Model* GetMesh () const;
+	void SetMesh (const Resource<Model>& mesh);
+	Resource<Model> GetMesh () const;
 
 	bool IsAlive () const;
 

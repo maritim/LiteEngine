@@ -29,7 +29,7 @@ EditorScene::EditorScene () :
 
 EditorScene::~EditorScene ()
 {
-
+	delete _sceneCamera;
 }
 
 #include "Debug/Logger/Logger.h"

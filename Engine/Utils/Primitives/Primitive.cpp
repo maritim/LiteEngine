@@ -19,7 +19,7 @@ Primitive::Primitive ()
 	};
 
 	for (std::size_t i=0;i<primitivesCount;i++) {
-		Model* primitive = Resources::LoadModel (primitive_filenames [i]);
+		Resource<Model> primitive = Resources::LoadModel (primitive_filenames [i]);
 
 		_primitives.push_back (primitive);
 	}
@@ -30,9 +30,7 @@ Primitive::~Primitive ()
 
 }
 
-Model* Primitive::Create (Type type)
+Resource<Model> Primitive::Create (Type type)
 {
-	Model* primitive = new Model (*_primitives [type]);
-
-	return primitive;
+	return _primitives [type];
 }

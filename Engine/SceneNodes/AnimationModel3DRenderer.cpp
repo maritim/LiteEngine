@@ -27,13 +27,13 @@ AnimatedVertexData::AnimatedVertexData () : VertexData ()
 	}
 }
 
-void AnimationModel3DRenderer::Attach (Model* model)
+void AnimationModel3DRenderer::Attach (const Resource<Model>& model)
 {
 	for_each_type (ObjectModel*, objModel, *model) {
 		ProcessObjectModel (model, objModel);
 	}
 
-	_animationModel = dynamic_cast<AnimationModel*> (model);
+	_animationModel = model;
 
 	_currentAnimClipName = std::string ();
 	_previousAnimClipName = std::string ();
@@ -95,9 +95,9 @@ void AnimationModel3DRenderer::Blend (const std::string& nextAnimName, float dur
 
 // For the moment I clone the vertex/normal/texture tuple for every one
 // Maybe will be a good idea to delete the duplicates, low priority TODO:
-BufferObject AnimationModel3DRenderer::ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup)
+BufferObject AnimationModel3DRenderer::ProcessPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup)
 {
-	AnimationModel* animModel = dynamic_cast<AnimationModel*> (model);
+	const AnimationModel* animModel = dynamic_cast<const AnimationModel*> (&*model);
 
 	std::vector<AnimatedVertexData> vertexBuffer;
 	std::vector<unsigned int> indexBuffer;
@@ -151,15 +151,17 @@ BufferObject AnimationModel3DRenderer::ProcessPolygonGroup (Model* model, Polygo
 
 std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 {
-	// Calculate attribute
-	std::vector<glm::mat4> boneTransform (_animationModel->GetBoneCount (), glm::mat4 (1.0f));
+	AnimationModel* animModel = dynamic_cast<AnimationModel*> (&*_animationModel);
 
-	AnimationsController* animController = _animationModel->GetAnimationsController ();
+	// Calculate attribute
+	std::vector<glm::mat4> boneTransform (animModel->GetBoneCount (), glm::mat4 (1.0f));
+
+	AnimationsController* animController = animModel->GetAnimationsController ();
 	AnimationContainer* prevAnimContainer = animController->GetAnimationContainer (_previousAnimClipName);
 	AnimationContainer* animContainer = animController->GetAnimationContainer (_currentAnimClipName);
 
 	if (animContainer != nullptr) {
-		BoneTree* boneTree = _animationModel->GetBoneTree ();
+		BoneTree* boneTree = animModel->GetBoneTree ();
 		glm::mat4 rootMatrix (1.0f);
 
 		glm::mat4 globalInverse = boneTree->GetRoot ()->GetTransform ();
@@ -181,7 +183,7 @@ std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 
 			animationTime = 0.0f;
 
-			ProcessBoneTransform (_animationModel, rootMatrix, prevAnimContainer, animContainer,
+			ProcessBoneTransform (animModel, rootMatrix, prevAnimContainer, animContainer,
 				boneTree->GetRoot (), globalInverse, prevAnimationTime, animationTime, blendWeight, boneTransform);
 
 			if (blendElapsedTime > _blendDuration) {
@@ -191,7 +193,7 @@ std::vector<PipelineAttribute> AnimationModel3DRenderer::GetCustomAttributes ()
 		}
 
 		if (prevAnimContainer == nullptr) {
-			ProcessBoneTransform (_animationModel, rootMatrix, nullptr, animContainer,
+			ProcessBoneTransform (animModel, rootMatrix, nullptr, animContainer,
 				boneTree->GetRoot (), globalInverse, 0.0f, animationTime, 0.0f, boneTransform);
 		}
 	}

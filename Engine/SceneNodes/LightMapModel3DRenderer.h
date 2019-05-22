@@ -19,7 +19,7 @@ public:
 	using Model3DRenderer::Model3DRenderer;
 
 protected:
-	BufferObject ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup);
+	BufferObject ProcessPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup);
 
 	BufferObject BindVertexData (const std::vector<LightMapVertexData>& vBuf, const std::vector<unsigned int>& iBuf);
 };

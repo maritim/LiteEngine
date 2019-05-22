@@ -60,7 +60,8 @@ void EditorAnimationModel::ShowAnimationsWindow ()
 
 		if (ImGui::CollapsingHeader (std::string ("Model: " + objectName).c_str ())) {
 
-			AnimationModel* animModel = (AnimationModel*) animGameObject->GetMesh ();
+			Resource<Model> model = animGameObject->GetMesh ();
+			AnimationModel* animModel = (AnimationModel*) &*model;
 			AnimationsController* animController = animModel->GetAnimationsController ();
 
 			std::vector<std::string> animations = { "None" };

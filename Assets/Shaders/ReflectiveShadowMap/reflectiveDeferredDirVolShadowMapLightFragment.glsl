@@ -121,7 +121,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 
 	float shadow = CalcDirectionalShadowContribution (in_position);
 
-	directDiffuseColor = (1.0 - shadow) * (directDiffuseColor);
+	directDiffuseColor = shadow * directDiffuseColor;
 
 	vec3 indirectDiffuseColor = CalcIndirectDiffuseLight (worldPosition, worldNormal);
 

@@ -53,7 +53,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// Calculate shadow
 	float shadow = CalcDirectionalShadowContribution (in_position);
 
-	return (1.0 - shadow) * (diffuseColor + specularColor);
+	return shadow * (diffuseColor + specularColor);
 }
 
 void main()

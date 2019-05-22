@@ -89,7 +89,7 @@ bool Intersection::CheckRayVsAABB (RayPrimitive* ray, AABBVolume* aabb, float& d
 	return tMax > tMin;
 }
 
-bool Intersection::CheckRayVsModel (RayPrimitive* ray, Model* model, float& distance)
+bool Intersection::CheckRayVsModel (RayPrimitive* ray, const Resource<Model>& model, float& distance)
 {
 	bool isIntersection = false;
 	distance = std::numeric_limits<float>::infinity ();
@@ -118,7 +118,7 @@ bool Intersection::CheckRayVsModel (RayPrimitive* ray, Model* model, float& dist
  * Thanks to: https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
 */
 
-bool Intersection::CheckRayVsPolygon (RayPrimitive* ray, Model* model, Polygon* poly, float& distance)
+bool Intersection::CheckRayVsPolygon (RayPrimitive* ray, const Resource<Model>& model, Polygon* poly, float& distance)
 {
 	const RayPrimitive::RayPrimitiveInformation& rayData = ray->GetVolumeInformation ();
 

@@ -3,6 +3,7 @@
 
 #include "ParticleRenderer.h"
 
+#include "Core/Resources/Resource.h"
 #include "Mesh/Model.h"
 
 class MeshParticleRenderer : public ParticleRenderer
@@ -17,7 +18,7 @@ public:
 	virtual std::vector<PipelineAttribute> GetUniformAttributes ();
 	virtual std::vector<BufferAttribute> GetBufferAttributes ();
 
-	virtual void Attach (Model* mesh);
+	virtual void Attach (const Resource<Model>& mesh);
 };
 
 #endif

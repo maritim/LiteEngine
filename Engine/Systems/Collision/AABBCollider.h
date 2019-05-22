@@ -8,7 +8,7 @@ class ENGINE_API AABBCollider : public Collider
 public:
 	~AABBCollider ();
 
-	void virtual Rebuild (Model* mesh, Transform* transform);
+	void virtual Rebuild (const Resource<Model>& mesh, Transform* transform);
 };
 
 #endif

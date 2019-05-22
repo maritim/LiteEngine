@@ -4,6 +4,7 @@
 #include "Systems/Physics/MotionState.h"
 
 Rigidbody::Rigidbody (Transform* transform) :
+	_motionState (nullptr),
 	_rigidBody (nullptr),
 	_transform (transform),
 	_mass (0.0f),
@@ -16,6 +17,10 @@ Rigidbody::Rigidbody (Transform* transform) :
 Rigidbody::~Rigidbody ()
 {
 	DestroyRigidbody ();
+
+	if (_collider != nullptr) {
+		delete _collider;
+	}
 }
 
 void Rigidbody::SetMass (float mass)
@@ -159,7 +164,7 @@ void Rigidbody::Debug (bool isEnabled)
 
 void Rigidbody::Build ()
 {
-	btMotionState* motionState = new MotionState (_transform, glm::vec3 (0.0f)); //_collider->GetOffset ());
+	_motionState = new MotionState (_transform, glm::vec3 (0.0f)); //_collider->GetOffset ());
 
 	/*
 	 * Initialize rigidbody
@@ -169,7 +174,7 @@ void Rigidbody::Build ()
 
 	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI (
 		_mass,
-		motionState,
+		_motionState,
 		nullptr,
 		localInertia
 	);
@@ -224,9 +229,11 @@ void Rigidbody::UpdateCollider ()
 
 void Rigidbody::DestroyRigidbody ()
 {
-	if (_rigidBody == nullptr) {
-		return;
+	if (_rigidBody != nullptr) {
+		delete _rigidBody;
 	}
 
-	delete _rigidBody;
+	if (_motionState != nullptr) {
+		delete _motionState;
+	}
 }

@@ -27,16 +27,17 @@ public:
 	std::size_t GetBoneCount () const;
 
 	VertexBoneInfo* GetVertexBoneInfo (std::size_t index);
+	VertexBoneInfo* GetVertexBoneInfo (std::size_t index) const;
 
 	void SetAnimationsController (AnimationsController* animController);
-	AnimationsController* GetAnimationsController ();
+	AnimationsController* GetAnimationsController () const;
 
-	BoneTree* GetBoneTree ();
+	BoneTree* GetBoneTree () const;
 	void SetBoneTree (BoneTree* boneTree);
 
 	void AddBone (BoneInfo* bone);
-	BoneInfo* GetBone (const std::string& name);
-	BoneInfo* GetBone (std::size_t index);
+	BoneInfo* GetBone (const std::string& name) const;
+	BoneInfo* GetBone (std::size_t index) const;
 
 	~AnimationModel ();
 };

@@ -5,16 +5,17 @@
 #include "Systems/Components/ComponentObjectI.h"
 
 #include "Mesh/Model.h"
+#include "Core/Resources/Resource.h"
 
 class ENGINE_API GameObject : public SceneObject, public ComponentObjectI
 {
 protected:
-	Model* _mesh;
+	Resource<Model> _mesh;
 public:
 	GameObject ();
 
-	virtual void AttachMesh (Model* mesh);
-	Model* GetMesh () const;
+	virtual void AttachMesh (const Resource<Model>& mesh);
+	Resource<Model> GetMesh () const;
 
 	void Update ();
 

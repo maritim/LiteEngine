@@ -14,6 +14,10 @@ class ENGINE_API PhysicsManager : public Singleton<PhysicsManager>
 	DECLARE_SINGLETON(PhysicsManager)
 
 private:
+	btDefaultCollisionConfiguration* _collisionConfiguration;
+	btCollisionDispatcher* _collisionDispatcher;
+	btDbvtBroadphase* _broadphaseInterface;
+	btSequentialImpulseConstraintSolver* _solver;
 	btDiscreteDynamicsWorld* _dynamicsWorld;
 
 public:
@@ -26,6 +30,8 @@ public:
 		float distance = 2000);
 
 	void Update ();
+
+	void Clear ();
 private:
 	PhysicsManager ();
 	~PhysicsManager ();

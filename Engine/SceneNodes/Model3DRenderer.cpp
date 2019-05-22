@@ -32,7 +32,7 @@ Model3DRenderer::~Model3DRenderer ()
 	Clear ();
 }
 
-void Model3DRenderer::Attach (Model* model)
+void Model3DRenderer::Attach (const Resource<Model>& model)
 {
 	/*
 	 * Clear current buffer data if exists
@@ -96,7 +96,7 @@ void Model3DRenderer::Clear ()
 	_drawableObjects.shrink_to_fit ();
 }
 
-void Model3DRenderer::ProcessObjectModel (Model* model, ObjectModel* objModel)
+void Model3DRenderer::ProcessObjectModel (const Resource<Model>& model, ObjectModel* objModel)
 {
 	for (PolygonGroup* polyGroup : *objModel) {
 		BufferObject bufObj = ProcessPolygonGroup (model, polyGroup);
@@ -107,7 +107,7 @@ void Model3DRenderer::ProcessObjectModel (Model* model, ObjectModel* objModel)
 
 // For the moment I clone the vertex/normal/texture tuple for every one
 // Maybe will be a good idea to delete the duplicates, low priority TODO:
-BufferObject Model3DRenderer::ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup)
+BufferObject Model3DRenderer::ProcessPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup)
 {
 	std::vector<VertexData> vertexBuffer;
 	std::vector<unsigned int> indexBuffer;

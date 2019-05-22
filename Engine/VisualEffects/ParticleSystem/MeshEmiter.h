@@ -7,6 +7,7 @@
 
 #include "Particle.h"
 
+#include "Core/Resources/Resource.h"
 #include "Mesh/Model.h"
 
 class MeshSample
@@ -20,17 +21,17 @@ public:
 class MeshEmiter : public PrimitiveEmiter
 {
 protected:
-	Model* _mesh;
+	Resource<Model> _mesh;
 	std::vector<MeshSample> _meshSamples;
 
 public:
-	MeshEmiter (Model* mesh);
+	MeshEmiter (const Resource<Model>& mesh);
 	~MeshEmiter ();
 protected:
 	glm::vec3 GetParticlePosition ();
 private:
-	void ProcessObjectModel (Model* mesh, ObjectModel* objModel);
-	void ProcessPolygonGroup (Model* mesh, PolygonGroup* polyGroup);
+	void ProcessObjectModel (const Resource<Model>& mesh, ObjectModel* objModel);
+	void ProcessPolygonGroup (const Resource<Model>& mesh, PolygonGroup* polyGroup);
 };
 
 #endif

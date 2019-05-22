@@ -21,7 +21,7 @@ void BulletCollider::SetOffset (const glm::vec3& offset)
 	_isDirty = true;
 }
 
-void BulletCollider::SetMesh (Model* mesh)
+void BulletCollider::SetMesh (const Resource<Model>& mesh)
 {
 	_mesh = mesh;
 
@@ -49,7 +49,7 @@ glm::vec3 BulletCollider::GetOffset () const
 	return _offset;
 }
 
-Model* BulletCollider::GetMesh () const
+Resource<Model> BulletCollider::GetMesh () const
 {
 	return _mesh;
 }
@@ -61,7 +61,7 @@ bool BulletCollider::IsDirty () const
 
 void BulletCollider::DestroyCollisionShape ()
 {
-	if (_collisionShape != nullptr) {
+	if (_collisionShape == nullptr) {
 		return;
 	}
 

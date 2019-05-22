@@ -18,7 +18,7 @@ public:
 
 	virtual ~ParticleRenderer ();
 
-	virtual void Attach (Model* mesh);
+	virtual void Attach (const Resource<Model>& mesh);
 
 	void Draw ();
 protected:

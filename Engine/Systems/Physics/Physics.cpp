@@ -9,5 +9,5 @@ void Physics::Init ()
 
 void Physics::Quit ()
 {
-
+	PhysicsManager::Instance ()->Clear ();
 }

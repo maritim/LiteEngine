@@ -17,21 +17,21 @@ public:
 
 	template <class T>
 	T GetValue (const std::string& key, T defaultValue);
-
-	template <>
-	std::string GetValue (const std::string& key, std::string defaultValue);
-
-	template <>
-	int GetValue (const std::string& key, int defaultValue);
-
-	template <>
-	float GetValue (const std::string& key, float defaultValue);
-
-	template <>
-	bool GetValue (const std::string& key, bool defaultValue);
-
-	template <>
-	glm::vec2 GetValue (const std::string& key, glm::vec2 defaultValue);
 };
+
+template <>
+std::string ENGINE_API SettingsContainer::GetValue (const std::string& key, std::string defaultValue);
+
+template <>
+int ENGINE_API SettingsContainer::GetValue (const std::string& key, int defaultValue);
+
+template <>
+float ENGINE_API SettingsContainer::GetValue (const std::string& key, float defaultValue);
+
+template <>
+bool ENGINE_API SettingsContainer::GetValue (const std::string& key, bool defaultValue);
+
+template <>
+glm::vec2 ENGINE_API SettingsContainer::GetValue (const std::string& key, glm::vec2 defaultValue);
 
 #endif

@@ -21,6 +21,7 @@ SceneObject::~SceneObject ()
 	delete _transform;
 	delete _renderer;
 	delete _rigidbody;
+	delete _audioSource;
 
 	if (_collider != nullptr) {
 		delete _collider;

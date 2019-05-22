@@ -21,12 +21,12 @@ public:
 	void Draw ();
 
 protected:
-	BufferObject ProcessPolygonGroup (Model* model, PolygonGroup* polyGroup);
+	BufferObject ProcessPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup);
 
 	BufferObject BindVertexData (const std::vector<NormalMapVertexData>& vBuf, const std::vector<unsigned int>& iBuf);
 
-	glm::vec3 CalculateNormal (Model* model, Polygon* poly);
-	glm::vec3 CalculateTangent (Model* model, Polygon* poly);
+	glm::vec3 CalculateNormal (const Resource<Model>& model, Polygon* poly);
+	glm::vec3 CalculateTangent (const Resource<Model>& model, Polygon* poly);
 };
 
 #endif

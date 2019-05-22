@@ -191,5 +191,5 @@ void ShaderManager::ErrorCheck (unsigned int shader)
 
 	Console::Log ("Compile status (empty means compiles successfully) : " + (std::string) error);
 
-	delete error;
+	free (error);
 }

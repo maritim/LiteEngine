@@ -9,17 +9,17 @@ VolumetricLight::VolumetricLight () :
 
 VolumetricLight::~VolumetricLight ()
 {
-	delete _volume;
+	delete _lightRenderer;
 }
 
-void VolumetricLight::SetVolume (Model* volume)
+void VolumetricLight::SetVolume (const Resource<Model>& volume)
 {
 	_volume = volume;
 
 	_lightRenderer->Attach (volume);
 }
 
-Model* VolumetricLight::GetVolume ()
+Resource<Model> VolumetricLight::GetVolume ()
 {
 	return _volume;
 }
