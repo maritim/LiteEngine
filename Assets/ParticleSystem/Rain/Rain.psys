@@ -4,7 +4,7 @@
 	<CountRange min="0" max="5000"/>
 	<EmissionRate rate="500" />
 
-	<Emiter type="QUAD" width="49.0" depth="49.0" >
+	<Emiter type="QUAD" width="5.0" depth="5.0" >
 		<Particle type="BILLBOARD">
 			<Mesh type="Primitive" index="0" description="Quad" >
 				<Material>
@@ -12,6 +12,7 @@
 					<MaterialName>RainDrop</MaterialName>
 				</Material>
 			</Mesh>
+			<TextureAtlas path="Textures/Drop.png" />
 		</Particle>
 	
 		<Transform>
@@ -24,9 +25,9 @@
 		<ScaleCurve type="EASE" easeindex="1" description="Constant" ></ScaleCurve>
 		<TweenCurve type="EASE" easeindex="2" description="Linear" ></TweenCurve>
 
-		<LifetimeRange min="9900" max="10000" description="In milliseconds" />
+		<LifetimeRange min="2900" max="3000" description="In milliseconds" />
 		<SpeedRange min="7.0" max="7.1" description="In units per second" />
-		<ScaleRange min="0.2" max="0.2" description="In units" />
+		<ScaleRange min="0.05" max="0.05" description="In units" />
 	</Emiter>
 </ParticleSystem>
 

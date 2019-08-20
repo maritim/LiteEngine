@@ -80,6 +80,13 @@ void AL::BufferData(ALuint buffer, ALenum format, const ALvoid *data, ALsizei si
 	ErrorCheck ("alBufferData");
 }
 
+void AL::DeleteBuffers(ALsizei n, ALuint *buffers)
+{
+	alDeleteBuffers (n, buffers);
+
+	ErrorCheck ("alDeleteBuffers");
+}
+
 /*
  * Sources
 */

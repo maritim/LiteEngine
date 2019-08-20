@@ -6,7 +6,7 @@
 class ENGINE_API BloomHorizontalBlurContainerRenderSubPass : public HorizontalGaussianBlurContainerRenderSubPass
 {
 public:
-	bool IsAvailable (const Scene* scene, const Camera* camera,
+	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 protected:
 	glm::ivec2 GetPostProcessVolumeResolution (const RenderSettings& settings) const;

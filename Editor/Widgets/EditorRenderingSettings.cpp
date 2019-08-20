@@ -10,16 +10,21 @@
 #include "Systems/Window/Window.h"
 #include "Systems/Input/Input.h"
 
-#include "Managers/TextureManager.h"
 #include "Managers/RenderSettingsManager.h"
 
 #include "Resources/Resources.h"
 
+#include "Renderer/RenderSystem.h"
 #include "Renderer/RenderManager.h"
+
+#include "Debug/Statistics/StatisticsManager.h"
+#include "Debug/Statistics/RSMStatisticsObject.h"
 
 #include "Debug/Logger/Logger.h"
 
 EditorRenderingSettings::EditorRenderingSettings () :
+	_lutTexture (nullptr),
+	_lutTextureView (nullptr),
 	_continuousVoxelizationReset (false)
 {
 
@@ -68,137 +73,102 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 	ImGui::PushItemWidth(ImGui::GetFontSize() * -12);
 
-	int lastRenderModule = SettingsManager::Instance ()->GetValue<int> ("render_module", 0);
-	int renderModule = lastRenderModule;
+	std::map<std::string, int> renderModes;
+	renderModes ["SceneRenderModule"] = 0;
+	renderModes ["VoxelConeTracingRenderModule"] = 1;
+	renderModes ["ReflectiveShadowMappingRenderModule"] = 2;
 
-	const char* items[] = { "Direct Light", "Voxel Cone Trace", "Reflective Shadow Map", "Voxel Ray Trace" };
-	ImGui::Combo("Render Module", &renderModule, items, 4);
+	int lastRenderMode = renderModes [_settings->renderMode];
+	int renderMode = lastRenderMode;
 
-	// if (lastRenderModule != renderModule) {
-	// 	SettingsManager::Instance ()->SetValue ("render_module", std::to_string (renderModule));
+	const char* items[] = { "Direct Light", "Voxel Cone Tracing", "Reflective Shadow Mapping", "Voxel Ray Trace" };
+	ImGui::Combo("Render Module", &renderMode, items, 4);
 
-	// 	if (renderModule == 0) {
-	// 		RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_DIRECT_LIGHTING);
-	// 		SettingsManager::Instance ()->SetValue ("ambient_occlusion", std::to_string (_lastAmbientOcclusionEnabled));
-	// 	}
+	const char* srenderModes[] = { "SceneRenderModule", "VoxelConeTracingRenderModule", "ReflectiveShadowMappingRenderModule", "SceneRenderModule" };
 
-	// 	if (renderModule == 1) {
-	// 		RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_VOXEL_CONE_TRACE);
-
-	// 		_lastAmbientOcclusionEnabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", false);
-	// 		SettingsManager::Instance ()->SetValue ("ambient_occlusion", std::to_string (false));
-	// 	}
-
-	// 	if (renderModule == 2) {
-	// 		RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_REFLECTIVE_SHADOW_MAP);
-
-	// 		_lastAmbientOcclusionEnabled = SettingsManager::Instance ()->GetValue<bool> ("ambient_occlusion", false);
-	// 		SettingsManager::Instance ()->SetValue ("ambient_occlusion", std::to_string (false));
-	// 	}
-
-	// 	if (renderModule == 3) {
-	// 		RenderManager::Instance ()->SetRenderMode (RenderMode::RENDER_MODE_VOXELIZATION);
-	// 	}
-	// }
+	if (lastRenderMode != renderMode) {
+		_settings->renderMode = srenderModes [renderMode];
+	}
 
 	ImGui::Spacing ();
 
-	if (ImGui::CollapsingHeader ("Voxel Cone Trace")) {
+	if (ImGui::CollapsingHeader ("Voxel Cone Tracing")) {
 		if (_continuousVoxelizationReset == true) {
-			SettingsManager::Instance ()->SetValue ("vct_continuous_voxelization", std::to_string (_lastContinuousVoxelization));
+			_settings->vct_continuous_voxelization = _lastContinuousVoxelization;
 			_continuousVoxelizationReset = false;
 		}
 
-		int lastVoxelVolumeSize = SettingsManager::Instance ()->GetValue<int> ("vct_voxels_size", 0);
-		int voxelVolumeSize = lastVoxelVolumeSize;
-		ImGui::InputInt ("Voxel Volume Size", &voxelVolumeSize);
+		std::size_t lastVoxelVolumeSize = _settings->vct_voxels_size;
+		bool lastVoxelBordering = _settings->vct_bordering;
 
-		bool lastRevoxelization = SettingsManager::Instance ()->GetValue<bool> ("vct_continuous_voxelization", false);
-		bool revoxelization = lastRevoxelization;
-		ImGui::Checkbox ("Continuous Voxelization", &revoxelization);
+		ImGui::InputScalar ("Voxel Volume Size", ImGuiDataType_U32, &_settings->vct_voxels_size);
+		ImGui::Checkbox ("Continuous Voxelization", &_settings->vct_continuous_voxelization);
+		ImGui::Checkbox ("Voxel Volume Bordering", &_settings->vct_bordering);
+		ImGui::InputFloat ("Indirect Light Intensity", &_settings->vct_indirect_intensity, 0.1f);
 
-		bool lastVoxelBordering = SettingsManager::Instance ()->GetValue<bool> ("vct_bordering", false);
-		bool voxelBordering = lastVoxelBordering;
-		ImGui::Checkbox ("Voxel Volume Bordering", &voxelBordering);
-
-		bool lastVoxelAmbient = SettingsManager::Instance ()->GetValue<bool> ("vct_ambient", false);
-		bool voxelAmbient = lastVoxelAmbient;
-		ImGui::Checkbox ("Voxel Volume Air Ambient", &voxelAmbient);
-
-		float lastIndirectLightIntensity = SettingsManager::Instance ()->GetValue<float> ("vct_indirect_intensity", 0.0f);
-		float indirectLightIntensity = lastIndirectLightIntensity;
-		ImGui::InputFloat ("Indirect Light Intensity", &indirectLightIntensity, 0.1f);
-
-		if (lastVoxelVolumeSize != voxelVolumeSize) {
-			SettingsManager::Instance ()->SetValue ("vct_voxels_size", std::to_string (voxelVolumeSize));
-
-			_lastContinuousVoxelization = revoxelization;
+		if (lastVoxelVolumeSize != _settings->vct_voxels_size) {
+			_lastContinuousVoxelization = _settings->vct_continuous_voxelization;
 			_continuousVoxelizationReset = true;
 
-			SettingsManager::Instance ()->SetValue ("vct_continuous_voxelization", std::to_string (true));
+			_settings->vct_continuous_voxelization = true;
 		}
 
-		if (lastRevoxelization != revoxelization) {
-			SettingsManager::Instance ()->SetValue ("vct_continuous_voxelization", std::to_string (revoxelization));
-		}
-
-		if (lastVoxelBordering != voxelBordering) {
-			SettingsManager::Instance ()->SetValue ("vct_bordering", std::to_string (voxelBordering));
-
-			_lastContinuousVoxelization = revoxelization;
+		if (lastVoxelBordering != _settings->vct_bordering) {
+			_lastContinuousVoxelization = _settings->vct_continuous_voxelization;
 			_continuousVoxelizationReset = true;
 
-			SettingsManager::Instance ()->SetValue ("vct_continuous_voxelization", std::to_string (true));
-		}
-
-		if (lastVoxelAmbient != voxelAmbient) {
-			SettingsManager::Instance ()->SetValue ("vct_ambient", std::to_string (voxelAmbient));
-
-			_lastContinuousVoxelization = revoxelization;
-			_continuousVoxelizationReset = true;
-
-			SettingsManager::Instance ()->SetValue ("vct_continuous_voxelization", std::to_string (true));
-		}
-
-		if (lastIndirectLightIntensity != indirectLightIntensity) {
-			SettingsManager::Instance ()->SetValue ("vct_indirect_intensity", std::to_string (indirectLightIntensity));
+			_settings->vct_continuous_voxelization = true;
 		}
 	}
 
     ImGui::Spacing();
 
-	if (ImGui::CollapsingHeader ("Reflective Shadow Map")) {
-		glm::vec2 lastRSMResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("rsm_resolution", glm::vec2 (0));
-		int rsmResolution [2] = { (int) lastRSMResolution.x, (int) lastRSMResolution.y };
+	if (ImGui::CollapsingHeader ("Reflective Shadow Mapping")) {
+
+		glm::ivec2 lastRSMResolution = _settings->rsm_resolution;
+		int rsmResolution [2] = { lastRSMResolution.x, lastRSMResolution.y };
 		ImGui::InputInt2 ("Resolution", rsmResolution);
+		_settings->rsm_resolution = glm::ivec2 (rsmResolution [0], rsmResolution [1]);
 
-		int lastRSMSamplesSize = SettingsManager::Instance ()->GetValue<int> ("rsm_samples", 0);
-		int rsmSamplesSize = lastRSMSamplesSize;
-		ImGui::SliderInt ("Samples Size", &rsmSamplesSize, 1, 200);
+		std::size_t limit1 = 1, limit2 = 200;
+		ImGui::SliderScalar ("Samples Size", ImGuiDataType_U32, &_settings->rsm_samples, &limit1, &limit2);
 
-		float lastRSMRadius = SettingsManager::Instance ()->GetValue<float> ("rsm_radius", 0.0f);
-		float rsmRadius = lastRSMRadius;
-		ImGui::InputFloat ("Sample Radius", &rsmRadius);
+		ImGui::SliderFloat ("Shadow Bias", &_settings->rsm_bias, 0.0001, 0.2, "%5f");
+		ImGui::SliderFloat ("Sample Radius", &_settings->rsm_radius, 0.001, 0.2);
+		ImGui::SliderFloat ("Indirect Light Intensity", &_settings->rsm_intensity, 0, 5);
+		ImGui::Checkbox ("Caching", &_settings->rsm_caching);
 
-		float lastRSMIntensity = SettingsManager::Instance ()->GetValue<float> ("rsm_intensity", 0.0f);
-		float rsmIntensity = lastRSMIntensity;
-		ImGui::InputFloat ("Indirect Light Intensity", &rsmIntensity);
+		if (ImGui::TreeNode ("Debug")) {
+			if (ImGui::TreeNode ("Reflective Shadow Map")) {
 
-		if (lastRSMResolution.x != rsmResolution [0] || lastRSMResolution.y != rsmResolution [1]) {
-			SettingsManager::Instance ()->SetValue ("rsm_resolution",
-				std::to_string (rsmResolution [0]) + "," + std::to_string (rsmResolution [1]));
-		}
+				StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
+				RSMStatisticsObject* rsmStat = nullptr;
 
-		if (lastRSMSamplesSize != rsmSamplesSize) {
-			SettingsManager::Instance ()->SetValue ("rsm_samples", std::to_string (rsmSamplesSize));
-		}
+				if (stat != nullptr) {
+					rsmStat = dynamic_cast<RSMStatisticsObject*> (stat);
+				}
 
-		if (lastRSMRadius != rsmRadius) {
-			SettingsManager::Instance ()->SetValue ("rsm_radius", std::to_string (rsmRadius));
-		}
+				if (rsmStat != nullptr) {
 
-		if (lastRSMIntensity != rsmIntensity) {
-			SettingsManager::Instance ()->SetValue ("rsm_intensity", std::to_string (rsmIntensity));
+					int windowWidth = ImGui::GetWindowWidth() * 0.65f;
+
+					ImGui::Text ("Position Map");
+					ImGui::Image((void*)(intptr_t) rsmStat->rsmPosMapID, ImVec2(windowWidth, windowWidth), ImVec2 (0, 1), ImVec2 (1, 0));
+
+					ImGui::Text ("Normal Map");
+					ImGui::Image((void*)(intptr_t) rsmStat->rsmNormalMapID, ImVec2(windowWidth, windowWidth), ImVec2 (0, 1), ImVec2 (1, 0));
+
+					ImGui::Text ("Flux Map");
+					ImGui::Image((void*)(intptr_t) rsmStat->rsmFluxMapID, ImVec2(windowWidth, windowWidth), ImVec2 (0, 1), ImVec2 (1, 0));
+
+					ImGui::Text ("Cache Map");
+					ImGui::Image((void*)(intptr_t) rsmStat->rsmCacheMapID, ImVec2(windowWidth, windowWidth), ImVec2 (0, 1), ImVec2 (1, 0));
+				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop();
 		}
 	}
 
@@ -276,14 +246,14 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 			ImGui::Text ("Path: %s", lutTexturePath.c_str ());
 
-			Texture* texture = TextureManager::Instance ()->GetTexture (lutTexturePath);
-			if (texture == nullptr) {
-				texture = Resources::LoadTexture (std::string (lutTexturePath));
-				TextureManager::Instance ()->AddTexture (texture);
+			if (_lutTexture == nullptr || _lastLUTTexturePath != lutTexturePath) {
+				_lutTexture = Resources::LoadTexture (lutTexturePath);
+				_lutTextureView = RenderSystem::LoadTexture (_lutTexture);
+				_lastLUTTexturePath = lutTexturePath;
 			}
 
-			auto texSize = texture->GetSize ();
-			ImGui::Image((void*)(intptr_t) texture->GetGPUIndex (), ImVec2(texSize.width, texSize.height));
+			auto texSize = _lutTexture->GetSize ();
+			ImGui::Image((void*)(intptr_t) _lutTextureView->GetGPUIndex (), ImVec2(texSize.width, texSize.height));
 
 			ImGui::SameLine ();
 

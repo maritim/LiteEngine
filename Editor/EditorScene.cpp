@@ -72,9 +72,9 @@ void EditorScene::Update ()
 	_sceneCamera->SetAspect ((float) _size.x / _size.y);
 }
 
-void EditorScene::Render (const Scene* scene)
+void EditorScene::Render ()
 {
-	_renderSettings->renderMode = "SceneRenderModule";
+	// _renderSettings->renderMode = "SceneRenderModule";
 	_renderSettings->framebuffer.width = _size.x;
 	_renderSettings->framebuffer.height = _size.y;
 	_renderSettings->viewport.x = 0;
@@ -82,7 +82,7 @@ void EditorScene::Render (const Scene* scene)
 	_renderSettings->viewport.width = _size.x;
 	_renderSettings->viewport.height = _size.y;
 
-	RenderProduct result = RenderManager::Instance ()->RenderScene (scene, _sceneCamera, *_renderSettings);
+	RenderProduct result = RenderManager::Instance ()->Render (_sceneCamera, *_renderSettings);
 
 	FrameBuffer2DVolume* framebuffer = dynamic_cast<FrameBuffer2DVolume*> (result.resultVolume);
 	_textureID = framebuffer->GetColorTextureID ();

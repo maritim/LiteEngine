@@ -1,9 +1,7 @@
 #include "DirectionalLightContainerRenderVolumeCollection.h"
 
-#include "Lighting/LightsManager.h"
-
 DirectionalLightContainerRenderVolumeCollection::DirectionalLightContainerRenderVolumeCollection () :
-	_directionalLightsIterator (),
+	_iterations (0),
 	_volumetricLightVolume (new VolumetricLightVolume ())
 {
 
@@ -16,18 +14,20 @@ DirectionalLightContainerRenderVolumeCollection::~DirectionalLightContainerRende
 
 void DirectionalLightContainerRenderVolumeCollection::Reset ()
 {
-	_directionalLightsIterator = LightsManager::Instance ()->begin<DirectionalLight*> ();
+	_iterations = 0;
 }
 
-RenderVolumeI* DirectionalLightContainerRenderVolumeCollection::GetNextVolume ()
+RenderVolumeI* DirectionalLightContainerRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene)
 {
-	if (_directionalLightsIterator == LightsManager::Instance ()->end<DirectionalLight*> ()) {
+	if (_iterations > 0) {
 		return nullptr;
 	}
 
-	_volumetricLightVolume->SetVolumetricLight (*_directionalLightsIterator);
+	auto renderLightObject = renderScene->GetRenderDirectionalLightObject ();
 
-	_directionalLightsIterator ++;
+	_volumetricLightVolume->SetRenderLightObject (renderLightObject);
+
+	_iterations ++;
 
 	return _volumetricLightVolume;
 }

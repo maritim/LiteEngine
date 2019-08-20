@@ -4,6 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Systems/GUI/ImGuizmo/ImGuizmo.h"
 
+#include "SceneNodes/GameObject.h"
+
 #include "EditorScene.h"
 #include "EditorSelection.h"
 
@@ -101,15 +103,17 @@ SceneObject* EditorSelector::GetSelectedObject (const glm::ivec2& pos)
 		 *
 		*/
 
-		if (sceneObject->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
-			continue;
-		}
+		// if (sceneObject->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
+		// 	continue;
+		// }
 
 		/*
 		 * Ignore objects without collider
 		*/
 
-		if (sceneObject->GetCollider () == nullptr) {
+		GameObject* gameObject = dynamic_cast<GameObject*> (sceneObject);
+
+		if (gameObject == nullptr) {
 			continue;
 		}
 
@@ -119,7 +123,7 @@ SceneObject* EditorSelector::GetSelectedObject (const glm::ivec2& pos)
 		 * Check AABB intersection
 		*/
 
-		GeometricPrimitive* primitive = sceneObject->GetCollider ()->GetGeometricPrimitive ();
+		GeometricPrimitive* primitive = gameObject->GetCollider ()->GetGeometricPrimitive ();
 		if (!Intersection::Instance ()->CheckRayVsPrimitive (&ray, primitive, distance)) {
 			continue;
 		}
@@ -128,7 +132,7 @@ SceneObject* EditorSelector::GetSelectedObject (const glm::ivec2& pos)
 		 * Compute model space ray primitive
 		*/
 
-		Resource<Model> model = dynamic_cast<GameObject*> (sceneObject)->GetMesh ();
+		Resource<Model> model = gameObject->GetMesh ();
 		Transform* transform = sceneObject->GetTransform ();
 
 		glm::vec3 position = transform->GetPosition ();

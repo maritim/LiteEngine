@@ -16,21 +16,21 @@ public:
 	virtual ~DeferredAmbientLightContainerRenderSubPass ();
 
 	virtual void Init (const RenderSettings& settings);
-	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
-	virtual bool IsAvailable (const Scene* scene, const Camera* camera,
+	virtual bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 
 	void Clear ();
 protected:
 	void StartAmbientLightPass (const RenderSettings& settings, RenderVolumeCollection* rvc);
-	void AmbientLightPass (const Scene* scene, const Camera* camera,
+	void AmbientLightPass (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 	void EndAmbientLightPass ();
 
 	void LockShader (const RenderSettings& settings);
-	std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection* rvc);
+	std::vector<PipelineAttribute> GetCustomAttributes (const RenderScene* renderScene, RenderVolumeCollection* rvc);
 };
 
 #endif

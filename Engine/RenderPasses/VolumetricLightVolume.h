@@ -3,18 +3,18 @@
 
 #include "Renderer/RenderVolumeI.h"
 
-#include "Lighting/VolumetricLight.h"
+#include "Renderer/RenderLightObject.h"
 
 class VolumetricLightVolume : public RenderVolumeI
 {
 protected:
-	VolumetricLight* _volumetricLight;
+	RenderLightObject* _renderLightObject;
 
 public:
 	VolumetricLightVolume ();
 
-	void SetVolumetricLight (VolumetricLight* volumetricLight);
-	VolumetricLight* GetVolumetricLight () const;
+	void SetRenderLightObject (RenderLightObject* renderLightObject);
+	RenderLightObject* GetRenderLightObject () const;
 
 	virtual void BindForReading ();
 	virtual void BindForWriting ();

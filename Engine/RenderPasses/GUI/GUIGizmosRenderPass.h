@@ -16,7 +16,7 @@ public:
 	GUIGizmosRenderPass ();
 
 	virtual void Init (const RenderSettings& settings);
-	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void Clear ();

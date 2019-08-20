@@ -7,7 +7,6 @@
 #include "VisualEffects/ParticleSystem/Particle.h"
 
 #include "Mesh/Model.h"
-#include "Managers/MaterialManager.h"
 
 #include "VisualEffects/ParticleSystem/PointEmiter.h"
 #include "VisualEffects/ParticleSystem/QuadEmiter.h"
@@ -206,6 +205,9 @@ void ParticleSystemLoader::ProcessParticle (TiXmlElement* xmlElem, Emiter* emite
 		if (name == "Mesh") {
 			ProcessParticleMesh (content, particlePrototype, filename);
 		}
+		else if (name == "TextureAtlas") {
+			ProcessTextureAtlas (content, particlePrototype, filename);
+		}
 
 		content = content->NextSiblingElement ();
 	}
@@ -255,18 +257,32 @@ void ParticleSystemLoader::ProcessMeshMaterial (TiXmlElement* xmlElem, Resource<
 	std::string matName = xmlElem->FirstChildElement ("MaterialName")->GetText ();
 
 	matLbName = FileSystem::GetDirectory (filename) + matLbName;
-	MaterialLibrary* matLb = Resources::LoadMaterialLibrary (matLbName);
+	Resource<MaterialLibrary> matLb = Resources::LoadMaterialLibrary (matLbName);
 
 	matName = matLbName + "::" + matName;
-	Material* mat = matLb->GetMaterial (matName);
-
-	MaterialManager::Instance ()->AddMaterial (mat);
+	Resource<Material> mat = matLb->GetMaterial (matName);
 
 	for_each_type (ObjectModel*, objModel, *mesh) {
 		for (PolygonGroup* polyGroup : *objModel) {
-			polyGroup->SetMaterialName (mat->name);
+			polyGroup->SetMaterial (mat);
 		}
 	}
+}
+
+void ParticleSystemLoader::ProcessTextureAtlas (TiXmlElement* xmlElem, Particle* particle, const std::string& filename)
+{
+	auto billboardParticle = dynamic_cast<BillboardParticle*> (particle);
+
+	if (billboardParticle == nullptr) {
+		return;
+	}
+
+	std::string textureAtlasPath = xmlElem->Attribute ("path");
+	textureAtlasPath = FileSystem::GetDirectory (filename) + textureAtlasPath;
+
+	Resource<Texture> textureAtlas = Resources::LoadTextureAtlas (textureAtlasPath);
+
+	billboardParticle->SetTextureAtlas (textureAtlas);
 }
 
 void ParticleSystemLoader::ProcessTransform (TiXmlElement* xmlElem, Emiter* emiter)
@@ -292,7 +308,7 @@ void ParticleSystemLoader::ProcessTransform (TiXmlElement* xmlElem, Emiter* emit
 
 glm::vec3 ParticleSystemLoader::GetVector (TiXmlElement* xmlElem)
 {
-	glm::vec3 vec;
+	glm::vec3 vec (0.0f);
 
 	const char* x = xmlElem->Attribute ("x");
 	const char* y = xmlElem->Attribute ("y");

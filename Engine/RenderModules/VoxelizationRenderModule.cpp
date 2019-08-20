@@ -1,10 +1,10 @@
 #include "VoxelizationRenderModule.h"
 
-#include "RenderPasses/VoxelizationRenderPass.h"
-#include "RenderPasses/VoxelDirectionalShadowMapRenderPass.h"
-#include "RenderPasses/VoxelRadianceInjectionRenderPass.h"
-#include "RenderPasses/VoxelMipmapRenderPass.h"
-#include "RenderPasses/VoxelBorderRenderPass.h"
+#include "RenderPasses/Voxelization/VoxelizationRenderPass.h"
+#include "RenderPasses/Voxelization/VoxelDirectionalShadowMapRenderPass.h"
+#include "RenderPasses/Voxelization/VoxelRadianceInjectionRenderPass.h"
+#include "RenderPasses/Voxelization/VoxelMipmapRenderPass.h"
+#include "RenderPasses/Voxelization/VoxelBorderRenderPass.h"
 #include "RenderPasses/VoxelRayTraceRenderPass.h"
 #include "RenderPasses/ForwardRenderPass.h"
 

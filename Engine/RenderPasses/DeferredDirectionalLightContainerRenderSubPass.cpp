@@ -37,7 +37,7 @@ void DeferredDirectionalLightContainerRenderSubPass::Clear ()
 	*/
 }
 
-void DeferredDirectionalLightContainerRenderSubPass::LockShader (const VolumetricLight* volumetricLight)
+void DeferredDirectionalLightContainerRenderSubPass::LockShader (const RenderLightObject* renderLightObject)
 {
 	/*
 	 * Unlock last shader
@@ -49,7 +49,7 @@ void DeferredDirectionalLightContainerRenderSubPass::LockShader (const Volumetri
 	 * Lock shader for shadow directional light
 	*/
 
-	if (volumetricLight->IsCastingShadows () == true) {
+	if (renderLightObject->IsCastingShadows () == true) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shadowShaderName));
 	}
 
@@ -57,12 +57,12 @@ void DeferredDirectionalLightContainerRenderSubPass::LockShader (const Volumetri
 	 * Lock general shader for directional light
 	*/
 
-	if (volumetricLight->IsCastingShadows () == false) {
+	if (renderLightObject->IsCastingShadows () == false) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
 	}
 }
 
-std::vector<PipelineAttribute> DeferredDirectionalLightContainerRenderSubPass::GetCustomAttributes () const
+std::vector<PipelineAttribute> DeferredDirectionalLightContainerRenderSubPass::GetCustomAttributes (const RenderSettings& settings) const
 {
 	std::vector<PipelineAttribute> attributes;
 

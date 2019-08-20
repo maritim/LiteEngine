@@ -19,9 +19,9 @@ BitmapFont::~BitmapFont ()
 	}
 }
 
-FontChar* BitmapFont::GetChar (unsigned char ch)
+FontChar* BitmapFont::GetChar (unsigned char ch) const
 {
-	std::map<std::size_t, BitmapFontPage*>::iterator it;
+	std::map<std::size_t, BitmapFontPage*>::const_iterator it;
 
 	for (it = _pages.begin ();it != _pages.end (); it++) {
 		FontChar* fntCh = it->second->GetCharset ()->GetChar (ch);
@@ -36,9 +36,9 @@ FontChar* BitmapFont::GetChar (unsigned char ch)
 	return nullptr;
 }
 
-Texture* BitmapFont::GetTexture (std::size_t id)
+Resource<Texture> BitmapFont::GetTexture (std::size_t id) const
 {
-	std::map<std::size_t, BitmapFontPage*>::iterator it;
+	std::map<std::size_t, BitmapFontPage*>::const_iterator it;
 
 	for (it = _pages.begin ();it != _pages.end (); it++) {
 		if (it->second->GetId () == id) {

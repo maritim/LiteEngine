@@ -3,7 +3,8 @@
 using namespace PennerEasing;
 
 float Elastic::easeIn (float t,float b , float c, float d) {
-	if (t==0) return b;  if ((t/=d)==1) return b+c;  
+	if (t==0) return b;
+	if ((t/=d)==1) return b+c;  
 	float p=d*.3f;
 	float a=c; 
 	float s=p/4;
@@ -12,7 +13,8 @@ float Elastic::easeIn (float t,float b , float c, float d) {
 }
 
 float Elastic::easeOut(float t,float b , float c, float d) {
-	if (t==0) return b;  if ((t/=d)==1) return b+c;  
+	if (t==0) return b;
+	if ((t/=d)==1) return b+c;  
 	float p=d*.3f;
 	float a=c; 
 	float s=p/4;
@@ -20,7 +22,8 @@ float Elastic::easeOut(float t,float b , float c, float d) {
 }
 
 float Elastic::easeInOut(float t,float b , float c, float d) {
-	if (t==0) return b;  if ((t/=d/2)==2) return b+c; 
+	if (t==0) return b;
+	if ((t/=d/2)==2) return b+c; 
 	float p=d*(.3f*1.5f);
 	float a=c; 
 	float s=p/4;

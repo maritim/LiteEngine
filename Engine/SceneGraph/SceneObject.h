@@ -6,10 +6,6 @@
 #include <string>
 
 #include "Transform.h"
-#include "Renderer/Renderer.h"
-#include "Systems/Physics/Rigidbody.h"
-#include "Systems/Collision/Collider.h"
-#include "Audio/AudioSource.h"
 
 class ENGINE_API SceneObject : public Object
 {
@@ -17,10 +13,6 @@ protected:
 	std::string _name;
 	std::size_t _instanceID;
 	Transform* _transform;
-	Renderer* _renderer;
-	Rigidbody* _rigidbody;
-	Collider* _collider;
-	AudioSource* _audioSource;
 	int _sceneLayers;
 	bool _isActive;
 
@@ -33,13 +25,9 @@ public:
 
 	void SetName (const std::string& name);
 	void SetInstanceID (std::size_t instanceID);
-	void SetActive (bool isActive);
+	virtual void SetActive (bool isActive);
 
 	Transform* GetTransform () const;
-	Renderer* GetRenderer () const;
-	Rigidbody* GetRigidbody () const;
-	Collider* GetCollider () const;
-	AudioSource* GetAudioSource () const;
 	int GetLayers () const;
 
 	virtual void Update () = 0;

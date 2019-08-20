@@ -8,17 +8,19 @@ class ENGINE_API DirectionalVolumetricLightContainerRenderSubPass : public Volum
 public:
 	~DirectionalVolumetricLightContainerRenderSubPass ();
 
-	RenderVolumeCollection* Execute (const Scene*, const Camera*, const RenderSettings&, RenderVolumeCollection* );
+	RenderVolumeCollection* Execute (const RenderScene*, const Camera*, const RenderSettings&, RenderVolumeCollection* );
 protected:
-	bool IsAvailable (const VolumetricLight*) const;
+	bool IsAvailable (const RenderLightObject*) const;
 
 	void StartDirectionalLightPass (RenderVolumeCollection*);
-	void DirectionalLightPass (const Scene*, const Camera*, const RenderSettings&, RenderVolumeCollection*);
+	void DirectionalLightPass (const RenderScene*, const Camera*, const RenderSettings&, RenderVolumeCollection*);
 	void EndDirectionalLightPass ();
 
-	virtual void LockShader (const VolumetricLight*) = 0;
+	virtual void LockShader (const RenderLightObject*) = 0;
 
-	virtual std::vector<PipelineAttribute> GetCustomAttributes () const = 0;
+	std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection*) const;
+
+	virtual std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings&) const = 0;
 };
 
 #endif

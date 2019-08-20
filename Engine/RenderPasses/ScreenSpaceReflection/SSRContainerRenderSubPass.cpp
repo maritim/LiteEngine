@@ -2,7 +2,7 @@
 
 #include "SSRMapVolume.h"
 
-bool SSRContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool SSRContainerRenderSubPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

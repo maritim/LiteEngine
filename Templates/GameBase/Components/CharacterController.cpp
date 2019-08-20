@@ -17,7 +17,8 @@
 
 void CharacterController::Start ()
 {
-	_object = SceneManager::Instance ()->Current ()->GetObject ("Eve");
+	auto object = SceneManager::Instance ()->Current ()->GetObject ("Eve");
+	_object = dynamic_cast<AnimationGameObject*> (object);
 
 	_walkSpeed = 2.5f;
 	_walkBackSpeed = 1.5f;
@@ -37,9 +38,7 @@ void CharacterController::Start ()
 	_isWalkingBack = false; _isRunning = false;
 
 	if (_object != nullptr) {
-		AnimationModel3DRenderer* renderer = (AnimationModel3DRenderer*) _object->GetRenderer ();
-
-		renderer->SetAnimationClip ("Idle");
+		_object->SetAnimationClip ("Idle");
 	}
 }
 
@@ -123,25 +122,23 @@ void CharacterController::MovePlayer ()
 
 void CharacterController::AnimatePlayer ()
 {
-	AnimationModel3DRenderer* renderer = (AnimationModel3DRenderer*) _object->GetRenderer ();
-
 	//TODO: Change in state machine
 
 	if (_needJump == true || _inJump == true) {
 		if (_needJump == true) {
 
 			if (_isRunning == true || _isWalking == true) {
-				renderer->Blend ("RunJump", 0.2f);
+				_object->Blend ("RunJump", 0.2f);
 				_jumpElapsedTime = 1.0f;
 			}
 
 			if (_isIdle == true) {
-				renderer->Blend ("IdleJump", 0.2f);
+				_object->Blend ("IdleJump", 0.2f);
 				_jumpElapsedTime = 2.6f;
 			}
 
 			if (_isWalkingBack == true) {
-				renderer->Blend ("BackJump", 0.2f);
+				_object->Blend ("BackJump", 0.2f);
 				_jumpElapsedTime = 0.87;
 			}
 
@@ -154,19 +151,19 @@ void CharacterController::AnimatePlayer ()
 				_inJump = false;
 
 				if (_isRunning == true) {
-					renderer->Blend ("Run", 0.2f);
+					_object->Blend ("Run", 0.2f);
 				}
 
 				if (_isWalking == true) {
-					renderer->Blend ("Walk", 0.2f);
+					_object->Blend ("Walk", 0.2f);
 				}
 
 				if (_isWalkingBack == true) {
-					renderer->Blend ("WalkBack", 0.2f);
+					_object->Blend ("WalkBack", 0.2f);
 				}
 
 				if (_isIdle == true) {
-					renderer->Blend ("Idle", 0.2f);
+					_object->Blend ("Idle", 0.2f);
 				}
 			}
 		}
@@ -174,17 +171,17 @@ void CharacterController::AnimatePlayer ()
 		if (glm::length (_velocity) > 0.0001f && _isIdle == true) {
 
 			if (_currentSpeed == _runSpeed) {
-				renderer->Blend ("Run", 0.2f);
+				_object->Blend ("Run", 0.2f);
 				_isRunning = true;
 			}
 
 			if (_currentSpeed == _walkBackSpeed) {
-				renderer->Blend ("WalkBack", 0.2f);
+				_object->Blend ("WalkBack", 0.2f);
 				_isWalkingBack = true;
 			}
 
 			if (_currentSpeed == _walkSpeed) {
-				renderer->Blend ("Walk", 0.2f);
+				_object->Blend ("Walk", 0.2f);
 				_isWalking = true;
 			}
 
@@ -193,13 +190,13 @@ void CharacterController::AnimatePlayer ()
 
 		if (glm::length (_velocity) > 0.0001f && _isWalking == true) {
 			if (_currentSpeed == _runSpeed) {
-				renderer->Blend ("Run", 0.2f);
+				_object->Blend ("Run", 0.2f);
 				_isWalking = false;
 				_isRunning = true;
 			}
 
 			if (_currentSpeed == _walkBackSpeed) {
-				renderer->Blend ("WalkBack", 0.2f);
+				_object->Blend ("WalkBack", 0.2f);
 				_isWalking = false;
 				_isWalkingBack = true;
 			}
@@ -207,13 +204,13 @@ void CharacterController::AnimatePlayer ()
 
 		if (glm::length (_velocity) > 0.0001f && _isRunning == true) {
 			if (_currentSpeed == _walkSpeed) {
-				renderer->Blend ("Walk", 0.2f);
+				_object->Blend ("Walk", 0.2f);
 				_isWalking = true;
 				_isRunning = false;
 			}
 
 			if (_currentSpeed == _walkBackSpeed) {
-				renderer->Blend ("WalkBack", 0.2f);
+				_object->Blend ("WalkBack", 0.2f);
 				_isWalkingBack = true;
 				_isRunning = false;
 			}
@@ -221,20 +218,20 @@ void CharacterController::AnimatePlayer ()
 
 		if (glm::length (_velocity) > 0.0001f && _isWalkingBack == true) {
 			if (_currentSpeed == _walkSpeed) {
-				renderer->Blend ("Walk", 0.2f);
+				_object->Blend ("Walk", 0.2f);
 				_isWalking = true;
 				_isWalkingBack = false;
 			}
 
 			if (_currentSpeed == _runSpeed) {
-				renderer->Blend ("Run", 0.2f);
+				_object->Blend ("Run", 0.2f);
 				_isRunning = false;
 				_isWalkingBack = true;
 			}
 		}
 
 		if (glm::length (_velocity) < 0.0001f && (_isWalking == true || _isWalkingBack == true || _isRunning == true)) {
-			renderer->Blend ("Idle", 0.2f);
+			_object->Blend ("Idle", 0.2f);
 
 			_speed = 0.0f;
 

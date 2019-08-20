@@ -6,11 +6,14 @@
 #include <string>
 #include <vector>
 
+#include "Core/Resources/Resource.h"
+#include "Material/Material.h"
+
 class PolygonGroup
 {
 private:
 	std::string _name;
-	std::string _matName;
+	Resource<Material> _material;
 	std::vector<Polygon*> _polygons;
 public:
 	PolygonGroup (std::string name);
@@ -18,10 +21,10 @@ public:
 	~PolygonGroup ();
 
 	std::string GetName () const;
-	std::string GetMaterialName () const;
+	Resource<Material> GetMaterial () const;
 
 	void SetName (const std::string& name);
-	void SetMaterialName (const std::string& matName);
+	void SetMaterial (const Resource<Material>& material);
 
 	std::vector<Polygon*>::iterator begin ();
 	std::vector<Polygon*>::iterator end ();

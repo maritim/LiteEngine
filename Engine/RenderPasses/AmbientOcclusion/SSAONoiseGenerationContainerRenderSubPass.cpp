@@ -1,7 +1,5 @@
 #include "SSAONoiseGenerationContainerRenderSubPass.h"
 
-#include "Systems/Settings/SettingsManager.h"
-
 #include "Core/Console/Console.h"
 
 SSAONoiseGenerationContainerRenderSubPass::SSAONoiseGenerationContainerRenderSubPass () :
@@ -24,7 +22,7 @@ void SSAONoiseGenerationContainerRenderSubPass::Init (const RenderSettings& sett
 	InitNoiseMapVolume (settings);
 }
 
-RenderVolumeCollection* SSAONoiseGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* SSAONoiseGenerationContainerRenderSubPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -65,7 +63,7 @@ void SSAONoiseGenerationContainerRenderSubPass::Clear ()
 	_ssaoNoiseMapVolume->Clear ();
 }
 
-bool SSAONoiseGenerationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool SSAONoiseGenerationContainerRenderSubPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

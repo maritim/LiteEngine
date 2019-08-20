@@ -5,11 +5,11 @@
 
 class ENGINE_API LightMapGameObject : public GameObject
 {
-protected:
-
 public:
 	LightMapGameObject ();
 	~LightMapGameObject ();
+
+	void AttachMesh (const Resource<Model>& mesh);
 };
 
 #endif

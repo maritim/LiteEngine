@@ -14,7 +14,7 @@ void WindowBlitRenderPass::Init (const RenderSettings& settings)
 
 }
 
-RenderVolumeCollection* WindowBlitRenderPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* WindowBlitRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*

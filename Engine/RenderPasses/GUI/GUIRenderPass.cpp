@@ -49,7 +49,7 @@ void GUIRenderPass::Init (const RenderSettings& settings)
 	GL::VertexAttribPointer (2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof (ImDrawVert), (GLvoid*)IM_OFFSETOF(ImDrawVert, col));
 }
 
-RenderVolumeCollection* GUIRenderPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* GUIRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*

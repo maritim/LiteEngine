@@ -1,7 +1,5 @@
 #include "SpotLight.h"
 
-#include "LightsManager.h"
-
 #include "Utils/Primitives/Primitive.h"
 
 SpotLight::SpotLight () :
@@ -9,7 +7,7 @@ SpotLight::SpotLight () :
 	_spotExponent (1.0),
 	_spotDirection (1.0, 1.0, 1.0)
 {
-	SetVolume (Primitive::Instance ()->Create (Primitive::Type::CONE));
+	//SetVolume (Primitive::Instance ()->Create (Primitive::Type::CONE));
 }
 
 void SpotLight::Update ()
@@ -49,10 +47,10 @@ void SpotLight::SetSpotExponent (float spotExponent)
 
 void SpotLight::OnAttachedToScene ()
 {
-	LightsManager::Instance ()->AddSpotLight (this);
+	//LightsManager::Instance ()->AddSpotLight (this);
 }
 
 void SpotLight::OnDetachedFromScene ()
 {
-	LightsManager::Instance ()->RemoveSpotLight (this);
+	//LightsManager::Instance ()->RemoveSpotLight (this);
 }

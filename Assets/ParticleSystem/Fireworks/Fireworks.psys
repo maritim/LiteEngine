@@ -12,6 +12,7 @@
 					<MaterialName>SprankleParticle</MaterialName>
 				</Material>
 			</Mesh>
+			<TextureAtlas path="Textures/Fireworks.png" />
 		</Particle>
 		
 		<Transform>

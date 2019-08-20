@@ -16,8 +16,6 @@ uniform mat3 normalWorldMatrix;
 
 uniform vec3 cameraPosition;
 
-uniform vec3 sceneAmbient;
-
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
 
@@ -32,34 +30,35 @@ vec2 CalcTexCoord()
 
 vec3 CalcPointLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
 {
-	// Vector from Light Source to Fragment
-	vec3 lightDirection = in_position - lightPosition;
+	// Vector direction from fragment to light source
+	vec3 lightDirection = vec3 (viewMatrix * vec4 (lightPosition, 1)) - in_position;
 
-	// Distance from Light Source to Fragment
+	// Distance from fragment to light source
 	float dist = length (lightDirection);
-	
-	// Normalize light vector from light source
+
+	// Normalize light direction
 	lightDirection = normalize (lightDirection);
 
-	// Calculate Point Light Attenuation over distance
+	// Compute point light attenuation over distance
 	float attenuation = 1.0 / (attenuationComp.x + attenuationComp.y * dist + attenuationComp.z * dist * dist);
 
-	// Diffuse contribution
-	float dCont = max (dot (in_normal, lightDirection), 0.0);
+	// Diffuse light intensity
+	float diffuseLightIntensity = max (dot (in_normal, lightDirection), 0.0);
 
-	// Calculate Diffuse Color
-	vec3 diffuseColor = lightColor * in_diffuse * dCont * attenuation;
+	// Compute diffuse color
+	vec3 diffuseColor = lightColor * in_diffuse * diffuseLightIntensity * attenuation;
 
-	// Vector from Camera Positon to Fragment
-	vec3 surface2view = normalize (cameraPosition - in_position);
+	// Vector from fragment to camera position
+	vec3 surface2view = normalize (-in_position);
 	vec3 reflection = reflect (-lightDirection, in_normal);
 
-	// Specular contribution
-	float sCont = pow (max (dot (surface2view, reflection), 0.0), 3);
+	// Specular light intensity
+	float specularLightIntensity = pow (max (dot (surface2view, reflection), 0.0), in_shininess);
 
-	vec3 specularColor = lightColor * in_specular * sCont;
+	// Compute specular color
+	vec3 specularColor = lightColor * in_diffuse * in_specular * specularLightIntensity * attenuation;
 
-	return diffuseColor + specularColor;
+	return diffuseColor;// + specularColor;
 }
 
 void main()

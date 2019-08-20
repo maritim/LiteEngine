@@ -66,8 +66,6 @@ Resource<Model> Resources::LoadModel (const std::string& filename)
 		mesh = LoadGenericModel (filename);
 	}
 
-	Console::LogError ("The File Format for " + extension + " is not recognized.");
-
 	return Resource<Model> (mesh, filename);
 }
 
@@ -141,17 +139,23 @@ AnimationContainer* Resources::LoadAnimationClip (const std::string& filename)
 	return animContainer;
 }
 
-AudioClip* Resources::LoadAudioClip (const std::string& filename)
+Resource<AudioClip> Resources::LoadAudioClip (const std::string& filename)
 {
+	if (Resource<AudioClip>::GetResource (filename) != nullptr) {
+		return Resource<AudioClip>::GetResource (filename);
+	}
+
+	AudioClip* audioClip = nullptr;
+
 	std::string extension = FileSystem::GetExtension(filename);
 
 	if (extension == ".wav") {
-		return LoadWAV (filename);
+		audioClip = LoadWAV (filename);
 	}
 
 	Console::LogError ("The File Format for " + extension + " is not recognized.");
 
-	return nullptr;
+	return Resource<AudioClip> (audioClip, filename);
 }
 
 AudioClip* Resources::LoadWAV (const std::string& filename)
@@ -176,19 +180,27 @@ ShaderContent* Resources::LoadShaderContent (const std::string& filename)
 	return shaderContent;
 }
 
-Texture* Resources::LoadTexture(const std::string& filename)
+Resource<Texture> Resources::LoadTexture(const std::string& filename)
 {
+	if (Resource<Texture>::GetResource (filename) != nullptr) {
+		return Resource<Texture>::GetResource (filename);
+	}
+
 	TextureLoader* textureLoader = new TextureLoader();
 
 	Texture* texture = (Texture*) textureLoader->Load(filename);
 
 	delete textureLoader;
 
-	return texture;
+	return Resource<Texture> (texture, filename);
 }
 
-CubeMap* Resources::LoadCubemap (const std::vector<std::string>& filename)
+Resource<Texture> Resources::LoadCubemap (const std::vector<std::string>& filename)
 {
+	if (Resource<Texture>::GetResource (filename [0]) != nullptr) {
+		return Resource<Texture>::GetResource (filename [0]);
+	}
+
 	CubeMapLoader* cubeMapLoader = new CubeMapLoader();
 	cubeMapLoader->SetFilenames (filename);
 
@@ -196,18 +208,22 @@ CubeMap* Resources::LoadCubemap (const std::vector<std::string>& filename)
 
 	delete cubeMapLoader;
 
-	return cubeMap;
+	return Resource<Texture> (cubeMap, filename [0]);
 }
 
-TextureAtlas* Resources::LoadTextureAtlas (const std::string& filename)
+Resource<Texture> Resources::LoadTextureAtlas (const std::string& filename)
 {
+	if (Resource<Texture>::GetResource (filename) != nullptr) {
+		return Resource<Texture>::GetResource (filename);
+	}
+
 	TextureAtlasLoader* texAtlasLoader = new TextureAtlasLoader ();
 
 	TextureAtlas* texAtlas = (TextureAtlas*) texAtlasLoader->Load (filename);
 
 	delete texAtlasLoader;
 
-	return texAtlas;
+	return Resource<Texture> (texAtlas, filename);
 }
 
 TextureLUT* Resources::LoadTextureLUT (const std::string& filename)
@@ -221,26 +237,34 @@ TextureLUT* Resources::LoadTextureLUT (const std::string& filename)
 	return lutTexture;
 }
 
-BitmapFont* Resources::LoadBitmapFont (const std::string& filename)
+Resource<Font> Resources::LoadBitmapFont (const std::string& filename)
 {
+	if (Resource<Font>::GetResource (filename) != nullptr) {
+		return Resource<Font>::GetResource (filename);
+	}
+
 	BitmapFontLoader* bitmapFontLoader = new BitmapFontLoader ();
 
 	BitmapFont* bitmapFont = (BitmapFont*) bitmapFontLoader->Load (filename);
 
 	delete bitmapFontLoader;
 
-	return bitmapFont;
+	return Resource<Font> (bitmapFont, filename);
 }
 
-MaterialLibrary* Resources::LoadMaterialLibrary(const std::string& filename)
+Resource<MaterialLibrary> Resources::LoadMaterialLibrary(const std::string& filename)
 {
+	if (Resource<MaterialLibrary>::GetResource (filename) != nullptr) {
+		return Resource<MaterialLibrary>::GetResource (filename);
+	}
+
 	MaterialLibraryLoader* materialLibraryLoader = new MaterialLibraryLoader();
 
 	MaterialLibrary* materialLibrary = (MaterialLibrary*) materialLibraryLoader->Load(filename);
 
 	delete materialLibraryLoader;
 
-	return materialLibrary;
+	return Resource<MaterialLibrary> (materialLibrary, filename);
 }
 
 ParticleSystem* Resources::LoadParticleSystem(const std::string& filename)

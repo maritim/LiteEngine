@@ -6,7 +6,6 @@
 #include "Core/Console/Console.h"
 
 Texture::Texture(const std::string& name) :
-	_gpuIndex (0),
 	_name (name),
 	_size (0, 0),
 	_generateMipmaps (true),
@@ -28,11 +27,6 @@ Texture::~Texture()
 	for (std::size_t i=0;i<_mipmapLevels;i++) {
 		delete[] _pixels [i];
 	}
-}
-
-unsigned int Texture::GetGPUIndex() const
-{
-	return _gpuIndex;
 }
 
 Size Texture::GetSize () const
@@ -85,12 +79,12 @@ TEXTURE_COMPRESSION_TYPE Texture::GetCompressionType () const
 	return _compressionType;
 }
 
-unsigned char* Texture::GetPixels ()
+unsigned char* Texture::GetPixels () const
 {
 	return GetMipmapLevel (0);
 }
 
-unsigned char* Texture::GetMipmapLevel (std::size_t mipmapLevel)
+unsigned char* Texture::GetMipmapLevel (std::size_t mipmapLevel) const
 {
 	if (mipmapLevel >= _mipmapLevels) {
 		Console::LogWarning ("Texture mipmap index exceed mipmaps count. \
@@ -101,11 +95,6 @@ unsigned char* Texture::GetMipmapLevel (std::size_t mipmapLevel)
 	}
 
 	return _pixels [mipmapLevel];
-}
-
-void Texture::SetGPUIndex(unsigned int gpuIndex)
-{
-	_gpuIndex = gpuIndex;
 }
 
 void Texture::SetName(const std::string& name)

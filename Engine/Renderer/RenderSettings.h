@@ -4,6 +4,7 @@
 #include "Core/Interfaces/Object.h"
 
 #include <string>
+#include <glm/vec2.hpp>
 
 struct Framebuffer
 {
@@ -55,6 +56,18 @@ struct RenderSettings : public Object
 	std::string lut_texture_path;
 
 	bool gamma_enabled;
+
+	glm::ivec2 rsm_resolution;
+	float rsm_bias;
+	std::size_t rsm_samples;
+	float rsm_radius;
+	float rsm_intensity;
+	bool rsm_caching;
+
+	std::size_t vct_voxels_size;
+	bool vct_continuous_voxelization;
+	bool vct_bordering;
+	float vct_indirect_intensity;
 };
 
 #endif

@@ -22,13 +22,13 @@ public:
 	~ExponentialShadowMapBlurContainerRenderSubPass ();
 
 	void Init ();
-	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc);
+	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera, RenderVolumeCollection* rvc);
 
 	void Notify (Object* sender, const SettingsObserverArgs& args);
 
 	void Clear ();
 protected:
-	bool IsAvailable (const VolumetricLight*) const;
+	bool IsAvailable (const RenderLightObject*) const;
 
 	void Blur (ExponentialShadowMapBlurVolume* fb1, ExponentialShadowMapBlurVolume* fb2);
 

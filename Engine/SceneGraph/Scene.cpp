@@ -5,6 +5,7 @@
 #include "Scene.h"
 
 #include "SceneObject.h"
+#include "SceneNodes/GameObject.h"
 
 #include "Core/Console/Console.h"
 
@@ -24,7 +25,15 @@ void Scene::Init ()
 
 void Scene::SetSkybox (Skybox *skybox)
 {
+	if (_skybox != nullptr) {
+		_skybox->OnDetachedFromScene ();
+
+		delete _skybox;
+	}
+
 	_skybox = skybox;
+
+	_skybox->OnAttachedToScene ();
 }
 
 Skybox* Scene::GetSkybox () const
@@ -135,13 +144,19 @@ void Scene::UpdateBoundingBox (SceneObject* sceneObject)
 	 * Check only objects that have collider
 	*/
 
-	if (sceneObject->GetCollider () == nullptr) {
+	GameObject* gameObject = dynamic_cast<GameObject*> (sceneObject);
+
+	if (gameObject == nullptr) {
+		return;
+	}
+
+	if (gameObject->GetCollider () == nullptr) {
 		return;
 	}
 
 	AABBVolume::AABBVolumeInformation* volume = _boundingBox->GetVolumeInformation ();
 
-	GeometricPrimitive* sceneObjectVolumePrimitive = sceneObject->GetCollider ()->GetGeometricPrimitive ();
+	GeometricPrimitive* sceneObjectVolumePrimitive = gameObject->GetCollider ()->GetGeometricPrimitive ();
 	AABBVolume* sceneObjectBoundingBox = dynamic_cast<AABBVolume*> (sceneObjectVolumePrimitive);
 	AABBVolume::AABBVolumeInformation* sceneObjectVolume = sceneObjectBoundingBox->GetVolumeInformation ();
 

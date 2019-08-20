@@ -1,30 +1,40 @@
 #include "VolumetricLight.h"
 
 VolumetricLight::VolumetricLight () :
-	_volume (nullptr),
-	_lightRenderer (nullptr)
+	_renderLightObject (nullptr)
 {
-	_lightRenderer = new LightRenderer (this);
+
 }
 
 VolumetricLight::~VolumetricLight ()
 {
-	delete _lightRenderer;
+	delete _renderLightObject;
 }
 
-void VolumetricLight::SetVolume (const Resource<Model>& volume)
+void VolumetricLight::SetActive (bool isActive)
 {
-	_volume = volume;
+	SceneObject::SetActive (isActive);
 
-	_lightRenderer->Attach (volume);
+	_renderLightObject->SetActive (isActive);
 }
 
-Resource<Model> VolumetricLight::GetVolume ()
+void VolumetricLight::SetColor (const Color& color)
 {
-	return _volume;
+	Light::SetColor (color);
+
+	_renderLightObject->SetLightColor (color);
 }
 
-LightRenderer* VolumetricLight::GetLightRenderer ()
+void VolumetricLight::SetIntensity (float intensity)
 {
-	return _lightRenderer;
+	Light::SetIntensity (intensity);
+
+	_renderLightObject->SetLightIntensity (intensity);
+}
+
+void VolumetricLight::SetShadowCasting (bool castShadows)
+{
+	Light::SetShadowCasting (castShadows);
+
+	_renderLightObject->SetShadowCasting (castShadows);
 }

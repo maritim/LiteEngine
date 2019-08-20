@@ -1,19 +1,19 @@
 #include "VolumetricLightVolume.h"
 
 VolumetricLightVolume::VolumetricLightVolume () :
-	_volumetricLight (nullptr)
+	_renderLightObject (nullptr)
 {
 
 }
 
-void VolumetricLightVolume::SetVolumetricLight (VolumetricLight* volumetricLight)
+void VolumetricLightVolume::SetRenderLightObject (RenderLightObject* renderLightObject)
 {
-	_volumetricLight = volumetricLight;
+	_renderLightObject = renderLightObject;
 }
 
-VolumetricLight* VolumetricLightVolume::GetVolumetricLight () const
+RenderLightObject* VolumetricLightVolume::GetRenderLightObject () const
 {
-	return _volumetricLight;
+	return _renderLightObject;
 }
 
 void VolumetricLightVolume::BindForReading ()

@@ -2,7 +2,6 @@
 
 #include "Systems/GUI/ImGuizmo/ImGuizmo.h"
 
-#include "Managers/SceneManager.h"
 #include "Managers/RenderSettingsManager.h"
 
 #include "EditorManager.h"
@@ -35,5 +34,5 @@ void Editor::UpdateScene ()
 
 void Editor::RenderScene ()
 {
-	EditorScene::Instance ()->Render (SceneManager::Instance ()->Current ());
+	EditorScene::Instance ()->Render ();
 }

@@ -118,7 +118,6 @@ void Game::DisplayScene()
 
 	_gameModule->RenderScene ();
 
-	Scene* scene = SceneManager::Instance ()->Current ();
 	Camera* camera = CameraManager::Instance ()->GetActive ();
 
 	//TODO: Change this
@@ -130,5 +129,5 @@ void Game::DisplayScene()
 	settings->viewport.width = Window::GetWidth ();
 	settings->viewport.height = Window::GetHeight ();
 
-	RenderManager::Instance ()->RenderScene (scene, camera, *settings);
+	RenderManager::Instance ()->Render (camera, *settings);
 }

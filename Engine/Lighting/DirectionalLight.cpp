@@ -1,14 +1,21 @@
 #include "DirectionalLight.h"
 
-#include "LightsManager.h"
-
 #include "Utils/Primitives/Primitive.h"
 
-#include "Lighting/DirectionalLightRenderer.h"
+#include "Renderer/RenderDirectionalLightObject.h"
+
+#include "Renderer/RenderSystem.h"
+#include "Renderer/RenderManager.h"
 
 DirectionalLight::DirectionalLight ()
 {
-	SetVolume (Primitive::Instance ()->Create (Primitive::Type::QUAD));
+	_renderLightObject = new RenderDirectionalLightObject ();
+
+	Resource<Model> model = Primitive::Instance ()->Create (Primitive::Type::QUAD);
+	Resource<ModelView> modelView = RenderSystem::LoadModel (model);
+
+	_renderLightObject->SetTransform (_transform);
+	_renderLightObject->SetModelView (modelView);
 }
 
 void DirectionalLight::Update ()
@@ -18,10 +25,16 @@ void DirectionalLight::Update ()
 
 void DirectionalLight::OnAttachedToScene ()
 {
-	LightsManager::Instance ()->AddDirectionalLight (this);
+	if (_isActive == false) {
+		return;
+	}
+
+	auto renderLightObject = (RenderDirectionalLightObject*) _renderLightObject;
+
+	RenderManager::Instance ()->SetRenderDirectionalLightObject (renderLightObject);
 }
 
 void DirectionalLight::OnDetachedFromScene ()
 {
-	LightsManager::Instance ()->RemoveDirectionalLight (this);
+	RenderManager::Instance ()->SetRenderDirectionalLightObject (nullptr);
 }

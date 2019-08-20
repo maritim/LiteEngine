@@ -94,6 +94,8 @@ public:
 	// Bind
 	static void BindVertexArray (GLuint array);
 	static void BindBuffer (GLenum target, GLuint buffer);
+	static void BindBufferBase(GLenum target, GLuint index, GLuint buffer);
+	static void UniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
 
 	/*
 	 * Depth Buffer
@@ -171,6 +173,7 @@ public:
 	static void AttachShader(GLuint program, GLuint shader);
 	static void DetachShader(GLuint program, GLuint shader);
 	static GLint GetUniformLocation(GLuint program, const GLchar *name);
+	static GLuint GetUniformBlockIndex(GLuint program, const GLchar *uniformBlockName);
 
 	static void DispatchCompute(GLuint num_groups_x,GLuint num_groups_y,GLuint num_groups_z);
 

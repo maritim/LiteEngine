@@ -2,7 +2,7 @@
 
 #include "SSAOMapVolume.h"
 
-bool SSAOContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool SSAOContainerRenderSubPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

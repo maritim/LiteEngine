@@ -14,7 +14,7 @@ void DeferredBlitRenderPass::Init (const RenderSettings& settings)
 
 }
 
-RenderVolumeCollection* DeferredBlitRenderPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* DeferredBlitRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*

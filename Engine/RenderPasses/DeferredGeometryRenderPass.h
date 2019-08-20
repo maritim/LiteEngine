@@ -23,7 +23,7 @@ public:
 	virtual ~DeferredGeometryRenderPass ();
 
 	virtual void Init (const RenderSettings& settings);
-	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void Clear ();
@@ -31,7 +31,7 @@ protected:
 	void UpdateCamera (const Camera* camera);
 
 	void PrepareDrawing ();
-	void GeometryPass (const Scene* scene, const Camera* camera, const RenderSettings& settings);
+	void GeometryPass (const RenderScene* renderScene, const Camera* camera, const RenderSettings& settings);
 	void EndDrawing ();
 
 	void LockShader (int sceneLayers);

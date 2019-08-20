@@ -301,6 +301,20 @@ void GL::BindBuffer(GLenum target, GLuint buffer)
 	ErrorCheck ("glBindBuffer");
 }
 
+void GL::BindBufferBase(GLenum target, GLuint index, GLuint buffer)
+{
+	glBindBufferBase (target, index, buffer);
+
+	ErrorCheck ("glBindBufferBase");
+}
+
+void GL::UniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding)
+{
+	glUniformBlockBinding (program, uniformBlockIndex, uniformBlockBinding);
+
+	ErrorCheck ("glUniformBlockBinding");
+}
+
 /*
  * Depth Buffer
 */
@@ -896,6 +910,15 @@ GLint GL::GetUniformLocation(GLuint program, const GLchar *name)
 	ErrorCheck ("glGetUniformLocation");
 
 	return uniformLocation;
+}
+
+GLuint GL::GetUniformBlockIndex(GLuint program, const GLchar *uniformBlockName)
+{
+	GLuint uniformBlockIndex = glGetUniformBlockIndex (program, uniformBlockName);
+
+	ErrorCheck ("glGetUniformBlockIndex");
+
+	return uniformBlockIndex;
 }
 
 void GL::DispatchCompute(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z)

@@ -13,6 +13,7 @@ class Light : public SceneObject
 {
 protected:
 	Color _color;
+	float _intensity;
 	bool _castShadows;
 
 public:
@@ -20,10 +21,12 @@ public:
 	virtual ~Light ();
 
 	Color GetColor () const;
+	float GetIntensity () const;
 	bool IsCastingShadows () const;
 
-	void SetColor (const Color& color);
-	void SetShadowCasting (bool castShadows);
+	virtual void SetColor (const Color& color);
+	virtual void SetIntensity (float intensity);
+	virtual void SetShadowCasting (bool castShadows);
 
 	virtual void Update () = 0;
 };

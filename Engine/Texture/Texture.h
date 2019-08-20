@@ -11,7 +11,6 @@
 class ENGINE_API Texture : public Object
 {
 protected:
-	unsigned int _gpuIndex;
 	std::string _name;
 
 	unsigned char *_pixels[MAX_TEXTURE_MIPMAP_LEVEL];
@@ -31,7 +30,6 @@ public:
 	Texture(const std::string& name);
 	virtual ~Texture();
 
-	unsigned int GetGPUIndex() const;
 	std::string GetName() const;
 	Size GetSize () const;
 	bool GenerateMipmaps () const;
@@ -43,10 +41,9 @@ public:
 	TEXTURE_MIPMAP_FILTER GetMipmapFilter () const;
 	TEXTURE_COMPRESSION_TYPE GetCompressionType () const;
 	// TODO: extend PixelAt
-	unsigned char* GetPixels ();
-	unsigned char* GetMipmapLevel (std::size_t mipmapLevel);
+	unsigned char* GetPixels () const;
+	unsigned char* GetMipmapLevel (std::size_t mipmapLevel) const;
 
-	void SetGPUIndex(unsigned int gpuIndex);
 	void SetName(const std::string& name);
 	void SetSize (Size size);
 	void SetMipmapsGeneration (bool generate);

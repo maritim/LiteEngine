@@ -50,7 +50,7 @@ void PostProcessContainerRenderSubPass::Clear ()
 	_postProcessMapVolume->Clear ();
 }
 
-RenderVolumeCollection* PostProcessContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* PostProcessContainerRenderSubPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -77,7 +77,7 @@ RenderVolumeCollection* PostProcessContainerRenderSubPass::Execute (const Scene*
 	 * Screen space ambient occlusion generation pass
 	*/
 
-	PostProcessPass (scene, camera, settings, rvc);
+	PostProcessPass (renderScene, camera, settings, rvc);
 
 	/*
 	 * End screen space ambient occlusion generation pass
@@ -97,7 +97,7 @@ void PostProcessContainerRenderSubPass::StartPostProcessPass ()
 	_postProcessMapVolume->BindForWriting ();
 }
 
-void PostProcessContainerRenderSubPass::PostProcessPass (const Scene* scene, const Camera* camera,
+void PostProcessContainerRenderSubPass::PostProcessPass (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*

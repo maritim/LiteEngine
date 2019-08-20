@@ -11,8 +11,9 @@
 
 #include "Shader/Shader.h"
 
-#include "Material/Material.h"
-#include "Texture/Texture.h"
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/MaterialView.h"
+#include "Renderer/RenderViews/TextureView.h"
 
 // TODO: Refactor this
 
@@ -29,11 +30,12 @@ private:
 
 	static Shader* _lockedShader;
 
-	static Material* _defaultMaterial;
-	static Texture* _defaultTexture;
+	static Resource<MaterialView> _defaultMaterialView;
+	static Resource<TextureView> _defaultTextureView;
 
 public:
 	static void Init ();
+	static void Clear ();
 
 	static void SetShader (Shader* shader);
 
@@ -48,7 +50,7 @@ public:
 
 	static void UpdateMatrices (Shader* shader);
 	static void SendLights (Shader* shader);
-	static void SendMaterial (Material* material, Shader* shader = nullptr);
+	static void SendMaterial (Resource<MaterialView> materialView, Shader* shader = nullptr);
 	// TODO: Reimplement this
 	static void SendCustomAttributes (const std::string& shadername, 
 		const std::vector<PipelineAttribute>& attrs);

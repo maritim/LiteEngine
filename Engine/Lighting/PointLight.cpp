@@ -3,21 +3,30 @@
 #include <glm/vec3.hpp>
 #include <cmath>
 
-#include "LightsManager.h"
-
 #include "Utils/Primitives/Primitive.h"
 
-#include "PointLightRenderer.h"
+#include "Renderer/RenderPointLightObject.h"
+
+#include "Renderer/RenderSystem.h"
+#include "Renderer/RenderManager.h"
 
 PointLight::PointLight () :
-	_constantAttenuation (1.0f),
-	_linearAttenuation (0.1f),
-	_quadraticAttenuation (0.01f)
+	_attenuation (0, 0, 1)
 {
-	delete _lightRenderer;
-	_lightRenderer = new PointLightRenderer (this);
+	_renderLightObject = new RenderPointLightObject ();
 
-	SetVolume (Primitive::Instance ()->Create (Primitive::Type::SPHERE));
+	Resource<Model> model = Primitive::Instance ()->Create (Primitive::Type::SPHERE);
+	Resource<ModelView> modelView = RenderSystem::LoadModel (model);
+
+	_renderLightObject->SetTransform (_transform);
+	_renderLightObject->SetModelView (modelView);
+}
+
+void PointLight::SetActive (bool isActive)
+{
+	SceneObject::SetActive (isActive);
+
+	_renderLightObject->SetActive (isActive);
 }
 
 void PointLight::Update ()
@@ -31,62 +40,50 @@ void PointLight::Update ()
 	}
 }
 
-float PointLight::GetConstantAttenuation () const
+void PointLight::SetAttenuation (const glm::vec3& attenuation)
 {
-	return _constantAttenuation;
-}
+	_attenuation = attenuation;
 
-float PointLight::GetLinearAttenuation () const
-{
-	return _linearAttenuation;
-}
-
-float PointLight::GetQuadraticAttenuation () const
-{
-	return _quadraticAttenuation;
-}
-
-void PointLight::SetConstantAttenuation (float constantAttenuation)
-{
-	_constantAttenuation = constantAttenuation;
-
-	UpdateScale ();
-}
-
-void PointLight::SetLinearAttenuation (float linearAttenuation)
-{
-	_linearAttenuation = linearAttenuation;
-
-	UpdateScale ();
-}
-
-void PointLight::SetQuadraticAttenuation (float quadraticAttenuation)
-{
-	_quadraticAttenuation = quadraticAttenuation;
+	auto renderLightObject = (RenderPointLightObject*) _renderLightObject;
+	renderLightObject->SetLightAttenuation (_attenuation);
 
 	UpdateScale ();
 }
 
 void PointLight::OnAttachedToScene ()
 {
-	LightsManager::Instance ()->AddPointLight (this);
+	auto renderLightObject = (RenderPointLightObject*) _renderLightObject;
+	RenderManager::Instance ()->AttachRenderPointLightObject (renderLightObject);
 }
 
 void PointLight::OnDetachedFromScene ()
 {
-	LightsManager::Instance ()->RemovePointLight (this);
+	auto renderLightObject = (RenderPointLightObject*) _renderLightObject;
+	RenderManager::Instance ()->DetachRenderPointLightObject (renderLightObject);
 }
 
 void PointLight::UpdateScale ()
 {
+	/*
+	 * TODO: Move this somewhere else
+	*/
+
+	float minIntensity = 5.0f;
+
+	/*
+	 * Compute light intensity distance
+	*/
+
 	glm::vec3 color = _color.ToVector3 ();
-	float MaxChannel = fmax(fmax(color.x, color.y), color.z);
+	float maxLightChannel = std::fmax (std::fmax (color.x, color.y), color.z);
 
-	float intensity = 0.01f;
+	float dist = (-_attenuation.y + std::sqrt (_attenuation.y * _attenuation.y -
+		4 * _attenuation.z * (_attenuation.x - (256.0f / minIntensity) * maxLightChannel))) /
+		(2 * _attenuation.z);
 
-	float ret = (-_linearAttenuation + sqrtf(_linearAttenuation * _linearAttenuation -
-		4 * _quadraticAttenuation * (_constantAttenuation - 256 * MaxChannel * intensity))) / 
-		(2 * _quadraticAttenuation);
+	/*
+	 * Set light volume scale based on light distance
+	*/
 
-	_transform->SetScale (glm::vec3 (ret / 2, ret / 2, ret / 2));
+	_transform->SetScale (glm::vec3 (dist));
 }

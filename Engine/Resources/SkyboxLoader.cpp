@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "Texture/CubeMapFace.h"
+
 #include "Utils/Color/Color.h"
 #include "Utils/Files/FileSystem.h"
 
@@ -60,34 +62,34 @@ void SkyboxLoader::ProcessFaces (TiXmlElement* xmlElem, Skybox* skybox, const st
 		std::string name = content->Value ();
 
 		if (name == "Right") {
-			facePaths [Skybox::Comp::SKY_RIGHT] = 
+			facePaths [CubeMapFace::CUBE_MAP_FACE_RIGHT] = 
 				FileSystem::GetDirectory (filename) + content->Attribute ("path");
 		}
 		else if (name == "Left") {
-			facePaths [Skybox::Comp::SKY_LEFT] = 
+			facePaths [CubeMapFace::CUBE_MAP_FACE_LEFT] = 
 				FileSystem::GetDirectory (filename) + content->Attribute ("path");
 		}
 		else if (name == "Up") {
-			facePaths [Skybox::Comp::SKY_UP] = 
+			facePaths [CubeMapFace::CUBE_MAP_FACE_UP] = 
 				FileSystem::GetDirectory (filename) + content->Attribute ("path");
 		}
 		else if (name == "Down") {
-			facePaths [Skybox::Comp::SKY_DOWN] = 
+			facePaths [CubeMapFace::CUBE_MAP_FACE_DOWN] = 
 				FileSystem::GetDirectory (filename) + content->Attribute ("path");
 		}
 		else if (name == "Back") {
-			facePaths [Skybox::Comp::SKY_BACK] = 
+			facePaths [CubeMapFace::CUBE_MAP_FACE_BACK] = 
 				FileSystem::GetDirectory (filename) + content->Attribute ("path");
 		}
 		else if (name == "Front") {
-			facePaths [Skybox::Comp::SKY_FRONT] = 
+			facePaths [CubeMapFace::CUBE_MAP_FACE_FRONT] = 
 				FileSystem::GetDirectory (filename) + content->Attribute ("path");
 		}
 
 		content = content->NextSiblingElement ();
 	}
 
-	CubeMap* cubeMap = Resources::LoadCubemap (facePaths);
+	Resource<Texture> cubeMap = Resources::LoadCubemap (facePaths);
 	skybox->SetCubeMap (cubeMap);
 }
 

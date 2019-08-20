@@ -37,3 +37,10 @@ int Shader::GetUniformLocation (const std::string& name)
 
 	return uniformLocation;
 }
+
+unsigned int Shader::GetUniformBlockIndex (const std::string& name)
+{
+	unsigned int uniformBlockIndex = GL::GetUniformBlockIndex (_program, name.c_str ());
+
+	return uniformBlockIndex;
+}

@@ -1,10 +1,37 @@
 #include "AmbientLight.h"
 
-#include "LightsManager.h"
+#include "Renderer/RenderManager.h"
 
-AmbientLight::AmbientLight ()
+AmbientLight::AmbientLight () :
+	_renderLightObject (new RenderAmbientLightObject ())
 {
-	_color = Color::Black;
+
+}
+
+AmbientLight::~AmbientLight ()
+{
+	delete _renderLightObject;
+}
+
+void AmbientLight::SetActive (bool isActive)
+{
+	SceneObject::SetActive (isActive);
+
+	_renderLightObject->isActive = isActive;
+}
+
+void AmbientLight::SetColor (const Color& color)
+{
+	Light::SetColor (color);
+
+	_renderLightObject->color = color;
+}
+
+void AmbientLight::SetIntensity (float intensity)
+{
+	Light::SetIntensity (intensity);
+
+	_renderLightObject->intensity = intensity;
 }
 
 void AmbientLight::Update ()
@@ -14,13 +41,10 @@ void AmbientLight::Update ()
 
 void AmbientLight::OnAttachedToScene ()
 {
-	/*
-	 * TODO: Solve this
-	*/
+	RenderManager::Instance ()->SetRenderAmbientLightObject (_renderLightObject);
+}
 
-	if (_isActive == false) {
-		return;
-	}
-
-	LightsManager::Instance ()->SetAmbientLightColor (_color);
+void AmbientLight::OnDetachedFromScene ()
+{
+	RenderManager::Instance ()->SetRenderAmbientLightObject (nullptr);
 }

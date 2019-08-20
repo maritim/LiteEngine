@@ -4,18 +4,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Lighting/LightsManager.h"
 #include "Lighting/Light.h"
 #include "Texture/Texture.h"
 #include "SceneGraph/Transform.h"
 #include "Material/Material.h"
 #include "Managers/ShaderManager.h"
-#include "Managers/TextureManager.h"
 #include "Systems/Settings/SettingsManager.h"
+
+#include "Texture/Texture.h"
 
 #include "Resources/Resources.h"
 
 #include "PipelineAttribute.h"
+
+#include "Renderer/RenderSystem.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
@@ -26,8 +28,8 @@ glm::vec3 Pipeline::_cameraPosition (0);
 std::size_t Pipeline::_textureCount (0);
 Shader* Pipeline::_lockedShader(nullptr);
 
-Material* Pipeline::_defaultMaterial (nullptr);
-Texture* Pipeline::_defaultTexture (nullptr);
+Resource<MaterialView> Pipeline::_defaultMaterialView (nullptr);
+Resource<TextureView> Pipeline::_defaultTextureView (nullptr);
 
 void Pipeline::Init ()
 {
@@ -36,15 +38,11 @@ void Pipeline::Init ()
 	*/
 
 	std::string defaultMaterialPath = "Assets/Materials/default.mtl";
-	MaterialLibrary* materialLibrary = Resources::LoadMaterialLibrary (defaultMaterialPath);
+	Resource<MaterialLibrary> materialLibrary = Resources::LoadMaterialLibrary (defaultMaterialPath);
 
-	_defaultMaterial = materialLibrary->GetMaterial (0);
+	Resource<Material> defaultMaterial = materialLibrary->GetMaterial (0);
 
-	for (std::size_t i=1;i<materialLibrary->GetMaterialsCount ();i++) {
-		delete materialLibrary->GetMaterial (i);
-	}
-
-	delete materialLibrary;
+	_defaultMaterialView = RenderSystem::LoadMaterial (defaultMaterial);
 
 	/*
 	 * Load default texture
@@ -53,9 +51,15 @@ void Pipeline::Init ()
 	// TODO: Extend this to default textures for every type (ambient, diffuse ...)
 
 	std::string defaultTexturePath = "Assets/Textures/AmbientDefault.png";
-	_defaultTexture = Resources::LoadTexture (defaultTexturePath);
+	Resource<Texture> defaultTexture = Resources::LoadTexture (defaultTexturePath);
 
-	TextureManager::Instance ()->AddTexture (_defaultTexture);
+	_defaultTextureView = RenderSystem::LoadTexture (defaultTexture);
+}
+
+void Pipeline::Clear ()
+{
+	_defaultMaterialView = nullptr;
+	_defaultTextureView = nullptr;
 }
 
 void Pipeline::SetShader (Shader* shader)
@@ -339,22 +343,21 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 			case PipelineAttribute::ATTR_MATRIX_4X4F :
 					GL::UniformMatrix4fv (unifLoc, 1, GL_FALSE, glm::value_ptr (attr [i].matrix));
 				break;
+			case PipelineAttribute::ATTR_BLOCK : {
+					unsigned int uniBlockIndex = shader->GetUniformBlockIndex (attr [i].name.c_str ());
+
+					GL::UniformBlockBinding (shader->GetProgram (), uniBlockIndex, 0);
+					GL::BindBufferBase (GL_UNIFORM_BUFFER, 0, (unsigned int) attr [i].value.x); 
+				}
+				break;
 		}
 	}
 }
 
-void Pipeline::SendMaterial(Material* mat, Shader* shader)
+void Pipeline::SendMaterial(Resource<MaterialView> mat, Shader* shader)
 {
-	/*
-	 * Lazy instantiation
-	*/
-
-	if (_defaultMaterial == nullptr || _defaultTexture == nullptr) {
-		Init ();
-	}
-
 	if (mat == nullptr) {
-		mat = _defaultMaterial;
+		mat = _defaultMaterialView;
 	}
 
 	if (shader == nullptr) {
@@ -392,8 +395,7 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	 * Send maps to shader
 	*/
 
-	GL::ActiveTexture (GL_TEXTURE0);
-	GL::BindTexture (GL_TEXTURE_2D, _defaultTexture->GetGPUIndex ());
+	_defaultTextureView->Activate (0);
 	++ _textureCount;
 
 	// if (mat->ambientTexture) {
@@ -405,36 +407,32 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	// 	glUniform1i (shader->GetUniformLocation ("AmbientMap"), 0);
 	// }
 
-	if (mat->diffuseTexture) {
-		GL::ActiveTexture (GL_TEXTURE0+_textureCount);
-		GL::BindTexture (GL_TEXTURE_2D, mat->diffuseTexture);
+	if (mat->diffuseTexture != nullptr) {
+		mat->diffuseTexture->Activate (_textureCount);
 		GL::Uniform1i (shader->GetUniformLocation ("DiffuseMap"), _textureCount);
 		++ _textureCount;
 	} else {
 		GL::Uniform1i (shader->GetUniformLocation ("DiffuseMap"), 0);
 	}
 
-	if (mat->specularTexture) {
-		GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
-		GL::BindTexture (GL_TEXTURE_2D, mat->specularTexture);
+	if (mat->specularTexture != nullptr) {
+		mat->specularTexture->Activate (_textureCount);
 		GL::Uniform1i (shader->GetUniformLocation ("SpecularMap"), _textureCount);
 		++ _textureCount;
 	} else {
 		GL::Uniform1i (shader->GetUniformLocation ("SpecularMap"), 0);
 	}
 
-	if (mat->bumpTexture) {
-		GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
-		GL::BindTexture (GL_TEXTURE_2D, mat->bumpTexture);
+	if (mat->bumpTexture != nullptr) {
+		mat->bumpTexture->Activate (_textureCount);
 		GL::Uniform1i (shader->GetUniformLocation ("NormalMap"), _textureCount);
 		++ _textureCount;
 	} else {
 		GL::Uniform1i (shader->GetUniformLocation ("NormalMap"), 0);
 	}
 
-	 if (mat->alphaTexture) {
-	 	GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
-	 	GL::BindTexture (GL_TEXTURE_2D, mat->alphaTexture);
+	 if (mat->alphaTexture != nullptr) {
+		mat->alphaTexture->Activate (_textureCount);
 	 	GL::Uniform1i (shader->GetUniformLocation ("AlphaMap"), _textureCount);
 	 	++ _textureCount;
 	 } else {
@@ -445,39 +443,39 @@ void Pipeline::SendMaterial(Material* mat, Shader* shader)
 	 * Send custom attributes
 	*/
 
-	for (std::size_t k = 0;k<mat->attributes.size ();k++) 
-	{
-		if (mat->attributes [k].type == Attribute::AttrType::ATTR_TEXTURE2D
-			|| mat->attributes [k].type == Attribute::AttrType::ATTR_TEXTURE2D_ATLAS) {
-			GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
-			Texture* tex = TextureManager::Instance ()->GetTexture (mat->attributes [k].valueName);
-			unsigned int textureID = tex->GetGPUIndex ();
-			GL::BindTexture (GL_TEXTURE_2D, textureID);
-			GL::Uniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
+	// for (std::size_t k = 0;k<mat->attributes.size ();k++) 
+	// {
+	// 	if (mat->attributes [k].type == Attribute::AttrType::ATTR_TEXTURE2D
+	// 		|| mat->attributes [k].type == Attribute::AttrType::ATTR_TEXTURE2D_ATLAS) {
+	// 		GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
+	// 		// Texture* tex = TextureManager::Instance ()->GetTexture (mat->attributes [k].valueName);
+	// 		// unsigned int textureID = tex->GetGPUIndex ();
+	// 		// GL::BindTexture (GL_TEXTURE_2D, textureID);
+	// 		// GL::Uniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
 
-			++ _textureCount;
-		}
-		else if (mat->attributes [k].type == Attribute::AttrType::ATTR_TEXTURE_CUBE) {
-			GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
+	// 		++ _textureCount;
+	// 	}
+	// 	else if (mat->attributes [k].type == Attribute::AttrType::ATTR_TEXTURE_CUBE) {
+	// 		GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
 
-			unsigned int textureID = 0;
-			if (mat->attributes [k].values.x == 1) {
-				textureID = (unsigned int)mat->attributes [k].values.y;
-			}
+	// 		unsigned int textureID = 0;
+	// 		if (mat->attributes [k].values.x == 1) {
+	// 			textureID = (unsigned int)mat->attributes [k].values.y;
+	// 		}
 
-			GL::BindTexture (GL_TEXTURE_CUBE_MAP, textureID);
-			GL::Uniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
+	// 		GL::BindTexture (GL_TEXTURE_CUBE_MAP, textureID);
+	// 		GL::Uniform1i (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), _textureCount);
 
-			++ _textureCount;
-		}
-		else if (mat->attributes [k].type == Attribute::AttrType::ATTR_FLOAT) {
-			float value = mat->attributes [k].values.x;
-			GL::Uniform1f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), value);
-		}
-		else if (mat->attributes [k].type == Attribute::AttrType::ATTR_VEC3) {
-			glm::vec3 values = mat->attributes [k].values;
-			GL::Uniform3f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), 
-				values.x, values.y, values.z);
-		}
-	}
+	// 		++ _textureCount;
+	// 	}
+	// 	else if (mat->attributes [k].type == Attribute::AttrType::ATTR_FLOAT) {
+	// 		float value = mat->attributes [k].values.x;
+	// 		GL::Uniform1f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), value);
+	// 	}
+	// 	else if (mat->attributes [k].type == Attribute::AttrType::ATTR_VEC3) {
+	// 		glm::vec3 values = mat->attributes [k].values;
+	// 		GL::Uniform3f (shader->GetUniformLocation (mat->attributes [k].name.c_str ()), 
+	// 			values.x, values.y, values.z);
+	// 	}
+	// }
 }

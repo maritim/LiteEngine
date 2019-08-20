@@ -35,7 +35,7 @@ public:
 
 	void Update ();
 
-	void Render (const Scene*);
+	void Render ();
 
 	Camera* GetCamera ();
 

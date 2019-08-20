@@ -25,6 +25,9 @@ Object* LightLoader::Load (const std::string& filename)
 		if (name == "Color") {
 			ProcessColor (content, light);
 		}
+		else if (name == "Intensity") {
+			ProcessIntensity (content, light);
+		}
 		else if (name == "Point") {
 			ProcessPointLight (content, light);
 		}
@@ -68,6 +71,15 @@ void LightLoader::ProcessColor (TiXmlElement* xmlElem, Light* light)
 	Color color = GetColor (xmlElem);
 
 	light->SetColor (color);
+}
+
+void LightLoader::ProcessIntensity (TiXmlElement* xmlElem, Light* light)
+{
+	const char* value = xmlElem->Attribute ("value");
+
+	if (value) {
+		light->SetIntensity (std::stof (value));
+	}
 }
 
 void LightLoader::ProcessShadows (TiXmlElement* xmlElem, Light* light)
@@ -127,17 +139,21 @@ void LightLoader::ProcessAttenuation (TiXmlElement* xmlElem, PointLight* light)
 	const char* linear = xmlElem->Attribute ("linear");
 	const char* quadratic = xmlElem->Attribute ("quadratic");
 
+	glm::vec3 attenuation (0.0f);
+
 	if (constant) {
-		light->SetConstantAttenuation (std::stof (constant));
+		attenuation.x = std::stof (constant);
 	}
 
 	if (linear) {
-		light->SetLinearAttenuation (std::stof (linear));
+		attenuation.y = std::stof (linear);
 	}
 
 	if (quadratic) {
-		light->SetQuadraticAttenuation (std::stof (quadratic));
+		attenuation.z = std::stof (quadratic);
 	}
+
+	light->SetAttenuation (attenuation);
 }
 
 void LightLoader::ProcessSpotCutoff (TiXmlElement* xmlElem, SpotLight* light)

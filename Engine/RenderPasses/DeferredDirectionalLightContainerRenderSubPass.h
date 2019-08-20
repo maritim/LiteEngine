@@ -18,9 +18,9 @@ public:
 
 	void Clear ();
 protected:
-	void LockShader (const VolumetricLight*);
+	void LockShader (const RenderLightObject*);
 
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
+	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings) const;
 };
 
 #endif

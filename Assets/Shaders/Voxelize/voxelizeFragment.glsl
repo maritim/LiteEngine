@@ -1,6 +1,6 @@
 #version 420 core
 
-uniform layout (binding = 0, r32ui) coherent volatile uimage3D volumeTexture;
+uniform layout (binding = 0, r32ui) coherent volatile uimage3D voxelVolume;
 
 layout (location = 0) out vec4 fragColor;
 
@@ -14,8 +14,6 @@ uniform mat3 normalWorldMatrix;
 uniform vec3 MaterialDiffuse;
 
 uniform sampler2D DiffuseMap;
-
-uniform vec3 sceneAmbient;
 
 uniform vec3 minPosition;
 uniform vec3 maxPosition;
@@ -90,5 +88,5 @@ void main()
 	 * Save in texture
 	*/
 
-	ImageAtomicAverageRGBA8 (volumeTexture, ivec3 (coords), fragmentColor);
+	ImageAtomicAverageRGBA8 (voxelVolume, ivec3 (coords), fragmentColor);
 }

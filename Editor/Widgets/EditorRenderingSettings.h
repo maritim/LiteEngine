@@ -6,10 +6,18 @@
 
 #include "Renderer/RenderSettings.h"
 
+#include "Core/Resources/Resource.h"
+#include "Texture/Texture.h"
+#include "Renderer/RenderViews/TextureView.h"
+
 class EditorRenderingSettings : public EditorWidget
 {
 protected:
 	RenderSettings* _settings;
+
+	std::string _lastLUTTexturePath;
+	Resource<Texture> _lutTexture;
+	Resource<TextureView> _lutTextureView;
 
 	bool _continuousVoxelizationReset;
 	bool _lastContinuousVoxelization;

@@ -22,10 +22,15 @@ BitmapFontCharset* BitmapFontPage::GetCharset () const
 	return _charset;
 }
 
-Texture* BitmapFontPage::GetTexture () const
+Resource<Texture> BitmapFontPage::GetTexture () const
 {
 	return _texture;
 }
+
+// Resource<TextureView> BitmapFontPage::GetTextureView () const
+// {
+// 	return _textureView;
+// }
 
 void BitmapFontPage::SetId (std::size_t id)
 {
@@ -37,7 +42,7 @@ void BitmapFontPage::SetCharset (BitmapFontCharset* charset)
 	_charset = charset;
 }
 
-void BitmapFontPage::SetTexture (Texture* texture)
+void BitmapFontPage::SetTexture (const Resource<Texture>& texture)
 {
 	_texture = texture;
 }

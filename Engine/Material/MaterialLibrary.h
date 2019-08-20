@@ -6,21 +6,25 @@
 #include <vector>
 #include <string>
 
+#include "Core/Resources/Resource.h"
 #include "Material.h"
 
 class MaterialLibrary : public Object
 {
 private:
-	std::vector<Material*> _materials;
+	std::string _name;
+	std::vector<Resource<Material>> _materials;
 public:
 	MaterialLibrary();
 	~MaterialLibrary();
 
-	void AddMaterial(Material* material);
+	void SetName (const std::string& name);
+	void AddMaterial(const Resource<Material>& material);
 
+	std::string GetName () const;
 	std::size_t GetMaterialsCount() const;
-	Material* GetMaterial(std::size_t index) const;
-	Material* GetMaterial (std::string name) const;
+	Resource<Material> GetMaterial(std::size_t index) const;
+	Resource<Material> GetMaterial (std::string name) const;
 
 	void Clear();
 };

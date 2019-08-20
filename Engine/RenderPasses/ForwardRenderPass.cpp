@@ -11,7 +11,7 @@ void ForwardRenderPass::Init (const RenderSettings& settings)
 
 }
 
-RenderVolumeCollection* ForwardRenderPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* ForwardRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -24,7 +24,7 @@ RenderVolumeCollection* ForwardRenderPass::Execute (const Scene* scene, const Ca
 	* Forward Rendering Pass
 	*/
 
-	ForwardPass (scene);
+	ForwardPass (renderScene);
 
 	return rvc;
 }
@@ -46,11 +46,11 @@ void ForwardRenderPass::StartForwardPass (RenderVolumeCollection* rvc)
 	framebuffer->BindForWriting ();
 }
 
-bool cmpForwardPass (Renderer* a, Renderer* b) {
+bool cmpForwardPass (RenderObject* a, RenderObject* b) {
 	return a->GetPriority () < b->GetPriority ();
 }
 
-void ForwardRenderPass::ForwardPass (const Scene* scene)
+void ForwardRenderPass::ForwardPass (const RenderScene* renderScene)
 {
 	//TODO: Initialize camera projection here
 
@@ -65,19 +65,28 @@ void ForwardRenderPass::ForwardPass (const Scene* scene)
 	* Render scene entities to framebuffer at Forward Rendering Stage
 	*/
 
-	std::vector<Renderer*> renderers;
+	std::vector<RenderObject*> renderObjects;
 
-	for (SceneObject* sceneObject : *scene) {
-		if (sceneObject->GetRenderer ()->GetStageType () != Renderer::StageType::FORWARD_STAGE) {
+	for (RenderObject* renderObject : *renderScene) {
+
+		/*
+		 * Check if it's active
+		*/
+
+		if (renderObject->IsActive () == false) {
+			continue;
+		}
+		
+		if (renderObject->GetRenderStage () != RenderStage::RENDER_STAGE_FORWARD) {
 			continue;
 		}
 
-		renderers.push_back (sceneObject->GetRenderer ());
+		renderObjects.push_back (renderObject);
 	}
 
-	std::sort (renderers.begin (), renderers.end (), cmpForwardPass);
+	std::sort (renderObjects.begin (), renderObjects.end (), cmpForwardPass);
 
-	for (Renderer* renderer : renderers) {
-		renderer->Draw ();
+	for (RenderObject* renderObject : renderObjects) {
+		renderObject->Draw ();
 	}
 }

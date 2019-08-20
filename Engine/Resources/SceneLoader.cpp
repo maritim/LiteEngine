@@ -15,8 +15,6 @@
 #include "Systems/Components/ComponentsFactory.h"
 #include "Systems/Components/Component.h"
 
-#include "Managers/AudioClipManager.h"
-
 #include "Resources/Resources.h"
 
 #include "Utils/Extensions/StringExtend.h"
@@ -263,6 +261,9 @@ void SceneLoader::ProcessLightMapGameObject (TiXmlElement* xmlElem, Scene* scene
 		else if (name == "Rigidbody") {
 			ProcessRigidbody (content, lightMapGameObject);
 		}
+		else if (name == "AudioSource") {
+			ProcessAudioSource (content, lightMapGameObject);
+		}
 		else if (name == "Components") {
 			ProcessComponents (content, lightMapGameObject);
 		}
@@ -300,9 +301,6 @@ void SceneLoader::ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene)
 
 		if (name == "Transform") {
 			ProcessTransform (content, scene, partSystem);
-		}
-		else if (name == "Rigidbody") {
-			ProcessRigidbody (content, partSystem);
 		}
 
 		content = content->NextSiblingElement ();
@@ -472,7 +470,7 @@ void SceneLoader::ProcessComponent (TiXmlElement* xmlElem, GameObject* gameObjec
 	gameObject->AttachComponent (component);	
 }
 
-void SceneLoader::ProcessRigidbody (TiXmlElement* xmlElem, SceneObject* object)
+void SceneLoader::ProcessRigidbody (TiXmlElement* xmlElem, GameObject* object)
 {
 	std::string mass = xmlElem->Attribute ("mass");
 
@@ -492,7 +490,7 @@ void SceneLoader::ProcessRigidbody (TiXmlElement* xmlElem, SceneObject* object)
 	}
 }
 
-void SceneLoader::ProcessAudioSource (TiXmlElement* xmlElem, SceneObject* object)
+void SceneLoader::ProcessAudioSource (TiXmlElement* xmlElem, GameObject* object)
 {
 	std::string volume = xmlElem->Attribute ("volume");
 	std::string loop = xmlElem->Attribute ("loop");
@@ -527,12 +525,7 @@ void SceneLoader::ProcessAudioClip (TiXmlElement* xmlElem, AudioSource* audioSou
 {
 	std::string path = xmlElem->Attribute ("path");
 
-	AudioClip* audioClip = AudioClipManager::Instance ()->GetAudioClip (path);
-
-	if (audioClip == nullptr) {
-		audioClip = Resources::LoadAudioClip (path);
-		AudioClipManager::Instance ()->AddAudioClip (audioClip);
-	}
+	Resource<AudioClip> audioClip = Resources::LoadAudioClip (path);
 
 	audioSource->SetAudioClip (audioClip);
 }

@@ -1,10 +1,13 @@
 #include "AudioSource.h"
 
+#include "AudioSystem.h"
+
 #include "Wrappers/OpenAL/AL.h"
 
 AudioSource::AudioSource (Transform* transform) :
 	_transform (transform),
 	_audioClip (nullptr),
+	_audioClipView (nullptr),
 	_sourceID (0)
 {
 	AL::GenSources((ALuint)1, &_sourceID);
@@ -16,11 +19,12 @@ AudioSource::AudioSource (Transform* transform) :
 	AL::Sourcei(_sourceID, AL_LOOPING, AL_FALSE);
 }
 
-void AudioSource::SetAudioClip (AudioClip* audioClip)
+void AudioSource::SetAudioClip (const Resource<AudioClip>& audioClip)
 {
 	_audioClip = audioClip;
+	_audioClipView = AudioSystem::LoadAudioClip (audioClip);
 
-	AL::Sourcei(_sourceID, AL_BUFFER, _audioClip->GetBufferID ());
+	AL::Sourcei(_sourceID, AL_BUFFER, _audioClipView->GetBufferID ());
 }
 
 void AudioSource::SetVolume (float volume)
@@ -33,7 +37,7 @@ void AudioSource::SetLoop (bool loop)
 	AL::Sourcei(_sourceID, AL_LOOPING, loop);
 }
 
-AudioClip* AudioSource::GetAudioClip () const
+Resource<AudioClip> AudioSource::GetAudioClip () const
 {
 	return _audioClip;
 }

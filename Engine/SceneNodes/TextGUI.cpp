@@ -1,77 +1,44 @@
 #include "TextGUI.h"
 
+#include "Renderer/RenderSystem.h"
+#include "Renderer/RenderManager.h"
+
 TextGUI::TextGUI () :
-	_text ("\0"),
-	_font (nullptr),
-	_screenPos (glm::vec2 (0.0f)),
-	_lineLength (1.0f),
-	_isDirty (true)
+	_renderObject (new RenderTextGUIObject ())
 {
-	delete _renderer;
-	_renderer = new TextGUIRenderer (_transform);
-	_renderer->SetStageType (Renderer::StageType::FORWARD_STAGE);
-	_renderer->SetPriority (5);
-
-	UpdateText ();
-}
-
-TextGUI::TextGUI (const std::string& text, Font* font, 
-	glm::vec2 screenPos, float lineLength) :
-	_text (text),
-	_font (font),
-	_screenPos (screenPos),
-	_lineLength (lineLength),
-	_isDirty (true)
-{
-	delete _renderer;
-	_renderer = new TextGUIRenderer (_transform);
-	_renderer->SetStageType (Renderer::StageType::FORWARD_STAGE);
-	_renderer->SetPriority (5);
-
-	UpdateText ();
+	_renderObject->SetTransform (_transform);
+	_renderObject->SetRenderStage (RenderStage::RENDER_STAGE_FORWARD);
 }
 
 TextGUI::~TextGUI ()
 {
-
+	delete _renderObject;
 }
 
-void TextGUI::SetFont (Font* font)
+void TextGUI::SetFont (const Resource<Font>& font)
 {
-	_font = font;
-	_isDirty = true;
+	_renderObject->SetFont (font);
+
+	Resource<TextureView> textureView = RenderSystem::LoadTexture (font->GetTexture (0));
+	_renderObject->SetFontTextureView (textureView);
 }
 
 void TextGUI::SetText (const std::string& text)
 {
-	_text = text;
-	_isDirty = true;
-}
-
-void TextGUI::SetScreenPosition (glm::vec2 position)
-{
-	_screenPos = position;
-	_isDirty = true;
-}
-
-void TextGUI::SetLineLength (float lineLength)
-{
-	_lineLength = lineLength;
-	_isDirty = true;
+	_renderObject->SetText (text);
 }
 
 void TextGUI::Update ()
 {
-	if (!_isDirty) {
-		return ;
-	}
 
-	UpdateText ();
-	_isDirty = false;
 }
 
-void TextGUI::UpdateText ()
+void TextGUI::OnAttachedToScene ()
 {
-	TextGUIRenderer* renderer = dynamic_cast<TextGUIRenderer*> (_renderer);
-	renderer->UpdateText (_text, _font, _screenPos, _lineLength);
+	RenderManager::Instance ()->AttachRenderObject (_renderObject);
+}
+
+void TextGUI::OnDetachedFromScene ()
+{
+	RenderManager::Instance ()->DetachRenderObject (_renderObject);
 }

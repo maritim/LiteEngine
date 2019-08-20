@@ -1,7 +1,7 @@
 #ifndef EMITER_H
 #define EMITER_H
 
-#include "SceneGraph/SceneObject.h"
+#include "Core/Interfaces/Object.h"
 
 #include <vector>
 

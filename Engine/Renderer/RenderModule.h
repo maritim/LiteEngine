@@ -9,7 +9,7 @@
 
 #include "RenderProduct.h"
 
-#include "SceneGraph/Scene.h"
+#include "Renderer/RenderScene.h"
 #include "Systems/Camera/Camera.h"
 #include "RenderSettings.h"
 
@@ -24,7 +24,7 @@ public:
 	virtual ~RenderModule ();
 
 	virtual void InitModule (const RenderSettings&);
-	virtual RenderProduct RenderScene (const Scene*, const Camera*, const RenderSettings&);
+	virtual RenderProduct Render (const RenderScene*, const Camera*, const RenderSettings&);
 
 	virtual void ClearModule ();
 protected:

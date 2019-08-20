@@ -17,8 +17,6 @@ uniform mat3 normalWorldMatrix;
 
 uniform vec3 cameraPosition;
 
-uniform vec3 sceneAmbient;
-
 uniform vec2 screenSize;
 
 vec2 CalcTexCoord()

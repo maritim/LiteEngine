@@ -8,7 +8,6 @@
 #include "Mesh/AnimationModel.h"
 
 #include "SceneNodes/AnimationGameObject.h"
-#include "SceneNodes/AnimationModel3DRenderer.h"
 
 #include "Systems/Window/Window.h"
 
@@ -87,14 +86,12 @@ void EditorAnimationModel::ShowAnimationsWindow ()
 			ImGui::InputFloat ("Blend Duration", &_blendDuration);
 
 			if (lastAnimIndex != _currentAnimIndex) {
-				AnimationModel3DRenderer* renderer = (AnimationModel3DRenderer*) animGameObject->GetRenderer ();
-
 				if (_isBlending) {
-					renderer->Blend (animations [_currentAnimIndex], _blendDuration);
+					animGameObject->Blend (animations [_currentAnimIndex], _blendDuration);
 				}
 
 				if (!_isBlending) {
-					renderer->SetAnimationClip (animations [_currentAnimIndex]);
+					animGameObject->SetAnimationClip (animations [_currentAnimIndex]);
 				}
 			}
 		}

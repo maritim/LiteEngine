@@ -1,6 +1,6 @@
 #include "HDRContainerRenderSubPass.h"
 
-bool HDRContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool HDRContainerRenderSubPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

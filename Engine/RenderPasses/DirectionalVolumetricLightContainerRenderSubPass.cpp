@@ -7,7 +7,7 @@ DirectionalVolumetricLightContainerRenderSubPass::~DirectionalVolumetricLightCon
 
 }
 
-RenderVolumeCollection* DirectionalVolumetricLightContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* DirectionalVolumetricLightContainerRenderSubPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -20,7 +20,7 @@ RenderVolumeCollection* DirectionalVolumetricLightContainerRenderSubPass::Execut
 	 * Draw volumetric lights
 	*/
 
-	DirectionalLightPass (scene, camera, settings, rvc);
+	DirectionalLightPass (renderScene, camera, settings, rvc);
 
 	/*
 	 * End directional light pass
@@ -31,7 +31,7 @@ RenderVolumeCollection* DirectionalVolumetricLightContainerRenderSubPass::Execut
 	return rvc;
 }
 
-bool DirectionalVolumetricLightContainerRenderSubPass::IsAvailable (const VolumetricLight*) const
+bool DirectionalVolumetricLightContainerRenderSubPass::IsAvailable (const RenderLightObject*) const
 {
 	/*
 	 * Always execute directional volumetric light render sub pass
@@ -51,7 +51,7 @@ void DirectionalVolumetricLightContainerRenderSubPass::StartDirectionalLightPass
 	lightAccumulationVolume->BindForWriting ();
 }
 
-void DirectionalVolumetricLightContainerRenderSubPass::DirectionalLightPass (const Scene* scene, const Camera* camera,
+void DirectionalVolumetricLightContainerRenderSubPass::DirectionalLightPass (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -66,13 +66,13 @@ void DirectionalVolumetricLightContainerRenderSubPass::DirectionalLightPass (con
 	 * Get volumetric light from render volume collection
 	*/
 
-	VolumetricLight* volumetricLight = GetVolumetricLight (rvc);
+	RenderLightObject* renderLightObject = GetRenderLightObject (rvc);
 
 	/*
 	 * Lock shader for volumetric light draw
 	*/
 
-	LockShader (volumetricLight);
+	LockShader (renderLightObject);
 
 	/*
 	 * Set viewport
@@ -101,16 +101,29 @@ void DirectionalVolumetricLightContainerRenderSubPass::DirectionalLightPass (con
 	GL::Disable (GL_CULL_FACE);
 
 	/*
+	 * Send camera to pipeline
+	*/
+
+	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
+	Pipeline::SendCamera (camera);
+
+	/*
 	 * Send custom attributes
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes ());
+	Pipeline::SendCustomAttributes ("", GetCustomAttributes (rvc));
+
+	/*
+	 * Send custom attributes
+	*/
+
+	Pipeline::SendCustomAttributes ("", GetCustomAttributes (settings));
 
 	/*
 	 * Draw volumetric light
 	*/
 
-	volumetricLight->GetLightRenderer ()->Draw (scene, camera, rvc);
+	renderLightObject->Draw ();
 }
 
 void DirectionalVolumetricLightContainerRenderSubPass::EndDirectionalLightPass ()
@@ -120,4 +133,17 @@ void DirectionalVolumetricLightContainerRenderSubPass::EndDirectionalLightPass (
 	*/
 
 	Pipeline::UnlockShader ();
+}
+
+std::vector<PipelineAttribute> DirectionalVolumetricLightContainerRenderSubPass::GetCustomAttributes (RenderVolumeCollection* rvc) const
+{
+	std::vector<PipelineAttribute> attributes;
+
+	for (RenderVolumeI* renderVolume : *rvc) {
+		std::vector<PipelineAttribute> volumeAttributes = renderVolume->GetCustomAttributes ();
+
+		attributes.insert (attributes.end (), volumeAttributes.begin (), volumeAttributes.end ());
+	}
+
+	return attributes;
 }

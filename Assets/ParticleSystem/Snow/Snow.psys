@@ -12,6 +12,7 @@
 					<MaterialName>SnowFlake</MaterialName>
 				</Material>
 			</Mesh>
+			<TextureAtlas path="Textures/Snow.png" />
 		</Particle>
 	
 		<Transform>

@@ -3,27 +3,25 @@
 
 #include "VolumetricLight.h"
 
+#include <glm/vec3.hpp>
+
 class PointLight : public VolumetricLight
 {
 protected:
-	float _constantAttenuation, _linearAttenuation, _quadraticAttenuation;
+	glm::vec3 _attenuation;
 
 public:
 	PointLight ();
 
+	void SetAttenuation (const glm::vec3& attenuation);
+
+	void SetActive (bool isActive);
+
 	void Update ();
-
-	float GetConstantAttenuation () const;
-	float GetLinearAttenuation () const;
-	float GetQuadraticAttenuation () const;
-
-	void SetConstantAttenuation (float constantAttenuation);
-	void SetLinearAttenuation (float linearAttenuation);
-	void SetQuadraticAttenuation (float quadraticAttenuation);
 
 	void OnAttachedToScene ();
 	void OnDetachedFromScene ();
-
+protected:
 	void UpdateScale ();
 };
 

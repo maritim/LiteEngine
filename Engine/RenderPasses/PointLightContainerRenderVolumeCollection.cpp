@@ -1,7 +1,5 @@
 #include "PointLightContainerRenderVolumeCollection.h"
 
-#include "Lighting/LightsManager.h"
-
 PointLightContainerRenderVolumeCollection::PointLightContainerRenderVolumeCollection () :
 	_pointLightsIterator (),
 	_volumetricLightVolume (new VolumetricLightVolume ())
@@ -16,18 +14,20 @@ PointLightContainerRenderVolumeCollection::~PointLightContainerRenderVolumeColle
 
 void PointLightContainerRenderVolumeCollection::Reset ()
 {
-	_pointLightsIterator = LightsManager::Instance ()->begin<PointLight*> ();
+	// _pointLightsIterator = LightsManager::Instance ()->begin<PointLight*> ();
 }
 
-RenderVolumeI* PointLightContainerRenderVolumeCollection::GetNextVolume ()
+RenderVolumeI* PointLightContainerRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene)
 {
-	if (_pointLightsIterator == LightsManager::Instance ()->end<PointLight*> ()) {
-		return nullptr;
-	}
+	return nullptr;
 
-	_volumetricLightVolume->SetVolumetricLight (*_pointLightsIterator);
+	// if (_pointLightsIterator == LightsManager::Instance ()->end<PointLight*> ()) {
+	// 	return nullptr;
+	// }
 
-	_pointLightsIterator ++;
+	// _volumetricLightVolume->SetVolumetricLight (*_pointLightsIterator);
 
-	return _volumetricLightVolume;
+	// _pointLightsIterator ++;
+
+	// return _volumetricLightVolume;
 }

@@ -7,6 +7,11 @@ FrustumVolume::FrustumVolume (FrustumVolumeInformation* data) :
 
 }
 
+FrustumVolume::~FrustumVolume ()
+{
+	delete _data;
+}
+
 void FrustumVolume::SetVolume (const glm::mat4& mvpMatrix)
 {
 	FrustumVolumeInformation* frustum = (FrustumVolumeInformation*) _data;

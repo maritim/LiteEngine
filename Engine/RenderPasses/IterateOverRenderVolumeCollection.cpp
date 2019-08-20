@@ -1,7 +1,5 @@
 #include "IterateOverRenderVolumeCollection.h"
 
-#include "Lighting/LightsManager.h"
-
 IterateOverRenderVolumeCollection::IterateOverRenderVolumeCollection (std::size_t iterations) :
 	_iterations (iterations),
 	_iterationsElapsed (0),
@@ -20,7 +18,7 @@ void IterateOverRenderVolumeCollection::Reset ()
 	_iterationsElapsed = 0;
 }
 
-RenderVolumeI* IterateOverRenderVolumeCollection::GetNextVolume ()
+RenderVolumeI* IterateOverRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene)
 {
 	if (_iterationsElapsed == _iterations) {
 		return nullptr;

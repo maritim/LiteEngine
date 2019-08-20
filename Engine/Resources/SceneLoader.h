@@ -10,6 +10,7 @@
 
 #include "SceneGraph/Scene.h"
 #include "SceneGraph/Transform.h"
+#include "SceneNodes/GameObject.h"
 
 class SceneLoader
 {
@@ -36,9 +37,9 @@ private:
 	void ProcessComponents (TiXmlElement* xmlElem, GameObject* gameObject);
 	void ProcessComponent (TiXmlElement* xmlElem, GameObject* gameObject);
 
-	void ProcessRigidbody (TiXmlElement* xmlElem, SceneObject* object);
+	void ProcessRigidbody (TiXmlElement* xmlElem, GameObject* object);
 
-	void ProcessAudioSource (TiXmlElement* xmlElem, SceneObject* object);
+	void ProcessAudioSource (TiXmlElement* xmlElem, GameObject* object);
 
 	void ProcessCollider (TiXmlElement* xmlElem, Rigidbody* rigidbody);
 

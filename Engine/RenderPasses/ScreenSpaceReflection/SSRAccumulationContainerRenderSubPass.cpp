@@ -1,6 +1,6 @@
 #include "SSRAccumulationContainerRenderSubPass.h"
 
-bool SSRAccumulationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool SSRAccumulationContainerRenderSubPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

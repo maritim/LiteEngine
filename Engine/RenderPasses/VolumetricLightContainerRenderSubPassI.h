@@ -3,16 +3,16 @@
 
 #include "Container/ContainerRenderSubPassI.h"
 
-#include "Lighting/VolumetricLight.h"
+#include "Renderer/RenderLightObject.h"
 
 class ENGINE_API VolumetricLightContainerRenderSubPassI : public ContainerRenderSubPassI
 {
 protected:
-	VolumetricLight* GetVolumetricLight (const RenderVolumeCollection* rvc) const;
-	bool IsAvailable (const Scene*, const Camera*,
+	RenderLightObject* GetRenderLightObject (const RenderVolumeCollection* rvc) const;
+	bool IsAvailable (const RenderScene*, const Camera*,
 		const RenderSettings& settings, const RenderVolumeCollection*) const;
 
-	virtual bool IsAvailable (const VolumetricLight*) const = 0;
+	virtual bool IsAvailable (const RenderLightObject*) const = 0;
 };
 
 #endif

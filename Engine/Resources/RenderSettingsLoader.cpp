@@ -25,7 +25,10 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 	while (content) {
 		std::string name = content->Value ();
 
-		if (name == "SSAO") {
+		if (name == "RenderMode") {
+			ProcessRenderMode (content, settings);
+		}
+		else if (name == "SSAO") {
 			ProcessSSAO (content, settings);
 		}
 		else if (name == "SSR") {
@@ -43,6 +46,12 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 		else if (name == "Gamma") {
 			ProcessGamma (content, settings);
 		}
+		else if (name == "RSM") {
+			ProcessRSM (content, settings);
+		}
+		else if (name == "VCT") {
+			ProcessVCT (content, settings);
+		}
 
 		content = content->NextSiblingElement ();
 	}
@@ -52,6 +61,13 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 	doc.Clear ();
 
 	return settings;
+}
+
+void RenderSettingsLoader::ProcessRenderMode (TiXmlElement* xmlElem, RenderSettings* settings)
+{
+	std::string renderMode = xmlElem->Attribute ("mode");
+
+	settings->renderMode = renderMode;
 }
 
 void RenderSettingsLoader::ProcessSSAO (TiXmlElement* xmlElem, RenderSettings* settings)
@@ -128,4 +144,36 @@ void RenderSettingsLoader::ProcessGamma (TiXmlElement* xmlElem, RenderSettings* 
 	std::string enabled = xmlElem->Attribute ("enabled");
 
 	settings->gamma_enabled = Extensions::StringExtend::ToBool (enabled);
+}
+
+void RenderSettingsLoader::ProcessRSM (TiXmlElement* xmlElem, RenderSettings* settings)
+{
+	std::string resolution = xmlElem->Attribute ("resolution");
+	std::string bias = xmlElem->Attribute ("bias");
+	std::string samples = xmlElem->Attribute ("samples");
+	std::string radius = xmlElem->Attribute ("radius");
+	std::string intensity = xmlElem->Attribute ("intensity");
+	std::string caching = xmlElem->Attribute ("caching");
+
+	auto vresolution = Extensions::StringExtend::Split (resolution, ",");
+
+	settings->rsm_resolution = glm::ivec2 (std::stoi (vresolution [0]), std::stoi (vresolution [1]));
+	settings->rsm_bias = std::stof (bias);
+	settings->rsm_samples = std::stoi (samples);
+	settings->rsm_radius = std::stof (radius);
+	settings->rsm_intensity = std::stof (intensity);
+	settings->rsm_caching = Extensions::StringExtend::ToBool (caching);
+}
+
+void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings)
+{
+	std::string voxelsSize = xmlElem->Attribute ("voxelsSize");
+	std::string continuousVoxelization = xmlElem->Attribute ("continuousVoxelization");
+	std::string bordering = xmlElem->Attribute ("bordering");
+	std::string indirectIntensity = xmlElem->Attribute ("indirectIntensity");
+
+	settings->vct_voxels_size = std::stoi (voxelsSize);
+	settings->vct_continuous_voxelization = Extensions::StringExtend::ToBool (continuousVoxelization);
+	settings->vct_bordering = Extensions::StringExtend::ToBool (bordering);
+	settings->vct_indirect_intensity = std::stof (indirectIntensity);
 }

@@ -12,12 +12,16 @@ class RenderSettingsLoader : public ResourceLoader
 public:
 	Object* Load(const std::string& fileName);
 protected:
+	void ProcessRenderMode (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessSSAO (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessSSR (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessBloom (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessHDR (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessLUT (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessGamma (TiXmlElement* xmlElem, RenderSettings* settings);
+
+	void ProcessRSM (TiXmlElement* xmlElem, RenderSettings* settings);
+	void ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings);
 };
 
 #endif

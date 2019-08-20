@@ -23,7 +23,7 @@
 
 #include "RenderProduct.h"
 
-#include "SceneGraph/Scene.h"
+#include "RenderScene.h"
 #include "Systems/Camera/Camera.h"
 #include "RenderSettings.h"
 
@@ -33,10 +33,25 @@ class ENGINE_API RenderManager : public Singleton<RenderManager>
 
 	DECLARE_SINGLETON(RenderManager)
 
+private:
+	RenderScene* _renderScene;
+
 public:
 	void Init ();
 
-	RenderProduct RenderScene (const Scene* scene, const Camera* camera, const RenderSettings&);
+	RenderProduct Render (const Camera* camera, const RenderSettings&);
+
+	void SetRenderSkyboxObject (RenderSkyboxObject*);
+
+	void AttachRenderObject (RenderObject*);
+	void DetachRenderObject (RenderObject*);
+
+	void SetRenderDirectionalLightObject (RenderDirectionalLightObject*);
+
+	void AttachRenderPointLightObject (RenderPointLightObject*);
+	void DetachRenderPointLightObject (RenderPointLightObject*);
+
+	void SetRenderAmbientLightObject (RenderAmbientLightObject*);
 
 	void Clear ();
 private:

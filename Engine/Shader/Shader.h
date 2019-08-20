@@ -23,6 +23,7 @@ public:
 	GLuint GetProgram () const;
 
 	int GetUniformLocation (const std::string& name);
+	unsigned int GetUniformBlockIndex (const std::string& name);
 };
 
 #endif

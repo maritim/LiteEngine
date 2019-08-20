@@ -25,6 +25,8 @@
 #include "Modules/SDLModule.h"
 #include "Modules/OpenALModule.h"
 
+#include "Renderer/Pipeline.h"
+
 #define ENGINE_SETTINGS_PATH "Assets/LiteEngine.ini"
 
 /*
@@ -50,7 +52,11 @@ void GameEngine::Init ()
 
 	Physics::Init ();
 
+	RenderManager::Instance ()->Init ();
+
 	GUI::Init ();
+
+	Pipeline::Init ();
 
 	InitScene ();
 }
@@ -61,6 +67,8 @@ void GameEngine::Clear ()
 	SceneManager::Instance()->Clear();
 	RenderManager::Instance()->Clear();
 	RenderModuleManager::Instance ()->Clear ();
+
+	Pipeline::Clear ();
 
 	GUI::Clear ();
 

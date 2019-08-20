@@ -72,8 +72,8 @@ void PhysicsManager::Init ()
 	 * Initialize debug mode
 	*/
 
-	btIDebugDraw* debugDraw = new BulletDebugDraw ();
-	_dynamicsWorld->setDebugDrawer (debugDraw);
+	_debugDraw = new BulletDebugDraw ();
+	_dynamicsWorld->setDebugDrawer (_debugDraw);
 }
 
 void PhysicsManager::Clear ()
@@ -84,6 +84,7 @@ void PhysicsManager::Clear ()
 	delete _broadphaseInterface;
 	delete _collisionDispatcher;
 	delete _collisionConfiguration;
+	delete _debugDraw;
 }
 
 void PhysicsManager::AttachRigidbody (btRigidBody* rigidbody)

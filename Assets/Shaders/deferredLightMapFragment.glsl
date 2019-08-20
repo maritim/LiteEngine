@@ -25,8 +25,6 @@ uniform sampler2D AlphaMap;
 
 uniform vec3 cameraPosition;
 
-uniform vec3 sceneAmbient;
-
 const vec3 nullInAlphaMap = vec3 (0.0);
 
 in vec3 geom_position;

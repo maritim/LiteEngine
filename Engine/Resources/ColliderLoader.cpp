@@ -67,7 +67,7 @@ BulletCollider* ColliderLoader::CreateCollider (TiXmlElement* root)
 
 void ColliderLoader::ProcessOffset (TiXmlElement* xmlElem, BulletCollider* collider)
 {
-	glm::vec3 vec;
+	glm::vec3 vec (0.0f);
 
 	const char* x = xmlElem->Attribute ("x");
 	const char* y = xmlElem->Attribute ("y");

@@ -10,9 +10,19 @@ MaterialLibrary::~MaterialLibrary()
 
 }
 
-void MaterialLibrary::AddMaterial(Material* material)
+void MaterialLibrary::SetName (const std::string& name)
+{
+	_name = name;
+}
+
+void MaterialLibrary::AddMaterial(const Resource<Material>& material)
 {
 	_materials.push_back (material);
+}
+
+std::string MaterialLibrary::GetName () const
+{
+	return _name;
 }
 
 std::size_t MaterialLibrary::GetMaterialsCount () const
@@ -20,7 +30,7 @@ std::size_t MaterialLibrary::GetMaterialsCount () const
 	return _materials.size();
 }
 
-Material* MaterialLibrary::GetMaterial(std::size_t index) const
+Resource<Material> MaterialLibrary::GetMaterial(std::size_t index) const
 {
 	if (index >= _materials.size()) {
 		return NULL;
@@ -28,7 +38,7 @@ Material* MaterialLibrary::GetMaterial(std::size_t index) const
 	return _materials[index];
 }
 
-Material* MaterialLibrary::GetMaterial (std::string matName) const
+Resource<Material> MaterialLibrary::GetMaterial (std::string matName) const
 {
 	for (std::size_t i=0;i<_materials.size ();i++) {
 		if (_materials [i]->name == matName) {
@@ -41,7 +51,5 @@ Material* MaterialLibrary::GetMaterial (std::string matName) const
 
 void MaterialLibrary::Clear()
 {
-	for (std::size_t i=0;i<_materials.size();i++) {
-		delete _materials [i];
-	}
+
 }

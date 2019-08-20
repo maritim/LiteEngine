@@ -3,27 +3,22 @@
 
 #include "Light.h"
 
-#include "Core/Resources/Resource.h"
-#include "Mesh/Model.h"
-
-#include "LightRenderer.h"
+#include "Renderer/RenderLightObject.h"
 
 class VolumetricLight : public Light
 {
 protected:
-	Resource<Model> _volume;
-	LightRenderer* _lightRenderer;
+	RenderLightObject* _renderLightObject;
 
 public:
 	VolumetricLight ();
 	virtual ~VolumetricLight ();
 
-	virtual LightRenderer* GetLightRenderer ();
+	void SetActive (bool isActive);
 
-	void SetVolume (const Resource<Model>& volume);
-	Resource<Model> GetVolume ();
-
-	virtual void Update () = 0;
+	void SetColor (const Color& color);
+	void SetIntensity (float intensity);
+	void SetShadowCasting (bool castShadows);
 };
 
 #endif

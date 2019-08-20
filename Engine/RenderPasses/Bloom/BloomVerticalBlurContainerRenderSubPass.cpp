@@ -1,6 +1,6 @@
 #include "BloomVerticalBlurContainerRenderSubPass.h"
 
-bool BloomVerticalBlurContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool BloomVerticalBlurContainerRenderSubPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

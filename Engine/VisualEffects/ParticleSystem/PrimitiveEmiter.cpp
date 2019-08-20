@@ -23,7 +23,7 @@ Particle* PrimitiveEmiter::GetParticle ()
 	particle->SetSpeed (speed);
 	particle->SetScaleCurve (_scaleCurve);
 	particle->SetTweenCurve (_tweenCurve);
-	particle->SetMoveDirection (new glm::vec3 (direction));
+	particle->SetMoveDirection (direction);
 	particle->GetTransform ()->SetPosition (position);
 	particle->GetTransform ()->SetScale (glm::vec3 (1.0f) * scale);
 	particle->GetTransform ()->SetRotation (this->GetTransform ()->GetRotation ());

@@ -1,28 +1,50 @@
 #include "GameObject.h"
 
 #include "SceneGraph/Transform.h"
-#include "Model3DRenderer.h"
 #include "Systems/Collision/AABBCollider.h"
 
 #include "Systems/Input/Input.h"
 
+#include "Renderer/RenderSystem.h"
+
+#include "SceneNodes/SceneLayer.h"
+
+#include "Renderer/RenderManager.h"
+
+#include "Mesh/AnimationModel.h"
+#include "Mesh/LightMapModel.h"
+
 GameObject::GameObject () :
 	SceneObject (),
-	_mesh (nullptr)
+	_mesh (nullptr),
+	_renderObject (new RenderObject ()),
+	_rigidbody (new Rigidbody (_transform)),
+	_collider (new AABBCollider ()),
+	_audioSource (new AudioSource (_transform))
 {
-	delete _renderer;
-	_renderer = new Model3DRenderer (_transform);
-	_renderer->SetPriority (1);
 
-	_collider = new AABBCollider ();
+}
+
+GameObject::~GameObject ()
+{
+	delete _renderObject;
+	delete _rigidbody;
+	delete _collider;
+	delete _audioSource;
 }
 
 void GameObject::AttachMesh (const Resource<Model>& mesh)
 {
 	_mesh = mesh;
 
-	Model3DRenderer* model3dRenderer = dynamic_cast<Model3DRenderer*>(_renderer);
-	model3dRenderer->Attach (_mesh);
+	Resource<ModelView> modelView = RenderSystem::LoadModel (mesh);
+
+	_renderObject->SetTransform (_transform);
+	_renderObject->SetModelView (modelView);
+	_renderObject->SetRenderStage (RenderStage::RENDER_STAGE_DEFERRED);
+	_renderObject->SetSceneLayers (SceneLayer::STATIC);
+	_renderObject->SetPriority (1);
+	_renderObject->SetCollider (_collider);
 
 	if (_rigidbody->GetCollider () != nullptr) {
 		_rigidbody->GetCollider ()->SetMesh (_mesh);
@@ -31,11 +53,34 @@ void GameObject::AttachMesh (const Resource<Model>& mesh)
 	_collider->Rebuild (_mesh, _transform);
 }
 
+void GameObject::SetActive (bool isActive)
+{
+	SceneObject::SetActive (isActive);
+
+	_rigidbody->Enable (_isActive);
+
+	_renderObject->SetActive (_isActive);
+}
+
 Resource<Model> GameObject::GetMesh () const
 {
 	return _mesh;
 }
 
+Rigidbody* GameObject::GetRigidbody () const
+{
+	return _rigidbody;
+}
+
+Collider* GameObject::GetCollider () const
+{
+	return _collider;
+}
+
+AudioSource* GameObject::GetAudioSource () const
+{
+	return _audioSource;
+}
 
 void GameObject::Update() 
 {
@@ -49,7 +94,16 @@ void GameObject::Update()
 	_transform->SetIsDirty (false);
 }
 
-GameObject::~GameObject ()
+void GameObject::OnAttachedToScene ()
 {
+	_rigidbody->OnAttachedToScene ();
 
+	RenderManager::Instance ()->AttachRenderObject (_renderObject);
+}
+
+void GameObject::OnDetachedFromScene ()
+{
+	_rigidbody->OnDetachedFromScene ();
+
+	RenderManager::Instance ()->DetachRenderObject (_renderObject);
 }

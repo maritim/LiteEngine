@@ -8,7 +8,6 @@
 
 #include "Systems/Camera/Camera.h"
 #include "Cameras/OrthographicCamera.h"
-#include "Lighting/VolumetricLight.h"
 
 #include "Systems/Settings/SettingsObserverArgs.h"
 
@@ -27,22 +26,22 @@ public:
 	~DirectionalLightShadowMapContainerRenderSubPass ();
 
 	virtual void Init (const RenderSettings& settings);
-	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void Notify (Object* sender, const SettingsObserverArgs& args);
 
 	void Clear ();
 protected:
-	bool IsAvailable (const VolumetricLight*) const;
+	bool IsAvailable (const RenderLightObject*) const;
 
-	void ShadowMapPass (const Scene* scene, const Camera* camera, VolumetricLight* volumetricLight);
+	void ShadowMapPass (const RenderScene* renderScene, const Camera* camera, const RenderLightObject* renderLightObject);
 	void EndShadowMapPass ();
 
 	void UpdateCascadeLevelsLimits (const Camera* camera);
 	void SendLightCamera (Camera* lightCamera);
-	void UpdateLightCameras (const Camera* viewCamera, VolumetricLight* volumetricLight);
-	void RenderScene (const Scene* scene, OrthographicCamera* lightCamera);
+	void UpdateLightCameras (const Camera* viewCamera, const RenderLightObject* renderLightObject);
+	void Render (const RenderScene* renderScene, OrthographicCamera* lightCamera);
 	void LockShader (int sceneLayers);
 
 	virtual std::vector<PipelineAttribute> GetCustomAttributes () const;

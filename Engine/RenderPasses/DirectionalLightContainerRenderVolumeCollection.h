@@ -6,12 +6,11 @@
 #include <vector>
 
 #include "RenderPasses/VolumetricLightVolume.h"
-#include "Lighting/DirectionalLight.h"
 
 class ENGINE_API DirectionalLightContainerRenderVolumeCollection : public ContainerRenderVolumeCollectionI
 {
 protected:
-	std::vector<DirectionalLight*>::iterator _directionalLightsIterator;
+	std::size_t _iterations;
 	VolumetricLightVolume* _volumetricLightVolume;
 
 public:
@@ -19,7 +18,7 @@ public:
 	~DirectionalLightContainerRenderVolumeCollection ();
 
 	void Reset ();
-	RenderVolumeI* GetNextVolume ();
+	RenderVolumeI* GetNextVolume (const RenderScene* renderScene);
 };
 
 #endif

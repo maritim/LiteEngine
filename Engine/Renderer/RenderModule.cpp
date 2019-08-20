@@ -34,7 +34,7 @@ void RenderModule::InitModule (const RenderSettings& settings)
 	_rvc = new RenderVolumeCollection ();
 }
 
-RenderProduct RenderModule::RenderScene (const Scene* scene, const Camera* camera, const RenderSettings& settings)
+RenderProduct RenderModule::Render (const RenderScene* renderScene, const Camera* camera, const RenderSettings& settings)
 {
 	/*
 	 * Create render product
@@ -47,7 +47,7 @@ RenderProduct RenderModule::RenderScene (const Scene* scene, const Camera* camer
 	*/
 
 	for (RenderPassI* renderPass : _renderPasses) {
-		_rvc = renderPass->Execute (scene, camera, settings, _rvc);
+		_rvc = renderPass->Execute (renderScene, camera, settings, _rvc);
 	}
 
 	/*

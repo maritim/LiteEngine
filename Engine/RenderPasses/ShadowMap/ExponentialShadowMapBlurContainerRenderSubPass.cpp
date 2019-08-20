@@ -74,7 +74,7 @@ void ExponentialShadowMapBlurContainerRenderSubPass::Clear ()
 	ClearSettings ();
 }
 
-RenderVolumeCollection* ExponentialShadowMapBlurContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+RenderVolumeCollection* ExponentialShadowMapBlurContainerRenderSubPass::Execute (const RenderScene* renderScene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Bind all render volumes
@@ -193,13 +193,13 @@ void ExponentialShadowMapBlurContainerRenderSubPass::Blur (ExponentialShadowMapB
 	GL::DrawArrays (GL_TRIANGLES, 0, 3);
 }
 
-bool ExponentialShadowMapBlurContainerRenderSubPass::IsAvailable (const VolumetricLight* volumetricLight) const
+bool ExponentialShadowMapBlurContainerRenderSubPass::IsAvailable (const RenderLightObject* renderLightObject) const
 {
 	/*
 	 * Execute shadow map sub pass only if light is casting shadows
 	*/
 
-	return volumetricLight->IsCastingShadows ();
+	return renderLightObject->IsCastingShadows ();
 }
 
 void ExponentialShadowMapBlurContainerRenderSubPass::InitSettings ()

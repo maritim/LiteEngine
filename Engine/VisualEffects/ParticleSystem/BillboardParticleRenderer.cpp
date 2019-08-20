@@ -1,126 +1,126 @@
-#include "BillboardParticleRenderer.h"
+// #include "BillboardParticleRenderer.h"
 
-#include <glm/glm.hpp>
-#include <vector>
+// #include <glm/glm.hpp>
+// #include <vector>
 
-#include "SceneNodes/Model3DRenderer.h"
+// #include "SceneNodes/Model3DRenderer.h"
 
-#include "Mesh/Model.h"
-#include "Texture/TextureAtlas.h"
-#include "Texture/Texture.h"
-#include "Material/Material.h"
+// #include "Mesh/Model.h"
+// #include "Texture/TextureAtlas.h"
+// #include "Texture/Texture.h"
+// #include "Material/Material.h"
 
-#include "Core/Math/Matrix.h"
+// #include "Core/Math/Matrix.h"
 
-#include "Managers/TextureManager.h"
-#include "Managers/MaterialManager.h"
+// #include "Managers/TextureManager.h"
+// #include "Managers/MaterialManager.h"
 
-void BillboardParticleRenderer::SetLifetime (unsigned int* lifetime)
-{
-	_lifetime = lifetime;
-}
+// void BillboardParticleRenderer::SetLifetime (unsigned int* lifetime)
+// {
+// 	_lifetime = lifetime;
+// }
 
-void BillboardParticleRenderer::SetTimeAlive (unsigned int* timeAlive)
-{
-	_timeAlive = timeAlive;
-}
+// void BillboardParticleRenderer::SetTimeAlive (unsigned int* timeAlive)
+// {
+// 	_timeAlive = timeAlive;
+// }
 
-Buffer<float> BillboardParticleRenderer::GetParticleData ()
-{
-	Buffer<float> buffer;
+// Buffer<float> BillboardParticleRenderer::GetParticleData ()
+// {
+// 	Buffer<float> buffer;
 
-	Material* mat = MaterialManager::Instance ()->GetMaterial (_matName);
+// 	Material* mat = MaterialManager::Instance ()->GetMaterial (_matName);
 
-	buffer.Add (this->GetModelMatrix ());
-	ManageAtlasTexcoord (mat, &buffer);
-	ManageCustomAttributes (&buffer);
+// 	buffer.Add (this->GetModelMatrix ());
+// 	ManageAtlasTexcoord (mat, &buffer);
+// 	ManageCustomAttributes (&buffer);
 
-	return buffer;	
-}
+// 	return buffer;	
+// }
 
-std::vector<BufferAttribute> BillboardParticleRenderer::GetBufferAttributes ()
-{
-	std::vector<BufferAttribute> attributes;
+// std::vector<BufferAttribute> BillboardParticleRenderer::GetBufferAttributes ()
+// {
+// 	std::vector<BufferAttribute> attributes;
 
-	for (int i=0;i<6;i++) {
-		BufferAttribute attribute;
+// 	for (int i=0;i<6;i++) {
+// 		BufferAttribute attribute;
 
-		attribute.index = 3 + i;
-		attribute.size = 4;
-		attribute.type = GL_FLOAT;
-		attribute.stride = 24 * sizeof (float);
-		attribute.pointer = i * 4 * sizeof (float);
+// 		attribute.index = 3 + i;
+// 		attribute.size = 4;
+// 		attribute.type = GL_FLOAT;
+// 		attribute.stride = 24 * sizeof (float);
+// 		attribute.pointer = i * 4 * sizeof (float);
 
-		attributes.push_back (attribute);
-	}
+// 		attributes.push_back (attribute);
+// 	}
 
-	return attributes;
-}
+// 	return attributes;
+// }
 
-std::vector<PipelineAttribute> BillboardParticleRenderer::GetUniformAttributes ()
-{
-	Material* mat = MaterialManager::Instance ()->GetMaterial (_matName);
+// std::vector<PipelineAttribute> BillboardParticleRenderer::GetUniformAttributes ()
+// {
+// 	Material* mat = MaterialManager::Instance ()->GetMaterial (_matName);
 
-	// Take area scale from the atlas
-	Attribute atlasMap = mat->GetAttribute (Attribute::AttrType::ATTR_TEXTURE2D_ATLAS);
-	Texture* tex = TextureManager::Instance ()->GetTexture (atlasMap.valueName);
+// 	// Take area scale from the atlas
+// 	Attribute atlasMap = mat->GetAttribute (Attribute::AttrType::ATTR_TEXTURE2D_ATLAS);
+// 	Texture* tex = TextureManager::Instance ()->GetTexture (atlasMap.valueName);
 
-	TextureAtlas* texAtlas = dynamic_cast <TextureAtlas*> (tex);
+// 	TextureAtlas* texAtlas = dynamic_cast <TextureAtlas*> (tex);
 
-	// Create attribute
-	std::vector<PipelineAttribute> attributes;
+// 	// Create attribute
+// 	std::vector<PipelineAttribute> attributes;
 
-	PipelineAttribute uniformAtlasArea;
+// 	PipelineAttribute uniformAtlasArea;
 
-	uniformAtlasArea.type = PipelineAttribute::AttrType::ATTR_1F;
+// 	uniformAtlasArea.type = PipelineAttribute::AttrType::ATTR_1F;
 
-	uniformAtlasArea.name = "atlasAreaScale";
+// 	uniformAtlasArea.name = "atlasAreaScale";
 
-	uniformAtlasArea.value = glm::vec3 (texAtlas->GetSize (0), 0.0f);
+// 	uniformAtlasArea.value = glm::vec3 (texAtlas->GetSize (0), 0.0f);
 
-	attributes.push_back (uniformAtlasArea);
+// 	attributes.push_back (uniformAtlasArea);
 
-	return attributes;
-}
+// 	return attributes;
+// }
 
-void BillboardParticleRenderer::Attach (const Resource<Model>& model)
-{
-	for_each_type (ObjectModel*, objModel, *model) {
-		for (PolygonGroup* polyGroup : *objModel) {
-			_matName = polyGroup->GetMaterialName ();
-		}
-	}
-}
+// void BillboardParticleRenderer::Attach (const Resource<Model>& model)
+// {
+// 	for_each_type (ObjectModel*, objModel, *model) {
+// 		for (PolygonGroup* polyGroup : *objModel) {
+// 			_matName = polyGroup->GetMaterialName ();
+// 		}
+// 	}
+// }
 
-void BillboardParticleRenderer::ManageAtlasTexcoord (Material* mat, Buffer<float>* buffer)
-{
-	Attribute atlasMap = mat->GetAttribute (Attribute::AttrType::ATTR_TEXTURE2D_ATLAS);
-	Texture* tex = TextureManager::Instance ()->GetTexture (atlasMap.valueName);
+// void BillboardParticleRenderer::ManageAtlasTexcoord (Material* mat, Buffer<float>* buffer)
+// {
+// 	Attribute atlasMap = mat->GetAttribute (Attribute::AttrType::ATTR_TEXTURE2D_ATLAS);
+// 	Texture* tex = TextureManager::Instance ()->GetTexture (atlasMap.valueName);
 
-	TextureAtlas* texAtlas = dynamic_cast <TextureAtlas*> (tex);
+// 	TextureAtlas* texAtlas = dynamic_cast <TextureAtlas*> (tex);
 
-	float lifeFactor = 1.0f * (*_timeAlive) / (*_lifetime);
+// 	float lifeFactor = 1.0f * (*_timeAlive) / (*_lifetime);
 
-	std::size_t areasCount = texAtlas->GetAreasCount ();
-	std::size_t areaIndex = (std::size_t) (lifeFactor * (float) areasCount);
-	std::size_t nextAreaIndex = areaIndex + (areaIndex + 1 < areasCount);
-	float texBlending = lifeFactor * areasCount - areaIndex;
+// 	std::size_t areasCount = texAtlas->GetAreasCount ();
+// 	std::size_t areaIndex = (std::size_t) (lifeFactor * (float) areasCount);
+// 	std::size_t nextAreaIndex = areaIndex + (areaIndex + 1 < areasCount);
+// 	float texBlending = lifeFactor * areasCount - areaIndex;
 
-	glm::vec2 currTexOffset = texAtlas->GetOffset (areaIndex);
-	glm::vec2 nextTexOffset = texAtlas->GetOffset (nextAreaIndex);
+// 	glm::vec2 currTexOffset = texAtlas->GetOffset (areaIndex);
+// 	glm::vec2 nextTexOffset = texAtlas->GetOffset (nextAreaIndex);
 
-	buffer->Add (currTexOffset.x); 
-	buffer->Add (currTexOffset.y);
-	buffer->Add (nextTexOffset.x);
-	buffer->Add (nextTexOffset.y);
-	buffer->Add (texBlending);
-}
+// 	buffer->Add (currTexOffset.x); 
+// 	buffer->Add (currTexOffset.y);
+// 	buffer->Add (nextTexOffset.x);
+// 	buffer->Add (nextTexOffset.y);
+// 	buffer->Add (texBlending);
+// }
 
-void BillboardParticleRenderer::ManageCustomAttributes (Buffer<float>* buffer)
-{
-	glm::vec3 scale = _transform->GetScale ();
+// void BillboardParticleRenderer::ManageCustomAttributes (Buffer<float>* buffer)
+// {
+// 	glm::vec3 scale = _transform->GetScale ();
 
-	buffer->Add (scale.x);
-	buffer->Add (scale.y);
-	buffer->Add (scale.z);
-}
+// 	buffer->Add (scale.x);
+// 	buffer->Add (scale.y);
+// 	buffer->Add (scale.z);
+// }

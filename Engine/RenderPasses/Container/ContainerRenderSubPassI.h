@@ -6,7 +6,7 @@
 class ENGINE_API ContainerRenderSubPassI : public RenderPassI
 {
 public:
-	virtual bool IsAvailable (const Scene* scene, const Camera* camera,
+	virtual bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const = 0;
 };
 

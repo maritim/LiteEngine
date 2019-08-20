@@ -5,7 +5,7 @@
 
 #include "RenderVolumeCollection.h"
 
-#include "SceneGraph/Scene.h"
+#include "Renderer/RenderScene.h"
 #include "Systems/Camera/Camera.h"
 #include "RenderSettings.h"
 
@@ -15,7 +15,7 @@ public:
 	virtual ~RenderPassI () = 0;
 
 	virtual void Init (const RenderSettings&) = 0;
-	virtual RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc) = 0;
 
 	virtual void Clear () = 0;

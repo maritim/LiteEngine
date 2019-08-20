@@ -7,7 +7,6 @@
 #include "Resources.h"
 
 #include "Texture/Texture.h"
-#include "Managers/TextureManager.h"
 
 #include "Core/Console/Console.h"
 
@@ -32,7 +31,7 @@ Object* TextureAtlasLoader::Load (const std::string& filename)
 
 void TextureAtlasLoader::LoadTexture (const std::string& filename, TextureAtlas* texAtlas)
 {
-	Texture* texture = Resources::LoadTexture (filename);
+	Resource<Texture> texture = Resources::LoadTexture (filename);
 
 	texAtlas->SetName (texture->GetName ());
 	texAtlas->SetSize (texture->GetSize ());

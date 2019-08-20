@@ -5,24 +5,27 @@
 
 #include "SceneGraph/Transform.h"
 
+#include "Core/Resources/Resource.h"
+#include "AudioViews/AudioClipView.h"
 #include "AudioClip.h"
 
 class ENGINE_API AudioSource : public Object
 {
 protected:
 	Transform* _transform;
-	AudioClip* _audioClip;
+	Resource<AudioClip> _audioClip;
+	Resource<AudioClipView> _audioClipView;
 
 	unsigned int _sourceID;
 
 public:
 	AudioSource (Transform* transform);
 
-	void SetAudioClip (AudioClip* audioClip);
+	void SetAudioClip (const Resource<AudioClip>& audioClip);
 	void SetVolume (float volume);
 	void SetLoop (bool loop);
 
-	AudioClip* GetAudioClip () const;
+	Resource<AudioClip> GetAudioClip () const;
 	bool IsPlaying () const;
 
 	void Update ();

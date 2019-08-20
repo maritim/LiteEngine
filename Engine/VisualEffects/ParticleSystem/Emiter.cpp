@@ -29,8 +29,7 @@ Emiter::Emiter () :
 
 Emiter::~Emiter ()
 {
-	// Remove _particleMesh, but need smart pointers
-
+	delete _particlePrototype;
 	delete _scaleCurve;
 	delete _tweenCurve;
 }

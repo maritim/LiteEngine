@@ -185,6 +185,11 @@ std::vector<PipelineAttribute> MultipleRenderTargetsVolume::GetCustomAttributes 
 	return std::vector<PipelineAttribute> ();
 }
 
+unsigned int MultipleRenderTargetsVolume::GetColorBuffer (std::size_t index) const
+{
+	return m_textures [index];
+}
+
 unsigned int MultipleRenderTargetsVolume::GetDepthBuffer () const
 {
 	return m_depthTexture;

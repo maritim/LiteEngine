@@ -26,6 +26,7 @@ public:
 	void BindForWriting ();
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
 
+	unsigned int GetColorBuffer (std::size_t index) const;
     unsigned int GetDepthBuffer () const;
 
     glm::ivec2 GetSize () const;

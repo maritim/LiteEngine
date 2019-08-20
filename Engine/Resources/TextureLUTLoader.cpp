@@ -18,7 +18,7 @@ Object* TextureLUTLoader::Load (const std::string& filename)
 	 * Load texture
 	*/
 
-	Texture* texture = Resources::LoadTexture (filename);
+	Resource<Texture> texture = Resources::LoadTexture (filename);
 
 	/*
 	 * Copy data to lookup table texture
@@ -26,12 +26,6 @@ Object* TextureLUTLoader::Load (const std::string& filename)
 
 	lutTexture->SetDepth (texture->GetSize ().height);
 	lutTexture->SetPixels (texture->GetPixels (), 4 * texture->GetSize ().width * texture->GetSize ().height);
-
-	/*
-	 * Delete texture
-	*/
-
-	delete texture;
 
 	/*
 	 * Load lookup table texture in GPU
@@ -51,7 +45,7 @@ Object* TextureLUTLoader::Load (const std::string& filename)
 	GL::TexParameteri (GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
 	GL::TexParameteri (GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
 
-	lutTexture->SetGPUIndex (textureID);
+	// lutTexture->SetGPUIndex (textureID);
 
 	return lutTexture;
 }

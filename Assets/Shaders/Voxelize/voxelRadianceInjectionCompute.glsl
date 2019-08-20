@@ -14,7 +14,7 @@ uniform ivec3 volumeSize;
  * Input shadow map volume and light space properties
 */
 
-uniform sampler2D shadowMap;
+uniform sampler2DShadow shadowMap;
 uniform mat4 lightSpaceMatrix;
 
 /*
@@ -66,20 +66,8 @@ bool IsInShadow (vec3 worldPos)
     */
 
     projCoords = projCoords * 0.5 + 0.5;
-    
-    /*
-     * Get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    */
 
-    float closestDepth = texture (shadowMap, projCoords.xy).r; 
-
-    /*
-     * Get depth of current fragment from light's perspective
-    */
-
-    float currentDepth = projCoords.z;
-
-    return currentDepth > closestDepth;	
+    return texture (shadowMap, projCoords, 0) == 0.0;
 }
 
 void main() 

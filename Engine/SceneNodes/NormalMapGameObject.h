@@ -10,6 +10,8 @@ protected:
 public:
 	NormalMapGameObject ();
 	~NormalMapGameObject ();
+
+	void AttachMesh (const Resource<Model>& mesh);
 };
 
 #endif

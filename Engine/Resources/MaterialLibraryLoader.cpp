@@ -13,7 +13,6 @@
 #include "Resources.h"
 
 #include "Managers/ShaderManager.h"
-#include "Managers/TextureManager.h"
 
 #include "Utils/Extensions/StringExtend.h"
 
@@ -43,7 +42,7 @@ Object* MaterialLibraryLoader::Load(const std::string& filename)
 				ProcessShaders(mtlFile, currentMaterial, filename);
 			}
 			else if (lineType == "attribute") {
-				ProcessCustomAttributes(mtlFile, currentMaterial, filename);
+				// ProcessCustomAttributes(mtlFile, currentMaterial, filename);
 			} else {
 				ProcessDefaultAttributes(mtlFile, currentMaterial, filename, lineType);
 			}
@@ -52,6 +51,8 @@ Object* MaterialLibraryLoader::Load(const std::string& filename)
 	else {
 		Console::LogError ("Unable to open material " + filename + " !");
 	}
+
+	materialLibrary->SetName (filename);
 
 	return materialLibrary;
 }
@@ -95,101 +96,90 @@ void MaterialLibraryLoader::ProcessShaders(std::ifstream &file, Material* curren
 
 void MaterialLibraryLoader::ProcessCustomAttributes(std::ifstream &file, Material* currentMaterial, std::string filename)
 {
-	Attribute attribute;
-	std::string attrType;
-	std::string attrName;
-	glm::vec3 values;
+	// Attribute attribute;
+	// std::string attrType;
+	// std::string attrName;
+	// glm::vec3 values;
 
-	file >> attrType >> attrName;
-	if (attrType == "TEXTURE2D") {
-		attribute.type = Attribute::AttrType::ATTR_TEXTURE2D;
+	// file >> attrType >> attrName;
+	// if (attrType == "TEXTURE2D") {
+	// 	attribute.type = Attribute::AttrType::ATTR_TEXTURE2D;
 
-		std::string attrTextureName;
-		std::getline (file, attrTextureName);
+	// 	std::string attrTextureName;
+	// 	std::getline (file, attrTextureName);
 
-		Extensions::StringExtend::Trim (attrTextureName);
+	// 	Extensions::StringExtend::Trim (attrTextureName);
 
-		attrTextureName = FileSystem::GetDirectory (filename) + attrTextureName;
-		attrTextureName = FileSystem::FormatFilename (attrTextureName);	
+	// 	attrTextureName = FileSystem::GetDirectory (filename) + attrTextureName;
+	// 	attrTextureName = FileSystem::FormatFilename (attrTextureName);	
 
-		Texture* texture = TextureManager::Instance ()->GetTexture (attrTextureName);
+	// 	Resource<Texture> texture = Resources::LoadTexture (attrTextureName);
 
-		if (texture == nullptr) {
-			texture = Resources::LoadTexture (attrTextureName);
-			TextureManager::Instance ()->AddTexture (texture);
-		}
+	// 	attribute.texture = texture;
+	// }
+	// else if (attrType == "TEXTURE2D_ATLAS") {
+	// 	attribute.type = Attribute::AttrType::ATTR_TEXTURE2D_ATLAS;
 
-		attribute.valueName = attrTextureName;
-	}
-	else if (attrType == "TEXTURE2D_ATLAS") {
-		attribute.type = Attribute::AttrType::ATTR_TEXTURE2D_ATLAS;
+	// 	std::string attrTextureName;
+	// 	std::getline (file, attrTextureName);
 
-		std::string attrTextureName;
-		std::getline (file, attrTextureName);
+	// 	Extensions::StringExtend::Trim (attrTextureName);
 
-		Extensions::StringExtend::Trim (attrTextureName);
+	// 	attrTextureName = FileSystem::GetDirectory (filename) + attrTextureName;
+	// 	attrTextureName = FileSystem::FormatFilename (attrTextureName);	
 
-		attrTextureName = FileSystem::GetDirectory (filename) + attrTextureName;
-		attrTextureName = FileSystem::FormatFilename (attrTextureName);	
+	// 	Resource<Texture> texture = Resources::LoadTextureAtlas (attrTextureName);
 
-		Texture* texture = TextureManager::Instance ()->GetTexture (attrTextureName);
-		TextureAtlas* textureAtlas = dynamic_cast<TextureAtlas*> (texture);
+	// 	attribute.texture = texture;		
+	// }
+	// else if (attrType == "TEXTURE_CUBE_MAP") {
+	// 	attribute.type = Attribute::AttrType::ATTR_TEXTURE_CUBE;
 
-		if (textureAtlas == nullptr) {
-			textureAtlas = Resources::LoadTextureAtlas (attrTextureName);
-			TextureManager::Instance ()->AddTexture (textureAtlas);
-		}
+	// 	std::vector<std::string> filenames;
 
-		attribute.valueName = attrTextureName;		
-	}
-	else if (attrType == "TEXTURE_CUBE_MAP") {
-		attribute.type = Attribute::AttrType::ATTR_TEXTURE_CUBE;
+	// 	std::string type;
 
-		std::vector<std::string> filenames;
+	// 	file >> type;
 
-		std::string type;
+	// 	if (type == "SKYBOX") {
+	// 		values.x = 0;
+	// 	}
+	// 	else if (type == "CUSTOM") {
+	// 		values.x = 1;
 
-		file >> type;
+	// 		for (int i=0;i<6;i++) {
+	// 			std::string attrTextureName;
+	// 			file >> attrTextureName;
 
-		if (type == "SKYBOX") {
-			values.x = 0;
-		}
-		else if (type == "CUSTOM") {
-			values.x = 1;
+	// 			attrTextureName = FileSystem::GetDirectory (filename) + attrTextureName;
 
-			for (int i=0;i<6;i++) {
-				std::string attrTextureName;
-				file >> attrTextureName;
+	// 			filenames.push_back (attrTextureName);
+	// 		}
 
-				attrTextureName = FileSystem::GetDirectory (filename) + attrTextureName;
+	// 		// CubeMap* cubeMap = Resources::LoadCubemap (filenames);
+	// 		// TextureManager::Instance()->AddTexture (cubeMap);
 
-				filenames.push_back (attrTextureName);
-			}
+	// 		// values.y = (float) cubeMap->GetGPUIndex ();
+	// 	}
+	// }
+	// else if (attrType == "VEC3") {
+	// 	attribute.type = Attribute::AttrType::ATTR_VEC3;
 
-			CubeMap* cubeMap = Resources::LoadCubemap (filenames);
-			TextureManager::Instance()->AddTexture (cubeMap);
+	// 	file >> values.x >> values.y >> values.z;
+	// }
+	// else if (attrType == "FLOAT") {
+	// 	attribute.type = Attribute::AttrType::ATTR_FLOAT;
 
-			values.y = (float) cubeMap->GetGPUIndex ();
-		}
-	}
-	else if (attrType == "VEC3") {
-		attribute.type = Attribute::AttrType::ATTR_VEC3;
+	// 	file >> values.x;
+	// }
+	// else {
+	// 	attribute.type = Attribute::AttrType::ATTR_NONE;
+	// }
 
-		file >> values.x >> values.y >> values.z;
-	}
-	else if (attrType == "FLOAT") {
-		attribute.type = Attribute::AttrType::ATTR_FLOAT;
+	// attribute.name = attrName;
+	// attribute.values = values;
 
-		file >> values.x;
-	}
-	else {
-		attribute.type = Attribute::AttrType::ATTR_NONE;
-	}
-
-	attribute.name = attrName;
-	attribute.values = values;
-
-	currentMaterial->attributes.push_back (attribute);
+	// currentMaterial->attributes.push_back (attribute);
 }
 
 void MaterialLibraryLoader::ProcessDefaultAttributes(std::ifstream &file, Material* currentMaterial, std::string filename, std::string fileType)
@@ -259,32 +249,25 @@ void MaterialLibraryLoader::ProcessDefaultAttributes(std::ifstream &file, Materi
 		textureName = FileSystem::GetDirectory (filename) + textureName;
 		textureName = FileSystem::FormatFilename (textureName);
 
-		Texture* texture = TextureManager::Instance ()->GetTexture (textureName);
-
-		if (texture == nullptr) {
-			texture = Resources::LoadTexture (textureName);
-			TextureManager::Instance ()->AddTexture (texture);
-		}
-
-		unsigned int textureId = texture->GetGPUIndex ();
+		Resource<Texture> texture = Resources::LoadTexture (textureName);
 
 		if (fileType == "map_Ka") {
-			currentMaterial->ambientTexture = textureId;
+			currentMaterial->ambientTexture = texture;
 		}
 		else if (fileType == "map_Kd") {
-			currentMaterial->diffuseTexture = textureId;
+			currentMaterial->diffuseTexture = texture;
 		}
 		else if (fileType == "map_Ks") {
-			currentMaterial->specularTexture = textureId;
+			currentMaterial->specularTexture = texture;
 		}
 		else if (fileType == "map_Ns") {
-			currentMaterial->specularHighlight = textureId;
+			currentMaterial->specularHighlight = texture;
 		}
 		else if (fileType == "map_d") {
-			currentMaterial->alphaTexture = textureId;
+			currentMaterial->alphaTexture = texture;
 		}
 		else if (fileType == "map_bump") {
-			currentMaterial->bumpTexture = textureId;
+			currentMaterial->bumpTexture = texture;
 		}
 	}
 }

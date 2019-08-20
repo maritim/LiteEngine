@@ -10,6 +10,8 @@
 #include "Systems/Input/Input.h"
 #include "Systems/GUI/Gizmo/Gizmo.h"
 
+#include "SceneNodes/GameObject.h"
+
 #include "EditorScene.h"
 #include "EditorSelection.h"
 
@@ -125,11 +127,13 @@ void EditorGizmos::ShowGizmo (const Camera* camera, Transform* transform)
 
 void EditorGizmos::ShowBoundingBox ()
 {
-	Collider* collider = _focusedObject->GetCollider ();
+	GameObject* gameObject = dynamic_cast<GameObject*> (_focusedObject);
 
-	if (collider == nullptr) {
+	if (gameObject == nullptr) {
 		return;
 	}
+
+	Collider* collider = gameObject->GetCollider ();
 
 	auto aabb = (AABBVolume*) collider->GetGeometricPrimitive ();
 	auto aabbData = aabb->GetVolumeInformation ();
@@ -157,7 +161,11 @@ void EditorGizmos::HideLastCollider ()
 	}
 
 	if (_lastFocusedObject != nullptr) {
-		_lastFocusedObject->GetRigidbody ()->Debug (false);
+		GameObject* gameObject = dynamic_cast<GameObject*> (_lastFocusedObject);
+
+		if (gameObject != nullptr) {
+			gameObject->GetRigidbody ()->Debug (false);			
+		}
 	}
 }
 
@@ -167,7 +175,13 @@ void EditorGizmos::ShowCollider ()
 		return;
 	}
 
-	_focusedObject->GetRigidbody ()->Debug (true);
+	GameObject* gameObject = dynamic_cast<GameObject*> (_focusedObject);
+
+	if (gameObject == nullptr) {
+		return;
+	}
+
+	gameObject->GetRigidbody ()->Debug (true);
 }
 
 void EditorGizmos::ShowGrid ()

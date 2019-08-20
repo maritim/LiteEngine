@@ -6,10 +6,6 @@
 
 SceneObject::SceneObject () :
 	_transform (new Transform ()),
-	_renderer (new Renderer (_transform)),
-	_rigidbody (new Rigidbody (_transform)),
-	_collider (nullptr),
-	_audioSource (new AudioSource (_transform)),
 	_sceneLayers ((int) SceneLayer::STATIC),
 	_isActive (true)
 {
@@ -19,39 +15,12 @@ SceneObject::SceneObject () :
 SceneObject::~SceneObject ()
 {
 	delete _transform;
-	delete _renderer;
-	delete _rigidbody;
-	delete _audioSource;
-
-	if (_collider != nullptr) {
-		delete _collider;
-	}
 }
 
 // Don't ever modify this object's pointer
 Transform* SceneObject::GetTransform () const
 {
 	return _transform;
-}
-
-Renderer* SceneObject::GetRenderer () const
-{
-	return _renderer;
-}
-
-Rigidbody* SceneObject::GetRigidbody () const
-{
-	return _rigidbody;
-}
-
-Collider* SceneObject::GetCollider () const
-{
-	return _collider;
-}
-
-AudioSource* SceneObject::GetAudioSource () const
-{
-	return _audioSource;
 }
 
 int SceneObject::GetLayers() const
@@ -87,18 +56,14 @@ void SceneObject::SetInstanceID (std::size_t instanceID)
 void SceneObject::SetActive (bool isActive)
 {
 	_isActive = isActive;
-
-	if (_rigidbody != nullptr) {
-		_rigidbody->Enable (_isActive);
-	}
 }
 
 void SceneObject::OnAttachedToScene ()
 {
-	_rigidbody->OnAttachedToScene ();
+
 }
 
 void SceneObject::OnDetachedFromScene ()
 {
-	_rigidbody->OnDetachedFromScene ();
+
 }

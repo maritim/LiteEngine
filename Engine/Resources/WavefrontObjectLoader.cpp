@@ -4,7 +4,6 @@
 #include <string>
 #include <limits>
 
-#include "Managers/MaterialManager.h"
 #include "Utils/Triangulation/Triangulation.h"
 
 #include "Utils/Files/FileSystem.h"
@@ -26,7 +25,9 @@ Object* WavefrontObjectLoader::Load(const std::string& filename)
 	PolygonGroup* currentPolyGroup = nullptr;
 
 	// Initialization part
-	std::string currentMatName, lineType;
+	Resource<MaterialLibrary> currentMatLibrary = nullptr;
+	Resource<Material> currentMaterial = nullptr;
+	std::string lineType;
 	bool indexNormalization = false;
 
 	std::ifstream objFile (filename.c_str());
@@ -48,7 +49,7 @@ Object* WavefrontObjectLoader::Load(const std::string& filename)
 			ProcessComment(objFile);
 		}
 		else if (lineType == "mtllib") {
-			LoadMaterialLibrary (objFile, filename, model);
+			LoadMaterialLibrary (objFile, currentMatLibrary, filename, model);
 		}
 		else if (lineType == "v") {
 			ReadVertex (objFile, model);
@@ -60,7 +61,7 @@ Object* WavefrontObjectLoader::Load(const std::string& filename)
 			ReadTexcoord (objFile, model);
 		}
 		else if (lineType == "usemtl") {
-			ReadCurrentMtlName (objFile, currentMatName);
+			ReadCurrentMtlName (objFile, currentMaterial, currentMatLibrary);
 		}
 		else if (lineType == "f") {
 			if (currentPolyGroup == nullptr) {
@@ -71,7 +72,7 @@ Object* WavefrontObjectLoader::Load(const std::string& filename)
 				currentObjModel->AddPolygonGroup (currentPolyGroup);
 			}
 
-			ReadFace (objFile, model, currentPolyGroup, indexNormalization, currentMatName);
+			ReadFace (objFile, model, currentPolyGroup, indexNormalization, currentMaterial);
 		}
 		else if (lineType == "o") {
 			std::pair<ObjectModel*, PolygonGroup*> result = ReadObject (objFile, model);
@@ -113,7 +114,7 @@ void WavefrontObjectLoader::ProcessComment(std::ifstream& file)
 	file.ignore (std::numeric_limits<std::streamsize>::max(), '\n');	
 }
 
-void WavefrontObjectLoader::LoadMaterialLibrary(std::ifstream& file, const std::string& filename, Model* model)
+void WavefrontObjectLoader::LoadMaterialLibrary(std::ifstream& file, Resource<MaterialLibrary>& matLibrary, const std::string& filename, Model* model)
 {
 	std::string mtlfilename;
 	std::getline (file, mtlfilename);
@@ -126,11 +127,7 @@ void WavefrontObjectLoader::LoadMaterialLibrary(std::ifstream& file, const std::
 
 	model->SetMaterialLibrary (fullMtlFilename);
 
-	MaterialLibrary* mtlLibrary = Resources::LoadMaterialLibrary(fullMtlFilename);
-
-	for (std::size_t i=0;i<mtlLibrary->GetMaterialsCount ();i++) {
-		MaterialManager::Instance ()->AddMaterial (mtlLibrary->GetMaterial (i));
-	}	
+	matLibrary = Resources::LoadMaterialLibrary(fullMtlFilename);
 }
 
 void WavefrontObjectLoader::ReadVertex(std::ifstream& file, Model* model)
@@ -158,11 +155,15 @@ void WavefrontObjectLoader::ReadTexcoord(std::ifstream& file, Model* model)
 	model->AddTexcoord (glm::vec2 (x, 1.0f - y));
 }
 
-void WavefrontObjectLoader::ReadCurrentMtlName(std::ifstream& file, std::string& mtlName)
+void WavefrontObjectLoader::ReadCurrentMtlName(std::ifstream& file, Resource<Material>& curMat, const Resource<MaterialLibrary>& curMatLibrary)
 {
+	std::string mtlName;
+
 	std::getline (file, mtlName);
 
 	Extensions::StringExtend::Trim (mtlName);
+
+	curMat = curMatLibrary->GetMaterial (curMatLibrary->GetName () + "::" + mtlName);
 }
 
 std::pair<ObjectModel*, PolygonGroup*> WavefrontObjectLoader::ReadObject (std::ifstream& file, Model* model)
@@ -190,7 +191,7 @@ PolygonGroup* WavefrontObjectLoader::ReadPolygonGroup (std::ifstream& file, Obje
 	return polyGroup;
 }
 
-void WavefrontObjectLoader::ReadFace(std::ifstream& file, Model* model, PolygonGroup* currentPolyGroup, bool& indexNormalization, const std::string& curMatName)
+void WavefrontObjectLoader::ReadFace(std::ifstream& file, Model* model, PolygonGroup* currentPolyGroup, bool& indexNormalization, const Resource<Material>& curMat)
 {
 	std::string line;
 
@@ -263,7 +264,7 @@ void WavefrontObjectLoader::ReadFace(std::ifstream& file, Model* model, PolygonG
 		}
 	}
 
-	currentPolyGroup->SetMaterialName (model->GetMaterialLibrary () + "::" + curMatName);
+	currentPolyGroup->SetMaterial (curMat);
 
 	currentPolyGroup->AddPolygon (face);
 }

@@ -7,9 +7,6 @@
 #include "Material/Material.h"
 #include "Texture/Texture.h"
 
-#include "Managers/MaterialManager.h"
-#include "Managers/TextureManager.h"
-
 #include "Resources/Resources.h"
 
 #include "Utils/Extensions/StringExtend.h"
@@ -164,13 +161,9 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 		std::string directory = FileSystem::GetDirectory (filename);
 		textureName = directory + textureName;
 
-		Texture* texture = TextureManager::Instance ()->GetTexture (textureName);
-		if (texture == nullptr) {
-			texture = Resources::LoadTexture (std::string (textureName));
-			TextureManager::Instance ()->AddTexture (texture);
-		}
+		Resource<Texture> texture = Resources::LoadTexture (std::string (textureName));
 
-		material->diffuseTexture = texture->GetGPUIndex ();
+		material->diffuseTexture = texture;
 	}
 
 	for (unsigned int i=0;i<assimpMaterial->GetTextureCount (aiTextureType_SPECULAR); i++) {
@@ -182,13 +175,9 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 		std::string directory = FileSystem::GetDirectory (filename);
 		textureName = directory + textureName;
 
-		Texture* texture = TextureManager::Instance ()->GetTexture (textureName);
-		if (texture == nullptr) {
-			texture = Resources::LoadTexture (std::string (textureName));
-			TextureManager::Instance ()->AddTexture (texture);
-		}
+		Resource<Texture> texture = Resources::LoadTexture (std::string (textureName));
 
-		material->specularTexture = texture->GetGPUIndex ();
+		material->specularTexture = texture;
 	}
 
 	aiColor4D diffCol;
@@ -199,8 +188,7 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 	aiGetMaterialColor (assimpMaterial, AI_MATKEY_COLOR_SPECULAR, &specCol);
 	material->specularColor = glm::vec3 (specCol.r, specCol.g, specCol.b);
 
-	polyGroup->SetMaterialName (material->name);
-	MaterialManager::Instance ()->AddMaterial (material);
+	polyGroup->SetMaterial (Resource<Material> (material, material->name));
 }
 
 /*

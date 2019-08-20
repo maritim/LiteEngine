@@ -5,20 +5,18 @@
 #include <string>
 #include <vector>
 
+#include "Core/Resources/Resource.h"
+
 class ENGINE_API CubeMap : public Texture
 {
-private:
-	std::string _filenames[6];
-	unsigned int _gpuIndices[6];
+protected:
+	std::vector<Resource<Texture>> _textures;
+
 public:
-	CubeMap(std::string filename, unsigned int gpuIndex);
-	~CubeMap();
+	using Texture::Texture;
 
-	std::vector<std::string> GetFilenames() const;
-	std::vector<unsigned int> GetGPUIndices() const;
-
-	void SetFilename(std::string filename, std::size_t index);
-	void SetGPUIndexFace(unsigned int gpuIndex, std::size_t index);
+	void AddTexture (const Resource<Texture>& texture);
+	Resource<Texture> GetTexture (std::size_t index) const;
 };
 
 #endif

@@ -37,7 +37,7 @@ void DeferredPointLightContainerRenderSubPass::Clear ()
 	*/
 }
 
-void DeferredPointLightContainerRenderSubPass::LockShader (const VolumetricLight* volumetricLight)
+void DeferredPointLightContainerRenderSubPass::LockShader (const RenderLightObject* renderLightObject)
 {
 	/*
 	 * Unlock last shader
@@ -57,7 +57,7 @@ void DeferredPointLightContainerRenderSubPass::LockShader (const VolumetricLight
 	 * Lock general shader for directional light
 	*/
 
-	if (volumetricLight->IsCastingShadows () == false) {
+	if (renderLightObject->IsCastingShadows () == false) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
 	}
 }

@@ -11,6 +11,7 @@
 					<MaterialName>FireParticle</MaterialName>
 				</Material>
 			</Mesh>
+			<TextureAtlas path="Textures/Smoke.png" />
 		</Particle>
 	
 		<Transform>

@@ -2,15 +2,6 @@
 
 #include "Core/Console/Console.h"
 
-Attribute::Attribute () :
-	name (""),
-	type (ATTR_NONE),
-	values (),
-	valueName ("")
-{
-
-}
-
 Material::Material(void) :
 	name(""),
 	ambientColor(0.2, 0.2, 0.2),
@@ -20,42 +11,17 @@ Material::Material(void) :
 	transparency (1.0),
 	illum(0),
 	blending (770, 771),
-	ambientTexture(0),
-	diffuseTexture (0),
-	specularTexture (0),
-	specularHighlight(0),
-	alphaTexture (0),
-	bumpTexture (0),
-	cubeTexture (0),
-	shaderName (""),
-	attributes ()
+	ambientTexture(nullptr),
+	diffuseTexture (nullptr),
+	specularTexture (nullptr),
+	specularHighlight(nullptr),
+	alphaTexture (nullptr),
+	bumpTexture (nullptr),
+	cubeTexture (nullptr),
+	shaderName ("")
 {
 	// Documentation: 
 	// http://stackoverflow.com/questions/10181201/opengl-light-changes-ambient-to-diffuse-or-specular-works-but-not-the-opposite
-}
-
-Material::Material(const std::string& na, glm::vec3 aC, glm::vec3 dC, glm::vec3 sC, float ns, float tr, int lum, unsigned int tex,
-	const std::pair<int, int>& blend, unsigned int bumpTex, unsigned int cubeTex, const std::string& shaderNam, 
-	const std::vector<Attribute>& attr) :
-	name(na),
-	ambientColor(aC),
-	diffuseColor(dC),
-	specularColor(sC),
-	shininess(ns),
-	transparency (tr),
-	illum(lum),
-	blending (blend),
-	ambientTexture(tex),
-	diffuseTexture(tex),
-	specularTexture(tex),
-	specularHighlight(0),
-	alphaTexture (0),
-	bumpTexture (bumpTex),
-	cubeTexture (cubeTex),
-	shaderName (shaderNam),
-	attributes (attr)
-{
-	// Nothing
 }
 
 Material::Material(const Material& other) :
@@ -74,27 +40,11 @@ Material::Material(const Material& other) :
 	alphaTexture (other.alphaTexture),
 	bumpTexture (other.bumpTexture),
 	cubeTexture (other.cubeTexture),
-	shaderName (other.shaderName),
-	attributes (other.attributes)
+	shaderName (other.shaderName)
 {
 
 }
 
 Material::~Material ()
 {
-}
-
-Attribute Material::GetAttribute (Attribute::AttrType type) const
-{
-	for (std::size_t i=0;i<attributes.size ();i++) {
-		if (attributes [i].type == type) {
-			return attributes [i];
-		}
-	}
-
-	Console::LogWarning ("In material " + name + " is no attribute of type " + 
-		std::to_string (type));
-
-	Attribute invalid;
-	return invalid;
 }

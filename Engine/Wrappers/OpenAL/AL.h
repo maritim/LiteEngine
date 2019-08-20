@@ -31,6 +31,7 @@ public:
 
 	static void GenBuffers(ALsizei n, ALuint *buffers);
 	static void BufferData(ALuint buffer, ALenum format, const ALvoid *data, ALsizei size, ALsizei freq);
+	static void DeleteBuffers(ALsizei n, ALuint *buffers);
 
 	/*
 	 * Sources

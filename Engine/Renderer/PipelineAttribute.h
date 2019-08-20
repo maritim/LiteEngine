@@ -18,7 +18,8 @@ struct PipelineAttribute
 		ATTR_TEXTURE_2D,
 		ATTR_TEXTURE_3D,
 		ATTR_TEXTURE_CUBE,
-		ATTR_MATRIX_4X4F
+		ATTR_MATRIX_4X4F,
+		ATTR_BLOCK
 	};
 
 	AttrType type;

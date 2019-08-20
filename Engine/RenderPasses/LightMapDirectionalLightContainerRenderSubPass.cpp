@@ -28,7 +28,7 @@ void LightMapDirectionalLightContainerRenderSubPass::Clear ()
 	*/
 }
 
-void LightMapDirectionalLightContainerRenderSubPass::LockShader (const VolumetricLight* volumetricLight)
+void LightMapDirectionalLightContainerRenderSubPass::LockShader (const RenderLightObject* renderLightObject)
 {
 	/*
 	 * Unlock last shader
@@ -43,7 +43,7 @@ void LightMapDirectionalLightContainerRenderSubPass::LockShader (const Volumetri
 	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
 }
 
-std::vector<PipelineAttribute> LightMapDirectionalLightContainerRenderSubPass::GetCustomAttributes () const
+std::vector<PipelineAttribute> LightMapDirectionalLightContainerRenderSubPass::GetCustomAttributes (const RenderSettings& settings) const
 {
 	std::vector<PipelineAttribute> attributes;
 

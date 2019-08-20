@@ -64,20 +64,20 @@ void DirectionalLightShadowMapContainerRenderSubPass::Init (const RenderSettings
 	InitShadowMapVolume ();
 }
 
-RenderVolumeCollection* DirectionalLightShadowMapContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* DirectionalLightShadowMapContainerRenderSubPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Get volumetric light from render volume collection
 	*/
 
-	VolumetricLight* volumetricLight = GetVolumetricLight (rvc);
+	RenderLightObject* renderLightObject = GetRenderLightObject (rvc);
 
 	/*
 	 * Draw shadow map
 	*/
 
-	ShadowMapPass (scene, camera, volumetricLight);
+	ShadowMapPass (renderScene, camera, renderLightObject);
 
 	/*
 	 * End drawing
@@ -136,19 +136,19 @@ void DirectionalLightShadowMapContainerRenderSubPass::Clear ()
 	ClearSettings ();
 }
 
-bool DirectionalLightShadowMapContainerRenderSubPass::IsAvailable (const VolumetricLight* volumetricLight) const
+bool DirectionalLightShadowMapContainerRenderSubPass::IsAvailable (const RenderLightObject* renderLightObject) const
 {
 	/*
 	 * Execute shadow map sub pass only if light is casting shadows
 	*/
 
-	return volumetricLight->IsCastingShadows ();
+	return renderLightObject->IsCastingShadows ();
 }
 
-void DirectionalLightShadowMapContainerRenderSubPass::ShadowMapPass (const Scene* scene, const Camera* camera, VolumetricLight* volumetricLight)
+void DirectionalLightShadowMapContainerRenderSubPass::ShadowMapPass (const RenderScene* renderScene, const Camera* camera, const RenderLightObject* renderLightObject)
 {
 	UpdateCascadeLevelsLimits (camera);
-	UpdateLightCameras (camera, volumetricLight);
+	UpdateLightCameras (camera, renderLightObject);
 
 	for (std::size_t index = 0; index < _cascades; index++) {
 		_volume->BindForShadowMapCatch (index);
@@ -156,7 +156,7 @@ void DirectionalLightShadowMapContainerRenderSubPass::ShadowMapPass (const Scene
 		OrthographicCamera* lightCamera = (OrthographicCamera*) _volume->GetLightCamera (index);
 
 		SendLightCamera (lightCamera);
-		RenderScene (scene, lightCamera);
+		Render (renderScene, lightCamera);
 	}
 }
 
@@ -231,11 +231,11 @@ void DirectionalLightShadowMapContainerRenderSubPass::SendLightCamera (Camera* l
  *    orthographic projection matrix for the shadow map.
 */
 
-void DirectionalLightShadowMapContainerRenderSubPass::UpdateLightCameras (const Camera* viewCamera, VolumetricLight* volumetricLight)
+void DirectionalLightShadowMapContainerRenderSubPass::UpdateLightCameras (const Camera* viewCamera, const RenderLightObject* renderLightObject)
 {
 	const float LIGHT_CAMERA_OFFSET = 100.0f;
 
-	Transform* lightTransform = volumetricLight->GetTransform ();
+	Transform* lightTransform = renderLightObject->GetTransform ();
 
 	glm::vec3 lightDir = glm::normalize(lightTransform->GetPosition()) * -1.0f;
 	glm::quat lightDirQuat = glm::toQuat(glm::lookAt(glm::vec3 (0), lightDir, glm::vec3(0, 1, 0)));
@@ -286,7 +286,7 @@ void DirectionalLightShadowMapContainerRenderSubPass::UpdateLightCameras (const 
 	}
 }
 
-void DirectionalLightShadowMapContainerRenderSubPass::RenderScene (const Scene* scene, OrthographicCamera* lightCamera)
+void DirectionalLightShadowMapContainerRenderSubPass::Render (const RenderScene* renderScene, OrthographicCamera* lightCamera)
 {
 	/*
 	 * Shadow map is a depth test
@@ -319,8 +319,17 @@ void DirectionalLightShadowMapContainerRenderSubPass::RenderScene (const Scene* 
 	* Render scene entities to framebuffer at Deferred Rendering Stage
 	*/
 
-	for (SceneObject* sceneObject : *scene) {
-		if (sceneObject->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
+	for (RenderObject* renderObject : *renderScene) {
+
+		/*
+		 * Check if it's active
+		*/
+
+		if (renderObject->IsActive () == false) {
+			continue;
+		}
+
+		if (renderObject->GetRenderStage () != RenderStage::RENDER_STAGE_DEFERRED) {
 			continue;
 		}
 
@@ -328,20 +337,18 @@ void DirectionalLightShadowMapContainerRenderSubPass::RenderScene (const Scene* 
 		 * Culling Check
 		*/
 
-		if (sceneObject->GetCollider () == nullptr) {
-			continue;
-		}
-
-		GeometricPrimitive* primitive = sceneObject->GetCollider ()->GetGeometricPrimitive ();
-		if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
-			continue;
+		if (renderObject->GetCollider () != nullptr) {
+			GeometricPrimitive* primitive = renderObject->GetCollider ()->GetGeometricPrimitive ();
+			if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
+				continue;
+			}
 		}
 
 		/*
 		 * Lock shader based on scene object layer
 		*/
 
-		LockShader (sceneObject->GetLayers ());
+		LockShader (renderObject->GetSceneLayers ());
 
 		/*
 		 * Send custom attributes
@@ -353,7 +360,10 @@ void DirectionalLightShadowMapContainerRenderSubPass::RenderScene (const Scene* 
 		 * Render object on shadow map
 		*/
 
-		sceneObject->GetRenderer ()->DrawGeometry ();
+		renderObject->Draw ();
+
+		//TODO: Fix this
+		// renderObject->DrawGeometry ();
 	}
 }
 

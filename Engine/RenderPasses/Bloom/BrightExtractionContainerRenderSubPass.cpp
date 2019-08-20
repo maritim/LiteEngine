@@ -2,7 +2,7 @@
 
 #include "RenderPasses/Blur/BlurMapVolume.h"
 
-bool BrightExtractionContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool BrightExtractionContainerRenderSubPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

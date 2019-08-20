@@ -17,9 +17,6 @@ uniform mat3 normalWorldMatrix;
 
 uniform vec3 cameraPosition;
 
-uniform vec3 lightPosition;
-uniform vec3 lightColor;
-
 uniform vec2 screenSize;
 
 const int SSAO_SAMPLES_KERNEL = 64;

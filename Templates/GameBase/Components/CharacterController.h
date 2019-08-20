@@ -4,13 +4,12 @@
 #include "Systems/Components/Component.h"
 #include "Systems/Components/ComponentsFactory.h"
 
-#include "SceneGraph/SceneObject.h"
-#include "SceneNodes/AnimationModel3DRenderer.h"
+#include "SceneNodes/AnimationGameObject.h"
 
 class CharacterController : public Component
 {
 protected:
-	SceneObject* _object;
+	AnimationGameObject* _object;
 
 	glm::vec3 _velocity;
 	float _currentSpeed;

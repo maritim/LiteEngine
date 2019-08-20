@@ -5,11 +5,14 @@
 
 class ENGINE_API AnimationGameObject : public GameObject
 {
-protected:
-
 public:
 	AnimationGameObject ();
 	~AnimationGameObject ();
+
+	void AttachMesh (const Resource<Model>& mesh);
+
+	void SetAnimationClip (const std::string& animName);
+	void Blend (const std::string& nextAnimName, float duration);
 };
 
 #endif

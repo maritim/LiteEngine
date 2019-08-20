@@ -20,6 +20,7 @@
 #include "Texture/TextureLUT.h"
 #include "VisualEffects/ParticleSystem/ParticleSystem.h"
 #include "Skybox/Skybox.h"
+#include "Systems/Collision/BulletCollider.h"
 #include "Fonts/BitmapFont.h"
 #include "Lighting/Light.h"
 
@@ -36,19 +37,19 @@ public:
 	static AnimationModel* LoadSkinModel (const std::string& filename);
 	static AnimationContainer* LoadAnimationClip (const std::string& filename);
 
-	static AudioClip* LoadAudioClip (const std::string& filename);
+	static Resource<AudioClip> LoadAudioClip (const std::string& filename);
 
 	static ShaderContent* LoadShaderContent (const std::string& filename);
 	
-	static Texture* LoadTexture (const std::string& filename);
-	static TextureAtlas* LoadTextureAtlas (const std::string& filename);
-	static CubeMap* LoadCubemap (const std::vector<std::string>& filenames);
+	static Resource<Texture> LoadTexture (const std::string& filename);
+	static Resource<Texture> LoadTextureAtlas (const std::string& filename);
+	static Resource<Texture> LoadCubemap (const std::vector<std::string>& filenames);
 	static TextureLUT* LoadTextureLUT (const std::string& filename);
 //	static unsigned int Load_R5G6B5_BMP (const std::string filename);
 
-	static BitmapFont* LoadBitmapFont (const std::string& filename); 
+	static Resource<Font> LoadBitmapFont (const std::string& filename); 
 
-	static MaterialLibrary* LoadMaterialLibrary (const std::string& filename);
+	static Resource<MaterialLibrary> LoadMaterialLibrary (const std::string& filename);
 	static ParticleSystem* LoadParticleSystem (const std::string& filename);
 	static Skybox* LoadSkybox (const std::string& filename);
 	static BulletCollider* LoadCollider (const std::string& filename);

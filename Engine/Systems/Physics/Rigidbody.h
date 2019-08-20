@@ -45,7 +45,6 @@ public:
 
 	void Debug (bool isEnabled);
 protected:
-	void Build ();
 	void UpdateCollider ();
 
 	void DestroyRigidbody ();

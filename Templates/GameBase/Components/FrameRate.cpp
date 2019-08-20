@@ -16,9 +16,11 @@ FrameRate::FrameRate () :
 
 void FrameRate::Start ()
 {
-	Font* font = Resources::LoadBitmapFont ("Assets/Fonts/Fonts/sans.fnt");
+	Resource<Font> font = Resources::LoadBitmapFont ("Assets/Fonts/Fonts/sans.fnt");
 
-	_textGUI = new TextGUI ("", font, glm::vec2 (0.0f, 0.9f));
+	_textGUI = new TextGUI ();
+	_textGUI->SetFont (font);
+	_textGUI->GetTransform ()->SetPosition (glm::vec3 (0.0f, 0.9f, 0.0f));
 	_textGUI->GetTransform ()->SetScale (glm::vec3 (0.7f, 0.7f, 0.0f));
 	SceneManager::Instance ()->Current ()->AttachObject (_textGUI);
 }

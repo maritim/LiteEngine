@@ -6,8 +6,6 @@
 
 #include "EditorSelection.h"
 
-#include "Managers/AudioClipManager.h"
-
 #include "Mesh/Model.h"
 
 #include "Resources/Resources.h"
@@ -121,17 +119,23 @@ void EditorInspector::ShowObject (SceneObject* object)
 
 void EditorInspector::ShowGameObject (SceneObject* object)
 {
+	GameObject* gameObject = dynamic_cast<GameObject*> (object);
+
 	ImGui::Spacing ();
 
 	ShowRenderer (object);
 
-	ImGui::Spacing ();
+	if (gameObject != nullptr) {
+		ImGui::Spacing ();
 
-	ShowRigidbody (object->GetRigidbody ());
+		ShowRigidbody (gameObject->GetRigidbody ());
+	}
 
-	ImGui::Spacing ();
+	if (gameObject != nullptr) {
+		ImGui::Spacing ();
 
-	ShowAudioSource (object->GetAudioSource ());
+		ShowAudioSource (gameObject->GetAudioSource ());		
+	}
 }
 
 void EditorInspector::ShowRenderer (SceneObject* object)
@@ -250,7 +254,7 @@ void EditorInspector::ShowAudioSource (AudioSource* audioSource)
 {
 	if (ImGui::CollapsingHeader ("Audio Source", ImGuiTreeNodeFlags_DefaultOpen)) {
 
-		AudioClip* audioClip = audioSource->GetAudioClip ();
+		Resource<AudioClip> audioClip = audioSource->GetAudioClip ();
 		std::string path = audioClip == nullptr ? "" : audioClip->GetName ();
 
 		ImGui::Text ("Audio Clip: %s", path.c_str ());
@@ -279,12 +283,7 @@ void EditorInspector::ShowAudioSource (AudioSource* audioSource)
 
 		if (audioClipPath != std::string ()) {
 
-			AudioClip* audioClip = AudioClipManager::Instance ()->GetAudioClip (audioClipPath);
-
-			if (audioClip == nullptr) {
-				audioClip = Resources::LoadAudioClip (audioClipPath);
-				AudioClipManager::Instance ()->AddAudioClip (audioClip);
-			}
+			Resource<AudioClip> audioClip = Resources::LoadAudioClip (audioClipPath);
 
 			audioSource->SetAudioClip (audioClip);
 		}

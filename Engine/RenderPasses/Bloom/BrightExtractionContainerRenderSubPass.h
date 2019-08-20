@@ -6,7 +6,7 @@
 class ENGINE_API BrightExtractionContainerRenderSubPass : public PostProcessContainerRenderSubPass
 {
 public:
-	bool IsAvailable (const Scene* scene, const Camera* camera,
+	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 protected:
 	std::string GetPostProcessFragmentShaderPath () const;

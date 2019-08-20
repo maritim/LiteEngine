@@ -18,7 +18,7 @@ void IdleContainerRenderSubPass::Init (const RenderSettings& settings)
 	InitVolume (settings);
 }
 
-RenderVolumeCollection* IdleContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* IdleContainerRenderSubPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -46,7 +46,7 @@ RenderVolumeCollection* IdleContainerRenderSubPass::Execute (const Scene* scene,
 	return rvc->Insert ("PostProcessMapVolume", _postProcessMapVolume);
 }
 
-bool IdleContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool IdleContainerRenderSubPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

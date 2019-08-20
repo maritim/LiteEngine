@@ -8,7 +8,7 @@ PointVolumetricLightContainerRenderSubPass::~PointVolumetricLightContainerRender
 
 }
 
-RenderVolumeCollection* PointVolumetricLightContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* PointVolumetricLightContainerRenderSubPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -21,7 +21,7 @@ RenderVolumeCollection* PointVolumetricLightContainerRenderSubPass::Execute (con
 	 * Draw volumetric lights
 	*/
 
-	PointLightPass (scene, camera, rvc);
+	PointLightPass (renderScene, camera, rvc);
 
 	/*
 	 * End directional light pass
@@ -32,7 +32,7 @@ RenderVolumeCollection* PointVolumetricLightContainerRenderSubPass::Execute (con
 	return rvc;
 }
 
-bool PointVolumetricLightContainerRenderSubPass::IsAvailable (const VolumetricLight*) const
+bool PointVolumetricLightContainerRenderSubPass::IsAvailable (const RenderLightObject*) const
 {
 	/*
 	 * Always execute directional volumetric light render sub pass
@@ -52,31 +52,31 @@ void PointVolumetricLightContainerRenderSubPass::StartPointLightPass (RenderVolu
 	lightAccumulationVolume->BindForWriting ();
 }
 
-void PointVolumetricLightContainerRenderSubPass::PointLightPass (const Scene* scene, const Camera* camera, RenderVolumeCollection* rvc)
+void PointVolumetricLightContainerRenderSubPass::PointLightPass (const RenderScene* renderScene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Get volumetric light from render volume collection
 	*/
 
-	VolumetricLight* volumetricLight = GetVolumetricLight (rvc);
+	RenderLightObject* renderLightObject = GetRenderLightObject (rvc);
 
 	/*
 	 * Lock shader for volumetric point light
 	*/
 
-	LockShader (volumetricLight);
+	LockShader (renderLightObject);
 
 	/*
 	 * Draw point light for stencil pass
 	*/
 
-	PointLightStencilPass (scene, camera, volumetricLight, rvc);
+	PointLightStencilPass (renderScene, camera, renderLightObject, rvc);
 
 	/*
 	 * Draw volumetric point light
 	*/
 
-	PointLightDrawPass (scene, camera, volumetricLight, rvc);
+	PointLightDrawPass (renderScene, camera, renderLightObject, rvc);
 }
 
 void PointVolumetricLightContainerRenderSubPass::EndPointLightPass ()
@@ -88,8 +88,8 @@ void PointVolumetricLightContainerRenderSubPass::EndPointLightPass ()
 	Pipeline::UnlockShader ();
 }
 
-void PointVolumetricLightContainerRenderSubPass::PointLightStencilPass (const Scene* scene, const Camera* camera,
-	VolumetricLight* volumetricLight, RenderVolumeCollection* rvc)
+void PointVolumetricLightContainerRenderSubPass::PointLightStencilPass (const RenderScene* renderScene, const Camera* camera,
+	RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
 {
 	/*
 	 * No rendering target
@@ -124,14 +124,21 @@ void PointVolumetricLightContainerRenderSubPass::PointLightStencilPass (const Sc
 	GL::Disable (GL_CULL_FACE);
 
 	/*
+	 * Send camera to pipeline
+	*/
+
+	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
+	Pipeline::SendCamera (camera);
+
+	/*
 	 * Volumetric light draw.
 	*/
 
-	volumetricLight->GetLightRenderer ()->Draw (scene, camera);
+	renderLightObject->Draw ();
 }
 
-void PointVolumetricLightContainerRenderSubPass::PointLightDrawPass (const Scene* scene, const Camera* camera,
-	VolumetricLight* volumetricLight, RenderVolumeCollection* rvc)
+void PointVolumetricLightContainerRenderSubPass::PointLightDrawPass (const RenderScene* renderScene, const Camera* camera,
+	RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Bind all render volumes
@@ -187,8 +194,15 @@ void PointVolumetricLightContainerRenderSubPass::PointLightDrawPass (const Scene
 	GL::CullFace (GL_FRONT);
 
 	/*
+	 * Send camera to pipeline
+	*/
+
+	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
+	Pipeline::SendCamera (camera);
+
+	/*
 	 * Draw the volumetric light.
 	*/
 
-	volumetricLight->GetLightRenderer ()->Draw (scene, camera, rvc);
+	renderLightObject->Draw ();
 }

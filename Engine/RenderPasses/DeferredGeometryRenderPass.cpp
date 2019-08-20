@@ -86,7 +86,7 @@ void DeferredGeometryRenderPass::Init (const RenderSettings& settings)
 	InitLightAccumulationVolume (settings);
 }
 
-RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -111,7 +111,7 @@ RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const Scene* scene,
 	* Deferred Rendering: Geometry Pass
 	*/
 
-	GeometryPass (scene, camera, settings);
+	GeometryPass (renderScene, camera, settings);
 
 	/*
 	 * End geometry drawing
@@ -158,7 +158,7 @@ void DeferredGeometryRenderPass::PrepareDrawing ()
 	_frameBuffer->BindForWriting ();
 }
 
-void DeferredGeometryRenderPass::GeometryPass (const Scene* scene, const Camera* camera, const RenderSettings& settings)
+void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, const Camera* camera, const RenderSettings& settings)
 {
 	/*
 	 * Set viewport
@@ -200,14 +200,23 @@ void DeferredGeometryRenderPass::GeometryPass (const Scene* scene, const Camera*
 	* Render scene entities to framebuffer at Deferred Rendering Stage
 	*/
 
-	std::vector<Renderer*> renderers;
+	// std::vector<Renderer*> renderers;
 
 	FrustumVolume* frustum = camera->GetFrustumVolume ();
 
 	std::size_t drawnObjectsCount = 0;
 
-	for (SceneObject* sceneObject : *scene) {
-		if (sceneObject->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
+	for (RenderObject* renderObject : *renderScene) {
+
+		/*
+		 * Check if it's active
+		*/
+
+		if (renderObject->IsActive () == false) {
+			continue;
+		}
+
+		if (renderObject->GetRenderStage () != RenderStage::RENDER_STAGE_DEFERRED) {
 			continue;
 		}
 
@@ -215,13 +224,11 @@ void DeferredGeometryRenderPass::GeometryPass (const Scene* scene, const Camera*
 		* Culling Check
 		*/
 
-		if (sceneObject->GetCollider () == nullptr) {
-			continue;
-		}
-
-		GeometricPrimitive* primitive = sceneObject->GetCollider ()->GetGeometricPrimitive ();
-		if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
-			continue;
+		if (renderObject->GetCollider () != nullptr) {
+			GeometricPrimitive* primitive = renderObject->GetCollider ()->GetGeometricPrimitive ();
+			if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
+				continue;
+			}
 		}
 
 		drawnObjectsCount++;
@@ -230,13 +237,13 @@ void DeferredGeometryRenderPass::GeometryPass (const Scene* scene, const Camera*
 		 * Lock shader according to object layers
 		*/
 
-		LockShader (sceneObject->GetLayers ());
+		LockShader (renderObject->GetSceneLayers ());
 
 		/*
 		 * Draw object on geometry buffer
 		*/
 
-		sceneObject->GetRenderer ()->Draw ();
+		renderObject->Draw ();
 	}
 
 	static DrawnObjectsCountStat* drawnObjectsCountStat = new DrawnObjectsCountStat ();

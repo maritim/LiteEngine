@@ -1,6 +1,7 @@
 #include "ParticleSystem.h"
 
 #include <vector>
+#include <cstring>
 
 #include "Systems/Time/Time.h"
 
@@ -9,7 +10,7 @@
 #include "Emiter.h"
 #include "Particle.h"
 
-#include "ParticleSystemRenderer.h"
+#include "Renderer/RenderSystem.h"
 
 ParticleSystem::ParticleSystem () :
 	_emiter (nullptr),
@@ -17,12 +18,12 @@ ParticleSystem::ParticleSystem () :
 	_useDepthMask (false),
 	_useGravity (true),
 	_partCount (500, 1000),
-	_timeFromLastEmission (0)
+	_timeFromLastEmission (0),
+	_modelView (nullptr),
+	_instanceBuffer (nullptr),
+	_instanceBufferSize (0)
 {
-	delete _renderer;
-	_renderer = new ParticleSystemRenderer (_transform);
-	_renderer->SetStageType (Renderer::FORWARD_STAGE);
-	_renderer->SetPriority (2);
+
 }
 
 ParticleSystem::~ParticleSystem ()
@@ -34,6 +35,8 @@ ParticleSystem::~ParticleSystem ()
 	}
 	_particles.clear ();
 	_particles.shrink_to_fit ();
+
+	delete[] _instanceBuffer;
 }
 
 void ParticleSystem::SetEmiter (Emiter* emiter)
@@ -45,9 +48,16 @@ void ParticleSystem::SetEmiter (Emiter* emiter)
 	emiter->GetTransform ()->SetParent (_transform);
 	_emiter = emiter;
 
-	ParticleSystemRenderer* renderer = dynamic_cast<ParticleSystemRenderer*> (_renderer);
-	renderer->SetInstance (emiter->GetParticlePrototype ());
-	renderer->SetDepthMaskCheck (_useDepthMask);
+	AttachMesh (emiter->GetParticlePrototype ()->GetMesh ());
+
+	_modelView = RenderSystem::LoadModel (emiter->GetParticlePrototype ()->GetMesh ());
+
+	_renderObject->SetTransform (_transform);
+	_renderObject->SetModelView (_modelView);
+	_renderObject->SetRenderStage (RenderStage::RENDER_STAGE_FORWARD);
+	_renderObject->SetPriority (2);
+	_renderObject->SetAttributes (emiter->GetParticlePrototype ()->GetAttributes ());
+	// renderer->SetDepthMaskCheck (_useDepthMask);
 }
 
 void ParticleSystem::SetEmissionRate (std::size_t rate)
@@ -64,8 +74,8 @@ void ParticleSystem::SetDepthMaskCheck (bool check)
 {
 	_useDepthMask = check;
 
-	ParticleSystemRenderer* renderer = dynamic_cast<ParticleSystemRenderer*> (_renderer);
-	renderer->SetDepthMaskCheck (_useDepthMask);
+	// ParticleSystemRenderer* renderer = dynamic_cast<ParticleSystemRenderer*> (_renderer);
+	// renderer->SetDepthMaskCheck (_useDepthMask);
 }
 
 void ParticleSystem::SetGravityUse (bool use)
@@ -76,9 +86,6 @@ void ParticleSystem::SetGravityUse (bool use)
 void ParticleSystem::SetMaximPartCount (std::size_t count)
 {
 	_partCount.second = count;
-
-	ParticleSystemRenderer* renderer = dynamic_cast<ParticleSystemRenderer*> (_renderer);
-	renderer->SetParticlesCount (count);
 }
 
 void ParticleSystem::Update ()
@@ -96,7 +103,7 @@ void ParticleSystem::Update ()
 			_particles [i] = _particles.back ();
 			_particles.pop_back ();
 
-			RemoveParticle (doomed);
+			delete doomed;
 		} else {
 			++ i;
 		}
@@ -113,26 +120,27 @@ void ParticleSystem::Update ()
 	{
 		Particle* particle = _emiter->GetParticle ();
 
-		AddParticle (particle);
+		_particles.push_back (particle);
 
 		if (_timeFromLastEmission > timePerEmission) {
 			_timeFromLastEmission -= timePerEmission;
 		}
 	}
-}
 
-void ParticleSystem::AddParticle (Particle* particle)
-{
-	_particles.push_back (particle);
+	if (_instanceBuffer == nullptr) {
+		auto particlePrototype = _emiter->GetParticlePrototype ();
+		_instanceBufferSize = particlePrototype->GetSize () * _partCount.second;
+		_instanceBuffer = new unsigned char [_instanceBufferSize];
 
-	ParticleSystemRenderer* renderer = dynamic_cast <ParticleSystemRenderer*> (_renderer);
-	renderer->AddRenderer (dynamic_cast<ParticleRenderer*> (particle->GetRenderer ()));
-}
+		RenderSystem::CreateInstanceModelView (_modelView, particlePrototype->GetBufferAttributes (), _instanceBufferSize);
+	}
 
-void ParticleSystem::RemoveParticle (Particle* particle)
-{
-	ParticleSystemRenderer* renderer = dynamic_cast <ParticleSystemRenderer*> (_renderer);
-	renderer->RemoveRenderer (dynamic_cast<ParticleRenderer*> (particle->GetRenderer ()));
+	std::size_t bufferIndex = 0;
+	for (auto particle : _particles) {
+		std::memcpy (_instanceBuffer + bufferIndex, particle->GetBuffer (), particle->GetSize ());
 
-	delete particle;
+		bufferIndex += particle->GetSize ();
+	}
+
+	RenderSystem::UpdateInstanceModelView (_modelView, _instanceBufferSize, _particles.size (), _instanceBuffer);
 }

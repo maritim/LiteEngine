@@ -23,7 +23,7 @@ void VoxelRayTraceRenderPass::Init (const RenderSettings& settings)
 		"Assets/Shaders/Voxelize/voxelRayTraceGeometry.glsl");
 }
 
-RenderVolumeCollection* VoxelRayTraceRenderPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* VoxelRayTraceRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*

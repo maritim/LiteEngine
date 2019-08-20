@@ -53,7 +53,7 @@ std::vector<Polygon*> Triangulation::ConvexTriangulation (Polygon* polygon)
 PolygonGroup* Triangulation::ConvexTriangulation (PolygonGroup* polyGroup)
 {
 	PolygonGroup* resultPolyGroup = new PolygonGroup (polyGroup->GetName ());
-	resultPolyGroup->SetMaterialName (polyGroup->GetMaterialName ());
+	resultPolyGroup->SetMaterial (polyGroup->GetMaterial ());
 
 	for (Polygon* poly : *polyGroup) {
 		std::vector<Polygon*> newPolygons = ConvexTriangulation (poly);

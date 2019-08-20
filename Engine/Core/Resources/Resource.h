@@ -26,10 +26,10 @@ public:
 	const T* operator-> () const;
 	Resource<T>& operator= (const Resource<T>& other);
 	Resource<T>& operator= (std::nullptr_t);
-	bool operator== (const Resource<T>& other);
-	bool operator!= (const Resource<T>& other);
-	bool operator== (std::nullptr_t);
-	bool operator!= (std::nullptr_t);
+	bool operator== (const Resource<T>& other) const;
+	bool operator!= (const Resource<T>& other) const;
+	bool operator== (std::nullptr_t) const;
+	bool operator!= (std::nullptr_t) const;
 
 	static Resource<T> GetResource (const std::string& path);
 };
@@ -129,6 +129,10 @@ const T* Resource<T>::operator-> () const
 template <class T>
 Resource<T>& Resource<T>::operator= (const Resource<T>& other)
 {
+	if (_source == other._source) {
+		return *this;
+	}
+
 	if (_source != nullptr) {
 		(*_counter) --;
 
@@ -160,29 +164,29 @@ Resource<T>& Resource<T>::operator= (const Resource<T>& other)
 template <class T>
 Resource<T>& Resource<T>::operator= (std::nullptr_t other)
 {
-	return Resource<T> (nullptr);
+	return (*this) = Resource<T> (nullptr);
 }
 
 template <class T>
-bool Resource<T>::operator== (const Resource<T>& other)
+bool Resource<T>::operator== (const Resource<T>& other) const
 {
 	return _source == other._source;
 }
 
 template <class T>
-bool Resource<T>::operator!= (const Resource<T>& other)
+bool Resource<T>::operator!= (const Resource<T>& other) const
 {
 	return ! (*this == other);
 }
 
 template <class T>
-bool Resource<T>::operator== (std::nullptr_t check)
+bool Resource<T>::operator== (std::nullptr_t check) const
 {
 	return _source == nullptr;
 }
 
 template <class T>
-bool Resource<T>::operator!= (std::nullptr_t check)
+bool Resource<T>::operator!= (std::nullptr_t check) const
 {
 	return ! (*this == check);
 }

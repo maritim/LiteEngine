@@ -30,8 +30,8 @@ public:
 	BitmapFont ();
 	~BitmapFont ();
 
-	virtual FontChar* GetChar (unsigned char ch);
-	virtual Texture* GetTexture (std::size_t id);
+	virtual FontChar* GetChar (unsigned char ch) const;
+	virtual Resource<Texture> GetTexture (std::size_t id) const;
 	virtual std::size_t GetLineHeight ();
 
 	std::string GetPageName () const;

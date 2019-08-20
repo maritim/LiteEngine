@@ -19,6 +19,7 @@ private:
 	btDbvtBroadphase* _broadphaseInterface;
 	btSequentialImpulseConstraintSolver* _solver;
 	btDiscreteDynamicsWorld* _dynamicsWorld;
+	btIDebugDraw* _debugDraw;
 
 public:
 	void Init ();

@@ -1,6 +1,6 @@
 #include "BloomAccumulationContainerRenderSubPass.h"
 
-bool BloomAccumulationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool BloomAccumulationContainerRenderSubPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

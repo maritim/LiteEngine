@@ -20,7 +20,7 @@ Camera::Camera(void) :
 
 Camera::~Camera ()
 {
-
+	delete _frustumVolume;
 }
 
 glm::vec3 Camera::GetPosition () const

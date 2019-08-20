@@ -23,10 +23,10 @@ public:
 	~ContainerRenderPass ();
 
 	void Init (const RenderSettings& settings);
-	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera, 
+	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera, 
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
-	bool IsAvailable (const Scene* scene, const Camera* camera,
+	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 
 	void Clear ();
@@ -37,7 +37,7 @@ protected:
 		const std::vector<ContainerRenderSubPassI*>& renderSubPasses, 
 		ContainerRenderVolumeCollectionI* containerRenderVolumeCollection);
 
-	RenderVolumeCollection* IterateOverSubPasses (RenderVolumeI*, const Scene*, 
+	RenderVolumeCollection* IterateOverSubPasses (RenderVolumeI*, const RenderScene*, 
 		const Camera*, const RenderSettings&, RenderVolumeCollection*);
 };
 

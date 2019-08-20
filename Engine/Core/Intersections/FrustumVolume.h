@@ -20,6 +20,7 @@ private:
 
 public:
 	FrustumVolume (FrustumVolumeInformation* data);
+	~FrustumVolume ();
 
 	void SetVolume (const glm::mat4& mvpMatrix);
 

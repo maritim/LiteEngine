@@ -1,6 +1,6 @@
 #include "GammaCorrectionContainerRenderSubPass.h"
 
-bool GammaCorrectionContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool GammaCorrectionContainerRenderSubPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

@@ -2,65 +2,54 @@
 
 #include "Utils/Primitives/Primitive.h"
 
-#include "SkyboxRenderer.h"
-
 #include "Wrappers/OpenGL/GL.h"
 
-Skybox::Skybox () :
-    _cubemap (NULL),
-    _tintColor (Color::White),
-    _brightness (1.0),
-    _angularVelocity (0.0)
-{
-    delete _renderer;
-    _renderer = new SkyboxRenderer (this);
+#include "Renderer/RenderSystem.h"
+#include "Renderer/RenderManager.h"
 
+Skybox::Skybox () :
+    _renderSkyboxObject (new RenderSkyboxObject ())
+{
     Resource<Model> cube = Primitive::Instance ()->Create (Primitive::Type::CUBE);
-    AttachMesh (cube);
+
+    Resource<ModelView> _skyboxModelView = RenderSystem::LoadModel (cube);
+
+    _renderSkyboxObject->SetModelView (_skyboxModelView);
 }
 
 Skybox::~Skybox ()
 {
-    unsigned int texture[] = { _cubemap->GetGPUIndex () };
-    GL::DeleteTextures(1,texture);
+    delete _renderSkyboxObject;
 }
 
-void Skybox::SetCubeMap (CubeMap* cubemap)
+void Skybox::SetCubeMap (const Resource<Texture>& cubemap)
 {
-    _cubemap = cubemap;
-}
+    Resource<TextureView> textureView = RenderSystem::LoadCubeMap (cubemap);
 
-CubeMap* Skybox::GetCubeMap () const
-{
-    return _cubemap;
+    _renderSkyboxObject->SetCubeMap (textureView);
 }
 
 void Skybox::SetTintColor (Color tintColor)
 {
-    _tintColor = tintColor;
-}
-
-Color Skybox::GetTintColor () const
-{
-    return _tintColor;
+    _renderSkyboxObject->SetTintColor (tintColor);
 }
 
 void Skybox::SetBrightness (float brightness)
 {
-    _brightness = brightness;
-}
-
-float Skybox::GetBrightness () const
-{
-    return _brightness;
+    _renderSkyboxObject->SetBrightness (brightness);
 }
 
 void Skybox::SetAngularVelocity (float velocity)
 {
-    _angularVelocity = velocity;
+    _renderSkyboxObject->SetAngularVelocity (velocity);
 }
 
-float Skybox::GetAngularVelocity () const
+void Skybox::OnAttachedToScene ()
 {
-    return _angularVelocity;
+    RenderManager::Instance ()->SetRenderSkyboxObject (_renderSkyboxObject);
+}
+
+void Skybox::OnDetachedFromScene ()
+{
+    RenderManager::Instance ()->SetRenderSkyboxObject (nullptr);
 }

@@ -21,6 +21,7 @@ uniform vec3 cameraPosition;
 
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
+uniform float lightIntensity;
 
 uniform vec2 screenSize;
 
@@ -53,7 +54,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// Calculate shadow
 	float shadow = CalcDirectionalShadowContribution (in_position);
 
-	return shadow * (diffuseColor + specularColor);
+	return shadow * (diffuseColor + specularColor) * lightIntensity;
 }
 
 void main()
@@ -68,4 +69,4 @@ void main()
 	in_normal = normalize(in_normal);
 
 	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
-} 
+}

@@ -1,7 +1,7 @@
 #ifndef PARTICLESYSTEM_H
 #define PARTICLESYSTEM_H
 
-#include "SceneGraph/SceneObject.h"
+#include "SceneNodes/GameObject.h"
 
 #include <vector>
 #include <string>
@@ -9,7 +9,7 @@
 #include "Emiter.h"
 #include "Particle.h"
 
-class ENGINE_API ParticleSystem : public SceneObject
+class ENGINE_API ParticleSystem : public GameObject
 {
 protected:
 	Emiter* _emiter;
@@ -23,6 +23,10 @@ protected:
 
 	float _timeFromLastEmission;
 
+	Resource<ModelView> _modelView;
+	unsigned char* _instanceBuffer;
+	std::size_t _instanceBufferSize;
+
 public:
 	ParticleSystem ();
 	~ParticleSystem ();
@@ -35,9 +39,6 @@ public:
 	void SetGravityUse (bool use);
 
 	void Update ();
-private:
-	void AddParticle (Particle* particle);
-	void RemoveParticle (Particle* particle);
 };
 
 #endif

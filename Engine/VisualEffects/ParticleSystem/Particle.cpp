@@ -6,8 +6,6 @@
 
 #include "Utils/Extensions/MathExtend.h"
 
-#include "ParticleRenderer.h"
-
 Particle::Particle () :
 	SceneObject (),
 	_lifetime (0),
@@ -19,13 +17,12 @@ Particle::Particle () :
 	_timeAlive (0),
 	_mesh (nullptr)
 {
-	delete _renderer;
-	_renderer = new ParticleRenderer (_transform);
+
 }
 
 Particle::~Particle ()
 {
-	delete _direction;
+
 }
 
 void Particle::SetLifetime (unsigned int lifetime)
@@ -48,26 +45,22 @@ void Particle::SetSpeed (float speed)
 	_speed = speed;
 }
 
-void Particle::SetMoveDirection (glm::vec3* direction)
+void Particle::SetMoveDirection (const glm::vec3& direction)
 {
-	delete _direction;
 	_direction = direction;
 }
 
 void Particle::Init ()
 {
-	*_direction = glm::normalize (*_direction);
+	_direction = glm::normalize (_direction);
 
 	_initialPosition = _transform->GetPosition ();
 	_initialScale = _transform->GetScale ();
-	_finalDestination = _initialPosition + (*_direction) * _speed * (_lifetime / 1000.0f);
+	_finalDestination = _initialPosition + (_direction) * _speed * (_lifetime / 1000.0f);
 }
 
 void Particle::SetMesh (const Resource<Model>& mesh)
 {
-	ParticleRenderer* particleRenderer = dynamic_cast<ParticleRenderer*>(_renderer);
-	particleRenderer->Attach (mesh);
-
 	_mesh = mesh;
 }
 
@@ -122,13 +115,4 @@ void Particle::UpdateScale ()
 void Particle::UpdateRotation ()
 {
 	// TODO: implement this
-}
-
-Particle* Particle::Clone ()
-{
-	Particle* clone = new Particle ();
-
-	clone->SetMesh (_mesh);
-
-	return clone;
 }

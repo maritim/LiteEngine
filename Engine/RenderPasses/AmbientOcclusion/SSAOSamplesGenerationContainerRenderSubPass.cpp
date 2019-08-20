@@ -1,7 +1,5 @@
 #include "SSAOSamplesGenerationContainerRenderSubPass.h"
 
-#include "Systems/Settings/SettingsManager.h"
-
 #include "Core/Console/Console.h"
 
 SSAOSamplesGenerationContainerRenderSubPass::SSAOSamplesGenerationContainerRenderSubPass () :
@@ -24,7 +22,7 @@ void SSAOSamplesGenerationContainerRenderSubPass::Init (const RenderSettings& se
 	InitSamplesVolume (settings);
 }
 
-RenderVolumeCollection* SSAOSamplesGenerationContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* SSAOSamplesGenerationContainerRenderSubPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -36,7 +34,7 @@ RenderVolumeCollection* SSAOSamplesGenerationContainerRenderSubPass::Execute (co
 	return rvc->Insert ("SSAOSamplesVolume", _ssaoSamplesVolume);
 }
 
-bool SSAOSamplesGenerationContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool SSAOSamplesGenerationContainerRenderSubPass::IsAvailable (const RenderScene* renderScenee, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

@@ -18,7 +18,7 @@ public:
 
 	void Clear ();
 protected:
-	void LockShader (const VolumetricLight*);
+	void LockShader (const RenderLightObject*);
 };
 
 #endif

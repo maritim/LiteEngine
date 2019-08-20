@@ -6,7 +6,8 @@
  * Singleton Part
 */
 
-RenderManager::RenderManager ()
+RenderManager::RenderManager () :
+	_renderScene (nullptr)
 {
 
 }
@@ -24,13 +25,48 @@ SPECIALIZE_SINGLETON(RenderManager)
 
 void RenderManager::Init ()
 {
+	_renderScene = new RenderScene ();
+}
 
+void RenderManager::SetRenderSkyboxObject (RenderSkyboxObject* renderSkyboxObject)
+{
+	_renderScene->SetRenderSkyboxObject (renderSkyboxObject);
+}
+
+void RenderManager::AttachRenderObject (RenderObject* renderObject)
+{
+	_renderScene->AttachRenderObject (renderObject);
+}
+
+void RenderManager::DetachRenderObject (RenderObject* renderObject)
+{
+	_renderScene->DetachRenderObject (renderObject);
+}
+
+void RenderManager::SetRenderDirectionalLightObject (RenderDirectionalLightObject* renderDirectionalLightObject)
+{
+	_renderScene->SetRenderDirectionalLightObject (renderDirectionalLightObject);
+}
+
+void RenderManager::AttachRenderPointLightObject (RenderPointLightObject* renderPointLightObject)
+{
+	_renderScene->AttachRenderPointLightObject (renderPointLightObject);
+}
+
+void RenderManager::DetachRenderPointLightObject (RenderPointLightObject* renderPointLightObject)
+{
+	_renderScene->DetachRenderPointLightObject (renderPointLightObject);
+}
+
+void RenderManager::SetRenderAmbientLightObject (RenderAmbientLightObject* renderAmbientLightObject)
+{
+	_renderScene->SetRenderAmbientLightObject (renderAmbientLightObject);
 }
 
 //TODO: Remove this
 #include <set>
 
-RenderProduct RenderManager::RenderScene (const Scene* scene, const Camera* camera, const RenderSettings& settings)
+RenderProduct RenderManager::Render (const Camera* camera, const RenderSettings& settings)
 {
 	RenderModule* renderModule = RenderModuleManager::Instance ()->GetRenderModule (settings.renderMode);
 
@@ -43,12 +79,12 @@ RenderProduct RenderManager::RenderScene (const Scene* scene, const Camera* came
 		initalized.insert (renderModule);
 	}
 
-	RenderProduct result = renderModule->RenderScene (scene, camera, settings);
+	RenderProduct result = renderModule->Render (_renderScene, camera, settings);
 
 	return result;
 }
 
 void RenderManager::Clear ()
 {
-
+	delete _renderScene;
 }

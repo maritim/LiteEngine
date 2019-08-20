@@ -2,7 +2,7 @@
 
 #include "VolumetricLightVolume.h"
 
-VolumetricLight* VolumetricLightContainerRenderSubPassI::GetVolumetricLight (const RenderVolumeCollection* rvc) const
+RenderLightObject* VolumetricLightContainerRenderSubPassI::GetRenderLightObject (const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Get volumetric light volume from render volume collection
@@ -14,25 +14,25 @@ VolumetricLight* VolumetricLightContainerRenderSubPassI::GetVolumetricLight (con
 	 * Get volumetric light from volumetric light volume
 	*/
 
-	VolumetricLight* volumetricLight = volume->GetVolumetricLight ();
+	RenderLightObject* renderLightObject = volume->GetRenderLightObject ();
 
-	return volumetricLight;
+	return renderLightObject;
 }
 
-bool VolumetricLightContainerRenderSubPassI::IsAvailable (const Scene*, const Camera*,
+bool VolumetricLightContainerRenderSubPassI::IsAvailable (const RenderScene*, const Camera*,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Get volumetric light from render volume collection
 	*/
 
-	VolumetricLight* volumetricLight = GetVolumetricLight (rvc);
+	RenderLightObject* renderLightObject = GetRenderLightObject (rvc);
 
 	/*
 	 * Ignore light if it's not active
 	*/
 
-	if (!volumetricLight->IsActive ()) {
+	if (!renderLightObject->IsActive ()) {
 		return false;
 	}
 
@@ -40,5 +40,5 @@ bool VolumetricLightContainerRenderSubPassI::IsAvailable (const Scene*, const Ca
 	 * Use specialization
 	*/
 
-	return IsAvailable (volumetricLight);
+	return IsAvailable (renderLightObject);
 }

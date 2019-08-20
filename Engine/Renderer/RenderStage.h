@@ -1,0 +1,10 @@
+#ifndef RENDERSTAGE_H
+#define RENDERSTAGE_H
+
+enum RenderStage
+{
+	RENDER_STAGE_DEFERRED,
+	RENDER_STAGE_FORWARD
+};
+
+#endif

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <RenderSettings>
-	<RenderMode mode="0" />
+	<RenderMode mode="VoxelConeTracingRenderModule" />
+
+	<Ambient intensity="0.2" >
+		<Color r="255" g="255" b="255" />
+	</Ambient>
 
 	<SSAO enabled="true" scale="0.5" samples="32" noiseSize="4" radius="0.2" bias="0.025" blurEnabled="true" />
 	<SSR enabled="false" scale="0.5" iterations="500" roughness="0.035" sampleSkip="0.3" spatialBias="0.5" intensity="5" />
@@ -12,4 +16,7 @@
 	<LUT enabled="false" path="Assets/Textures/LUTDefault.png" />
 
 	<Gamma enabled="false" />
+
+	<RSM resolution="512,512" bias="0.005" samples="50" radius="0.05" intensity="0.5" caching="true" />
+	<VCT voxelsSize="512" continuousVoxelization="false" bordering="false" indirectIntensity="1" />
 </RenderSettings>

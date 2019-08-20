@@ -21,13 +21,13 @@ public:
 	virtual ~PostProcessContainerRenderSubPass ();
 
 	void Init (const RenderSettings& settings);
-	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void Clear ();
 protected:
 	virtual void StartPostProcessPass ();
-	virtual void PostProcessPass (const Scene* scene, const Camera* camera,
+	virtual void PostProcessPass (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 	virtual void EndPostProcessPass ();
 

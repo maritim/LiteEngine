@@ -18,6 +18,7 @@ uniform vec3 cameraPosition;
 
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
+uniform float lightIntensity;
 
 uniform vec2 screenSize;
 
@@ -29,7 +30,7 @@ vec2 CalcTexCoord()
 vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
 {
 	// The position is also a direction for Directional Lights
-	vec3 lightDirection = normalize (lightPosition);
+	vec3 lightDirection = normalize (vec3 (viewMatrix * vec4 (lightPosition, 0)));
 
 	// Diffuse contribution
 	float dCont = max (dot (in_normal, lightDirection), 0.0);
@@ -45,7 +46,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 
 	vec3 specularColor = lightColor * in_specular * sCont;
 
-	return diffuseColor + specularColor;
+	return (diffuseColor + specularColor) * lightIntensity;
 }
 
 void main()

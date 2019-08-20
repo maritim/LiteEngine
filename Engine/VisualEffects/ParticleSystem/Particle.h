@@ -11,13 +11,16 @@
 
 #include "Utils/Curves/AnimationCurve.h"
 
+#include "Renderer/BufferAttribute.h"
+#include "Renderer/PipelineAttribute.h"
+
 class Particle : public SceneObject
 {
 protected:
 	// In milliseconds
 	unsigned int _lifetime;
 	// Movement direction
-	glm::vec3* _direction;
+	glm::vec3 _direction;
 	// Movement speed - units per second
 	float _speed;
 
@@ -42,18 +45,24 @@ public:
 	void SetScaleCurve (AnimationCurve* scaleCurve);
 	void SetTweenCurve (AnimationCurve* tweenCurve);
 	void SetSpeed (float speed);
-	void SetMoveDirection (glm::vec3* direction);
+	void SetMoveDirection (const glm::vec3& direction);
 
 	void Init ();
 
 	void SetMesh (const Resource<Model>& mesh);
 	Resource<Model> GetMesh () const;
 
+	virtual std::vector<BufferAttribute> GetBufferAttributes () const = 0;
+	virtual unsigned char* GetBuffer () = 0;
+	virtual std::size_t GetSize () const = 0;
+	virtual std::string GetShaderName () const = 0;
+	virtual std::vector<PipelineAttribute> GetAttributes () const = 0;
+
 	bool IsAlive () const;
 
 	void Update ();
 
-	virtual Particle* Clone ();
+	virtual Particle* Clone () = 0;
 protected:
 	void UpdatePosition ();
 	void UpdateScale ();

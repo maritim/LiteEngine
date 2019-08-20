@@ -11,7 +11,29 @@ Rigidbody::Rigidbody (Transform* transform) :
 	_collider (nullptr),
 	_isEnabled (true)
 {
-	Build ();
+	_motionState = new MotionState (_transform, glm::vec3 (0.0f)); //_collider->GetOffset ());
+
+	/*
+	 * Initialize rigidbody
+	*/
+
+	btVector3 localInertia = btVector3 (0.0f, 0.0f, 0.0f);
+
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI (
+		_mass,
+		_motionState,
+		nullptr,
+		localInertia
+	);
+
+	_rigidBody = new btRigidBody (rigidBodyCI);
+
+	/*
+	 * Disable debug data
+	*/
+
+	_rigidBody->setCollisionFlags (_rigidBody->getCollisionFlags ()
+		| btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT);
 }
 
 Rigidbody::~Rigidbody ()
@@ -160,33 +182,6 @@ void Rigidbody::Debug (bool isEnabled)
 		collisionFlags | btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT;
 
 	_rigidBody->setCollisionFlags (newCollisionFlags);
-}
-
-void Rigidbody::Build ()
-{
-	_motionState = new MotionState (_transform, glm::vec3 (0.0f)); //_collider->GetOffset ());
-
-	/*
-	 * Initialize rigidbody
-	*/
-
-	btVector3 localInertia = btVector3 (0.0f, 0.0f, 0.0f);
-
-	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI (
-		_mass,
-		_motionState,
-		nullptr,
-		localInertia
-	);
-
-	_rigidBody = new btRigidBody (rigidBodyCI);
-
-	/*
-	 * Disable debug data
-	*/
-
-	_rigidBody->setCollisionFlags (_rigidBody->getCollisionFlags ()
-		| btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT);
 }
 
 void Rigidbody::UpdateCollider ()

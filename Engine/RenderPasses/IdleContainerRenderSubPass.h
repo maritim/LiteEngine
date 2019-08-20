@@ -15,10 +15,10 @@ public:
 	~IdleContainerRenderSubPass ();
 
 	void Init (const RenderSettings& settings);
-	RenderVolumeCollection* Execute (const Scene* scene, const Camera* camera,
+	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
-	bool IsAvailable (const Scene* scene, const Camera* camera,
+	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 
 	void Clear ();

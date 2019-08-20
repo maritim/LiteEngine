@@ -27,7 +27,7 @@ void GUIGizmosRenderPass::Init (const RenderSettings& settings)
 		"Assets/Shaders/GUI/guiGizmosFragment.glsl");
 }
 
-RenderVolumeCollection* GUIGizmosRenderPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* GUIGizmosRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*

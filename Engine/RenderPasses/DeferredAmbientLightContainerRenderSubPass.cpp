@@ -1,9 +1,5 @@
 #include "DeferredAmbientLightContainerRenderSubPass.h"
 
-#include "Systems/Settings/SettingsManager.h"
-
-#include "Lighting/LightsManager.h"
-
 #include "Managers/ShaderManager.h"
 
 #include "Renderer/Pipeline.h"
@@ -39,17 +35,19 @@ void DeferredAmbientLightContainerRenderSubPass::Init (const RenderSettings& set
 		"Assets/Shaders/deferredAmbientOcclusionAmbientLightFragment.glsl");
 }
 
-bool DeferredAmbientLightContainerRenderSubPass::IsAvailable (const Scene* scene, const Camera* camera,
+bool DeferredAmbientLightContainerRenderSubPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Always available
 	*/
 
-	return true;
+	auto renderLightObject = renderScene->GetRenderAmbientLightObject ();
+
+	return renderLightObject != nullptr && renderLightObject->isActive;
 }
 
-RenderVolumeCollection* DeferredAmbientLightContainerRenderSubPass::Execute (const Scene* scene, const Camera* camera,
+RenderVolumeCollection* DeferredAmbientLightContainerRenderSubPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -62,7 +60,7 @@ RenderVolumeCollection* DeferredAmbientLightContainerRenderSubPass::Execute (con
 	 * Render ambient light
 	*/
 
-	AmbientLightPass (scene, camera, settings, rvc);
+	AmbientLightPass (renderScene, camera, settings, rvc);
 
 	/*
 	 * End directional light pass
@@ -97,7 +95,7 @@ void DeferredAmbientLightContainerRenderSubPass::StartAmbientLightPass (const Re
 	lightAccumulationVolume->BindForWriting ();
 }
 
-void DeferredAmbientLightContainerRenderSubPass::AmbientLightPass (const Scene* scene, const Camera* camera,
+void DeferredAmbientLightContainerRenderSubPass::AmbientLightPass (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -112,7 +110,7 @@ void DeferredAmbientLightContainerRenderSubPass::AmbientLightPass (const Scene* 
 	 * Send custom uniforms
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes (rvc));
+	Pipeline::SendCustomAttributes ("", GetCustomAttributes (renderScene, rvc));
 
 	/*
 	 * Set viewport
@@ -176,7 +174,7 @@ void DeferredAmbientLightContainerRenderSubPass::LockShader (const RenderSetting
 	}
 }
 
-std::vector<PipelineAttribute> DeferredAmbientLightContainerRenderSubPass::GetCustomAttributes (RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> DeferredAmbientLightContainerRenderSubPass::GetCustomAttributes (const RenderScene* renderScene, RenderVolumeCollection* rvc)
 {
 	std::vector<PipelineAttribute> attributes;
 
@@ -200,7 +198,7 @@ std::vector<PipelineAttribute> DeferredAmbientLightContainerRenderSubPass::GetCu
 
 	ambientLightColor.name = "ambientLightColor";
 
-	ambientLightColor.value = LightsManager::Instance ()->GetAmbientLightColor ().ToVector3 ();
+	ambientLightColor.value = renderScene->GetRenderAmbientLightObject ()->color.ToVector3 ();
 
 	attributes.push_back (ambientLightColor);
 

@@ -163,6 +163,8 @@ void CascadedShadowMapDirectionalLightVolume::SetLightCamera (std::size_t cascad
 		return;
 	}
 
+	delete _lightCameras [cascadedLevel];
+
 	/*
 	 * Configure light camera
 	*/

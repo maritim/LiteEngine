@@ -8,18 +8,18 @@ class ENGINE_API PointVolumetricLightContainerRenderSubPass : public VolumetricL
 public:
 	~PointVolumetricLightContainerRenderSubPass ();
 
-	RenderVolumeCollection* Execute (const Scene*, const Camera*, const RenderSettings&, RenderVolumeCollection* );
+	RenderVolumeCollection* Execute (const RenderScene*, const Camera*, const RenderSettings&, RenderVolumeCollection* );
 protected:
-	bool IsAvailable (const VolumetricLight*) const;
+	bool IsAvailable (const RenderLightObject*) const;
 
 	void StartPointLightPass (RenderVolumeCollection*);
-	void PointLightPass (const Scene*, const Camera*, RenderVolumeCollection*);
+	void PointLightPass (const RenderScene*, const Camera*, RenderVolumeCollection*);
 	void EndPointLightPass ();
 
-	void PointLightStencilPass (const Scene*, const Camera*, VolumetricLight*, RenderVolumeCollection*);
-	void PointLightDrawPass (const Scene*, const Camera*, VolumetricLight*, RenderVolumeCollection*);
+	void PointLightStencilPass (const RenderScene*, const Camera*, RenderLightObject*, RenderVolumeCollection*);
+	void PointLightDrawPass (const RenderScene*, const Camera*, RenderLightObject*, RenderVolumeCollection*);
 
-	virtual void LockShader (const VolumetricLight*) = 0;
+	virtual void LockShader (const RenderLightObject*) = 0;
 };
 
 #endif
