@@ -683,6 +683,45 @@ void GL::MemoryBarrier (GLbitfield barriers)
 }
 
 /*
+ * Queries
+*/
+
+void GL::GenQueries(GLsizei n, GLuint * ids)
+{
+	glGenQueries (n, ids);
+
+	ErrorCheck ("glGenQueries");
+}
+
+void GL::DeleteQueries(GLsizei n, const GLuint * ids)
+{
+	glDeleteQueries (n, ids);
+
+	ErrorCheck ("glDeleteQueries");
+}
+
+void GL::QueryCounter(GLuint id, GLenum target)
+{
+	glQueryCounter (id, target);
+
+	ErrorCheck ("glQueryCounter");
+}
+
+void GL::GetQueryObjectiv(GLuint id, GLenum pname, GLint * params)
+{
+	glGetQueryObjectiv(id, pname, params);
+
+	ErrorCheck ("glGetQueryObjectiv");
+}
+
+void GL::GetQueryObjectui64v(GLuint id, GLenum pname, GLuint64 * params)
+{
+	glGetQueryObjectui64v(id, pname, params);
+
+	ErrorCheck ("glGetQueryObjectui64v");
+}
+
+/*
  * Capabilities
 */
 

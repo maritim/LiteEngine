@@ -3,10 +3,10 @@
 
 #include "Renderer/RenderPassI.h"
 
-#define MIPMAP_LEVELS 6
-
 class VoxelMipmapRenderPass : public RenderPassI
 {
+	DECLARE_RENDER_PASS(VoxelMipmapRenderPass)
+
 protected:
 	bool _firstTime;
 

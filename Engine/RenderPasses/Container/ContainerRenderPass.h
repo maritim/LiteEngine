@@ -15,6 +15,8 @@ class ENGINE_API ContainerRenderPass : public ContainerRenderSubPassI
 {
 	friend ContainerRenderPassBuilder;
 
+	DECLARE_RENDER_PASS(ContainerRenderPass)
+
 protected:
 	std::vector<ContainerRenderSubPassI*> _renderSubPasses;
 	ContainerRenderVolumeCollectionI* _renderVolumeCollection;

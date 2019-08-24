@@ -17,7 +17,7 @@ public:
 	~IterateOverRenderVolumeCollection ();
 
 	void Reset ();
-	RenderVolumeI* GetNextVolume (const RenderScene* renderScene);
+	RenderVolumeI* GetNextVolume (const RenderScene* renderScene, const RenderSettings&);
 };
 
 #endif

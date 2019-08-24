@@ -45,13 +45,23 @@ RenderVolumeCollection* GUIGizmosRenderPass::Execute (const RenderScene* renderS
 	return rvc;
 }
 
+bool GUIGizmosRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const
+{
+	/*
+	 * Always execute skybox render sub pass
+	*/
+
+	return true;
+}
+
 void GUIGizmosRenderPass::StartGizmoDraw (RenderVolumeCollection* rvc)
 {
 	/*
 	 * Bind framebuffer for writing
 	*/
 
-	FrameBuffer2DVolume* framebuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("LightAccumulationVolume");
+	FrameBuffer2DVolume* framebuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
 	framebuffer->BindForWriting ();
 }
 

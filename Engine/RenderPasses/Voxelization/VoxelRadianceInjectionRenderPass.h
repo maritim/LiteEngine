@@ -5,6 +5,8 @@
 
 class VoxelRadianceInjectionRenderPass : public RenderPassI
 {
+	DECLARE_RENDER_PASS(VoxelRadianceInjectionRenderPass)
+
 protected:
 	bool _firstTime;
 
@@ -21,7 +23,7 @@ protected:
 	void RadianceInjectPass (const RenderSettings&, RenderVolumeCollection*);
 	void EndRadianceInjectionPass ();
 
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
+	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings&) const;
 };
 
 #endif

@@ -18,5 +18,8 @@
 	<Gamma enabled="false" />
 
 	<RSM resolution="512,512" bias="0.005" samples="50" radius="0.05" intensity="0.5" caching="true" />
-	<VCT voxelsSize="512" continuousVoxelization="false" bordering="false" indirectIntensity="1" />
+	<VCT voxelsSize="512" continuousVoxelization="false" bordering="false"
+		mipmapLevels="6" indirectIntensity="1" diffuseConeDistance="0.3"
+		specularConeRatio="0.2" specularConeDistance="0.6"
+		shadowConeRatio="0.01" shadowConeDistance="0.365" />
 </RenderSettings>

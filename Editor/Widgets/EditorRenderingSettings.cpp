@@ -1,7 +1,5 @@
 #include "EditorRenderingSettings.h"
 
-#include <sstream>
-#include <iomanip>
 #include <glm/vec2.hpp>
 #include "Systems/GUI/ImGui/imgui.h"
 #include "Systems/GUI/imguifilesystem/imguifilesystem.h"
@@ -17,10 +15,10 @@
 #include "Renderer/RenderSystem.h"
 #include "Renderer/RenderManager.h"
 
+#include "Utils/Extensions/MathExtend.h"
+
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/RSMStatisticsObject.h"
-
-#include "Debug/Logger/Logger.h"
 
 EditorRenderingSettings::EditorRenderingSettings () :
 	_lutTexture (nullptr),
@@ -81,10 +79,10 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 	int lastRenderMode = renderModes [_settings->renderMode];
 	int renderMode = lastRenderMode;
 
-	const char* items[] = { "Direct Light", "Voxel Cone Tracing", "Reflective Shadow Mapping", "Voxel Ray Trace" };
-	ImGui::Combo("Render Module", &renderMode, items, 4);
+	const char* items[] = { "Direct Light", "Voxel Cone Tracing", "Reflective Shadow Mapping"};
+	ImGui::Combo("Render Module", &renderMode, items, 3);
 
-	const char* srenderModes[] = { "SceneRenderModule", "VoxelConeTracingRenderModule", "ReflectiveShadowMappingRenderModule", "SceneRenderModule" };
+	const char* srenderModes[] = { "SceneRenderModule", "VoxelConeTracingRenderModule", "ReflectiveShadowMappingRenderModule"};
 
 	if (lastRenderMode != renderMode) {
 		_settings->renderMode = srenderModes [renderMode];
@@ -100,24 +98,55 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 		std::size_t lastVoxelVolumeSize = _settings->vct_voxels_size;
 		bool lastVoxelBordering = _settings->vct_bordering;
+		std::size_t lastVolumeMipmapLevels = _settings->vct_mipmap_levels;
 
 		ImGui::InputScalar ("Voxel Volume Size", ImGuiDataType_U32, &_settings->vct_voxels_size);
 		ImGui::Checkbox ("Continuous Voxelization", &_settings->vct_continuous_voxelization);
 		ImGui::Checkbox ("Voxel Volume Bordering", &_settings->vct_bordering);
+
+		std::size_t speed = 1;
+		ImGui::InputScalar ("Volume Mipmap Levels", ImGuiDataType_U32, &_settings->vct_mipmap_levels, &speed);
+		_settings->vct_mipmap_levels = Extensions::MathExtend::Clamp (
+			_settings->vct_mipmap_levels, (std::size_t) 1,
+			(std::size_t) std::log2 (_settings->vct_voxels_size));
+
 		ImGui::InputFloat ("Indirect Light Intensity", &_settings->vct_indirect_intensity, 0.1f);
 
-		if (lastVoxelVolumeSize != _settings->vct_voxels_size) {
+        ImGui::Separator();
+
+		ImGui::SliderFloat ("Diffuse Cone Distance", &_settings->vct_diffuse_cone_distance, 0.0f, 1.0f);
+
+        ImGui::Separator();
+
+		ImGui::SliderFloat ("Specular Cone Distance", &_settings->vct_specular_cone_distance, 0.0f, 1.0f);
+
+        ImGui::Separator();
+
+		ImGui::SliderFloat ("Shadow Cone Ratio", &_settings->vct_shadow_cone_ratio, 0.0f, 1.0f, "%3f", 10.0f);
+		ImGui::SliderFloat ("Shadow Cone Distance", &_settings->vct_shadow_cone_distance, 0.0f, 1.0f);
+
+		if (lastVoxelVolumeSize != _settings->vct_voxels_size ||
+			lastVoxelBordering != _settings->vct_bordering ||
+			lastVolumeMipmapLevels != _settings->vct_mipmap_levels) {
 			_lastContinuousVoxelization = _settings->vct_continuous_voxelization;
 			_continuousVoxelizationReset = true;
 
 			_settings->vct_continuous_voxelization = true;
 		}
 
-		if (lastVoxelBordering != _settings->vct_bordering) {
-			_lastContinuousVoxelization = _settings->vct_continuous_voxelization;
-			_continuousVoxelizationReset = true;
+        ImGui::Separator();
 
-			_settings->vct_continuous_voxelization = true;
+		if (ImGui::TreeNode ("Debug")) {
+
+			ImGui::Checkbox ("Show Voxels", &_settings->vct_debug_show_voxels);
+
+			std::size_t speed = 1;
+			ImGui::InputScalar ("Mipmap Level", ImGuiDataType_U32, &_settings->vct_debug_volume_mipmap_level, &speed);
+			_settings->vct_debug_volume_mipmap_level = Extensions::MathExtend::Clamp (
+				_settings->vct_debug_volume_mipmap_level, (std::size_t) 0,
+				(std::size_t) _settings->vct_mipmap_levels - 1);
+
+			ImGui::TreePop();
 		}
 	}
 

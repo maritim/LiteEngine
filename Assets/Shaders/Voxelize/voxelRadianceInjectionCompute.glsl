@@ -9,6 +9,7 @@ uniform sampler3D volumeTexture;
 uniform vec3 minVertex;
 uniform vec3 maxVertex;
 uniform ivec3 volumeSize;
+uniform int volumeMipmapLevels;
 
 /*
  * Input shadow map volume and light space properties
@@ -66,9 +67,11 @@ bool IsInShadow (vec3 worldPos)
     */
 
     projCoords = projCoords * 0.5 + 0.5;
+    projCoords.z -= 1.0 / volumeSize.x;
 
     return texture (shadowMap, projCoords, 0) == 0.0;
 }
+
 
 void main() 
 {

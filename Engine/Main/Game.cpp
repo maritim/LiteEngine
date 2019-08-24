@@ -50,7 +50,6 @@ void Game::Start ()
 	while(running)
 	{
 		PROFILER_FRAME
-		PROFILER_LOGGER("Frame")
 
 		Time::UpdateFrame();
 		Input::UpdateState ();
@@ -114,8 +113,6 @@ void Game::UpdateScene()
 
 void Game::DisplayScene() 
 {
-	PROFILER_LOGGER("Render")
-
 	_gameModule->RenderScene ();
 
 	Camera* camera = CameraManager::Instance ()->GetActive ();

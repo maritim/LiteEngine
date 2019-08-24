@@ -3,49 +3,31 @@
 
 #include "Core/Singleton/Singleton.h"
 
-#include <string>
-#include <vector>
+#include "ProfilerService.h"
 
-#include "ProfilerLogger.h"
-#include "ProfilerFrame.h"
+#include "CPUProfilerService.h"
+#include "GPUProfilerService.h"
 
-/*
- * TODO: Move this to another part of the code.
-*/
-
-#define PROFILER_ARGUMENT_FLAG "profiler"
-
-struct ProfilerLoggerContainer
-{
-	std::string Name;
-	float Duration;
-	std::size_t NestDepth;
-
-	ProfilerLoggerContainer ();
-};
+#define PROFILER_FRAME \
+Profiler::Instance ()->GetCPUProfilerService ()->StartFrame (); \
+Profiler::Instance ()->GetGPUProfilerService ()->StartFrame ();
 
 class Profiler : public Singleton<Profiler>
 {
 	friend Singleton<Profiler>;
 
 private:
-	bool _isActive;
-	std::vector<ProfilerLoggerContainer> _eventsQueue;
+	CPUProfilerService* _profilerCPUService;
+	GPUProfilerService* _profilerGPUService;
 
 public:
-	bool IsActive () const;
-
-	void AddEventAt (const ProfilerLoggerContainer&, std::size_t);
-	const std::vector<ProfilerLoggerContainer>& GetEvents () const;
-
-	void Clear ();
+	CPUProfilerService* GetCPUProfilerService ();
+	GPUProfilerService* GetGPUProfilerService ();
 private:
 	Profiler ();
 	~Profiler ();
 	Profiler (const Profiler&);
 	Profiler& operator=(const Profiler&);
-
-	void Allocate (std::size_t);
 };
 
 #endif

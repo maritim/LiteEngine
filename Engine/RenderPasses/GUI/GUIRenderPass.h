@@ -5,6 +5,8 @@
 
 class ENGINE_API GUIRenderPass : public RenderPassI
 {
+	DECLARE_RENDER_PASS(GUIRenderPass)
+
 protected:
 	std::string _shaderName;
 	unsigned int _VAO_ID;

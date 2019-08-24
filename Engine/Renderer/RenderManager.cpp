@@ -2,6 +2,8 @@
 
 #include "RenderModuleManager.h"
 
+#include "Debug/Profiler/Profiler.h"
+
 /*
  * Singleton Part
 */
@@ -68,6 +70,8 @@ void RenderManager::SetRenderAmbientLightObject (RenderAmbientLightObject* rende
 
 RenderProduct RenderManager::Render (const Camera* camera, const RenderSettings& settings)
 {
+	PROFILER_LOGGER("Render")
+
 	RenderModule* renderModule = RenderModuleManager::Instance ()->GetRenderModule (settings.renderMode);
 
 	static std::set<RenderModule*> initalized;

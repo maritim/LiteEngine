@@ -29,6 +29,16 @@ RenderVolumeCollection* ForwardRenderPass::Execute (const RenderScene* renderSce
 	return rvc;
 }
 
+bool ForwardRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const
+{
+	/*
+	 * Always execute skybox render sub pass
+	*/
+
+	return true;
+}
+
 void ForwardRenderPass::Clear ()
 {
 	/*
@@ -42,7 +52,7 @@ void ForwardRenderPass::StartForwardPass (RenderVolumeCollection* rvc)
 	 * Bind framebuffer for writing
 	*/
 
-	FrameBuffer2DVolume* framebuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("LightAccumulationVolume");
+	FrameBuffer2DVolume* framebuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
 	framebuffer->BindForWriting ();
 }
 

@@ -17,7 +17,7 @@ void DirectionalLightContainerRenderVolumeCollection::Reset ()
 	_iterations = 0;
 }
 
-RenderVolumeI* DirectionalLightContainerRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene)
+RenderVolumeI* DirectionalLightContainerRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene, const RenderSettings& settings)
 {
 	if (_iterations > 0) {
 		return nullptr;

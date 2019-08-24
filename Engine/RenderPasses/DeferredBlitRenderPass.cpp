@@ -27,7 +27,7 @@ RenderVolumeCollection* DeferredBlitRenderPass::Execute (const RenderScene* rend
 	 * Get depth buffer from render volume collection
 	*/
 
-	FrameBuffer2DVolume* resultFramebuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("LightAccumulationVolume");
+	FrameBuffer2DVolume* resultFramebuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
 
 	/*
 	* Render skybox
@@ -36,6 +36,16 @@ RenderVolumeCollection* DeferredBlitRenderPass::Execute (const RenderScene* rend
 	EndDrawing (frameBuffer, resultFramebuffer, settings);
 
 	return rvc;
+}
+
+bool DeferredBlitRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const
+{
+	/*
+	 * Always execute skybox render sub pass
+	*/
+
+	return true;
 }
 
 void DeferredBlitRenderPass::Clear ()

@@ -9,6 +9,10 @@
 #include "Systems/Camera/Camera.h"
 #include "RenderSettings.h"
 
+#define DECLARE_RENDER_PASS(T) \
+public: \
+	std::string GetName () const { return #T; }
+
 class ENGINE_API RenderPassI : public Object
 {
 public:
@@ -17,6 +21,8 @@ public:
 	virtual void Init (const RenderSettings&) = 0;
 	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc) = 0;
+
+	virtual std::string GetName () const = 0;
 
 	virtual void Clear () = 0;
 };

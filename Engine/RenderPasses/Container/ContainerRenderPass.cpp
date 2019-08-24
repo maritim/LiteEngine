@@ -1,5 +1,7 @@
 #include "ContainerRenderPass.h"
 
+#include "Debug/Profiler/Profiler.h"
+
 ContainerRenderPass::ContainerRenderPass (
 	const std::vector<ContainerRenderSubPassI*>& renderSubPasses,
 	ContainerRenderVolumeCollectionI* renderVolumeCollection) :
@@ -54,7 +56,7 @@ RenderVolumeCollection* ContainerRenderPass::Execute (const RenderScene* renderS
 	 * Iterate every render volume provided by specialization
 	*/
 
-	while ((volume = _renderVolumeCollection->GetNextVolume (renderScene)) != nullptr) {
+	while ((volume = _renderVolumeCollection->GetNextVolume (renderScene, settings)) != nullptr) {
 
 		/*
 		 * Execute all sub passes using provided volume
@@ -110,6 +112,9 @@ RenderVolumeCollection* ContainerRenderPass::IterateOverSubPasses (
 	*/
 
 	for (auto renderSubPass : _renderSubPasses) {
+
+		PROFILER_LOGGER(renderSubPass->GetName ())
+		PROFILER_GPU_LOGGER(renderSubPass->GetName ())
 
 		/*
 		 * Check if sub pass admits current volume

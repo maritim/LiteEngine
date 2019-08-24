@@ -21,7 +21,7 @@ RenderVolumeCollection* WindowBlitRenderPass::Execute (const RenderScene* render
 	 * Get depth buffer from render volume collection
 	*/
 
-	FrameBuffer2DVolume* frameBuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("LightAccumulationVolume");
+	FrameBuffer2DVolume* frameBuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
 
 	/*
 	* Render skybox

@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "ResultFrameBuffer2DVolume.h"
+
 #include "Managers/ShaderManager.h"
 
 #include "Core/Intersections/Intersection.h"
@@ -23,8 +25,7 @@ DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
 	_normalMapShaderName ("NORMAL_MAP_DEFERRED_GEOMETRY"),
 	_lightMapShaderName ("LIGHT_MAP_DEFERRED_GEOMETRY"),
 	_animationShaderName ("ANIMATION_DEFERRED_GEOMETRY"),
-	_frameBuffer (new GBuffer ()),
-	_lightAccumulationVolume (new LightAccumulationVolume ())
+	_frameBuffer (new GBuffer ())
 {
 
 }
@@ -32,7 +33,6 @@ DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
 DeferredGeometryRenderPass::~DeferredGeometryRenderPass ()
 {
 	delete _frameBuffer;
-	delete _lightAccumulationVolume;
 }
 
 void DeferredGeometryRenderPass::Init (const RenderSettings& settings)
@@ -78,12 +78,6 @@ void DeferredGeometryRenderPass::Init (const RenderSettings& settings)
 	*/
 
 	InitGBufferVolume (settings);
-
-	/*
-	 * Initialize light accumulation volume
-	*/
-
-	InitLightAccumulationVolume (settings);
 }
 
 RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -93,7 +87,7 @@ RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const RenderScene* 
 	 * Update volumes
 	*/
 
-	UpdateVolumes (settings);
+	UpdateVolumes (settings, rvc);
 
 	/*
 	* Send Camera to Pipeline
@@ -119,7 +113,17 @@ RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const RenderScene* 
 
 	EndDrawing ();
 
-	return rvc->Insert ("GBuffer", _frameBuffer)->Insert ("LightAccumulationVolume", _lightAccumulationVolume);
+	return rvc->Insert ("GBuffer", _frameBuffer);
+}
+
+bool DeferredGeometryRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const
+{
+	/*
+	 * Always execute skybox render sub pass
+	*/
+
+	return true;
 }
 
 void DeferredGeometryRenderPass::Clear ()
@@ -129,28 +133,10 @@ void DeferredGeometryRenderPass::Clear ()
 	*/
 
 	_frameBuffer->Clear ();
-
-	/*
-	 * Clear light accumulation volume
-	*/
-
-	_lightAccumulationVolume->Clear ();
 }
 
 void DeferredGeometryRenderPass::PrepareDrawing ()
 {
-	/*
-	 * Bind light accumulation volume for writting
-	*/
-
-	_lightAccumulationVolume->BindForWriting ();
-
-	/*
-	 * Clear light accumulation buffer
-	*/
-
-	GL::Clear (GL_COLOR_BUFFER_BIT);
-
 	/*
 	 * Bind framebuffer for writting
 	*/
@@ -323,7 +309,7 @@ void DeferredGeometryRenderPass::UpdateCamera (const Camera* camera)
 	Pipeline::SendCamera (camera);
 }
 
-void DeferredGeometryRenderPass::UpdateVolumes (const RenderSettings& settings)
+void DeferredGeometryRenderPass::UpdateVolumes (const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	Framebuffer framebuffer = settings.framebuffer;
 
@@ -344,21 +330,14 @@ void DeferredGeometryRenderPass::UpdateVolumes (const RenderSettings& settings)
 		InitGBufferVolume (settings);
 	}
 
-	glm::ivec2 lightVolumeSize = _lightAccumulationVolume->GetSize ();
+	/*
+	 * Update result framebuffer
+	*/
 
-	if ((std::size_t) lightVolumeSize.x != framebuffer.width || (std::size_t) lightVolumeSize.y != framebuffer.height) {
+	ResultFrameBuffer2DVolume* resultFrameBufferVolume = (ResultFrameBuffer2DVolume*) rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
 
-		/*
-		 * Clear light accumulation volume
-		*/
-
-		_lightAccumulationVolume->Clear ();
-
-		/*
-		 * Initialize light accumulation volume
-		*/
-
-		InitLightAccumulationVolume (settings);
+	if (resultFrameBufferVolume->GetDepthBuffer () != _frameBuffer->GetDepthBuffer ()) {
+		resultFrameBufferVolume->AttachDepthBuffer (_frameBuffer->GetDepthBuffer ());
 	}
 }
 
@@ -373,19 +352,5 @@ void DeferredGeometryRenderPass::InitGBufferVolume (const RenderSettings& settin
 			"Geometry buffer for deferred rendering cannot be initialized!" +
 			" It is not possible to continue the process. End now!");
 		exit (GBUFFER_FBO_NOT_INIT);
-	}
-}
-
-void DeferredGeometryRenderPass::InitLightAccumulationVolume (const RenderSettings& settings)
-{
-	/*
-	 * Initialize light accumulation volume
-	*/
-
-	if (!_lightAccumulationVolume->Init (glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height), _frameBuffer)) {
-		Console::LogError (std::string () +
-			"Light accumulation buffer for deferred rendering cannot be initialized!" +
-			" It is not possible to continue the process. End now!");
-		exit (LIGHT_ACCUMULATION_FBO_NOT_INIT);
 	}
 }

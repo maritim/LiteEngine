@@ -1,12 +1,14 @@
 #ifndef VCTDIRECTIONALLIGHTRENDERPASS_H
 #define VCTDIRECTIONALLIGHTRENDERPASS_H
 
-#include "RenderPasses/DirectionalVolumetricLightContainerRenderSubPass.h"
+#include "RenderPasses/DirectionalVolumetricLightRenderPass.h"
 
 #include <string>
 
-class VCTDirectionalLightRenderPass : public DirectionalVolumetricLightContainerRenderSubPass
+class VCTDirectionalLightRenderPass : public DirectionalVolumetricLightRenderPass
 {
+	DECLARE_RENDER_PASS(VCTDirectionalLightRenderPass)
+
 protected:
 	std::string _shadowShaderName;
 

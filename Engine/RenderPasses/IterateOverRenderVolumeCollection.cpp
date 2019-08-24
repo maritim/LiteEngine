@@ -18,7 +18,7 @@ void IterateOverRenderVolumeCollection::Reset ()
 	_iterationsElapsed = 0;
 }
 
-RenderVolumeI* IterateOverRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene)
+RenderVolumeI* IterateOverRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene, const RenderSettings&)
 {
 	if (_iterationsElapsed == _iterations) {
 		return nullptr;

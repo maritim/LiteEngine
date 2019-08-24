@@ -66,10 +66,9 @@ void VoxelMipmapRenderPass::GenerateMipmaps (const RenderSettings& settings, Ren
 
 	voxelVolume->BindForReading ();
 
-	for (int mipLevel = 0; mipLevel < MIPMAP_LEVELS - 1; mipLevel++) {
+	for (std::size_t mipLevel = 0; mipLevel < voxelVolume->GetVolumeMipmapLevels () - 1; mipLevel++) {
 
-		Pipeline::SendCustomAttributes ("VOXEL_MIPMAP_PASS_COMPUTE_SHADER",
-			rvc->GetRenderVolume ("VoxelVolume")->GetCustomAttributes ());
+		Pipeline::SendCustomAttributes ("VOXEL_MIPMAP_PASS_COMPUTE_SHADER", voxelVolume->GetCustomAttributes ());
 
 		GL::Uniform1i (computeShader->GetUniformLocation ("SrcMipLevel"), mipLevel);
 		GL::Uniform1i (computeShader->GetUniformLocation ("DstMipRes"), dstMipRes);

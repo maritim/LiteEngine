@@ -7,6 +7,8 @@
 
 class VoxelDirectionalShadowMapRenderPass : public RenderPassI
 {
+	DECLARE_RENDER_PASS(VoxelDirectionalShadowMapRenderPass)
+
 protected:
 	std::string _staticShaderName;
 	std::string _animationShaderName;

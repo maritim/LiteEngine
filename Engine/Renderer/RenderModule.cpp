@@ -1,5 +1,7 @@
 #include "RenderModule.h"
 
+#include "Debug/Profiler/Profiler.h"
+
 RenderModule::RenderModule () :
 	_rvc (nullptr)
 {
@@ -47,6 +49,9 @@ RenderProduct RenderModule::Render (const RenderScene* renderScene, const Camera
 	*/
 
 	for (RenderPassI* renderPass : _renderPasses) {
+		PROFILER_LOGGER(renderPass->GetName ())
+		PROFILER_GPU_LOGGER(renderPass->GetName ())
+
 		_rvc = renderPass->Execute (renderScene, camera, settings, _rvc);
 	}
 
@@ -54,7 +59,7 @@ RenderProduct RenderModule::Render (const RenderScene* renderScene, const Camera
 	 * Initialize render product
 	*/
 
-	product.resultVolume = _rvc->GetRenderVolume ("LightAccumulationVolume");
+	product.resultVolume = _rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
 
 	return product;
 }

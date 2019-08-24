@@ -17,7 +17,7 @@ void PointLightContainerRenderVolumeCollection::Reset ()
 	// _pointLightsIterator = LightsManager::Instance ()->begin<PointLight*> ();
 }
 
-RenderVolumeI* PointLightContainerRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene)
+RenderVolumeI* PointLightContainerRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene, const RenderSettings& settings)
 {
 	return nullptr;
 

@@ -7,6 +7,8 @@
 
 class WindowBlitRenderPass : public RenderPassI
 {
+	DECLARE_RENDER_PASS(WindowBlitRenderPass)
+
 public:
 	virtual ~WindowBlitRenderPass ();
 

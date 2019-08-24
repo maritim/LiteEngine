@@ -9,7 +9,6 @@ class EditorMainMenu : public EditorWidget
 public:
 	void Show ();
 protected:
-	void CreateDockSpace ();
 	void ShowMainMenu ();
 };
 

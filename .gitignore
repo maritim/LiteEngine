@@ -30,10 +30,10 @@
 *.app
 
 # Build
-Assets/Examples/
-Build/
-Debug/
-.Utils/
+/Assets/Examples/
+/Build/
+/Debug/
+/.Utils/
 
 # python bytecode
 *.pyc
@@ -57,8 +57,8 @@ TODOS
 *.opendb
 *.cfg
 *.user
-Engine/x64
-Engine/x86
-x86/
-x64/
-.vs/
+/Engine/x64
+/Engine/x86
+/x86/
+/x64/
+/.vs/

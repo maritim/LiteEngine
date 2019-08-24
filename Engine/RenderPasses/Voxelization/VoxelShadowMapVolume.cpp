@@ -2,16 +2,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-void VoxelShadowMapVolume::SetLightCamera (Camera* camera)
-{
-	_camera = camera;
-}
-
-Camera* VoxelShadowMapVolume::GetLightCamera ()
-{
-	return _camera;
-}
-
 void VoxelShadowMapVolume::BindForReading ()
 {
 	/*
@@ -49,8 +39,9 @@ std::vector<PipelineAttribute> VoxelShadowMapVolume::GetCustomAttributes () cons
 	cascadesCount.value.x = _cascadedLevels;
 	shadowMap.value.x = 4;
 
-	glm::mat4 lightProjection = _camera->GetProjectionMatrix ();
-	glm::mat4 lightView = glm::translate (glm::mat4_cast (_camera->GetRotation ()), _camera->GetPosition () * -1.0f);
+	Camera* lightCamera = _lightCameras [0];
+	glm::mat4 lightProjection = lightCamera->GetProjectionMatrix ();
+	glm::mat4 lightView = glm::translate (glm::mat4_cast (lightCamera->GetRotation ()), lightCamera->GetPosition () * -1.0f);
 
 	lightSpaceMatrix.matrix = lightProjection * lightView;
 

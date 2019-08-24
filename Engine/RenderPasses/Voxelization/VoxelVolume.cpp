@@ -7,7 +7,8 @@
 VoxelVolume::VoxelVolume() :
 	_volumeTexture(0),
 	_volumeFbo(0),
-	_volumeSize(0)
+	_volumeSize(0),
+	_volumeMipmapLevels(0)
 {
 
 }
@@ -93,31 +94,31 @@ std::vector<PipelineAttribute> VoxelVolume::GetCustomAttributes () const
 	PipelineAttribute minVertex;
 	PipelineAttribute maxVertex;
 	PipelineAttribute volumeSize;
-	PipelineAttribute volumeMipmapLevel;
+	PipelineAttribute volumeMipmapLevels;
 
 	volumeTexture.type = PipelineAttribute::AttrType::ATTR_1I;
 	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
 	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
 	volumeSize.type = PipelineAttribute::AttrType::ATTR_3I;
-	volumeMipmapLevel.type = PipelineAttribute::AttrType::ATTR_1I;
+	volumeMipmapLevels.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	volumeTexture.name = "volumeTexture";
 	minVertex.name = "minVertex";
 	maxVertex.name = "maxVertex";
 	volumeSize.name = "volumeSize";
-	volumeMipmapLevel.name = "volumeMipmapLevel";
+	volumeMipmapLevels.name = "volumeMipmapLevels";
 
 	volumeTexture.value.x = 10;
 	minVertex.value = _minVertex;
 	maxVertex.value = _maxVertex;
 	volumeSize.value = glm::vec3 ((float) _volumeSize);
-	volumeMipmapLevel.value.x = 0;
+	volumeMipmapLevels.value.x = _volumeMipmapLevels;
 
 	attributes.push_back (volumeTexture);
 	attributes.push_back (minVertex);
 	attributes.push_back (maxVertex);
 	attributes.push_back (volumeSize);
-	attributes.push_back (volumeMipmapLevel);
+	attributes.push_back (volumeMipmapLevels);
 
 	return attributes;
 }
@@ -159,14 +160,30 @@ void VoxelVolume::UpdateBoundingBox(const glm::vec3& minVertex, const glm::vec3&
 	_maxVertex += glm::vec3(difX / 2.0f, difY / 2.0f, difZ / 2.0f);
 }
 
-void VoxelVolume::BindForWriting (std::size_t mipmap)
+void VoxelVolume::BindForWriting (std::size_t mipmap, bool permit)
 {
-	GL::BindImageTexture (0, _volumeTexture, mipmap, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+	if (permit == false) {
+		GL::BindImageTexture (0, _volumeTexture, mipmap, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+	}
+
+	if (permit == true) {
+		GL::BindImageTexture (0, _volumeTexture, mipmap, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
+	}
+}
+
+void VoxelVolume::SetVolumeMipmapLevels (std::size_t volumeMipmapLevels)
+{
+	_volumeMipmapLevels = volumeMipmapLevels;
 }
 
 std::size_t VoxelVolume::GetVolumeSize () const
 {
 	return _volumeSize;
+}
+
+std::size_t VoxelVolume::GetVolumeMipmapLevels () const
+{
+	return _volumeMipmapLevels;
 }
 
 void VoxelVolume::Clear()

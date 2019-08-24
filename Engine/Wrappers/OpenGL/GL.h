@@ -222,6 +222,16 @@ public:
 	static void MemoryBarrier(GLbitfield barriers);
 
 	/*
+	 * Queries
+	*/
+
+	static void GenQueries(GLsizei n, GLuint * ids);
+	static void DeleteQueries(GLsizei n, const GLuint * ids);
+	static void QueryCounter(GLuint id, GLenum target);
+	static void GetQueryObjectiv(GLuint id, GLenum pname, GLint * params);
+	static void GetQueryObjectui64v(GLuint id, GLenum pname, GLuint64 * params);
+
+	/*
 	 * Capabilities
 	*/
 

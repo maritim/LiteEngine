@@ -51,12 +51,8 @@ TextGUIVertexData::TextGUIVertexData ()
 	}
 }
 
-#include "Debug/Logger/Logger.h"
-
 Resource<ModelView> RenderSystem::LoadModel (const Resource<Model>& model)
 {
-	DEBUG_LOG (model->GetName ());
-
 	if (Resource<ModelView>::GetResource (model->GetName ()) != nullptr) {
 		return Resource<ModelView>::GetResource (model->GetName ());
 	}

@@ -168,7 +168,7 @@ void VoxelizationRenderPass::GeometryVoxelizationPass (const RenderScene* render
 
 void VoxelizationRenderPass::EndVoxelization ()
 {
-	// GL::MemoryBarrier(GL_ALL_BARRIER_BITS);
+	GL::MemoryBarrier(GL_ALL_BARRIER_BITS);
 
 	/*
 	* Clear settings
@@ -228,6 +228,12 @@ void VoxelizationRenderPass::InitVoxelVolume (const RenderSettings& settings)
 			" It is not possible to continue the process. End now!");
 		exit (VOXEL_TEXTURE_NOT_INIT);
 	}
+
+	/*
+	 * Set voxel volume mipmap levels
+	*/
+
+	_voxelVolume->SetVolumeMipmapLevels (settings.vct_mipmap_levels);
 }
 
 void VoxelizationRenderPass::UpdateVoxelVolume (const RenderSettings& settings)
@@ -245,5 +251,14 @@ void VoxelizationRenderPass::UpdateVoxelVolume (const RenderSettings& settings)
 		*/
 
 		InitVoxelVolume (settings);
+	}
+
+	if (_voxelVolume->GetVolumeMipmapLevels () != settings.vct_mipmap_levels) {
+
+		/*
+		 * Update voxel volume mipmap levels
+		*/
+
+		_voxelVolume->SetVolumeMipmapLevels (settings.vct_mipmap_levels);
 	}
 }

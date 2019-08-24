@@ -19,7 +19,7 @@ public:
 	~PointLightContainerRenderVolumeCollection ();
 
 	void Reset ();
-	RenderVolumeI* GetNextVolume (const RenderScene*);
+	RenderVolumeI* GetNextVolume (const RenderScene*, const RenderSettings&);
 };
 
 #endif

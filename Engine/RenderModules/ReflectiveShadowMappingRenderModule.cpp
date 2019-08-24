@@ -1,5 +1,6 @@
 #include "ReflectiveShadowMappingRenderModule.h"
 
+#include "RenderPasses/ResultFrameBufferGenerationRenderPass.h"
 #include "RenderPasses/DeferredGeometryRenderPass.h"
 #include "RenderPasses/DeferredSkyboxRenderPass.h"
 #include "RenderPasses/DeferredBlitRenderPass.h"
@@ -9,26 +10,28 @@
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
 
-#include "RenderPasses/AmbientOcclusion/SSAOSamplesGenerationContainerRenderSubPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAONoiseGenerationContainerRenderSubPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAOContainerRenderSubPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAOBlurContainerRenderSubPass.h"
+#include "RenderPasses/AmbientOcclusion/SSAOSamplesGenerationRenderPass.h"
+#include "RenderPasses/AmbientOcclusion/SSAONoiseGenerationRenderPass.h"
+#include "RenderPasses/AmbientOcclusion/SSAORenderPass.h"
+#include "RenderPasses/AmbientOcclusion/SSAOBlurRenderPass.h"
 
-#include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationContainerRenderSubPass.h"
-#include "RenderPasses/ReflectiveShadowMapping/RSMSamplesGenerationContainerRenderSubPass.h"
-#include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightContainerRenderSubPass.h"
-#include "RenderPasses/ReflectiveShadowMapping/RSMCachingContainerRenderSubPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMSamplesGenerationRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMCachingRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 
-#include "RenderPasses/DeferredAmbientLightContainerRenderSubPass.h"
+#include "RenderPasses/DeferredAmbientLightRenderPass.h"
 
-#include "RenderPasses/IdleContainerRenderSubPass.h"
-#include "RenderPasses/Bloom/BrightExtractionContainerRenderSubPass.h"
-#include "RenderPasses/Bloom/BloomHorizontalBlurContainerRenderSubPass.h"
-#include "RenderPasses/Bloom/BloomVerticalBlurContainerRenderSubPass.h"
-#include "RenderPasses/Bloom/BloomAccumulationContainerRenderSubPass.h"
-#include "RenderPasses/HighDynamicRange/HDRContainerRenderSubPass.h"
-#include "RenderPasses/GammaCorrection/GammaCorrectionContainerRenderSubPass.h"
+#include "RenderPasses/IdleRenderPass.h"
+#include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
+#include "RenderPasses/ScreenSpaceReflection/SSRAccumulationRenderPass.h"
+#include "RenderPasses/Bloom/BrightExtractionRenderPass.h"
+#include "RenderPasses/Bloom/BloomHorizontalBlurRenderPass.h"
+#include "RenderPasses/Bloom/BloomVerticalBlurRenderPass.h"
+#include "RenderPasses/Bloom/BloomAccumulationRenderPass.h"
+#include "RenderPasses/HighDynamicRange/HDRRenderPass.h"
+#include "RenderPasses/GammaCorrection/GammaCorrectionRenderPass.h"
 
 void ReflectiveShadowMappingRenderModule::Init ()
 {
@@ -37,41 +40,47 @@ void ReflectiveShadowMappingRenderModule::Init ()
 	 * render passes
 	*/
 
+	_renderPasses.push_back (new ResultFrameBufferGenerationRenderPass ());
 	_renderPasses.push_back (new DeferredGeometryRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
-		.Attach (new RSMDirectionalLightAccumulationContainerRenderSubPass ())
-		.Attach (new RSMSamplesGenerationContainerRenderSubPass ())
-		.Attach (new RSMCachingContainerRenderSubPass ())
-		.Attach (new RSMDirectionalLightContainerRenderSubPass ())
+		.Attach (new RSMDirectionalLightAccumulationRenderPass ())
+		.Attach (new RSMSamplesGenerationRenderPass ())
+		.Attach (new RSMCachingRenderPass ())
+		.Attach (new RSMDirectionalLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
-		.Attach (new SSAOSamplesGenerationContainerRenderSubPass ())
-		.Attach (new SSAONoiseGenerationContainerRenderSubPass ())
-		.Attach (new SSAOContainerRenderSubPass ())
-		.Attach (new SSAOBlurContainerRenderSubPass ())
+		.Attach (new SSAOSamplesGenerationRenderPass ())
+		.Attach (new SSAONoiseGenerationRenderPass ())
+		.Attach (new SSAORenderPass ())
+		.Attach (new SSAOBlurRenderPass ())
 		.Build ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
-		.Attach (new DeferredAmbientLightContainerRenderSubPass ())
+		.Attach (new DeferredAmbientLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
-		.Attach (new IdleContainerRenderSubPass ())
+		.Attach (new IdleRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
-			.Attach (new BrightExtractionContainerRenderSubPass ())
+			.Attach (new SSRRenderPass ())
+			.Attach (new SSRAccumulationRenderPass ())
+			.Build ())
+		.Attach (ContainerRenderPass::Builder ()
+			.Volume (new IterateOverRenderVolumeCollection (1))
+			.Attach (new BrightExtractionRenderPass ())
 			.Attach (ContainerRenderPass::Builder ()
 				.Volume (new IterateOverRenderVolumeCollection (5))
-				.Attach (new BloomHorizontalBlurContainerRenderSubPass ())
-				.Attach (new BloomVerticalBlurContainerRenderSubPass ())
+				.Attach (new BloomHorizontalBlurRenderPass ())
+				.Attach (new BloomVerticalBlurRenderPass ())
 				.Build ())
-			.Attach (new BloomAccumulationContainerRenderSubPass ())
+			.Attach (new BloomAccumulationRenderPass ())
 			.Build ())
-		.Attach (new HDRContainerRenderSubPass ())
-		.Attach (new GammaCorrectionContainerRenderSubPass ())
+		.Attach (new HDRRenderPass ())
+		.Attach (new GammaCorrectionRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredBlitRenderPass ());
 	_renderPasses.push_back (new ForwardRenderPass ());

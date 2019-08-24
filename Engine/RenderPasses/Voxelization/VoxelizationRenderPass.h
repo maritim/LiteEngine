@@ -9,6 +9,8 @@
 
 class VoxelizationRenderPass : public RenderPassI
 {
+	DECLARE_RENDER_PASS(VoxelizationRenderPass)
+
 protected:
 	std::string _staticShaderName;
 	std::string _animationShaderName;

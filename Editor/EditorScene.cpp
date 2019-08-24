@@ -18,6 +18,7 @@
 EditorScene::EditorScene () :
 	_sceneCamera (new PerspectiveCamera ()),
 	_renderSettings (nullptr),
+	_isActive (true),
 	_position (0),
 	_size (0),
 	_textureID (0),
@@ -31,8 +32,6 @@ EditorScene::~EditorScene ()
 {
 	delete _sceneCamera;
 }
-
-#include "Debug/Logger/Logger.h"
 
 void EditorScene::Init ()
 {
@@ -74,23 +73,35 @@ void EditorScene::Update ()
 
 void EditorScene::Render ()
 {
-	// _renderSettings->renderMode = "SceneRenderModule";
-	_renderSettings->framebuffer.width = _size.x;
-	_renderSettings->framebuffer.height = _size.y;
-	_renderSettings->viewport.x = 0;
-	_renderSettings->viewport.y = 0;
-	_renderSettings->viewport.width = _size.x;
-	_renderSettings->viewport.height = _size.y;
+	if (_isActive == true) {
+		// _renderSettings->renderMode = "SceneRenderModule";
+		_renderSettings->framebuffer.width = _size.x;
+		_renderSettings->framebuffer.height = _size.y;
+		_renderSettings->viewport.x = 0;
+		_renderSettings->viewport.y = 0;
+		_renderSettings->viewport.width = _size.x;
+		_renderSettings->viewport.height = _size.y;
 
-	RenderProduct result = RenderManager::Instance ()->Render (_sceneCamera, *_renderSettings);
+		RenderProduct result = RenderManager::Instance ()->Render (_sceneCamera, *_renderSettings);
 
-	FrameBuffer2DVolume* framebuffer = dynamic_cast<FrameBuffer2DVolume*> (result.resultVolume);
-	_textureID = framebuffer->GetColorTextureID ();
+		FrameBuffer2DVolume* framebuffer = dynamic_cast<FrameBuffer2DVolume*> (result.resultVolume);
+		_textureID = framebuffer->GetColorTextureID ();		
+	}
 }
 
 Camera* EditorScene::GetCamera ()
 {
 	return _sceneCamera;
+}
+
+void EditorScene::SetActive (bool isActive)
+{
+	_isActive = isActive;
+}
+
+bool EditorScene::IsActive () const
+{
+	return _isActive;
 }
 
 glm::ivec2 EditorScene::GetWindowPosition () const

@@ -50,6 +50,6 @@ void main()
 			alpha += values [i].a;
 		}
 
-		imageStore(dstImageMip, dstPos, vec4(finalColor / contributionCount, alpha));
+		imageStore(dstImageMip, dstPos, vec4(finalColor / contributionCount, alpha / 8.0));
 	}
 }

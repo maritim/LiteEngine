@@ -47,18 +47,38 @@ std::vector<PipelineAttribute> VCTDirectionalLightRenderPass::GetCustomAttribute
 
 	PipelineAttribute ambientLightColor;
 	PipelineAttribute indirectIntensity;
+	PipelineAttribute diffuseConeDistance;
+	PipelineAttribute specularConeDistance;
+	PipelineAttribute shadowConeRatio;
+	PipelineAttribute shadowConeDistance;
 
 	ambientLightColor.type = PipelineAttribute::AttrType::ATTR_3F;
 	indirectIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+	diffuseConeDistance.type = PipelineAttribute::AttrType::ATTR_1F;
+	specularConeDistance.type = PipelineAttribute::AttrType::ATTR_1F;
+	shadowConeRatio.type = PipelineAttribute::AttrType::ATTR_1F;
+	shadowConeDistance.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	ambientLightColor.name = "ambientLightColor";
 	indirectIntensity.name = "indirectIntensity";
+	diffuseConeDistance.name = "diffuseConeDistance";
+	specularConeDistance.name = "specularConeDistance";
+	shadowConeRatio.name = "shadowConeRatio";
+	shadowConeDistance.name = "shadowConeDistance";
 
 	// ambientLightColor.value = LightsManager::Instance ()->GetAmbientLightColor ().ToVector3 ();
 	indirectIntensity.value.x = settings.vct_indirect_intensity;
+	diffuseConeDistance.value.x = settings.vct_diffuse_cone_distance;
+	specularConeDistance.value.x = settings.vct_specular_cone_distance;
+	shadowConeRatio.value.x = settings.vct_shadow_cone_ratio;
+	shadowConeDistance.value.x = settings.vct_shadow_cone_distance;
 
 	attributes.push_back (ambientLightColor);
 	attributes.push_back (indirectIntensity);
+	attributes.push_back (diffuseConeDistance);
+	attributes.push_back (specularConeDistance);
+	attributes.push_back (shadowConeRatio);
+	attributes.push_back (shadowConeDistance);
 
 	return attributes;
 }

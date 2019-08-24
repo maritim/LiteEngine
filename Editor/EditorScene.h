@@ -19,6 +19,7 @@ class EditorScene : public Singleton<EditorScene>
 private:
 	Camera* _sceneCamera;
 	RenderSettings* _renderSettings;
+	bool _isActive;
 
 	glm::ivec2 _position;
 	glm::ivec2 _size;
@@ -38,6 +39,9 @@ public:
 	void Render ();
 
 	Camera* GetCamera ();
+
+	void SetActive (bool isActive);
+	bool IsActive () const;
 
 	glm::ivec2 GetWindowPosition () const;
 	glm::ivec2 GetWindowSize () const;

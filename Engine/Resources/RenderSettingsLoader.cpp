@@ -170,10 +170,20 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	std::string voxelsSize = xmlElem->Attribute ("voxelsSize");
 	std::string continuousVoxelization = xmlElem->Attribute ("continuousVoxelization");
 	std::string bordering = xmlElem->Attribute ("bordering");
+	std::string mipmapLevels = xmlElem->Attribute ("mipmapLevels");
 	std::string indirectIntensity = xmlElem->Attribute ("indirectIntensity");
+	std::string diffuseConeDistance = xmlElem->Attribute ("diffuseConeDistance");
+	std::string specularConeDistance = xmlElem->Attribute ("specularConeDistance");
+	std::string shadowConeRatio = xmlElem->Attribute ("shadowConeRatio");
+	std::string shadowConeDistance = xmlElem->Attribute ("shadowConeDistance");
 
 	settings->vct_voxels_size = std::stoi (voxelsSize);
 	settings->vct_continuous_voxelization = Extensions::StringExtend::ToBool (continuousVoxelization);
 	settings->vct_bordering = Extensions::StringExtend::ToBool (bordering);
+	settings->vct_mipmap_levels = std::stoi (mipmapLevels);
 	settings->vct_indirect_intensity = std::stof (indirectIntensity);
+	settings->vct_diffuse_cone_distance = std::stof (diffuseConeDistance);
+	settings->vct_specular_cone_distance = std::stof (specularConeDistance);
+	settings->vct_shadow_cone_ratio = std::stof (shadowConeRatio);
+	settings->vct_shadow_cone_distance = std::stof (shadowConeDistance);
 }

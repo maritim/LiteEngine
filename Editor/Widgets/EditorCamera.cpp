@@ -22,7 +22,8 @@ void EditorCamera::Show ()
 {
 	static bool rightButtonDown = false;
 
-	if (EditorScene::Instance ()->IsWindowHovered () == false) {
+	if (EditorScene::Instance ()->IsActive () == false ||
+		EditorScene::Instance ()->IsWindowHovered () == false) {
 		if (rightButtonDown == true) {
 
 			rightButtonDown = false;

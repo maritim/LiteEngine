@@ -57,23 +57,6 @@ void VoxelRadianceInjectionRenderPass::StartRadianceInjectionPass ()
 
 void VoxelRadianceInjectionRenderPass::RadianceInjectPass (const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
-
-	/*
-	 * Bind all render volumes
-	*/
-
-	// for (RenderVolumeI* renderVolume : *rvc) {
-	// 	renderVolume->BindForReading ();
-	// }
-
-	/*
-	 * Send custom attributes of render volumes to pipeline
-	*/
-
-	// for (RenderVolumeI* renderVolume : *rvc) {
-	// 	Pipeline::SendCustomAttributes ("", renderVolume->GetCustomAttributes ());
-	// }
-	
 	/*
 	 * Bind render volumes for reading
 	*/
@@ -91,9 +74,6 @@ void VoxelRadianceInjectionRenderPass::RadianceInjectPass (const RenderSettings&
 
 	Pipeline::SendCustomAttributes ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER",
 		rvc->GetRenderVolume ("VoxelVolume")->GetCustomAttributes ());
-
-	Pipeline::SendCustomAttributes ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER", GetCustomAttributes ());
-
 	/*
 	 * Bind voxel volume for writing
 	*/
@@ -117,7 +97,7 @@ void VoxelRadianceInjectionRenderPass::EndRadianceInjectionPass ()
 	GL::MemoryBarrier (GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
-std::vector<PipelineAttribute> VoxelRadianceInjectionRenderPass::GetCustomAttributes () const
+std::vector<PipelineAttribute> VoxelRadianceInjectionRenderPass::GetCustomAttributes (const RenderSettings& settings) const
 {
 	/*
 	 * Attach voxel radiance injection attributes to pipeline
@@ -125,20 +105,20 @@ std::vector<PipelineAttribute> VoxelRadianceInjectionRenderPass::GetCustomAttrib
 
 	std::vector<PipelineAttribute> attributes;
 
-	// PipelineAttribute ambientLightColor;
-	// PipelineAttribute ambient;
+	PipelineAttribute shadowConeRatio;
+	PipelineAttribute shadowConeDistance;
 
-	// ambientLightColor.type = PipelineAttribute::AttrType::ATTR_3F;
-	// ambient.type = PipelineAttribute::AttrType::ATTR_3F;
+	shadowConeRatio.type = PipelineAttribute::AttrType::ATTR_1F;
+	shadowConeDistance.type = PipelineAttribute::AttrType::ATTR_1F;
 
-	// ambientLightColor.name = "ambientLightColor";
-	// ambient.name = "ambient";
+	shadowConeRatio.name = "shadowConeRatio";
+	shadowConeDistance.name = "shadowConeDistance";
 
-	// // ambientLightColor.value = LightsManager::Instance ()->GetAmbientLightColor ().ToVector3 ();
-	// ambient.value = _ambient ? glm::vec3 (1.0f) : glm::vec3 (0.0f);
+	shadowConeRatio.value.x = settings.vct_shadow_cone_ratio;
+	shadowConeDistance.value.x = settings.vct_shadow_cone_distance;
 
-	// attributes.push_back (ambientLightColor);
-	// attributes.push_back (ambient);
+	attributes.push_back (shadowConeRatio);
+	attributes.push_back (shadowConeDistance);
 
 	return attributes;
 }

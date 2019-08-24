@@ -2,17 +2,12 @@
 #define VOXELBORDERRENDERPASS_H
 
 #include "Renderer/RenderPassI.h"
-#include "Core/Observer/ObserverI.h"
 
-#include "Systems/Settings/SettingsObserverArgs.h"
-
-class VoxelBorderRenderPass : public RenderPassI, public ObserverI<SettingsObserverArgs>
+class VoxelBorderRenderPass : public RenderPassI
 {
-protected:
-	bool _enabled;
-	std::size_t _voxelVolumeSize;
-	bool _continuousVoxelization;
+	DECLARE_RENDER_PASS(VoxelBorderRenderPass)
 
+protected:
 	bool _firstTime;
 
 public:
@@ -22,16 +17,11 @@ public:
 	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
-	void Notify (Object* sender, const SettingsObserverArgs& args);
-
 	void Clear ();
 protected:
 	void StartVoxelBordering ();
-	void BorderVoxelVolume (RenderVolumeCollection*);
+	void BorderVoxelVolume (const RenderSettings&, RenderVolumeCollection*);
 	void EndVoxelBordering ();
-
-	void InitSettings ();
-	void ClearSettings ();
 };
 
 #endif

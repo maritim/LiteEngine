@@ -8,13 +8,7 @@
 
 class VoxelShadowMapVolume : public CascadedShadowMapDirectionalLightVolume
 {
-protected:
-	Camera* _camera;
-
 public:
-	virtual void SetLightCamera (Camera*);
-	virtual Camera* GetLightCamera ();
-
 	virtual void BindForReading ();
 	virtual void BindForWriting ();
 	virtual std::vector<PipelineAttribute> GetCustomAttributes () const;

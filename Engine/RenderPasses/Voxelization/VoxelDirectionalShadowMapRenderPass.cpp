@@ -74,7 +74,7 @@ RenderVolumeCollection* VoxelDirectionalShadowMapRenderPass::Execute (const Rend
 		*/
 
 		Camera* lightCamera = GetLightCamera (renderScene, camera);
-		_voxelShadowMapVolume->SetLightCamera (lightCamera);
+		_voxelShadowMapVolume->SetLightCamera (0, lightCamera);
 
 		/*
 		* Render geometry on shadow map

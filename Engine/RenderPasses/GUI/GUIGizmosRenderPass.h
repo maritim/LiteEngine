@@ -1,14 +1,16 @@
 #ifndef GUIGIZMOSRENDERPASS_H
 #define GUIGIZMOSRENDERPASS_H
 
-#include "Renderer/RenderPassI.h"
+#include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
 #include <string>
 
 #include "Systems/GUI/Gizmo/Gizmo.h"
 
-class ENGINE_API GUIGizmosRenderPass : public RenderPassI
+class ENGINE_API GUIGizmosRenderPass : public ContainerRenderSubPassI
 {
+	DECLARE_RENDER_PASS(GUIGizmosRenderPass)
+
 protected:
 	std::string _shaderName;
 
@@ -18,6 +20,8 @@ public:
 	virtual void Init (const RenderSettings& settings);
 	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
+	virtual bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
+		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 
 	void Clear ();
 protected:

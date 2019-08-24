@@ -7,6 +7,7 @@
 
 #include "Systems/Settings/SettingsManager.h"
 
+#include "EditorScene.h"
 #include "EditorSelection.h"
 
 void EditorMainMenu::Show ()
@@ -53,7 +54,7 @@ void EditorMainMenu::ShowMainMenu ()
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Windows")) {
+		if (ImGui::BeginMenu("Window")) {
 
 			bool lastShowHierarchy = SettingsManager::Instance ()->GetValue<bool> ("menu_show_hierarchy", false);
 			bool showHierarchy = lastShowHierarchy;
@@ -75,6 +76,12 @@ void EditorMainMenu::ShowMainMenu ()
 			bool showRenderingSettings = lastShowRenderingSettings;
 			ImGui::MenuItem("Rendering Settings", "CTRL+5", &showRenderingSettings);
 
+			ImGui::Separator ();
+
+			bool lastShowProfiler = SettingsManager::Instance ()->GetValue<bool> ("menu_show_profiler", false);
+			bool showProfiler = lastShowProfiler;
+			ImGui::MenuItem("Profiler", "CTRL+6", &showProfiler);
+
 			if (showHierarchy != lastShowHierarchy) {
 				SettingsManager::Instance ()->SetValue ("menu_show_hierarchy", std::to_string (showHierarchy));
 			}
@@ -91,7 +98,22 @@ void EditorMainMenu::ShowMainMenu ()
 				SettingsManager::Instance ()->SetValue ("menu_show_rendering_settings", std::to_string (showRenderingSettings));
 			}
 
+			if (showProfiler != lastShowProfiler) {
+				SettingsManager::Instance ()->SetValue ("menu_show_profiler", std::to_string (showProfiler));
+			}
+
 			ImGui::EndMenu();
+		}
+
+		ImGui::Separator ();
+		if (EditorScene::Instance ()->IsActive () == false) {
+			if (ImGui::Button ("Play")) {
+				EditorScene::Instance ()->SetActive (true);
+			}
+		} else {
+			if (ImGui::Button ("Stop")) {
+				EditorScene::Instance ()->SetActive (false);
+			}
 		}
 
 		ImGui::EndMainMenuBar();
