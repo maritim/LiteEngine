@@ -18,6 +18,7 @@ protected:
 	void ShowObject (SceneObject* object);
 
 	void ShowGameObject (SceneObject* object);
+	void ShowLight (SceneObject* object);
 
 	void ShowRenderer (SceneObject* object);
 	void ShowRigidbody (Rigidbody* rigidbody);

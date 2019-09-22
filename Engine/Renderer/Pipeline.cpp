@@ -346,8 +346,12 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 			case PipelineAttribute::ATTR_BLOCK : {
 					unsigned int uniBlockIndex = shader->GetUniformBlockIndex (attr [i].name.c_str ());
 
+					if (uniBlockIndex == GL_INVALID_INDEX) {
+						break;
+					}
+
 					GL::UniformBlockBinding (shader->GetProgram (), uniBlockIndex, 0);
-					GL::BindBufferBase (GL_UNIFORM_BUFFER, 0, (unsigned int) attr [i].value.x); 
+					GL::BindBufferBase (GL_UNIFORM_BUFFER, 0, (unsigned int) attr [i].value.x);
 				}
 				break;
 		}

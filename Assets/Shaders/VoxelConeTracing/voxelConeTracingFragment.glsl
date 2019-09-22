@@ -2,11 +2,6 @@
 
 layout(location = 0) out vec3 out_color;
 
-uniform sampler2D gPositionMap;
-uniform sampler2D gNormalMap;
-uniform sampler2D gDiffuseMap;
-uniform sampler2D gSpecularMap;
-
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
@@ -23,10 +18,6 @@ uniform vec3 cameraPosition;
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
 
-uniform vec3 attenuationComp;
-
-uniform vec2 screenSize;
-
 uniform sampler3D volumeTexture;
 
 uniform vec3 minVertex;
@@ -41,10 +32,8 @@ uniform float shadowConeDistance;
 
 uniform float indirectIntensity;
 
-vec2 CalcTexCoord()
-{
-	return gl_FragCoord.xy / screenSize;
-}
+#include "deferred.glsl"
+#include "AmbientLight/ambientLight.glsl"
 
 float GetInterpolatedComp (float comp, float minValue, float maxValue)
 {
@@ -285,13 +274,17 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 
 	float ambientOcclusion = CalcOcclusion (worldPosition, worldNormal);
 
+	// Calculate ambient light
+	vec3 ambientColor = CalcAmbientLight ();
+
 	// return vec3 (ambientOcclusion);
 	// return indirectSpecularColor;
 	// return vec3 (shadow);
 	// return indirectDiffuseColor;
 	// return indirectSpecularColor;
 	return (directDiffuseColor + indirectDiffuseColor * indirectIntensity) * in_diffuse
-		   + (directSpecularColor + indirectSpecularColor * indirectIntensity) * in_specular;
+		   + (directSpecularColor + indirectSpecularColor * indirectIntensity) * in_specular
+		   + ambientColor * in_diffuse;
 }
 
 void main()

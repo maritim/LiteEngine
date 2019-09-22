@@ -19,14 +19,14 @@ uniform vec3 cameraPosition;
 
 uniform vec2 screenSize;
 
-const int SSAO_SAMPLES_KERNEL = 64;
+layout(std140) uniform ssaoSamples
+{
+	int ssaoSamplesCount;
+	vec3 ssaoSample[200];
+};
 
-uniform int ssaoSamplesCount;
-uniform vec3 ssaoSample[SSAO_SAMPLES_KERNEL];
-
-uniform sampler2D ssaoNoiseMap;
-
-uniform vec2 ssaoNoiseSize;
+uniform sampler2D noiseMap;
+uniform vec2 noiseSize;
 
 uniform vec2 ssaoResolution;
 uniform float ssaoRadius;
@@ -45,9 +45,9 @@ float CalcScreenSpaceAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 te
 	 * Compute noise scale to map the noise on the whole screen
 	*/
 
-	vec2 noiseScale = ssaoResolution / ssaoNoiseSize;
+	vec2 noiseScale = ssaoResolution / noiseSize;
 
-	vec3 randomVec = texture (ssaoNoiseMap, texCoord * noiseScale).xyz;
+	vec3 randomVec = texture (noiseMap, texCoord * noiseScale).xyz;
 
 	vec3 tangent = normalize (randomVec - in_normal * dot (randomVec, in_normal));
 	vec3 bitangent = cross (in_normal, tangent);

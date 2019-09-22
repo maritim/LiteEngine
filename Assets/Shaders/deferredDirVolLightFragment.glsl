@@ -2,11 +2,6 @@
 
 layout(location = 0) out vec3 out_color;
 
-uniform sampler2D gPositionMap;
-uniform sampler2D gNormalMap;
-uniform sampler2D gDiffuseMap;
-uniform sampler2D gSpecularMap;
-
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelViewMatrix;
@@ -20,12 +15,8 @@ uniform vec3 lightPosition;
 uniform vec3 lightColor;
 uniform float lightIntensity;
 
-uniform vec2 screenSize;
-
-vec2 CalcTexCoord()
-{
-	return gl_FragCoord.xy / screenSize;
-}
+#include "deferred.glsl"
+#include "AmbientLight/ambientLight.glsl"
 
 vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
 {
@@ -46,7 +37,10 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 
 	vec3 specularColor = lightColor * in_specular * sCont;
 
-	return (diffuseColor + specularColor) * lightIntensity;
+	// Calculate ambient light
+	vec3 ambientColor = in_diffuse * CalcAmbientLight ();
+
+	return (diffuseColor + specularColor) * lightIntensity + ambientColor;
 }
 
 void main()

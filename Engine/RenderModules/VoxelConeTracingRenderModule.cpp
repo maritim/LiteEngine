@@ -24,10 +24,10 @@
 #include "RenderPasses/AmbientOcclusion/SSAORenderPass.h"
 #include "RenderPasses/AmbientOcclusion/SSAOBlurRenderPass.h"
 
+#include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
+
 #include "RenderPasses/VoxelConeTracing/VCTDirectionalLightRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
-
-#include "RenderPasses/DeferredAmbientLightRenderPass.h"
 
 #include "RenderPasses/IdleRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
@@ -57,19 +57,16 @@ void VoxelConeTracingRenderModule::Init ()
 		.Volume (new VCTDebugCheckRenderVolumeCollection ())
 		.Attach (new DeferredGeometryRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
-			.Volume (new DirectionalLightContainerRenderVolumeCollection ())
-			.Attach (new VCTDirectionalLightRenderPass ())
-			.Build ())
-		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new SSAOSamplesGenerationRenderPass ())
 			.Attach (new SSAONoiseGenerationRenderPass ())
 			.Attach (new SSAORenderPass ())
 			.Attach (new SSAOBlurRenderPass ())
 			.Build ())
+		.Attach (new AmbientLightRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
-			.Volume (new IterateOverRenderVolumeCollection (1))
-			.Attach (new DeferredAmbientLightRenderPass ())
+			.Volume (new DirectionalLightContainerRenderVolumeCollection ())
+			.Attach (new VCTDirectionalLightRenderPass ())
 			.Build ())
 		.Attach (new DeferredSkyboxRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()

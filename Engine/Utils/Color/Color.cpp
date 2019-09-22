@@ -15,6 +15,15 @@ Color::Color () :
 
 }
 
+Color::Color (const Color& other) :
+	r (other.r),
+	g (other.g),
+	b (other.b),
+	a (other.a)
+{
+
+}
+
 Color::Color (unsigned char r, unsigned char g, unsigned char b, unsigned char a) :
 	r (r),
 	g (g),
@@ -24,11 +33,11 @@ Color::Color (unsigned char r, unsigned char g, unsigned char b, unsigned char a
 
 }
 
-Color::Color (const Color& other) :
-	r (other.r),
-	g (other.g),
-	b (other.b),
-	a (other.a)
+Color::Color (const glm::vec3& color) :
+	r (color.x * 255),
+	g (color.y * 255),
+	b (color.z * 255),
+	a (255)
 {
 
 }

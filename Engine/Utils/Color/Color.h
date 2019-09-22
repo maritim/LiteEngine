@@ -18,8 +18,9 @@ public:
 
 public:
 	Color ();
-	Color (unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
 	Color (const Color& other);
+	Color (unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
+	Color (const glm::vec3& color);
 
 	glm::vec3 ToVector3 () const;
 };

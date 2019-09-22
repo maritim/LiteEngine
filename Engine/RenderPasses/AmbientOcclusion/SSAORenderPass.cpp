@@ -2,6 +2,9 @@
 
 #include "SSAOMapVolume.h"
 
+#include "Debug/Statistics/StatisticsManager.h"
+#include "Debug/Statistics/SSAOStatisticsObject.h"
+
 bool SSAORenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
@@ -24,6 +27,20 @@ std::string SSAORenderPass::GetPostProcessVolumeName () const
 
 glm::ivec2 SSAORenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
+	if (_postProcessMapVolume != nullptr) {
+		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSAOStatisticsObject");
+		SSAOStatisticsObject* ssaoStatisticsObject = nullptr;
+
+		if (stat == nullptr) {
+			stat = new SSAOStatisticsObject ();
+			StatisticsManager::Instance ()->SetStatisticsObject ("SSAOStatisticsObject", stat);
+		}
+
+		ssaoStatisticsObject = dynamic_cast<SSAOStatisticsObject*> (stat);
+
+		ssaoStatisticsObject->ssaoMapVolume = _postProcessMapVolume;
+	}
+
 	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssao_scale);
 }
 

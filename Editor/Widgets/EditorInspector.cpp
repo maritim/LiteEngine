@@ -6,6 +6,11 @@
 
 #include "EditorSelection.h"
 
+#include "Lighting/Light.h"
+#include "Lighting/DirectionalLight.h"
+#include "Lighting/PointLight.h"
+#include "Lighting/AmbientLight.h"
+
 #include "Mesh/Model.h"
 
 #include "Resources/Resources.h"
@@ -115,6 +120,9 @@ void EditorInspector::ShowObject (SceneObject* object)
 	if (dynamic_cast<GameObject*> (object) != nullptr) {
 		ShowGameObject (object);
 	}
+	if (dynamic_cast<Light*> (object) != nullptr) {
+		ShowLight (object);
+	}
 }
 
 void EditorInspector::ShowGameObject (SceneObject* object)
@@ -135,6 +143,46 @@ void EditorInspector::ShowGameObject (SceneObject* object)
 		ImGui::Spacing ();
 
 		ShowAudioSource (gameObject->GetAudioSource ());		
+	}
+}
+
+void EditorInspector::ShowLight (SceneObject* object)
+{
+	Light* light = dynamic_cast<Light*> (object);
+
+	ImGui::Spacing ();
+
+	if (ImGui::CollapsingHeader ("Light", ImGuiTreeNodeFlags_DefaultOpen)) {
+		int lightType = 0;
+
+		if (dynamic_cast<DirectionalLight*> (light) != nullptr) {
+			lightType = 1;
+		}
+		if (dynamic_cast<PointLight*> (light) != nullptr) {
+			lightType = 2;
+		}
+		if (dynamic_cast<AmbientLight*> (light) != nullptr) {
+			lightType = 4;
+		}
+
+		glm::vec3 lightColor = light->GetColor ().ToVector3 ();
+		float color[3] = { lightColor.x, lightColor.y, lightColor.z };
+
+		ImGui::ColorEdit3 ("Color", color);
+
+		lightColor = glm::vec3 (color [0], color [1], color [2]);
+		light->SetColor (lightColor);
+
+		float lightIntensity = light->GetIntensity ();
+		ImGui::InputFloat ("Intensity", &lightIntensity, 0.1f);
+		lightIntensity = std::max (lightIntensity, 0.0f);
+		light->SetIntensity (lightIntensity);
+
+		if (lightType < 4) {
+			bool castShadows = light->IsCastingShadows ();
+			ImGui::Checkbox ("Cast Shadows", &castShadows);
+			light->SetShadowCasting (castShadows);
+		}
 	}
 }
 

@@ -3,14 +3,20 @@
 
 #include "Renderer/RenderVolumeI.h"
 
-#include <glm/glm.hpp>
-
 #define SSAO_SAMPLES_NOT_INIT 351
+
+struct SSAOSamples
+{
+	int samplesCount;
+	int samplesCountPadding [3];
+	float samples [800];
+};
 
 class ENGINE_API SSAOSamplesVolume : public RenderVolumeI
 {
 protected:
-	std::vector<glm::vec3> _samples;
+	SSAOSamples _samples;
+	unsigned int _samplesUBO;
 
 public:
 	SSAOSamplesVolume ();

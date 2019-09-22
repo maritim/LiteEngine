@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <RenderSettings>
-	<RenderMode mode="VoxelConeTracingRenderModule" />
-
-	<Ambient intensity="0.2" >
-		<Color r="255" g="255" b="255" />
-	</Ambient>
+	<RenderMode mode="ScreenSpaceDirectionalOcclusionRenderModule" />
 
 	<SSAO enabled="true" scale="0.5" samples="32" noiseSize="4" radius="0.2" bias="0.025" blurEnabled="true" />
 	<SSR enabled="false" scale="0.5" iterations="500" roughness="0.035" sampleSkip="0.3" spatialBias="0.5" intensity="5" />
@@ -22,4 +18,5 @@
 		mipmapLevels="6" indirectIntensity="1" diffuseConeDistance="0.3"
 		specularConeRatio="0.2" specularConeDistance="0.6"
 		shadowConeRatio="0.01" shadowConeDistance="0.365" />
+	<SSDO scale="0.5" samples="32" radius="0.5" bias="0.025" indirectIntensity="3.0" />
 </RenderSettings>

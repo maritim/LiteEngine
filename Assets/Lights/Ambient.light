@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Light type="AMBIENT_LIGHT">
-	<Color r="64" g="64" b="64" />
+	<Color r="255" g="255" b="255" />
+	<Intensity value="0.25" />
 </Light>

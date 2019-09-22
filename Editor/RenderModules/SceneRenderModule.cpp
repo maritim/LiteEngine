@@ -15,6 +15,8 @@
 #include "RenderPasses/AmbientOcclusion/SSAORenderPass.h"
 #include "RenderPasses/AmbientOcclusion/SSAOBlurRenderPass.h"
 
+#include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
+
 #include "RenderPasses/ShadowMap/DirectionalLightShadowMapRenderPass.h"
 // #include "RenderPasses/ShadowMap/DirectionalLightExponentialShadowMapRenderPass.h"
 // #include "RenderPasses/ShadowMap/ExponentialShadowMapBlurRenderPass.h"
@@ -23,8 +25,6 @@
 
 #include "RenderPasses/DeferredPointLightRenderPass.h"
 #include "RenderPasses/PointLightContainerRenderVolumeCollection.h"
-
-#include "RenderPasses/DeferredAmbientLightRenderPass.h"
 
 #include "RenderPasses/IdleRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
@@ -39,7 +39,15 @@
 void SceneRenderModule::Init ()
 {
 	_renderPasses.push_back (new ResultFrameBufferGenerationRenderPass ());
-	_renderPasses.push_back (new DeferredGeometryRenderPass ());	
+	_renderPasses.push_back (new DeferredGeometryRenderPass ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new IterateOverRenderVolumeCollection (1))
+		.Attach (new SSAOSamplesGenerationRenderPass ())
+		.Attach (new SSAONoiseGenerationRenderPass ())
+		.Attach (new SSAORenderPass ())
+		.Attach (new SSAOBlurRenderPass ())
+		.Build ());
+	_renderPasses.push_back (new AmbientLightRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 		.Attach (new DirectionalLightShadowMapRenderPass ())
@@ -50,17 +58,6 @@ void SceneRenderModule::Init ()
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new PointLightContainerRenderVolumeCollection ())
 		.Attach (new DeferredPointLightRenderPass ())
-		.Build ());
-	_renderPasses.push_back (ContainerRenderPass::Builder ()
-		.Volume (new IterateOverRenderVolumeCollection (1))
-		.Attach (new SSAOSamplesGenerationRenderPass ())
-		.Attach (new SSAONoiseGenerationRenderPass ())
-		.Attach (new SSAORenderPass ())
-		.Attach (new SSAOBlurRenderPass ())
-		.Build ());
-	_renderPasses.push_back (ContainerRenderPass::Builder ()
-		.Volume (new IterateOverRenderVolumeCollection (1))
-		.Attach (new DeferredAmbientLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()

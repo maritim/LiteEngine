@@ -1,27 +1,25 @@
-#ifndef RSMSAMPLESVOLUME_H
-#define RSMSAMPLESVOLUME_H
+#ifndef SSDOSAMPLESVOLUME_H
+#define SSDOSAMPLESVOLUME_H
 
 #include "Renderer/RenderVolumeI.h"
 
-#include <glm/vec2.hpp>
+#define SSDO_SAMPLES_NOT_INIT 391
 
-#define REFLECTIVE_SHADOW_MAP_SAMPLES_NOT_INIT 351
-
-struct RSMSamples
+struct SSDOSamples
 {
 	int samplesCount;
 	int samplesCountPadding [3];
 	float samples [800];
 };
 
-class RSMSamplesVolume : public RenderVolumeI
+class ENGINE_API SSDOSamplesVolume : public RenderVolumeI
 {
 protected:
-	RSMSamples _samples;
+	SSDOSamples _samples;
 	unsigned int _samplesUBO;
 
 public:
-	RSMSamplesVolume ();
+	SSDOSamplesVolume ();
 
 	bool Init (std::size_t samplesCount);
 
@@ -29,7 +27,7 @@ public:
 	void BindForWriting ();
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
 
-	std::size_t GetSize () const;
+	std::size_t GetSamplesCount () const;
 
 	void Clear ();
 };

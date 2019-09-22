@@ -1,5 +1,5 @@
-#ifndef SSAONOISEMAPVOLUME_H
-#define SSAONOISEMAPVOLUME_H
+#ifndef NOISEMAPVOLUME_H
+#define NOISEMAPVOLUME_H
 
 #include "Renderer/RenderVolumeI.h"
 
@@ -7,7 +7,9 @@
 
 #include "Renderer/PipelineAttribute.h"
 
-class ENGINE_API SSAONoiseMapVolume : public RenderVolumeI
+#define NOISE_NOT_INIT 352
+
+class ENGINE_API NoiseMapVolume : public RenderVolumeI
 {
 protected:
 	unsigned int _noiseMap;
@@ -15,8 +17,8 @@ protected:
 	unsigned int _noiseHeight;
 
 public:
-	SSAONoiseMapVolume ();
-	virtual ~SSAONoiseMapVolume ();
+	NoiseMapVolume ();
+	virtual ~NoiseMapVolume ();
 
 	virtual bool Init (std::size_t width, std::size_t height);
 
@@ -25,6 +27,7 @@ public:
 	virtual std::vector<PipelineAttribute> GetCustomAttributes () const;
 
 	glm::ivec2 GetSize () const;
+	unsigned int GetColorBuffer () const;
 
 	virtual void Clear ();
 };

@@ -1,11 +1,13 @@
 #include "SSAOSamplesVolume.h"
 
+#include <cstring>
+
 #include "Core/Random/Random.h"
 
-#include "Utils/Extensions/MathExtend.h"
+#include "Wrappers/OpenGL/GL.h"
 
 SSAOSamplesVolume::SSAOSamplesVolume () :
-	_samples ()
+	_samplesUBO (0)
 {
 
 }
@@ -16,7 +18,9 @@ bool SSAOSamplesVolume::Init (std::size_t samplesCount)
 	 * Initialize samples
 	*/
 
-	_samples.reserve (samplesCount);
+	std::memset (&_samples, 0, sizeof (_samples));
+
+	_samples.samplesCount = samplesCount;
 
 	for (std::size_t index = 0; index < samplesCount; index++) {
 		glm::vec3 sample (
@@ -37,8 +41,15 @@ bool SSAOSamplesVolume::Init (std::size_t samplesCount)
 		// scale = 0.1f + 0.9f * scale * scale;
 		// sample *= scale;
 
-		_samples.push_back (sample);
+		_samples.samples [index * 4] = sample.x;
+		_samples.samples [index * 4 + 1] = sample.y;
+		_samples.samples [index * 4 + 2] = sample.z;
 	}
+
+	GL::GenBuffers (1, &_samplesUBO);
+	GL::BindBuffer (GL_UNIFORM_BUFFER, _samplesUBO);
+	GL::BufferData (GL_UNIFORM_BUFFER, sizeof (_samples), &_samples, GL_STATIC_DRAW);
+	GL::BindBuffer (GL_UNIFORM_BUFFER, 0);
 
 	return true;
 }
@@ -59,43 +70,27 @@ void SSAOSamplesVolume::BindForWriting ()
 
 std::vector<PipelineAttribute> SSAOSamplesVolume::GetCustomAttributes () const
 {
-	/*
-	 * TODO: change this to ssbo
-	*/
-
 	std::vector<PipelineAttribute> attributes;
 
-	PipelineAttribute ssaoSamplesCount;
+	PipelineAttribute ssaoSamples;
 
-	ssaoSamplesCount.type = PipelineAttribute::AttrType::ATTR_1I;
+	ssaoSamples.type = PipelineAttribute::AttrType::ATTR_BLOCK;
 
-	ssaoSamplesCount.name = "ssaoSamplesCount";
+	ssaoSamples.name = "ssaoSamples";
 
-	ssaoSamplesCount.value.x = _samples.size ();
+	ssaoSamples.value.x = _samplesUBO;
 
-	attributes.push_back (ssaoSamplesCount);
-
-	for (std::size_t index = 0; index < _samples.size(); index++) {
-		PipelineAttribute ssaoSample;
-
-		ssaoSample.type = PipelineAttribute::AttrType::ATTR_3F;
-
-		ssaoSample.name = "ssaoSample[" + std::to_string (index) + "]";
-
-		ssaoSample.value = _samples [index];
-
-		attributes.push_back (ssaoSample);
-	}
+	attributes.push_back (ssaoSamples);
 
 	return attributes;
 }
 
 std::size_t SSAOSamplesVolume::GetSamplesCount () const
 {
-	return _samples.size ();
+	return _samples.samplesCount;
 }
 
 void SSAOSamplesVolume::Clear ()
 {
-	_samples.clear ();
+	GL::DeleteBuffers (1, &_samplesUBO);
 }

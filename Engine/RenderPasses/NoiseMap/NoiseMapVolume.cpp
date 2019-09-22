@@ -1,4 +1,4 @@
-#include "SSAONoiseMapVolume.h"
+#include "NoiseMapVolume.h"
 
 #include <glm/vec3.hpp>
 
@@ -6,7 +6,7 @@
 
 #include "Core/Random/Random.h"
 
-SSAONoiseMapVolume::SSAONoiseMapVolume () :
+NoiseMapVolume::NoiseMapVolume () :
 	_noiseMap (0),
 	_noiseWidth (0),
 	_noiseHeight (0)
@@ -14,12 +14,12 @@ SSAONoiseMapVolume::SSAONoiseMapVolume () :
 
 }
 
-SSAONoiseMapVolume::~SSAONoiseMapVolume ()
+NoiseMapVolume::~NoiseMapVolume ()
 {
 
 }
 
-bool SSAONoiseMapVolume::Init (std::size_t width, std::size_t height)
+bool NoiseMapVolume::Init (std::size_t width, std::size_t height)
 {
 	/*
 	 * Keep new current noise map size
@@ -61,47 +61,52 @@ bool SSAONoiseMapVolume::Init (std::size_t width, std::size_t height)
 	return true;
 }
 
-void SSAONoiseMapVolume::BindForReading ()
+void NoiseMapVolume::BindForReading ()
 {
 	GL::ActiveTexture (GL_TEXTURE10);
 	GL::BindTexture (GL_TEXTURE_2D, _noiseMap);
 }
 
-void SSAONoiseMapVolume::BindForWriting ()
+void NoiseMapVolume::BindForWriting ()
 {
 	/*
 	 * Nothing
 	*/
 }
 
-std::vector<PipelineAttribute> SSAONoiseMapVolume::GetCustomAttributes () const
+std::vector<PipelineAttribute> NoiseMapVolume::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 
-	PipelineAttribute ssaoNoiseMap;
-	PipelineAttribute ssaoNoiseSize;
+	PipelineAttribute noiseMap;
+	PipelineAttribute noiseSize;
 
-	ssaoNoiseMap.type = PipelineAttribute::AttrType::ATTR_1I;
-	ssaoNoiseSize.type = PipelineAttribute::AttrType::ATTR_2F;
+	noiseMap.type = PipelineAttribute::AttrType::ATTR_1I;
+	noiseSize.type = PipelineAttribute::AttrType::ATTR_2F;
 
-	ssaoNoiseMap.name = "ssaoNoiseMap";
-	ssaoNoiseSize.name = "ssaoNoiseSize";
+	noiseMap.name = "noiseMap";
+	noiseSize.name = "noiseSize";
 
-	ssaoNoiseMap.value.x = 10;
-	ssaoNoiseSize.value = glm::vec3 (_noiseWidth, _noiseHeight, 0.0f);
+	noiseMap.value.x = 10;
+	noiseSize.value = glm::vec3 (_noiseWidth, _noiseHeight, 0.0f);
 
-	attributes.push_back (ssaoNoiseMap);
-	attributes.push_back (ssaoNoiseSize);
+	attributes.push_back (noiseMap);
+	attributes.push_back (noiseSize);
 
 	return attributes;
 }
 
-glm::ivec2 SSAONoiseMapVolume::GetSize () const
+unsigned int NoiseMapVolume::GetColorBuffer () const
+{
+	return _noiseMap;
+}
+
+glm::ivec2 NoiseMapVolume::GetSize () const
 {
 	return glm::ivec2 (_noiseWidth, _noiseHeight);
 }
 
-void SSAONoiseMapVolume::Clear ()
+void NoiseMapVolume::Clear ()
 {
 	/*
 	 * Delete noise texture

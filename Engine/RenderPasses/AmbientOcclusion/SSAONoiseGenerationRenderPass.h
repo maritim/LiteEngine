@@ -1,35 +1,15 @@
 #ifndef SSAONOISEGENERATIONRENDERPASS_H
-#define SSAONOISESGENERATIONRENDERPASS_H
+#define SSAONOISEGENERATIONRENDERPASS_H
 
-#include "RenderPasses/Container/ContainerRenderSubPassI.h"
+#include "RenderPasses/NoiseMap/NoiseGenerationRenderPass.h"
 
-#include "SSAONoiseMapVolume.h"
-
-#define SSAO_NOISE_NOT_INIT 352
-
-class ENGINE_API SSAONoiseGenerationRenderPass : public ContainerRenderSubPassI
+class SSAONoiseGenerationRenderPass : public NoiseGenerationRenderPass
 {
-	DECLARE_RENDER_PASS(SSAONoiseGenerationRenderPass)
-
-protected:
-	SSAONoiseMapVolume* _ssaoNoiseMapVolume;
-
 public:
-	SSAONoiseGenerationRenderPass ();
-	~SSAONoiseGenerationRenderPass ();
-
-	void Init (const RenderSettings& settings);
-	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
-		const RenderSettings& settings, RenderVolumeCollection* rvc);
-
 	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
-
-	void Clear ();
 protected:
-	void InitNoiseMapVolume (const RenderSettings& settings);
-
-	void UpdateNoiseMapVolume (const RenderSettings& settings);
+	glm::ivec2 GetNoiseMapVolumeResolution (const RenderSettings& settings) const;
 };
 
 #endif

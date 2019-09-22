@@ -75,6 +75,12 @@ struct RenderSettings : public Object
 	float vct_shadow_cone_distance;
 	bool vct_debug_show_voxels;
 	std::size_t vct_debug_volume_mipmap_level;
+
+	float ssdo_scale;
+	std::size_t ssdo_samples;
+	float ssdo_radius;
+	float ssdo_bias;
+	float ssdo_indirect_intensity;
 };
 
 #endif

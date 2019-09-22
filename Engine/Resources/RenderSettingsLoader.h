@@ -22,6 +22,7 @@ protected:
 
 	void ProcessRSM (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings);
+	void ProcessSSDO (TiXmlElement* xmlElem, RenderSettings* settings);
 };
 
 #endif

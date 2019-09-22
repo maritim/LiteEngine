@@ -19,6 +19,8 @@
 
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/RSMStatisticsObject.h"
+#include "Debug/Statistics/SSDOStatisticsObject.h"
+#include "Debug/Statistics/SSAOStatisticsObject.h"
 
 EditorRenderingSettings::EditorRenderingSettings () :
 	_lutTexture (nullptr),
@@ -75,14 +77,20 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 	renderModes ["SceneRenderModule"] = 0;
 	renderModes ["VoxelConeTracingRenderModule"] = 1;
 	renderModes ["ReflectiveShadowMappingRenderModule"] = 2;
+	renderModes ["ScreenSpaceDirectionalOcclusionRenderModule"] = 3;
 
 	int lastRenderMode = renderModes [_settings->renderMode];
 	int renderMode = lastRenderMode;
 
-	const char* items[] = { "Direct Light", "Voxel Cone Tracing", "Reflective Shadow Mapping"};
-	ImGui::Combo("Render Module", &renderMode, items, 3);
+	const char* items[] = { "Direct Light", "Voxel Cone Tracing", "Reflective Shadow Mapping", "Screen Space Directional Occlusion"};
+	ImGui::Combo("Render Module", &renderMode, items, 4);
 
-	const char* srenderModes[] = { "SceneRenderModule", "VoxelConeTracingRenderModule", "ReflectiveShadowMappingRenderModule"};
+	const char* srenderModes[] = {
+		"SceneRenderModule",
+		"VoxelConeTracingRenderModule",
+		"ReflectiveShadowMappingRenderModule",
+		"ScreenSpaceDirectionalOcclusionRenderModule"
+	};
 
 	if (lastRenderMode != renderMode) {
 		_settings->renderMode = srenderModes [renderMode];
@@ -203,6 +211,52 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
     ImGui::Spacing();
 
+	if (ImGui::CollapsingHeader ("Screen Space Directional Occlusion")) {
+
+		float scale = _settings->ssdo_scale;
+		ImGui::InputFloat ("Scale", &scale);
+		if (scale > 0) {
+			_settings->ssdo_scale = scale;
+		}
+
+		std::size_t limit1 = 1, limit2 = 200;
+		ImGui::SliderScalar ("Samples Size", ImGuiDataType_U32, &_settings->ssdo_samples, &limit1, &limit2);
+
+		ImGui::InputFloat ("Radius", &_settings->ssdo_radius, 0.1f);
+		ImGui::InputFloat ("Bias", &_settings->ssdo_bias, 0.1f);
+		ImGui::InputFloat ("Indirect Light Intensity", &_settings->ssdo_indirect_intensity, 0.1f);
+
+		ImGui::Separator ();
+
+		if (ImGui::TreeNode ("Debug")) {
+			StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSDOStatisticsObject");
+			SSDOStatisticsObject* ssdoStat = nullptr;
+
+			if (stat != nullptr) {
+				ssdoStat = dynamic_cast<SSDOStatisticsObject*> (stat);
+			}
+
+			if (ssdoStat != nullptr) {
+
+				int windowWidth = ImGui::GetWindowWidth() * 0.95f;
+
+				FrameBuffer2DVolume* ssdoMapVolume = ssdoStat->ssdoMapVolume;
+
+				glm::ivec2 ssdoMapSize = ssdoMapVolume->GetSize ();
+
+				int ssdoMapWidth = windowWidth;
+				int ssdoMapHeight = ((float) ssdoMapSize.y / ssdoMapSize.x) * ssdoMapWidth;
+
+				ImGui::Text ("SSDO Map");
+				ImGui::Image((void*)(intptr_t) ssdoMapVolume->GetColorTextureID (), ImVec2(ssdoMapWidth, ssdoMapHeight), ImVec2 (0, 1), ImVec2 (1, 0));
+			}
+
+			ImGui::TreePop();
+		}
+	}
+
+    ImGui::Spacing();
+
 	if (ImGui::CollapsingHeader ("Post Processing")) {
 		if (ImGui::TreeNode ("Screen Space Ambient Occlusion")) {
 
@@ -214,13 +268,44 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 				_settings->ssao_scale = scale;
 			}
 
-			std::size_t limit1 = 0, limit2 = 64;
+			std::size_t limit1 = 0, limit2 = 200;
 			ImGui::SliderScalar ("Samples Size", ImGuiDataType_U32, &_settings->ssao_samples, &limit1, &limit2);
 			
 			ImGui::InputScalar ("Noise Size", ImGuiDataType_U32, &_settings->ssao_noise_size);
 			ImGui::InputFloat ("Radius", &_settings->ssao_radius, 0.1f);
 			ImGui::InputFloat ("Bias", &_settings->ssao_bias, 0.1f);
 			ImGui::Checkbox ("Blur Enabled", &_settings->ssao_blur_enabled);
+
+			ImGui::Separator ();
+
+			if (ImGui::TreeNode ("Debug")) {
+				StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSAOStatisticsObject");
+				SSAOStatisticsObject* ssaoStat = nullptr;
+
+				if (stat != nullptr) {
+					ssaoStat = dynamic_cast<SSAOStatisticsObject*> (stat);
+				}
+
+				if (ssaoStat != nullptr) {
+
+					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
+
+					FrameBuffer2DVolume* ssaoMapVolume = ssaoStat->ssaoMapVolume;
+
+					glm::ivec2 ssaoMapSize = ssaoMapVolume->GetSize ();
+
+					int ssaoMapWidth = windowWidth;
+					int ssaoMapHeight = ((float) ssaoMapSize.y / ssaoMapSize.x) * ssaoMapWidth;
+
+					ImGui::Text ("SSAO Map");
+					ImGui::Image((void*)(intptr_t) ssaoMapVolume->GetColorTextureID (), ImVec2(ssaoMapWidth, ssaoMapHeight), ImVec2 (0, 1), ImVec2 (1, 0));
+
+					ImGui::Text ("SSAO Noise Map");
+					ImGui::Image((void*)(intptr_t) ssaoStat->noiseMapID, ImVec2(windowWidth, windowWidth), ImVec2 (0, 1), ImVec2 (1, 0));
+				}
+
+				ImGui::TreePop();
+			}
 
 			ImGui::TreePop();
 		}

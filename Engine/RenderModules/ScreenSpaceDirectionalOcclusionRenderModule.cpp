@@ -1,4 +1,4 @@
-#include "ReflectiveShadowMappingRenderModule.h"
+#include "ScreenSpaceDirectionalOcclusionRenderModule.h"
 
 #include "RenderPasses/ResultFrameBufferGenerationRenderPass.h"
 #include "RenderPasses/DeferredGeometryRenderPass.h"
@@ -6,9 +6,15 @@
 #include "RenderPasses/DeferredBlitRenderPass.h"
 #include "RenderPasses/ForwardRenderPass.h"
 #include "RenderPasses/GUI/GUIGizmosRenderPass.h"
+#include "RenderPasses/GUI/GUIRenderPass.h"
+#include "RenderPasses/WindowBlitRenderPass.h"
 
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
+
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOSamplesGenerationRenderPass.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDORenderPass.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDODirectionalLightRenderPass.h"
 
 #include "RenderPasses/AmbientOcclusion/SSAOSamplesGenerationRenderPass.h"
 #include "RenderPasses/AmbientOcclusion/SSAONoiseGenerationRenderPass.h"
@@ -17,11 +23,11 @@
 
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
-#include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationRenderPass.h"
-#include "RenderPasses/ReflectiveShadowMapping/RSMSamplesGenerationRenderPass.h"
-#include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightRenderPass.h"
-#include "RenderPasses/ReflectiveShadowMapping/RSMCachingRenderPass.h"
+#include "RenderPasses/ShadowMap/DirectionalLightShadowMapRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
+
+#include "RenderPasses/DeferredPointLightRenderPass.h"
+#include "RenderPasses/PointLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/IdleRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
@@ -33,29 +39,26 @@
 #include "RenderPasses/HighDynamicRange/HDRRenderPass.h"
 #include "RenderPasses/GammaCorrection/GammaCorrectionRenderPass.h"
 
-void ReflectiveShadowMappingRenderModule::Init ()
+void ScreenSpaceDirectionalOcclusionRenderModule::Init ()
 {
-	/*
-	 * Initialize reflective shadow map render module as a collection of 
-	 * render passes
-	*/
-
 	_renderPasses.push_back (new ResultFrameBufferGenerationRenderPass ());
 	_renderPasses.push_back (new DeferredGeometryRenderPass ());
-	_renderPasses.push_back (ContainerRenderPass::Builder ()
-		.Volume (new IterateOverRenderVolumeCollection (1))
-		.Attach (new SSAOSamplesGenerationRenderPass ())
-		.Attach (new SSAONoiseGenerationRenderPass ())
-		.Attach (new SSAORenderPass ())
-		.Attach (new SSAOBlurRenderPass ())
-		.Build ());
+	// _renderPasses.push_back (ContainerRenderPass::Builder ()
+	// 	.Volume (new IterateOverRenderVolumeCollection (1))
+	// 	.Attach (new SSAOSamplesGenerationRenderPass ())
+	// 	.Attach (new SSAONoiseGenerationRenderPass ())
+	// 	.Attach (new SSAORenderPass ())
+	// 	.Attach (new SSAOBlurRenderPass ())
+	// 	.Build ());
 	_renderPasses.push_back (new AmbientLightRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new IterateOverRenderVolumeCollection (1))
+		.Attach (new SSDOSamplesGenerationRenderPass ())
+		.Attach (new SSDORenderPass ())
+		.Build ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
-		.Attach (new RSMDirectionalLightAccumulationRenderPass ())
-		.Attach (new RSMSamplesGenerationRenderPass ())
-		.Attach (new RSMCachingRenderPass ())
-		.Attach (new RSMDirectionalLightRenderPass ())
+		.Attach (new SSDODirectionalLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
@@ -78,8 +81,8 @@ void ReflectiveShadowMappingRenderModule::Init ()
 			.Build ())
 		.Attach (new HDRRenderPass ())
 		.Attach (new GammaCorrectionRenderPass ())
+		.Attach (new DeferredBlitRenderPass ())
 		.Build ());
-	_renderPasses.push_back (new DeferredBlitRenderPass ());
 	_renderPasses.push_back (new ForwardRenderPass ());
 	_renderPasses.push_back (new GUIGizmosRenderPass ());
 }

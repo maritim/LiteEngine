@@ -52,6 +52,9 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 		else if (name == "VCT") {
 			ProcessVCT (content, settings);
 		}
+		else if (name == "SSDO") {
+			ProcessSSDO (content, settings);
+		}
 
 		content = content->NextSiblingElement ();
 	}
@@ -186,4 +189,19 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	settings->vct_specular_cone_distance = std::stof (specularConeDistance);
 	settings->vct_shadow_cone_ratio = std::stof (shadowConeRatio);
 	settings->vct_shadow_cone_distance = std::stof (shadowConeDistance);
+}
+
+void RenderSettingsLoader::ProcessSSDO (TiXmlElement* xmlElem, RenderSettings* settings)
+{
+	std::string scale = xmlElem->Attribute ("scale");
+	std::string samples = xmlElem->Attribute ("samples");
+	std::string radius = xmlElem->Attribute ("radius");
+	std::string bias = xmlElem->Attribute ("bias");
+	std::string indirectIntensity = xmlElem->Attribute ("indirectIntensity");
+
+	settings->ssdo_scale = std::stof (scale);
+	settings->ssdo_samples = std::stoi (samples);
+	settings->ssdo_radius = std::stof (radius);
+	settings->ssdo_bias = std::stof (bias);
+	settings->ssdo_indirect_intensity = std::stof (indirectIntensity);
 }
