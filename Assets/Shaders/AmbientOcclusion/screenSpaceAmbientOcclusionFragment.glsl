@@ -53,6 +53,8 @@ float CalcScreenSpaceAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 te
 	vec3 bitangent = cross (in_normal, tangent);
 	mat3 tangentMatrix = mat3 (tangent, bitangent, in_normal);
 
+	int samplesCount = 0;
+
 	for (int sampleIndex = 0; sampleIndex < ssaoSamplesCount; ++ sampleIndex) {
 		vec3 sample = tangentMatrix * ssaoSample [sampleIndex];
 		sample = in_position + sample * ssaoRadius;
@@ -61,14 +63,20 @@ float CalcScreenSpaceAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 te
 		offset.xyz /= offset.w;
 		offset.xyz = offset.xyz * 0.5 + 0.5;
 
+		if (offset.x < 0 || offset.x > 1 || offset.y < 0 || offset.y > 1) {
+			continue;
+		}
+
 		vec3 samplePos = texture2D (gPositionMap, offset.xy).xyz;
 
 		float rangeCheck = smoothstep (0.0, 1.0, ssaoRadius / abs (in_position.z - samplePos.z));
 
 		occlusion += (samplePos.z >= sample.z + ssaoBias ? 1.0 : 0.0) * rangeCheck;
+
+		++ samplesCount;
 	}
 
-	occlusion = 1.0 - (occlusion / ssaoSamplesCount);
+	occlusion = 1.0 - (occlusion / samplesCount);
 
 	return occlusion;
 }
