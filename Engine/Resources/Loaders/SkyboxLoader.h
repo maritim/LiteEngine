@@ -1,7 +1,7 @@
 #ifndef SKYBOXLOADER_H
 #define SKYBOXLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include <string>
 

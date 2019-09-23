@@ -1,7 +1,7 @@
 #ifndef LIGHTLOADER_H
 #define LIGHTLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include <string>
 

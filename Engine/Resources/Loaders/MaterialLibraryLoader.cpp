@@ -10,7 +10,7 @@
 #include "Texture/Texture.h"
 #include "Texture/CubeMap.h"
 
-#include "Resources.h"
+#include "Resources/Resources.h"
 
 #include "Managers/ShaderManager.h"
 

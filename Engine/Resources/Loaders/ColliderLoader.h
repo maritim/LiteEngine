@@ -1,7 +1,7 @@
 #ifndef COLLIDERLOADER_H
 #define COLLIDERLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include "Core/Parsers/XML/TinyXml/tinyxml.h"
 

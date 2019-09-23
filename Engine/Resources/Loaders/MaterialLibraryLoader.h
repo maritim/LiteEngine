@@ -1,7 +1,7 @@
 #ifndef MATERIALLIBRARYLOADER_H
 #define MATERIALLIBRARYLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include <string>
 

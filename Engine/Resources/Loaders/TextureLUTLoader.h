@@ -1,7 +1,7 @@
 #ifndef TEXTURELUTLOADER_H
 #define TEXTURELUTLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 class TextureLUTLoader : public ResourceLoader
 {

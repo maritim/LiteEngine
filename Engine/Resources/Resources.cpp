@@ -4,26 +4,40 @@
 
 #include "Utils/Files/FileSystem.h"
 
-#include "SettingsLoader.h"
-#include "RenderSettingsLoader.h"
-#include "WavefrontObjectLoader.h"
-#include "StanfordObjectLoader.h"
-#include "GenericObjectModelLoader.h"
-#include "AnimationModelLoader.h"
-#include "AnimationSkinLoader.h"
-#include "AnimationClipLoader.h"
-#include "WAVLoader.h"
-#include "ShaderContentLoader.h"
-#include "MaterialLibraryLoader.h"
-#include "TextureLoader.h"
-#include "TextureAtlasLoader.h"
-#include "CubeMapLoader.h"
-#include "TextureLUTLoader.h"
-#include "ParticleSystemLoader.h"
-#include "SkyboxLoader.h"
-#include "BitmapFontLoader.h"
-#include "ColliderLoader.h"
-#include "LightLoader.h"
+/*
+ * Load
+*/
+
+#include "Loaders/SettingsLoader.h"
+#include "Loaders/RenderSettingsLoader.h"
+#include "Loaders/WavefrontObjectLoader.h"
+#include "Loaders/StanfordObjectLoader.h"
+#include "Loaders/GenericObjectModelLoader.h"
+#include "Loaders/AnimationModelLoader.h"
+#include "Loaders/AnimationSkinLoader.h"
+#include "Loaders/AnimationClipLoader.h"
+#include "Loaders/WAVLoader.h"
+#include "Loaders/ShaderContentLoader.h"
+#include "Loaders/MaterialLibraryLoader.h"
+#include "Loaders/TextureLoader.h"
+#include "Loaders/TextureAtlasLoader.h"
+#include "Loaders/CubeMapLoader.h"
+#include "Loaders/TextureLUTLoader.h"
+#include "Loaders/ParticleSystemLoader.h"
+#include "Loaders/SkyboxLoader.h"
+#include "Loaders/BitmapFontLoader.h"
+#include "Loaders/ColliderLoader.h"
+#include "Loaders/LightLoader.h"
+
+/*
+ * Save
+*/
+
+#include "Savers/PNGSaver.h"
+
+/*
+ * Load
+*/
 
 SettingsContainer* Resources::LoadSettings (const std::string& filename)
 {
@@ -309,6 +323,32 @@ Light* Resources::LoadLight (const std::string& filename)
 	delete lightLoader;
 
 	return light;
+}
+
+/*
+ * Save
+*/
+
+bool Resources::SaveTexture (const Resource<Texture>& texture, const std::string& filename)
+{
+	std::string extension = FileSystem::GetExtension (filename);
+
+	if (extension == ".png") {
+		return SavePNG (texture, filename);
+	}
+
+	return false;
+}
+
+bool Resources::SavePNG (const Resource<Texture>& texture, const std::string& filename)
+{
+	PNGSaver* pngSaver = new PNGSaver ();
+
+	bool saveResult = pngSaver->Save (&*texture, filename);
+
+	delete pngSaver;
+
+	return saveResult;
 }
 
 // bool SortingMethod (Polygon* a, Polygon* b) { return (a->matName < b->matName); }

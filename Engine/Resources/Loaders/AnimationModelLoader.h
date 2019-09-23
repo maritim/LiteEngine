@@ -1,7 +1,7 @@
 #ifndef ANIMATIONMODELLOADER_H
 #define ANIMATIONMODELLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include "Core/Parsers/XML/TinyXml/tinyxml.h"
 

@@ -1,7 +1,7 @@
 #ifndef WAVLOADER_H
 #define WAVLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 class WAVLoader : public ResourceLoader
 {

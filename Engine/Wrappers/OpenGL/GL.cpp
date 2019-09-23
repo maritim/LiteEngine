@@ -834,6 +834,20 @@ void GL::GenerateMipmap (GLenum target)
 	ErrorCheck ("glGenerateMipmap");
 }
 
+void GL::GetTexImage (GLenum target, GLint level, GLenum format, GLenum type, GLvoid * pixels)
+{
+	glGetTexImage (target, level, format, type, pixels);
+
+	ErrorCheck ("glGetTexImage");
+}
+
+void GL::GetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GLint * params)
+{
+	glGetTexLevelParameteriv (target, level, pname, params);
+
+	ErrorCheck ("glGetTexLevelParameteriv");
+}
+
 /*
  * Pixels
 */

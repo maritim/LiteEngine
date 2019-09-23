@@ -1,7 +1,7 @@
 #ifndef ANIMATIONCLIPLOADER_H
 #define ANIMATIONCLIPLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include <string>
 #include <assimp/scene.h>

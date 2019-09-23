@@ -1,7 +1,7 @@
 #ifndef TEXTURELOADER_H
 #define TEXTURELOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include <string>
 

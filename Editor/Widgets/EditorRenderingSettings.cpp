@@ -1,8 +1,8 @@
 #include "EditorRenderingSettings.h"
 
+#include <experimental/filesystem>
 #include <glm/vec2.hpp>
 #include "Systems/GUI/ImGui/imgui.h"
-#include "Systems/GUI/imguifilesystem/imguifilesystem.h"
 
 #include "Systems/Settings/SettingsManager.h"
 #include "Systems/Window/Window.h"
@@ -15,6 +15,8 @@
 #include "Renderer/RenderSystem.h"
 #include "Renderer/RenderManager.h"
 
+#include "Utils/Files/FileSystem.h"
+
 #include "Utils/Extensions/MathExtend.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
@@ -22,10 +24,13 @@
 #include "Debug/Statistics/SSDOStatisticsObject.h"
 #include "Debug/Statistics/SSAOStatisticsObject.h"
 
+namespace fs = std::experimental::filesystem;
+
 EditorRenderingSettings::EditorRenderingSettings () :
 	_lutTexture (nullptr),
 	_lutTextureView (nullptr),
-	_continuousVoxelizationReset (false)
+	_continuousVoxelizationReset (false),
+	_dialog (ImGuiFs::Dialog ())
 {
 
 }
@@ -190,16 +195,16 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 					int windowWidth = ImGui::GetWindowWidth() * 0.65f;
 
 					ImGui::Text ("Position Map");
-					ImGui::Image((void*)(intptr_t) rsmStat->rsmPosMapID, ImVec2(windowWidth, windowWidth), ImVec2 (0, 1), ImVec2 (1, 0));
+					ShowImage (rsmStat->rsmPosMapID, glm::ivec2 (windowWidth, windowWidth));
 
 					ImGui::Text ("Normal Map");
-					ImGui::Image((void*)(intptr_t) rsmStat->rsmNormalMapID, ImVec2(windowWidth, windowWidth), ImVec2 (0, 1), ImVec2 (1, 0));
+					ShowImage (rsmStat->rsmNormalMapID, glm::ivec2 (windowWidth, windowWidth));
 
 					ImGui::Text ("Flux Map");
-					ImGui::Image((void*)(intptr_t) rsmStat->rsmFluxMapID, ImVec2(windowWidth, windowWidth), ImVec2 (0, 1), ImVec2 (1, 0));
+					ShowImage (rsmStat->rsmFluxMapID, glm::ivec2 (windowWidth, windowWidth));
 
 					ImGui::Text ("Cache Map");
-					ImGui::Image((void*)(intptr_t) rsmStat->rsmCacheMapID, ImVec2(windowWidth, windowWidth), ImVec2 (0, 1), ImVec2 (1, 0));
+					ShowImage (rsmStat->rsmCacheMapID, glm::ivec2 (windowWidth, windowWidth));
 				}
 
 				ImGui::TreePop();
@@ -238,17 +243,17 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 			if (ssdoStat != nullptr) {
 
-				int windowWidth = ImGui::GetWindowWidth() * 0.95f;
+				int windowWidth = ImGui::GetWindowWidth() * 0.9f;
 
 				FrameBuffer2DVolume* ssdoMapVolume = ssdoStat->ssdoMapVolume;
 
-				glm::ivec2 ssdoMapSize = ssdoMapVolume->GetSize ();
+				glm::ivec2 size = ssdoMapVolume->GetSize ();
 
-				int ssdoMapWidth = windowWidth;
-				int ssdoMapHeight = ((float) ssdoMapSize.y / ssdoMapSize.x) * ssdoMapWidth;
+				int width = windowWidth;
+				int height = ((float) size.y / size.x) * width;
 
 				ImGui::Text ("SSDO Map");
-				ImGui::Image((void*)(intptr_t) ssdoMapVolume->GetColorTextureID (), ImVec2(ssdoMapWidth, ssdoMapHeight), ImVec2 (0, 1), ImVec2 (1, 0));
+				ShowImage (ssdoMapVolume->GetColorTextureID (), glm::ivec2 (width, height));
 			}
 
 			ImGui::TreePop();
@@ -298,10 +303,10 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 					int ssaoMapHeight = ((float) ssaoMapSize.y / ssaoMapSize.x) * ssaoMapWidth;
 
 					ImGui::Text ("SSAO Map");
-					ImGui::Image((void*)(intptr_t) ssaoMapVolume->GetColorTextureID (), ImVec2(ssaoMapWidth, ssaoMapHeight), ImVec2 (0, 1), ImVec2 (1, 0));
+					ShowImage (ssaoMapVolume->GetColorTextureID (), glm::ivec2 (ssaoMapWidth, ssaoMapHeight));
 
 					ImGui::Text ("SSAO Noise Map");
-					ImGui::Image((void*)(intptr_t) ssaoStat->noiseMapID, ImVec2(windowWidth, windowWidth), ImVec2 (0, 1), ImVec2 (1, 0));
+					ShowImage (ssaoStat->noiseMapID, glm::ivec2 (windowWidth, windowWidth));
 				}
 
 				ImGui::TreePop();
@@ -373,8 +378,7 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 			bool lastLoadTexture = ImGui::Button ("Load", ImVec2 (48, 18));
 
-			static ImGuiFs::Dialog dialog = ImGuiFs::Dialog ();
-			const char* path = dialog.chooseFileDialog(lastLoadTexture);
+			const char* path = _dialog.chooseFileDialog(lastLoadTexture);
 
 			if (strlen (path) > 0) {
 				_settings->lut_texture_path = path;				
@@ -426,4 +430,37 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 	}
 
 	ImGui::End();
+}
+
+void EditorRenderingSettings::ShowImage (unsigned int textureID, const glm::ivec2& size)
+{
+	ImGui::Image((void*)(intptr_t) textureID, ImVec2(size.x, size.y), ImVec2 (0, 1), ImVec2 (1, 0));
+
+    bool saveVolume = false;
+
+    ImGui::PushID (textureID);
+
+    if (ImGui::BeginPopupContextItem(std::to_string (textureID).c_str ())) {
+		saveVolume = ImGui::MenuItem ("Save");
+
+	    ImGui::EndPopup();
+    }
+
+	std::string volumePath = _dialog.saveFileDialog(saveVolume, "", "image.png", ".png");
+
+	if (volumePath != std::string ()) {
+
+		volumePath = FileSystem::Relative (volumePath, fs::current_path ().string ());
+
+		Resource<TextureView> textureView (new TextureView (), "temp");
+		textureView->SetGPUIndex (textureID);
+
+		Resource<Texture> texture = RenderSystem::SaveTexture (textureView);
+
+		textureView->SetGPUIndex (0);
+
+		Resources::SaveTexture (texture, volumePath);
+	}
+
+	ImGui::PopID ();
 }

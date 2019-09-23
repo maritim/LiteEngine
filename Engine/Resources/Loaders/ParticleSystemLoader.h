@@ -1,7 +1,7 @@
 #ifndef PARTICLESYSTEMLOADER_H
 #define PARTICLESYSTEMLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include <string>
 

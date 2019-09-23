@@ -1,7 +1,7 @@
 #ifndef WAVEFRONTOBJECTLOADER_H
 #define WAVEFRONTOBJECTLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include <string>
 

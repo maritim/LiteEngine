@@ -1,7 +1,7 @@
 #ifndef RENDERSETTINGSLOADER_H
 #define RENDERSETTINGSLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include "Core/Parsers/XML/TinyXml/tinyxml.h"
 

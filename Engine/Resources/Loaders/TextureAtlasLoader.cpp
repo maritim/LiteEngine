@@ -4,7 +4,7 @@
 #include <limits>
 #include <string>
 
-#include "Resources.h"
+#include "Resources/Resources.h"
 
 #include "Texture/Texture.h"
 

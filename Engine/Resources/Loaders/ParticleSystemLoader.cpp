@@ -24,7 +24,7 @@
 #include "Utils/Files/FileSystem.h"
 #include "Utils/Extensions/StringExtend.h"
 
-#include "Resources.h"
+#include "Resources/Resources.h"
 
 Object* ParticleSystemLoader::Load (const std::string& filename)
 {

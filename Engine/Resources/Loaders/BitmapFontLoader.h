@@ -1,7 +1,7 @@
 #ifndef BITMAPFONTLOADER_H
 #define BITMAPFONTLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include <fstream>
 

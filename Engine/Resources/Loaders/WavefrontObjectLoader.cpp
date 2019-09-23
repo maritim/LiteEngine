@@ -13,7 +13,7 @@
 
 #include "Utils/Extensions/StringExtend.h"
 
-#include "Resources.h"
+#include "Resources/Resources.h"
 
 #include "Core/Console/Console.h"
 

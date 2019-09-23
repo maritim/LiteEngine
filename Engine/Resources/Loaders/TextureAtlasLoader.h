@@ -1,7 +1,7 @@
 #ifndef TEXTUREATLASLOADER_H
 #define TEXTUREATLASLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include <string>
 

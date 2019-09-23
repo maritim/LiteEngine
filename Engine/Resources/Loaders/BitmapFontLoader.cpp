@@ -7,7 +7,7 @@
 #include "Utils/Extensions/StringExtend.h"
 #include "Utils/Files/FileSystem.h"
 
-#include "Resources.h"
+#include "Resources/Resources.h"
 
 Object* BitmapFontLoader::Load (const std::string& filename)
 {

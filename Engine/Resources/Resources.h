@@ -27,12 +27,15 @@
 class ENGINE_API Resources
 {
 public:
+	/*
+	 * Load
+	*/
+
 	static SettingsContainer* LoadSettings (const std::string& filename);
 	static RenderSettings* LoadRenderSettings (const std::string& filename);
 
 	static Resource<Model> LoadModel (const std::string& filename);
 	static Resource<Model> LoadAnimatedModel (const std::string& filename);
-//	static int SaveModel (Model* model, char* filename);
 
 	static AnimationModel* LoadSkinModel (const std::string& filename);
 	static AnimationContainer* LoadAnimationClip (const std::string& filename);
@@ -45,7 +48,6 @@ public:
 	static Resource<Texture> LoadTextureAtlas (const std::string& filename);
 	static Resource<Texture> LoadCubemap (const std::vector<std::string>& filenames);
 	static TextureLUT* LoadTextureLUT (const std::string& filename);
-//	static unsigned int Load_R5G6B5_BMP (const std::string filename);
 
 	static Resource<Font> LoadBitmapFont (const std::string& filename); 
 
@@ -55,12 +57,28 @@ public:
 	static BulletCollider* LoadCollider (const std::string& filename);
 	static Light* LoadLight (const std::string& filename);
 
+	/*
+	 * Save
+	*/
+
+	static bool SaveTexture (const Resource<Texture>& texture, const std::string& filename);
+
 private:
+	/*
+	 * Load
+	*/
+
 	static Model* LoadWavefrontModel (const std::string& filename);
 	static Model* LoadStanfordModel (const std::string& filename);
 	static Model* LoadGenericModel (const std::string& filename);
 
 	static AudioClip* LoadWAV (const std::string& filename);
+
+	/*
+	 * Save
+	*/
+
+	static bool SavePNG (const Resource<Texture>& texture, const std::string& filename);
 
 //	static int SaveWavefrontModel (Model* model, char* filename);
 //	static int SaveStanfordModel (Model* model, char* filename);

@@ -1,7 +1,7 @@
 #ifndef SHADERCONTENTLOADER_H
 #define SHADERCONTENTLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 class ShaderContentLoader : public ResourceLoader
 {

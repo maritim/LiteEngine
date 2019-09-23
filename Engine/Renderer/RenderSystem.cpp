@@ -244,6 +244,34 @@ Resource<TextureView> RenderSystem::LoadCubeMap (const Resource<Texture>& textur
 	
 // }
 
+Resource<Texture> RenderSystem::SaveTexture (const Resource<TextureView>& textureView)
+{
+	//TODO: Extend this
+	Texture* texture = new Texture ("temp");
+
+	/*
+	 * Save texture in CPU
+	*/
+
+	GL::BindTexture (GL_TEXTURE_2D, textureView->GetGPUIndex ());
+	
+	int width, height;
+
+	GL::GetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+	GL::GetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+
+	unsigned char* pixels = new unsigned char [width * height * 4];
+
+	GL::GetTexImage (GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+	texture->SetSize (Size (width, height));
+	texture->SetPixels (pixels, width * height * 4);
+
+	delete[] pixels;
+
+	return Resource<Texture> (texture, texture->GetName ());
+}
+
 void RenderSystem::ProcessObjectModel (const Resource<Model>& model, ModelView* modelView, ObjectModel* objModel)
 {
 	for (PolygonGroup* polyGroup : *objModel) {

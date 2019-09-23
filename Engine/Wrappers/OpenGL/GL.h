@@ -142,6 +142,8 @@ public:
 	static void TexParameteriv(GLenum target, GLenum pname, const GLint * params);
 	static void TexParameterfv(GLenum target, GLenum pname, const GLfloat * params);
 	static void GenerateMipmap(GLenum target);
+	static void GetTexImage(GLenum target, GLint level, GLenum format, GLenum type, GLvoid * pixels);
+	static void GetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GLint * params);
 
 	/*
 	 * Pixels

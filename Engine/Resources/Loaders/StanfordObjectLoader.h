@@ -1,7 +1,7 @@
 #ifndef STANFORDOBJECTLOADER_H
 #define STANFORDOBJECTLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include <string>
 

@@ -4,7 +4,7 @@
 
 #include "Core/Console/Console.h"
 
-#include "Resources.h"
+#include "Resources/Resources.h"
 
 #include "Utils/Files/FileSystem.h"
 

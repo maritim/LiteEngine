@@ -1,7 +1,7 @@
 #ifndef CUBEMAPLOADER_H
 #define CUBEMAPLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include <string>
 #include <vector>

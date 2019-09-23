@@ -1,7 +1,7 @@
 #ifndef SETTINGSLOADER_H
 #define SETTINGSLOADER_H
 
-#include "ResourceLoader.h"
+#include "Resources/ResourceLoader.h"
 
 #include "Core/Parsers/INI/SimpleIni/SimpleIni.h"
 

@@ -73,6 +73,8 @@ public:
 	static Resource<TextureView> LoadCubeMap (const Resource<Texture>& texture);
 
 	// static Resource<ShaderView> LoadShader (const Resource<ShaderContent>& shaderContent);
+
+	static Resource<Texture> SaveTexture (const Resource<TextureView>& textureView);
 private:
 	static void ProcessObjectModel (const Resource<Model>& model, ModelView* modelView, ObjectModel* objModel);
 	static ObjectBuffer ProcessModelPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup);
