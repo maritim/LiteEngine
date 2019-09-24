@@ -147,7 +147,7 @@ vec3 CalcIndirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shini
 	vec3 eyeToFragment = normalize (in_position - cameraPosition);
 	vec3 reflectionDir = reflect (eyeToFragment, in_normal);
 
-	float specularConeRatio = pow (0.99, in_shininess);
+	float specularConeRatio = pow (0.1, in_shininess);
 		
 	vec3 reflectTraceOrigin = GetPositionInVolume (in_position);
 	specularLight = voxelTraceCone (reflectTraceOrigin, reflectionDir, specularConeRatio, specularConeDistance).xyz;

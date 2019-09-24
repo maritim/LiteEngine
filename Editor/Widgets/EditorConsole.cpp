@@ -4,6 +4,8 @@
 
 void EditorConsole::Show ()
 {
+	return;
+
 	if (ImGui::Begin("Console", NULL)) {
 
 

@@ -64,11 +64,15 @@ void EditorMainMenu::ShowMainMenu ()
 			bool showInspector = lastShowInspector;
 			ImGui::MenuItem ("Inspector Window", "CTRL+2", &showInspector);
 
+			bool lastShowProject = SettingsManager::Instance ()->GetValue<bool> ("menu_show_project", false);
+			bool showProject = lastShowProject;
+			ImGui::MenuItem ("Project Window", "CTRL+3", &showProject);
+
 			ImGui::Separator ();
 
 			bool lastShowAnimationSettings = SettingsManager::Instance ()->GetValue<bool> ("menu_show_animation_settings", false);
 			bool showAnimationSettings = lastShowAnimationSettings;
-			ImGui::MenuItem("Animation Settings", "CTRL+3", &showAnimationSettings);
+			ImGui::MenuItem("Animation Settings", "CTRL+4", &showAnimationSettings);
 
 			ImGui::Separator ();
 
@@ -80,7 +84,7 @@ void EditorMainMenu::ShowMainMenu ()
 
 			bool lastShowProfiler = SettingsManager::Instance ()->GetValue<bool> ("menu_show_profiler", false);
 			bool showProfiler = lastShowProfiler;
-			ImGui::MenuItem("Profiler", "CTRL+6", &showProfiler);
+			ImGui::MenuItem("Profiler", "CTRL+7", &showProfiler);
 
 			if (showHierarchy != lastShowHierarchy) {
 				SettingsManager::Instance ()->SetValue ("menu_show_hierarchy", std::to_string (showHierarchy));
@@ -88,6 +92,10 @@ void EditorMainMenu::ShowMainMenu ()
 
 			if (showInspector != lastShowInspector) {
 				SettingsManager::Instance ()->SetValue ("menu_show_inspector", std::to_string (showInspector));
+			}
+
+			if (showProject != lastShowProject) {
+				SettingsManager::Instance ()->SetValue ("menu_show_project", std::to_string (showProject));
 			}
 
 			if (showAnimationSettings != lastShowAnimationSettings) {

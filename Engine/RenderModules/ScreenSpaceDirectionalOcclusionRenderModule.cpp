@@ -23,7 +23,6 @@
 
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
-#include "RenderPasses/ShadowMap/DirectionalLightShadowMapRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/DeferredPointLightRenderPass.h"
@@ -43,13 +42,6 @@ void ScreenSpaceDirectionalOcclusionRenderModule::Init ()
 {
 	_renderPasses.push_back (new ResultFrameBufferGenerationRenderPass ());
 	_renderPasses.push_back (new DeferredGeometryRenderPass ());
-	// _renderPasses.push_back (ContainerRenderPass::Builder ()
-	// 	.Volume (new IterateOverRenderVolumeCollection (1))
-	// 	.Attach (new SSAOSamplesGenerationRenderPass ())
-	// 	.Attach (new SSAONoiseGenerationRenderPass ())
-	// 	.Attach (new SSAORenderPass ())
-	// 	.Attach (new SSAOBlurRenderPass ())
-	// 	.Build ());
 	_renderPasses.push_back (new AmbientLightRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))

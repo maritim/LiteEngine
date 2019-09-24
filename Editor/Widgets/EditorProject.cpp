@@ -16,7 +16,11 @@ EditorProject::EditorProject () :
 
 void EditorProject::Show ()
 {
-	ShowProject ();
+	bool isProjectVisible = SettingsManager::Instance ()->GetValue<bool> ("menu_show_project", false);
+
+	if (isProjectVisible == true) {
+		ShowProject ();
+	}
 }
 
 void EditorProject::ShowProject ()

@@ -82,13 +82,14 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 	renderModes ["SceneRenderModule"] = 0;
 	renderModes ["VoxelConeTracingRenderModule"] = 1;
 	renderModes ["ReflectiveShadowMappingRenderModule"] = 2;
-	renderModes ["ScreenSpaceDirectionalOcclusionRenderModule"] = 3;
+	renderModes ["LightPropagationVolumesModule"] = 3;
+	renderModes ["ScreenSpaceDirectionalOcclusionRenderModule"] = 4;
 
 	int lastRenderMode = renderModes [_settings->renderMode];
 	int renderMode = lastRenderMode;
 
-	const char* items[] = { "Direct Light", "Voxel Cone Tracing", "Reflective Shadow Mapping", "Screen Space Directional Occlusion"};
-	ImGui::Combo("Render Module", &renderMode, items, 4);
+	const char* items[] = { "Direct Light", "Voxel Cone Tracing", "Reflective Shadow Mapping", "Light Propagation Volumes", "Screen Space Directional Occlusion"};
+	ImGui::Combo("Render Module", &renderMode, items, 5);
 
 	const char* srenderModes[] = {
 		"SceneRenderModule",
@@ -212,6 +213,12 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 			ImGui::TreePop();
 		}
+	}
+
+	ImGui::Spacing ();
+
+	if (ImGui::CollapsingHeader ("Light Propagation Volumes")) {
+
 	}
 
     ImGui::Spacing();

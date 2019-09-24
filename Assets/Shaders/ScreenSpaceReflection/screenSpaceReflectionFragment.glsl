@@ -29,6 +29,8 @@ uniform float ssrSpatialBias;
 
 uniform sampler2D postProcessMap;
 
+#include "ScreenSpace/screenSpaceRayTracing.glsl"
+
 vec2 CalcTexCoord()
 {
 	return gl_FragCoord.xy / ssrResolution;
@@ -90,45 +92,16 @@ vec3 hash (vec3 a)
 
 vec3 CalcScreenSpaceReflection (vec3 in_position, vec3 in_normal, vec2 texCoord)
 {
-	vec3 worldPosition = (inverseViewMatrix * vec4 (in_position, 1.0f)).xyz;
-	vec3 jitter = mix (vec3 (0.0f), hash (worldPosition), ssrRoughness);
+	vec3 jitter = mix (vec3 (0.0f), hash (in_position), ssrRoughness);
 
 	vec3 viewDirection = normalize (in_position);
 
 	vec3 reflectionDirection = jitter + normalize (reflect (viewDirection, in_normal));
 
-	vec3 reflectionStartPos = in_position;
+	vec2 reflectionPos = ScreenSpaceRayTrace (in_position, reflectionDirection, gPositionMap,
+		ssrIterations, ssrSampleSkip, ssrSpatialBias);
 
-	int iterations = 0;
-
-	bool needStop = false;
-
-	vec3 reflectionPos = vec3 (0.0f);
-
-	while (iterations < ssrIterations && needStop == false) {
-
-		vec3 rayPos = reflectionStartPos + iterations * reflectionDirection * ssrSampleSkip;
-
-		vec4 projectedPos = projectionMatrix * vec4 (rayPos, 1.0f);
-		projectedPos.xyz /= projectedPos.w;
-		projectedPos.xyz = projectedPos.xyz * 0.5 + 0.5;
-
-		if (projectedPos.x > 1 || projectedPos.x < 0 || projectedPos.y > 1 || projectedPos.y < 0) {
-			needStop = true;
-		}
-
-		vec3 samplePos = texture (gPositionMap, projectedPos.xy).xyz;
-
-		if (rayPos.z < samplePos.z && rayPos.z > samplePos.z - ssrSpatialBias) {
-			needStop = true;
-
-			reflectionPos = projectedPos.xyz;
-		}
-
-		iterations ++;
-	}
-
-	return reflectionPos;
+	return vec3 (reflectionPos, 0.0);
 }
 
 void main()

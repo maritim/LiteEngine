@@ -35,6 +35,8 @@ vec2 CalcTexCoord()
 	return gl_FragCoord.xy / ssdoResolution;
 }
 
+#include "AmbientLight/ambientLight.glsl"
+
 /*
  * Calculate  a vector that is orthogonal to u.
 */
@@ -50,7 +52,8 @@ vec3 Orthogonal(vec3 u)
 
 vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec2 texCoord)
 {
-	vec3 occlusion = vec3 (0.0);
+	vec3 occlusionColor = vec3 (0.0);
+	float occlusion = 0.0;
 
 	/*
 	 * Compute noise scale to map the noise on the whole screen
@@ -85,16 +88,22 @@ vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal, vec3
 		float dist = distance (in_position, samplePos);
 
 		vec3 dir = normalize (in_position - samplePos);
-		vec3 occlusionColor = (sampleDiffuse * dot (dir, sampleNormal) * dot (-dir, in_normal) / max (1.0, dist * dist)) * ssdoIndirectIntensity;
+		vec3 sampleColor = ((sampleDiffuse * max (dot (dir, sampleNormal), 0.0) *
+			max (dot (-dir, in_normal), 0.0)) / max (1.0, dist * dist));
+		occlusionColor += sampleColor;
 
-		occlusion += (1.0 - visibility) * occlusionColor;
+		float rangeCheck = smoothstep (0.0, 1.0, ssdoRadius / abs (in_position.z - samplePos.z));
+		occlusion += (samplePos.z >= sample.z + ssdoBias ? 1.0 : 0.0) * rangeCheck;
 
 		++ samplesCount;
 	}
 
-	occlusion /= samplesCount;
+	samplesCount = max (samplesCount, 1);
 
-	return occlusion;
+	occlusion = 1.0 - (occlusion / samplesCount);
+	occlusionColor /= samplesCount;
+
+	return min (occlusion + occlusionColor * ssdoIndirectIntensity, 1.0) * ambientLightColor * ambientLightIntensity;
 }
 
 void main()

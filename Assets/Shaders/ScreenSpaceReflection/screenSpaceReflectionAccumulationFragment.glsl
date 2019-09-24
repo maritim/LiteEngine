@@ -58,8 +58,9 @@ void main()
 
 	vec3 reflectionDirection = normalize (reflect (normalize (in_position), in_normal));
 
-    vec3 fresnel = fresnelSchlick(max(dot(in_normal, normalize(-in_position)), 0.0), vec3 (0.0f));
+    vec3 fresnel = vec3 (1.0);// fresnelSchlick(max(dot(in_normal, normalize(-in_position)), 0.0), vec3 (0.0f));
 
 	out_color = in_diffuse + in_specular * reflection * screenEdgeFade *
-		clamp (-reflectionDirection.z, 0.0f, 1.0f) * fresnel * ssrIntensity;
+		// clamp (-reflectionDirection.z, 0.0f, 1.0f) * fresnel * ssrIntensity;
+		fresnel * ssrIntensity;
 }

@@ -53,6 +53,8 @@ private:
 	~EditorScene ();
 	EditorScene (const EditorScene& other);
 	EditorScene& operator=(const EditorScene& other);
+
+	void ShowSceneMenu ();
 };
 
 #endif

@@ -37,6 +37,7 @@ bool SSDOSamplesVolume::Init (std::size_t samplesCount)
 		 *
 		*/
 
+		sample = glm::normalize (sample);
 		sample *= Random::Instance ()->RangeF (0.5f, 1.0f);
 
 		_samples.samples [index * 4] = sample.x;
