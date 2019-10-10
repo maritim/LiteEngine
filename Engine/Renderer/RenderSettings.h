@@ -40,8 +40,8 @@ struct RenderSettings : public Object
 	float ssr_scale;
 	std::size_t ssr_iterations;
 	float ssr_roughness;
-	float ssr_sample_skip;
-	float ssr_spatial_bias;
+	float ssr_thickness;
+	std::size_t ssr_stride;
 	float ssr_intensity;
 
 	bool bloom_enabled;
@@ -77,9 +77,11 @@ struct RenderSettings : public Object
 	std::size_t vct_debug_volume_mipmap_level;
 
 	float ssdo_scale;
+	float ssdo_shadow_scale;
 	std::size_t ssdo_samples;
 	float ssdo_radius;
 	float ssdo_bias;
+	std::size_t ssdo_shadow_stride;
 	float ssdo_indirect_intensity;
 };
 

@@ -82,8 +82,9 @@ void VoxelVolume::BindForWriting ()
 
 void VoxelVolume::BindForReading ()
 {
-	GL::ActiveTexture (GL_TEXTURE10);
-	GL::BindTexture (GL_TEXTURE_3D, _volumeTexture);
+	/*
+	 * Do nothing
+	*/
 }
 
 std::vector<PipelineAttribute> VoxelVolume::GetCustomAttributes () const
@@ -96,7 +97,7 @@ std::vector<PipelineAttribute> VoxelVolume::GetCustomAttributes () const
 	PipelineAttribute volumeSize;
 	PipelineAttribute volumeMipmapLevels;
 
-	volumeTexture.type = PipelineAttribute::AttrType::ATTR_1I;
+	volumeTexture.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
 	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
 	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
 	volumeSize.type = PipelineAttribute::AttrType::ATTR_3I;
@@ -108,7 +109,7 @@ std::vector<PipelineAttribute> VoxelVolume::GetCustomAttributes () const
 	volumeSize.name = "volumeSize";
 	volumeMipmapLevels.name = "volumeMipmapLevels";
 
-	volumeTexture.value.x = 10;
+	volumeTexture.value.x = _volumeTexture;
 	minVertex.value = _minVertex;
 	maxVertex.value = _maxVertex;
 	volumeSize.value = glm::vec3 ((float) _volumeSize);

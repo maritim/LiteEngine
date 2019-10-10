@@ -63,8 +63,9 @@ bool NoiseMapVolume::Init (std::size_t width, std::size_t height)
 
 void NoiseMapVolume::BindForReading ()
 {
-	GL::ActiveTexture (GL_TEXTURE10);
-	GL::BindTexture (GL_TEXTURE_2D, _noiseMap);
+	/*
+	 * Nothing
+	*/
 }
 
 void NoiseMapVolume::BindForWriting ()
@@ -81,13 +82,13 @@ std::vector<PipelineAttribute> NoiseMapVolume::GetCustomAttributes () const
 	PipelineAttribute noiseMap;
 	PipelineAttribute noiseSize;
 
-	noiseMap.type = PipelineAttribute::AttrType::ATTR_1I;
+	noiseMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 	noiseSize.type = PipelineAttribute::AttrType::ATTR_2F;
 
 	noiseMap.name = "noiseMap";
 	noiseSize.name = "noiseSize";
 
-	noiseMap.value.x = 10;
+	noiseMap.value.x = _noiseMap;
 	noiseSize.value = glm::vec3 (_noiseWidth, _noiseHeight, 0.0f);
 
 	attributes.push_back (noiseMap);

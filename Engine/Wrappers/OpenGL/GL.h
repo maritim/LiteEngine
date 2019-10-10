@@ -129,11 +129,15 @@ public:
 	// Textures
 	static void BindTexture(GLenum target, GLuint texture);
 	static void ActiveTexture(GLenum texture);
+	static void TextureView(GLuint texture, GLenum target, GLuint origtexture, GLenum internalformat,
+		GLuint minlevel, GLuint numlevels, GLuint minlayer, GLuint numlayers);
 
 	static void TexImage2D(GLenum target,  GLint level,  GLint internalformat,  GLsizei width,  
 		GLsizei height,  GLint border,  GLenum format,  GLenum type,  const GLvoid * data); 
 	static void TexImage3D(GLenum target, GLint level, GLint internalFormat, GLsizei width, GLsizei height, 
 		GLsizei depth, GLint border, GLenum format, GLenum type, const GLvoid * data);
+
+	static void TexStorage2D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
 
 	static void TexEnvi(GLenum target,  GLenum pname,  GLint param);
 	static void TexEnvf(GLenum target,  GLenum pname,  GLfloat param);

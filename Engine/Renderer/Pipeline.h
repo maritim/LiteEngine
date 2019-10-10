@@ -12,6 +12,7 @@
 #include "Shader/Shader.h"
 
 #include "Core/Resources/Resource.h"
+#include "Renderer/RenderSettings.h"
 #include "Renderer/RenderViews/MaterialView.h"
 #include "Renderer/RenderViews/TextureView.h"
 
@@ -24,7 +25,7 @@ private:
 	static glm::mat4 _viewMatrix;
 	static glm::mat4 _projectionMatrix;
 
-	static glm::vec3 _cameraPosition;
+	static const Camera* _currentCamera;
 
 	static std::size_t _textureCount;
 

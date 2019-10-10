@@ -40,10 +40,10 @@ std::vector<PipelineAttribute> RSMVolume::GetCustomAttributes () const
 	PipelineAttribute reflectiveShadowMapFlux;
 	PipelineAttribute lightSpaceMatrix;
 
-	reflectiveShadowMapDepth.type = PipelineAttribute::AttrType::ATTR_1I;
-	reflectiveShadowMapPos.type = PipelineAttribute::AttrType::ATTR_1I;
-	reflectiveShadowMapNormal.type = PipelineAttribute::AttrType::ATTR_1I;
-	reflectiveShadowMapFlux.type = PipelineAttribute::AttrType::ATTR_1I;
+	reflectiveShadowMapDepth.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
+	reflectiveShadowMapPos.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
+	reflectiveShadowMapNormal.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
+	reflectiveShadowMapFlux.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 	lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
 
 	reflectiveShadowMapDepth.name = "rsmShadowMap";
@@ -52,10 +52,10 @@ std::vector<PipelineAttribute> RSMVolume::GetCustomAttributes () const
 	reflectiveShadowMapFlux.name = "rsmFluxMap";
 	lightSpaceMatrix.name = "rsmLightSpaceMatrix";
 
-	reflectiveShadowMapDepth.value.x = 15;
-	reflectiveShadowMapPos.value.x = 16;
-	reflectiveShadowMapNormal.value.x = 17;
-	reflectiveShadowMapFlux.value.x = 18;
+	reflectiveShadowMapDepth.value.x = _shadowMapBuffers [0]->GetDepthBuffer ();
+	reflectiveShadowMapPos.value.x = _shadowMapBuffers [0]->GetColorBuffer (0);
+	reflectiveShadowMapNormal.value.x = _shadowMapBuffers [0]->GetColorBuffer (1);
+	reflectiveShadowMapFlux.value.x = _shadowMapBuffers [0]->GetColorBuffer (2);
 
 	glm::mat4 lightProjection = _camera->GetProjectionMatrix ();
 	glm::mat4 lightView = glm::translate (glm::mat4_cast (_camera->GetRotation ()), _camera->GetPosition () * -1.0f);

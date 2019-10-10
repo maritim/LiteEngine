@@ -15,6 +15,7 @@
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOSamplesGenerationRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDORenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDODirectionalLightRenderPass.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOShadowRenderPass.h"
 
 #include "RenderPasses/AmbientOcclusion/SSAOSamplesGenerationRenderPass.h"
 #include "RenderPasses/AmbientOcclusion/SSAONoiseGenerationRenderPass.h"
@@ -44,23 +45,17 @@ void ScreenSpaceDirectionalOcclusionRenderModule::Init ()
 	_renderPasses.push_back (new DeferredGeometryRenderPass ());
 	_renderPasses.push_back (new AmbientLightRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
-		.Volume (new IterateOverRenderVolumeCollection (1))
+		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 		.Attach (new SSDOSamplesGenerationRenderPass ())
 		.Attach (new SSDORenderPass ())
-		.Build ());
-	_renderPasses.push_back (ContainerRenderPass::Builder ()
-		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
+		.Attach (new SSRRenderPass ())
+		.Attach (new SSDOShadowRenderPass ())
 		.Attach (new SSDODirectionalLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
 		.Attach (new IdleRenderPass ())
-		.Attach (ContainerRenderPass::Builder ()
-			.Volume (new IterateOverRenderVolumeCollection (1))
-			.Attach (new SSRRenderPass ())
-			.Attach (new SSRAccumulationRenderPass ())
-			.Build ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new BrightExtractionRenderPass ())

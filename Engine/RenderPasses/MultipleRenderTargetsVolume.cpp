@@ -66,7 +66,7 @@ bool MultipleRenderTargetsVolume::Init(const glm::ivec2& size)
 	*/
 
 	GL::BindTexture(GL_TEXTURE_2D, m_depthTexture);
-	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, _size.x, _size.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	GL::TexStorage2D (GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, _size.x, _size.y);
 	GL::FramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depthTexture, 0);
 
 	/*
@@ -145,13 +145,8 @@ void MultipleRenderTargetsVolume::Clear ()
 void MultipleRenderTargetsVolume::BindForReading ()
 {
 	/*
-	 * Bind all color textures for reading
+	 * Do nothing
 	*/
-
-	for (std::size_t i = 0; i < m_texturesCount; i++) {
-		GL::ActiveTexture (GL_TEXTURE0 + i);
-		GL::BindTexture (GL_TEXTURE_2D, m_textures [i]);
-	}
 }
 
 void MultipleRenderTargetsVolume::BindForWriting ()

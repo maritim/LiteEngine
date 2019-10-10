@@ -98,16 +98,16 @@ void RenderSettingsLoader::ProcessSSR (TiXmlElement* xmlElem, RenderSettings* se
 	std::string scale = xmlElem->Attribute ("scale");
 	std::string iterations = xmlElem->Attribute ("iterations");
 	std::string roughness = xmlElem->Attribute ("roughness");
-	std::string sampleSkip = xmlElem->Attribute ("sampleSkip");
-	std::string spatialBias = xmlElem->Attribute ("spatialBias");
+	std::string thickness = xmlElem->Attribute ("thickness");
+	std::string stride = xmlElem->Attribute ("stride");
 	std::string intensity = xmlElem->Attribute ("intensity");
 
 	settings->ssr_enabled = Extensions::StringExtend::ToBool (enabled);
 	settings->ssr_scale = std::stof (scale);
 	settings->ssr_iterations = std::stoul (iterations);
 	settings->ssr_roughness = std::stof (roughness);
-	settings->ssr_sample_skip = std::stof (sampleSkip);
-	settings->ssr_spatial_bias = std::stof (spatialBias);
+	settings->ssr_thickness = std::stof (thickness);
+	settings->ssr_stride = std::stoul (stride);
 	settings->ssr_intensity = std::stof (intensity);
 }
 
@@ -194,14 +194,18 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 void RenderSettingsLoader::ProcessSSDO (TiXmlElement* xmlElem, RenderSettings* settings)
 {
 	std::string scale = xmlElem->Attribute ("scale");
+	std::string shadowScale = xmlElem->Attribute ("shadowScale");
 	std::string samples = xmlElem->Attribute ("samples");
 	std::string radius = xmlElem->Attribute ("radius");
 	std::string bias = xmlElem->Attribute ("bias");
+	std::string shadowStride = xmlElem->Attribute ("shadowStride");
 	std::string indirectIntensity = xmlElem->Attribute ("indirectIntensity");
 
 	settings->ssdo_scale = std::stof (scale);
+	settings->ssdo_shadow_scale = std::stof (shadowScale);
 	settings->ssdo_samples = std::stoi (samples);
 	settings->ssdo_radius = std::stof (radius);
 	settings->ssdo_bias = std::stof (bias);
+	settings->ssdo_shadow_stride = std::stoul (shadowStride);
 	settings->ssdo_indirect_intensity = std::stof (indirectIntensity);
 }

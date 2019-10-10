@@ -16,9 +16,13 @@ public:
         GBUFFER_TEXTURE_TYPE_LIGHTMAP,
         GBUFFER_NUM_TEXTURES
     };
+protected:
+    unsigned int _depthTextureView;
 
 public:
     GBuffer();
+
+    bool Init (const glm::ivec2& size);
 
     std::vector<PipelineAttribute> GetCustomAttributes () const;
 }; 

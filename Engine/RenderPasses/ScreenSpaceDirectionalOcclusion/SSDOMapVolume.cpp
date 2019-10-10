@@ -6,8 +6,9 @@
 
 void SSDOMapVolume::BindForReading ()
 {
-	GL::ActiveTexture (GL_TEXTURE15);
-	GL::BindTexture (GL_TEXTURE_2D, _colorBuffer);
+	/*
+	 * Do nothing
+	*/
 }
 
 std::vector<PipelineAttribute> SSDOMapVolume::GetCustomAttributes () const
@@ -16,11 +17,11 @@ std::vector<PipelineAttribute> SSDOMapVolume::GetCustomAttributes () const
 
 	PipelineAttribute ssdoMap;
 
-	ssdoMap.type = PipelineAttribute::AttrType::ATTR_1I;
+	ssdoMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 
 	ssdoMap.name = "ssdoMap";
 
-	ssdoMap.value.x = 15;
+	ssdoMap.value.x = _colorBuffer;
 
 	attributes.push_back (ssdoMap);
 

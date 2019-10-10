@@ -4,8 +4,9 @@
 
 void SSRMapVolume::BindForReading ()
 {
-	GL::ActiveTexture (GL_TEXTURE15);
-	GL::BindTexture (GL_TEXTURE_2D, _colorBuffer);
+	/*
+	 * Do nothing
+	*/
 }
 
 std::vector<PipelineAttribute> SSRMapVolume::GetCustomAttributes () const
@@ -14,11 +15,11 @@ std::vector<PipelineAttribute> SSRMapVolume::GetCustomAttributes () const
 
 	PipelineAttribute reflectionMap;
 
-	reflectionMap.type = PipelineAttribute::AttrType::ATTR_1I;
+	reflectionMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 
 	reflectionMap.name = "reflectionMap";
 
-	reflectionMap.value.x = 15;
+	reflectionMap.value.x = _colorBuffer;
 
 	attributes.push_back (reflectionMap);
 

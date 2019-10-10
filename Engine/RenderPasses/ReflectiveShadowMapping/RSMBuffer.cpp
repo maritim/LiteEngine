@@ -80,18 +80,6 @@ bool RSMBuffer::Init (const glm::ivec2& size)
 void RSMBuffer::BindForReading ()
 {
 	/*
-	 * Bind depth buffer for reading
+	 * Do nothing
 	*/
-
-	GL::ActiveTexture (GL_TEXTURE15);
-	GL::BindTexture (GL_TEXTURE_2D, m_depthTexture);
-
-	/*
-	 * Bind every color buffer for reading
-	*/
-
-	for (std::size_t index = 0;index < m_texturesCount;index ++) {
-		GL::ActiveTexture (GL_TEXTURE16 + index);
-		GL::BindTexture (GL_TEXTURE_2D, m_textures [index]);
-	}
 }

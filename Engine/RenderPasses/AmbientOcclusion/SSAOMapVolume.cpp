@@ -55,8 +55,9 @@ bool SSAOMapVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
 
 void SSAOMapVolume::BindForReading ()
 {
-	GL::ActiveTexture (GL_TEXTURE11);
-	GL::BindTexture (GL_TEXTURE_2D, _colorBuffer);
+	/*
+	 * Do nothing
+	*/
 }
 
 std::vector<PipelineAttribute> SSAOMapVolume::GetCustomAttributes () const
@@ -65,11 +66,11 @@ std::vector<PipelineAttribute> SSAOMapVolume::GetCustomAttributes () const
 
 	PipelineAttribute ambientOcclusionMap;
 
-	ambientOcclusionMap.type = PipelineAttribute::AttrType::ATTR_1I;
+	ambientOcclusionMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 
 	ambientOcclusionMap.name = "ambientOcclusionMap";
 
-	ambientOcclusionMap.value.x = 11;
+	ambientOcclusionMap.value.x = _colorBuffer;
 
 	attributes.push_back (ambientOcclusionMap);
 

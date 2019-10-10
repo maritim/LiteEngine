@@ -4,8 +4,9 @@
 
 void PostProcessMapVolume::BindForReading ()
 {
-	GL::ActiveTexture (GL_TEXTURE18);
-	GL::BindTexture (GL_TEXTURE_2D, _colorBuffer);
+	/*
+	 * Do nothing
+	*/
 }
 
 std::vector<PipelineAttribute> PostProcessMapVolume::GetCustomAttributes () const
@@ -14,11 +15,11 @@ std::vector<PipelineAttribute> PostProcessMapVolume::GetCustomAttributes () cons
 
 	PipelineAttribute postProcessMap;
 
-	postProcessMap.type = PipelineAttribute::AttrType::ATTR_1I;
+	postProcessMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 
 	postProcessMap.name = "postProcessMap";
 
-	postProcessMap.value.x = 18;
+	postProcessMap.value.x = _colorBuffer;
 
 	attributes.push_back (postProcessMap);
 

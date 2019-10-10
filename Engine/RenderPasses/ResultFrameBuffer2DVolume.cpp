@@ -20,8 +20,9 @@ void ResultFrameBuffer2DVolume::AttachDepthBuffer (unsigned int depthBuffer)
 
 void ResultFrameBuffer2DVolume::BindForReading ()
 {
-	GL::ActiveTexture (GL_TEXTURE4);
-	GL::BindTexture (GL_TEXTURE_2D, _colorBuffer);
+	/*
+	 * Do nothing
+	*/
 }
 
 void ResultFrameBuffer2DVolume::BindForWriting ()
@@ -45,11 +46,11 @@ std::vector<PipelineAttribute> ResultFrameBuffer2DVolume::GetCustomAttributes ()
 
 	PipelineAttribute lightAccumulationMap;
 
-	lightAccumulationMap.type = PipelineAttribute::AttrType::ATTR_1I;
+	lightAccumulationMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 
 	lightAccumulationMap.name = "lightAccumulationMap";
 
-	lightAccumulationMap.value.x = 4;
+	lightAccumulationMap.value.x = _colorBuffer;
 
 	attributes.push_back (lightAccumulationMap);
 

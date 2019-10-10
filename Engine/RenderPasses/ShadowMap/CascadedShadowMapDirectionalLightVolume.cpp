@@ -91,13 +91,8 @@ void CascadedShadowMapDirectionalLightVolume::BindForShadowMapCatch (std::size_t
 void CascadedShadowMapDirectionalLightVolume::BindForReading ()
 {
 	/*
-	 * Bind every depth buffer for reading
+	 * Do nothing
 	*/
-
-	for (std::size_t index = 0;index < _cascadedLevels;index ++) {
-		GL::ActiveTexture (GL_TEXTURE4 + index);
-		_shadowMaps [index]->BindForReading ();
-	}
 }
 
 void CascadedShadowMapDirectionalLightVolume::BindForWriting ()
@@ -127,7 +122,7 @@ std::vector<PipelineAttribute> CascadedShadowMapDirectionalLightVolume::GetCusto
 		PipelineAttribute lightSpaceMatrix;
 		PipelineAttribute clipZLevel;
 
-		shadowMap.type = PipelineAttribute::AttrType::ATTR_1I;
+		shadowMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 		lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
 		clipZLevel.type = PipelineAttribute::AttrType::ATTR_1F;
 
@@ -135,7 +130,7 @@ std::vector<PipelineAttribute> CascadedShadowMapDirectionalLightVolume::GetCusto
 		lightSpaceMatrix.name = "lightSpaceMatrices[" + std::to_string (index) + "]";
 		clipZLevel.name = "clipZLevels[" + std::to_string (index) + "]";
 
-		shadowMap.value.x = 4.0f + index;
+		shadowMap.value.x = _shadowMaps [index]->GetColorTextureID ();
 
 		glm::mat4 lightProjection = _lightCameras [index]->GetProjectionMatrix ();
 		glm::mat4 lightView = glm::translate (glm::mat4_cast(_lightCameras [index]->GetRotation ()), _lightCameras [index]->GetPosition () * -1.0f);

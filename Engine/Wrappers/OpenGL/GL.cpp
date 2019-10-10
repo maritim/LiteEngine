@@ -764,6 +764,14 @@ void GL::ActiveTexture(GLenum texture)
 	ErrorCheck ("glActiveTexture");
 }
 
+void GL::TextureView(GLuint texture, GLenum target, GLuint origtexture, GLenum internalformat,
+	GLuint minlevel, GLuint numlevels, GLuint minlayer, GLuint numlayers)
+{
+	glTextureView (texture, target, origtexture, internalformat,
+		minlevel, numlevels, minlayer, numlayers);
+
+	ErrorCheck ("glTextureView");
+}
 
 void GL::TexImage2D(GLenum target,  GLint level,  GLint internalformat,  
 	GLsizei width,  GLsizei height,  GLint border,  GLenum format,  
@@ -783,6 +791,13 @@ void GL::TexImage3D(GLenum target, GLint level, GLint internalFormat,
 		border, format, type, data);
 
 	ErrorCheck ("glTexImage3D");
+}
+
+void GL::TexStorage2D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height)
+{
+	glTexStorage2D (target, levels, internalformat, width, height);
+
+	ErrorCheck ("glTexStorage2D");
 }
 
 void GL::TexEnvi(GLenum target,  GLenum pname,  GLint param)

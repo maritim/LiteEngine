@@ -83,8 +83,9 @@ void RSMCacheVolume::BindForWriting ()
 
 void RSMCacheVolume::BindForReading ()
 {
-	GL::ActiveTexture (GL_TEXTURE10);
-	GL::BindTexture (GL_TEXTURE_2D, _colorBuffer);
+	/*
+	 * Do nothing
+	*/
 }
 
 std::vector<PipelineAttribute> RSMCacheVolume::GetCustomAttributes () const
@@ -93,11 +94,11 @@ std::vector<PipelineAttribute> RSMCacheVolume::GetCustomAttributes () const
 
 	PipelineAttribute rsmCacheMap;
 
-	rsmCacheMap.type = PipelineAttribute::AttrType::ATTR_1I;
+	rsmCacheMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 
 	rsmCacheMap.name = "rsmCacheMap";
 
-	rsmCacheMap.value.x = 10;
+	rsmCacheMap.value.x = _colorBuffer;
 
 	attributes.push_back (rsmCacheMap);
 

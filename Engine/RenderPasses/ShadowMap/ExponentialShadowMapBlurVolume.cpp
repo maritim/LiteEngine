@@ -68,13 +68,13 @@ std::vector<PipelineAttribute> ExponentialShadowMapBlurVolume::GetCustomAttribut
 	PipelineAttribute postProcessMap;
 	PipelineAttribute blurMapResolution;
 
-	postProcessMap.type = PipelineAttribute::AttrType::ATTR_1I;
+	postProcessMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 	blurMapResolution.type = PipelineAttribute::AttrType::ATTR_2F;
 
 	postProcessMap.name = "blurMap";
 	blurMapResolution.name = "blurMapResolution";
 
-	postProcessMap.value.x = 18;
+	postProcessMap.value.x = _colorBuffer;
 	blurMapResolution.value = glm::vec3 (_resolution, 0);
 
 	attributes.push_back (postProcessMap);

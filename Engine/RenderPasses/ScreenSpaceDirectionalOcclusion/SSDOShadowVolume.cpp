@@ -1,10 +1,10 @@
-#include "BlurMapVolume.h"
+#include "SSDOShadowVolume.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
 #include "Core/Console/Console.h"
 
-bool BlurMapVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
+bool SSDOShadowVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
 {
 	/*
 	 * Create framebuffer
@@ -20,12 +20,12 @@ bool BlurMapVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
 	GL::GenTextures (1, &_colorBuffer);
 	GL::BindTexture (GL_TEXTURE_2D, _colorBuffer);
 
-	GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	GL::TexImage2D (GL_TEXTURE_2D, 0, GL_RGB16F, bufferWidth, bufferHeight, 0, GL_RGB, GL_FLOAT, 0);
+	GL::TexImage2D (GL_TEXTURE_2D, 0, GL_RED, bufferWidth, bufferHeight, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
 		
 	GL::FramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _colorBuffer, 0);
 
@@ -53,26 +53,26 @@ bool BlurMapVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
 	return true;
 }
 
-void BlurMapVolume::BindForReading ()
+void SSDOShadowVolume::BindForReading ()
 {
 	/*
 	 * Do nothing
 	*/
 }
 
-std::vector<PipelineAttribute> BlurMapVolume::GetCustomAttributes () const
+std::vector<PipelineAttribute> SSDOShadowVolume::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 
-	PipelineAttribute brightMap;
+	PipelineAttribute ssdoShadowMap;
 
-	brightMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
+	ssdoShadowMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 
-	brightMap.name = "blurMap";
+	ssdoShadowMap.name = "ssdoShadowMap";
 
-	brightMap.value.x = _colorBuffer;
+	ssdoShadowMap.value.x = _colorBuffer;
 
-	attributes.push_back (brightMap);
+	attributes.push_back (ssdoShadowMap);
 
 	return attributes;
 }

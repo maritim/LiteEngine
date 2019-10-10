@@ -2,12 +2,6 @@
 
 layout(location = 0) out vec3 out_color;
 
-uniform sampler2D gPositionMap;
-uniform sampler2D gNormalMap;
-uniform sampler2D gDiffuseMap;
-uniform sampler2D gSpecularMap;
-uniform sampler2D gDepthMap;
-
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelViewMatrix;
@@ -18,19 +12,16 @@ uniform mat3 normalWorldMatrix;
 uniform mat4 inverseViewMatrix;
 
 uniform vec3 cameraPosition;
-
-uniform vec2 screenSize;
+uniform vec2 cameraZLimits;
 
 uniform float ssrIntensity;
 
+uniform sampler2D lightAccumulationMap;
 uniform sampler2D postProcessMap;
 
 uniform sampler2D reflectionMap;
 
-vec2 CalcTexCoord()
-{
-	return gl_FragCoord.xy / screenSize;
-}
+#include "deferred.glsl"
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
@@ -58,9 +49,12 @@ void main()
 
 	vec3 reflectionDirection = normalize (reflect (normalize (in_position), in_normal));
 
-    vec3 fresnel = vec3 (1.0);// fresnelSchlick(max(dot(in_normal, normalize(-in_position)), 0.0), vec3 (0.0f));
+	vec3 fresnel = fresnelSchlick(max(dot(in_normal, normalize(-in_position)), 0.0), vec3 (0.0f));
 
-	out_color = in_diffuse + in_specular * reflection * screenEdgeFade *
-		// clamp (-reflectionDirection.z, 0.0f, 1.0f) * fresnel * ssrIntensity;
-		fresnel * ssrIntensity;
+	vec3 reflectionViewPos = texture (gPositionMap, in_reflection).xyz;
+	float d = distance (reflectionViewPos, in_position);
+
+	out_color = in_diffuse + (in_specular * reflection * screenEdgeFade *
+		clamp (-reflectionDirection.z, 0.0f, 1.0f) *
+		fresnel * ssrIntensity) / max (d / 3, 1.0f);
 }

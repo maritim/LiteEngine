@@ -23,6 +23,7 @@
 #include "Debug/Statistics/RSMStatisticsObject.h"
 #include "Debug/Statistics/SSDOStatisticsObject.h"
 #include "Debug/Statistics/SSAOStatisticsObject.h"
+#include "Debug/Statistics/SSRStatisticsObject.h"
 
 namespace fs = std::experimental::filesystem;
 
@@ -95,6 +96,7 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 		"SceneRenderModule",
 		"VoxelConeTracingRenderModule",
 		"ReflectiveShadowMappingRenderModule",
+		"LightPropagationVolumesModule",
 		"ScreenSpaceDirectionalOcclusionRenderModule"
 	};
 
@@ -231,11 +233,21 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			_settings->ssdo_scale = scale;
 		}
 
+		float shadowScale = _settings->ssdo_shadow_scale;
+		ImGui::InputFloat ("Shadow Scale", &shadowScale);
+		if (shadowScale > 0) {
+			_settings->ssdo_shadow_scale = shadowScale;
+		}
+
 		std::size_t limit1 = 1, limit2 = 200;
 		ImGui::SliderScalar ("Samples Size", ImGuiDataType_U32, &_settings->ssdo_samples, &limit1, &limit2);
 
 		ImGui::InputFloat ("Radius", &_settings->ssdo_radius, 0.1f);
 		ImGui::InputFloat ("Bias", &_settings->ssdo_bias, 0.1f);
+
+		std::size_t strideStep = 1;
+		ImGui::InputScalar ("Shadow Stride", ImGuiDataType_U32, &_settings->ssdo_shadow_stride, &strideStep);
+
 		ImGui::InputFloat ("Indirect Light Intensity", &_settings->ssdo_indirect_intensity, 0.1f);
 
 		ImGui::Separator ();
@@ -261,6 +273,11 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 				ImGui::Text ("SSDO Map");
 				ShowImage (ssdoMapVolume->GetColorTextureID (), glm::ivec2 (width, height));
+
+				FrameBuffer2DVolume* ssdoShadowVolume = ssdoStat->ssdoShadowVolume;
+
+				ImGui::Text ("SSDO Map");
+				ShowImage (ssdoShadowVolume->GetColorTextureID (), glm::ivec2 (width, height));
 			}
 
 			ImGui::TreePop();
@@ -337,9 +354,40 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			std::size_t step = 1;
 			ImGui::InputScalar ("Sample Iterations", ImGuiDataType_U32, &_settings->ssr_iterations, &step);
 
-			ImGui::InputFloat ("Spatial Sample Skip", &_settings->ssr_sample_skip, 0.1f);
-			ImGui::InputFloat ("Spatial Bias", &_settings->ssr_spatial_bias, 0.1f);
+			ImGui::SliderFloat ("Sample Thickness", &_settings->ssr_thickness, 0.0f, 10.0f);
+
+			std::size_t strideStep = 1;
+			ImGui::InputScalar ("Stride", ImGuiDataType_U32, &_settings->ssr_stride, &strideStep);
+
 			ImGui::InputFloat ("Intensity", &_settings->ssr_intensity, 0.1f);
+
+			ImGui::Separator ();
+
+			if (ImGui::TreeNode ("Debug")) {
+				StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSRStatisticsObject");
+				SSRStatisticsObject* ssrStat = nullptr;
+
+				if (stat != nullptr) {
+					ssrStat = dynamic_cast<SSRStatisticsObject*> (stat);
+				}
+
+				if (ssrStat != nullptr) {
+
+					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
+
+					FrameBuffer2DVolume* ssrPositionMapVolume = ssrStat->ssrPositionMapVolume;
+
+					glm::ivec2 ssrMapSize = ssrPositionMapVolume->GetSize ();
+
+					int ssrMapWidth = windowWidth;
+					int ssrMapHeight = ((float) ssrMapSize.y / ssrMapSize.x) * ssrMapWidth;
+
+					ImGui::Text ("SSR Position Map");
+					ShowImage (ssrPositionMapVolume->GetColorTextureID (), glm::ivec2 (ssrMapWidth, ssrMapHeight));
+				}
+
+				ImGui::TreePop();
+			}
 
 			ImGui::TreePop();
 		}

@@ -8,6 +8,7 @@
 struct ENGINE_API SSDOStatisticsObject : public StatisticsObject
 {
 	FrameBuffer2DVolume* ssdoMapVolume;
+	FrameBuffer2DVolume* ssdoShadowVolume;
 };
 
 #endif

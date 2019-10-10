@@ -24,7 +24,7 @@
 glm::mat4 Pipeline::_modelMatrix (0);
 glm::mat4 Pipeline::_viewMatrix (0);
 glm::mat4 Pipeline::_projectionMatrix (0);
-glm::vec3 Pipeline::_cameraPosition (0);
+const Camera* Pipeline::_currentCamera (nullptr);
 std::size_t Pipeline::_textureCount (0);
 Shader* Pipeline::_lockedShader(nullptr);
 
@@ -100,11 +100,20 @@ void Pipeline::CreateProjection (glm::mat4 projectionMatrix)
 
 void Pipeline::SendCamera (const Camera* camera)
 {
-	_cameraPosition = camera->GetPosition ();
+	_currentCamera = camera;
+
 	_viewMatrix = glm::mat4_cast (camera->GetRotation ());
 
-	_viewMatrix =  glm::translate (_viewMatrix, _cameraPosition * -1.0f);
+	_viewMatrix =  glm::translate (_viewMatrix, _currentCamera->GetPosition () * -1.0f);
 }
+
+// void Pipeline::SendViewport (const Viewport& viewport)
+// {
+// 	_currentViewport = viewport;
+
+// 	GL::Viewport (_currentViewport.x, _currentViewport.y,
+// 		_currentViewport.width, _currentViewport.height);
+// }
 
 void Pipeline::SetObjectTransform (const Transform* transform)
 {
@@ -153,7 +162,9 @@ void Pipeline::UpdateMatrices (Shader* shader)
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("inverseViewMatrix"), 1, GL_FALSE, glm::value_ptr (inverseViewMatrix));
 	GL::UniformMatrix4fv (shader->GetUniformLocation ("inverseViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (inverseViewProjectionMatrix));
 	GL::UniformMatrix3fv (shader->GetUniformLocation ("inverseNormalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (inverseNormalWorldMatrix));
-	GL::Uniform3fv (shader->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_cameraPosition));
+
+	GL::Uniform3fv (shader->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_currentCamera->GetPosition ()));
+	GL::Uniform2f (shader->GetUniformLocation ("cameraZLimit"), _currentCamera->GetZNear (), _currentCamera->GetZFar ());
 
 	// TODO: Change this
 	bool gammaCorrectionEnabled = SettingsManager::Instance ()->GetValue<bool> ("gamma_correction", false);
@@ -336,6 +347,14 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 			case PipelineAttribute::ATTR_TEXTURE_CUBE : {
 					GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
 					GL::BindTexture (GL_TEXTURE_CUBE_MAP, (unsigned int) attr [i].value.x);
+					GL::Uniform1i (unifLoc, _textureCount);
+					++ _textureCount;
+				}
+				break;
+			case PipelineAttribute::ATTR_TEXTURE_VIEW_DEPTH : {
+					GL::ActiveTexture (GL_TEXTURE0 + _textureCount);
+					GL::BindTexture (GL_TEXTURE_2D, (unsigned int) attr [i].value.x);
+					GL::TexParameteri (GL_TEXTURE_2D, GL_DEPTH_STENCIL_TEXTURE_MODE, GL_DEPTH_COMPONENT);
 					GL::Uniform1i (unifLoc, _textureCount);
 					++ _textureCount;
 				}
