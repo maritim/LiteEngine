@@ -3,7 +3,7 @@
 
 #include "Core/Interfaces/Object.h"
 
-class TextureView : public Object
+class ENGINE_API TextureView : public Object
 {
 protected:
 	unsigned int _gpuIndex;

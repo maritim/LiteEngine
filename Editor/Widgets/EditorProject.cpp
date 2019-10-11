@@ -6,6 +6,8 @@
 
 #include "Systems/Settings/SettingsManager.h"
 
+#include "Utils/Files/FileSystem.h"
+
 namespace fs = std::experimental::filesystem;
 
 EditorProject::EditorProject () :
@@ -136,8 +138,10 @@ void EditorProject::Open (const std::string& path)
 {
 	fs::path fspath (path);
 
+	std::string settingsPath = FileSystem::FormatFilename (path);
+
 	if (fspath.extension ().string () == ".rsettings") {
 		SettingsManager::Instance ()->SetValue ("menu_show_rendering_settings", std::to_string (true));
-		SettingsManager::Instance ()->SetValue ("menu_show_rendering_settings_path", path);
+		SettingsManager::Instance ()->SetValue ("menu_show_rendering_settings_path", settingsPath);
 	}
 }

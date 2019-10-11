@@ -11,6 +11,8 @@ Logger::~Logger ()
 	_outStream.close ();
 }
 
+SPECIALIZE_SINGLETON(Logger)
+
 void Logger::Log (const char* filename, int line, std::string message)
 {
 	_outStream << filename << ":" << line << ": " << message << std::endl;

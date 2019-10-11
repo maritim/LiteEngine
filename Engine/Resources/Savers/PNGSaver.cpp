@@ -37,9 +37,13 @@ bool PNGSaver::Save (const Object* object, const std::string& filename)
 
 	surface->pixels = pixels;
 
-	IMG_SavePNG (surface, filename.c_str ());
+	int result = IMG_SavePNG (surface, filename.c_str ());
 
-	Console::Log ("Image \"" + filename + "\" was successully saved!");
+	if (result == 0) {
+		Console::Log ("Image \"" + filename + "\" was successully saved!");
+	} else {
+		Console::LogError ("Could not save \"" + filename + "\" texture!");
+	}
 
 	delete[] pixels;
 

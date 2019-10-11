@@ -19,7 +19,12 @@
 
 //---- Define attributes of all API symbols declarations, e.g. for DLL under Windows
 // Using dear imgui via a shared library is not recommended, because of function call overhead and because we don't guarantee backward nor forward ABI compatibility.
-//#define IMGUI_API __declspec( dllexport )
+
+#ifdef _WIN32
+	#define IMGUI_API __declspec( dllexport )
+#else
+	#define IMGUI_API
+#endif
 //#define IMGUI_API __declspec( dllimport )
 
 //---- Don't define obsolete functions/enums names. Consider enabling from time to time after updating to avoid using soon-to-be obsolete function/names.

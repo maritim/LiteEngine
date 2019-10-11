@@ -12,9 +12,11 @@
 Profiler::Instance ()->GetCPUProfilerService ()->StartFrame (); \
 Profiler::Instance ()->GetGPUProfilerService ()->StartFrame ();
 
-class Profiler : public Singleton<Profiler>
+class ENGINE_API Profiler : public Singleton<Profiler>
 {
 	friend Singleton<Profiler>;
+
+	DECLARE_SINGLETON(Profiler)
 
 private:
 	CPUProfilerService* _profilerCPUService;

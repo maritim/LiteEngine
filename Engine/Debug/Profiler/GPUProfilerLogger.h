@@ -9,7 +9,7 @@
 
 struct GPUProfilerEntry;
 
-class GPUProfilerLogger : public Object
+class ENGINE_API GPUProfilerLogger : public Object
 {
 protected:
 	static std::size_t _nestDepth;

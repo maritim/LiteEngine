@@ -14,14 +14,14 @@ struct GPUProfilerEntry : ProfilerEntry
 	void Evaluate ();
 };
 
-class GPUProfilerService : public ProfilerService
+class ENGINE_API GPUProfilerService : public ProfilerService
 {
 protected:
 	std::vector<ProfilerEntry*> _lastFrameQueue2;
 
-	unsigned long int _lastStartFrameTime;
+	uint64_t _lastStartFrameTime;
 	unsigned int _lastStartFrameQuery;
-	unsigned long int _startFrameTime;
+	uint64_t _startFrameTime;
 	unsigned int _startFrameQuery;
 
 	float _lastFrameTime;
@@ -34,7 +34,7 @@ public:
 
 	const std::vector<ProfilerEntry*>& GetLastFrameEvents () const;
 
-	unsigned long int GetStartTime () const;
+	uint64_t GetStartTime () const;
 	float GetLastFrameTime () const;
 };
 

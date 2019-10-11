@@ -3,7 +3,7 @@
 
 #include "RenderPasses/NoiseMap/NoiseGenerationRenderPass.h"
 
-class SSAONoiseGenerationRenderPass : public NoiseGenerationRenderPass
+class ENGINE_API SSAONoiseGenerationRenderPass : public NoiseGenerationRenderPass
 {
 public:
 	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,

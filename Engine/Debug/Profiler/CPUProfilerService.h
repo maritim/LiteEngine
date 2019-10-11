@@ -7,7 +7,7 @@
 
 #include "CPUProfilerLogger.h"
 
-class CPUProfilerService : public ProfilerService
+class ENGINE_API CPUProfilerService : public ProfilerService
 {
 protected:
 	std::chrono::time_point<std::chrono::high_resolution_clock> _startFrame;

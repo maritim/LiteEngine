@@ -8,7 +8,6 @@ void GameBase::Init ()
 {
 	std::string renderSettingsPath = "Assets/RenderSettings/Default.rsettings";
 	RenderSettings* settings = Resources::LoadRenderSettings (renderSettingsPath);
-	settings->renderMode = "DirectLightingRenderModule";
 
 	RenderSettingsManager::Instance ()->AddRenderSettings (settings);
 	RenderSettingsManager::Instance ()->SetActive (settings);

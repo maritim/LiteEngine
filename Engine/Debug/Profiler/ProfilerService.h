@@ -15,7 +15,7 @@ struct ProfilerEntry : public Object
 	ProfilerEntry ();
 };
 
-class ProfilerService
+class ENGINE_API ProfilerService
 {
 protected:
 	bool _isActive;

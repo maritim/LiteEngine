@@ -21,6 +21,8 @@
 
 #include "Utils/Files/FileSystem.h"
 
+#include "Utils/Extensions/StringExtend.h"
+
 namespace fs = std::experimental::filesystem;
 
 EditorScene::EditorScene () :
@@ -157,6 +159,7 @@ void EditorScene::ShowSceneMenu ()
 	std::time_t currentTime = std::time (nullptr);
 	std::string filename = std::string (std::ctime (&currentTime));
 	filename.pop_back ();
+	Extensions::StringExtend::ReplaceAll (filename, ":", "-");
 	filename += ".png";
 
 	std::string volumePath = dialog.saveFileDialog(saveVolume, "", filename.c_str (), ".png");

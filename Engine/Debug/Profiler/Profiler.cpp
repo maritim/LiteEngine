@@ -12,6 +12,8 @@ Profiler::~Profiler ()
 
 }
 
+SPECIALIZE_SINGLETON(Profiler)
+
 CPUProfilerService* Profiler::GetCPUProfilerService ()
 {
 	return _profilerCPUService;

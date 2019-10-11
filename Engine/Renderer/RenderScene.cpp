@@ -1,5 +1,7 @@
 #include "RenderScene.h"
 
+#include <algorithm>
+
 RenderScene::RenderScene () :
 	_renderObjects (),
 	_renderSkyboxObject (nullptr),

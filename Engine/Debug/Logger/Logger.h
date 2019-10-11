@@ -10,9 +10,11 @@
 #define DEBUG_LOGERROR(message) Logger::Instance ()->LogError (__FILE__, __LINE__, message)
 #define DEBUG_LOGWARNING(message) Logger::Instance ()->LogWarning (__FILE__, __LINE__, message)
 
-class Logger : public Singleton<Logger>
+class ENGINE_API Logger : public Singleton<Logger>
 {
 	friend Singleton<Logger>;
+
+	DECLARE_SINGLETON(Logger)
 
 private:
 	std::ofstream _outStream;

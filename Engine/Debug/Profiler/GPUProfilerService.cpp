@@ -11,7 +11,7 @@ GPUProfilerEntry::~GPUProfilerEntry ()
 
 void GPUProfilerEntry::Evaluate ()
 {
-	unsigned long int startTime, finalTime;
+	uint64_t startTime, finalTime;
 
 	GL::GetQueryObjectui64v(TimeQueries[0], GL_QUERY_RESULT, &startTime);
 	GL::GetQueryObjectui64v(TimeQueries[1], GL_QUERY_RESULT, &finalTime);
@@ -57,7 +57,7 @@ void GPUProfilerService::StartFrame ()
 		_currentFrameQueue.begin(), _currentFrameQueue.end());
 	_currentFrameQueue.clear ();
 
-	unsigned long int currentStartFrameTime;
+	GLuint64 currentStartFrameTime;
 	GL::GetQueryObjectui64v(_lastStartFrameQuery, GL_QUERY_RESULT, &currentStartFrameTime);
 
 	_lastFrameTime = (currentStartFrameTime - _lastStartFrameTime) / 1000000.0f;
@@ -77,7 +77,7 @@ const std::vector<ProfilerEntry*>& GPUProfilerService::GetLastFrameEvents () con
 	return _lastFrameQueue2;
 }
 
-unsigned long int GPUProfilerService::GetStartTime () const
+uint64_t GPUProfilerService::GetStartTime () const
 {
 	return _lastStartFrameTime;
 }

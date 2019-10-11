@@ -10,7 +10,7 @@
 
 struct ProfilerEntry;
 
-class CPUProfilerLogger : public Object
+class ENGINE_API CPUProfilerLogger : public Object
 {
 protected:
 	static std::size_t _nestDepth;

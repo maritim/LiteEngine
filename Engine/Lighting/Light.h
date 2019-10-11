@@ -9,7 +9,7 @@
  * Color: light color
 */
 
-class Light : public SceneObject
+class ENGINE_API Light : public SceneObject
 {
 protected:
 	Color _color;
