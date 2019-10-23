@@ -88,8 +88,8 @@ vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal, vec3
 		float dist = distance (in_position, samplePos);
 
 		vec3 dir = normalize (in_position - samplePos);
-		vec3 sampleColor = ((sampleDiffuse * max (dot (dir, sampleNormal), 0.0) *
-			max (dot (-dir, in_normal), 0.0)) / max (1.0, dist * dist));
+		vec3 sampleColor = (ssdoRadius * ssdoRadius) * ((sampleDiffuse * max (dot (dir, sampleNormal), 0.0) *
+			max (dot (-dir, in_normal), 0.0)) / max (dist * dist, 1.0));
 		occlusionColor += sampleColor;
 
 		float rangeCheck = smoothstep (0.0, 1.0, ssdoRadius / abs (in_position.z - samplePos.z));
