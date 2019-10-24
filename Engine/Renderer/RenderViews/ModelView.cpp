@@ -6,45 +6,66 @@
 
 ModelView::~ModelView ()
 {
-	for (std::size_t i=0;i<_objectBuffers.size ();i++) {
-		GL::DeleteBuffers(1, &_objectBuffers[i].VBO_INDEX);
-		GL::DeleteBuffers(1, &_objectBuffers[i].VBO_INSTANCE_INDEX);
-		GL::DeleteBuffers(1, &_objectBuffers[i].IBO_INDEX);
-		GL::DeleteVertexArrays(1, &_objectBuffers [i].VAO_INDEX);
-	}
+	GL::DeleteBuffers(1, &_objectBuffer.VBO_INDEX);
+	GL::DeleteBuffers(1, &_objectBuffer.VBO_INSTANCE_INDEX);
+	GL::DeleteBuffers(1, &_objectBuffer.IBO_INDEX);
+	GL::DeleteVertexArrays(1, &_objectBuffer.VAO_INDEX);
 }
 
 void ModelView::Draw ()
 {
-	for (std::size_t i=0;i<_objectBuffers.size ();i++) {
-		if (_objectBuffers [i].materialView != nullptr) {
-			Pipeline::SendMaterial (_objectBuffers [i].materialView);
+	//bind pe containerul de stare de geometrie (vertex array object)
+	GL::BindVertexArray(_objectBuffer.VAO_INDEX);
+
+	for (std::size_t i=0;i<_groupBuffers.size ();i++) {
+		if (_groupBuffers [i].materialView != nullptr) {
+			Pipeline::SendMaterial (_groupBuffers [i].materialView);
 		}
 
-		//bind pe containerul de stare de geometrie (vertex array object)
-		GL::BindVertexArray(_objectBuffers [i].VAO_INDEX);
 		//comanda desenare
-		if (_objectBuffers [i].VBO_INSTANCE_INDEX == 0) {
-			GL::DrawElements (GL_TRIANGLES, _objectBuffers [i].INDEX_COUNT, GL_UNSIGNED_INT, 0);
+		if (_objectBuffer.VBO_INSTANCE_INDEX == 0) {
+			GL::DrawElements (GL_TRIANGLES, _groupBuffers [i].INDEX_COUNT, GL_UNSIGNED_INT,
+				(void*) (sizeof (unsigned int) * _groupBuffers [i].offset));
 		}
 
-		if (_objectBuffers [i].VBO_INSTANCE_INDEX != 0) {
-			GL::DrawElementsInstanced(GL_TRIANGLES, _objectBuffers [i].INDEX_COUNT, GL_UNSIGNED_INT, 0, _objectBuffers [i].INSTANCES_COUNT);
+		if (_objectBuffer.VBO_INSTANCE_INDEX != 0) {
+			GL::DrawElementsInstanced(GL_TRIANGLES, _groupBuffers [i].INDEX_COUNT, GL_UNSIGNED_INT,
+				(void*) (sizeof (unsigned int) * _groupBuffers [i].offset), _objectBuffer.INSTANCES_COUNT);
 		}
 	}
 }
 
-void ModelView::AddObjectBuffer (const ObjectBuffer& objectBuffer)
+void ModelView::SetObjectBuffer (const ObjectBuffer& objectBuffer)
 {
-	_objectBuffers.push_back (objectBuffer);
+	_objectBuffer = objectBuffer;
 }
 
-std::vector<ObjectBuffer>::iterator ModelView::begin ()
+void ModelView::AddGroupBuffer (const GroupBuffer& groupBuffer)
 {
-	return _objectBuffers.begin ();
+	_groupBuffers.push_back (groupBuffer);
 }
 
-std::vector<ObjectBuffer>::iterator ModelView::end ()
+ObjectBuffer& ModelView::GetObjectBuffer ()
 {
-	return _objectBuffers.end ();
+	return _objectBuffer;
+}
+
+std::size_t ModelView::GetVerticesCount () const
+{
+	return _objectBuffer.VerticesCount;
+}
+
+std::size_t ModelView::GetPolygonsCount () const
+{
+	return _objectBuffer.PolygonsCount;
+}
+
+std::vector<GroupBuffer>::iterator ModelView::begin ()
+{
+	return _groupBuffers.begin ();
+}
+
+std::vector<GroupBuffer>::iterator ModelView::end ()
+{
+	return _groupBuffers.end ();
 }

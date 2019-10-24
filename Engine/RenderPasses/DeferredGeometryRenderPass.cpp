@@ -14,7 +14,7 @@
 
 #include "Debug/Profiler/Profiler.h"
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/DrawnObjectsCountStat.h"
+#include "Debug/Statistics/RenderStatisticsObject.h"
 
 #include "Core/Console/Console.h"
 
@@ -190,6 +190,8 @@ void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, c
 
 	FrustumVolume* frustum = camera->GetFrustumVolume ();
 
+	std::size_t drawnVerticesCount = 0;
+	std::size_t drawnPolygonsCount = 0;
 	std::size_t drawnObjectsCount = 0;
 
 	for (RenderObject* renderObject : *renderScene) {
@@ -217,6 +219,8 @@ void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, c
 			}
 		}
 
+		drawnVerticesCount += renderObject->GetModelView ()->GetVerticesCount ();
+		drawnPolygonsCount += renderObject->GetModelView ()->GetPolygonsCount ();
 		drawnObjectsCount++;
 
 		/*
@@ -232,10 +236,12 @@ void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, c
 		renderObject->Draw ();
 	}
 
-	static DrawnObjectsCountStat* drawnObjectsCountStat = new DrawnObjectsCountStat ();
-	drawnObjectsCountStat->SetDrawnObjectsCount (drawnObjectsCount);
+	static RenderStatisticsObject* renderStatisticsObject = new RenderStatisticsObject ();
+	renderStatisticsObject->DrawnVerticesCount = drawnVerticesCount;
+	renderStatisticsObject->DrawnPolygonsCount = drawnPolygonsCount;
+	renderStatisticsObject->DrawnObjectsCount = drawnObjectsCount;
 
-	StatisticsManager::Instance ()->SetStatisticsObject ("DrawnObjectsCount", drawnObjectsCountStat);
+	StatisticsManager::Instance ()->SetStatisticsObject ("RenderStatisticsObject", renderStatisticsObject);
 
 	/*
 	* Disable Stecil Test for further rendering

@@ -10,7 +10,7 @@
 #include "Systems/Time/Time.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/DrawnObjectsCountStat.h"
+#include "Debug/Statistics/RenderStatisticsObject.h"
 
 EditorStats::EditorStats () :
 	_timeElapsed (0.0f),
@@ -52,7 +52,7 @@ void EditorStats::ShowStatistics ()
 	glm::ivec2 sceneWindowPos = EditorScene::Instance ()->GetWindowPosition ();
 	glm::ivec2 sceneWindowSize = EditorScene::Instance ()->GetWindowSize ();
 
-	ImGui::SetNextWindowPos(ImVec2 (sceneWindowPos.x + sceneWindowSize.x - 300, sceneWindowPos.y + 25), ImGuiCond_Always);
+	ImGui::SetNextWindowPos(ImVec2 (sceneWindowPos.x + sceneWindowSize.x - 300, sceneWindowPos.y + 45), ImGuiCond_Always);
 	ImGui::SetNextWindowSize (ImVec2 (200, 100), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowBgAlpha(0.3f);
 
@@ -67,14 +67,20 @@ void EditorStats::ShowStatistics ()
 
 		ImGui::Spacing ();
 
+		std::size_t drawnVerticesCount = 0;
+		std::size_t drawnPolygonsCount = 0;
 		std::size_t drawnObjectsCount = 0;
 
-		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("DrawnObjectsCount");
+		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RenderStatisticsObject");
+		RenderStatisticsObject* renderStatisticsObject = dynamic_cast<RenderStatisticsObject*> (stat);
 
-		if (stat != nullptr) {
-			drawnObjectsCount = dynamic_cast<DrawnObjectsCountStat*> (stat)->GetDrawnObjectsCount ();
+		if (renderStatisticsObject != nullptr) {
+			drawnVerticesCount = renderStatisticsObject->DrawnVerticesCount;
+			drawnPolygonsCount = renderStatisticsObject->DrawnPolygonsCount;
+			drawnObjectsCount = renderStatisticsObject->DrawnObjectsCount;
 		}
 
+		ImGui::Text ("Vertices: %lu Triangles: %lu", drawnVerticesCount, drawnPolygonsCount);
 		ImGui::Text ("Objects: %lu", drawnObjectsCount);
 
 		ImGui::Spacing ();

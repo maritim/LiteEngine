@@ -51,6 +51,12 @@ TextGUIVertexData::TextGUIVertexData ()
 	}
 }
 
+// http://szudzik.com/ElegantPairing.pdf
+std::size_t hash (std::size_t a, std::size_t b)
+{
+	return a >= b ? a * a + a + b : a + b * b;
+}
+
 Resource<ModelView> RenderSystem::LoadModel (const Resource<Model>& model)
 {
 	if (Resource<ModelView>::GetResource (model->GetName ()) != nullptr) {
@@ -63,9 +69,75 @@ Resource<ModelView> RenderSystem::LoadModel (const Resource<Model>& model)
 	 * Create buffer data
 	*/
 
+	std::map<std::size_t, std::size_t> indices;
+
+	std::vector<VertexData> vertexBuffer;
+	std::vector<unsigned int> indexBuffer;
+
 	for_each_type (ObjectModel*, objModel, *model) {
-		ProcessObjectModel (model, modelView, objModel);
+		for (PolygonGroup* polyGroup : *objModel) {
+			std::size_t startIndex = indexBuffer.size ();
+
+			for (Polygon* polygon : *polyGroup) {
+				for(std::size_t j=0;j<polygon->VertexCount();j++) {
+
+					std::size_t index = 0;
+
+					std::size_t vertexPos = polygon->GetVertex (j);
+					std::size_t normalPos = polygon->GetNormal (j);
+					std::size_t texcoordPos = polygon->GetTexcoord (j);
+
+					std::size_t hashPos = hash (vertexPos, hash (normalPos, texcoordPos));
+
+					auto indexIt = indices.find (hashPos);
+
+					if (indexIt == indices.end ()) {
+						VertexData vertexData;
+
+						glm::vec3 position = model->GetVertex (polygon->GetVertex(j));
+						vertexData.position[0] = position.x;
+						vertexData.position[1] = position.y;
+						vertexData.position[2] = position.z;
+
+						if (polygon->HaveNormals ()) {
+							glm::vec3 normal = model->GetNormal (polygon->GetNormal(j));
+							vertexData.normal[0] = normal.x;
+							vertexData.normal[1] = normal.y;
+							vertexData.normal[2] = normal.z;
+						}
+
+						if (model->HaveUV()) {
+							glm::vec2 texcoord = model->GetTexcoord (polygon->GetTexcoord(j));
+							vertexData.texcoord[0] = texcoord.x;
+							vertexData.texcoord[1] = texcoord.y;
+						}
+
+						vertexBuffer.push_back (vertexData);
+
+						index = vertexBuffer.size () - 1;
+
+						indices [hashPos] = index;
+					} else {
+						index = indexIt->second;
+					}
+
+					indexBuffer.push_back (index);
+				}
+			}
+
+			GroupBuffer groupBuffer;
+
+			groupBuffer.materialView = LoadMaterial (polyGroup->GetMaterial ());
+			groupBuffer.offset = startIndex;
+			groupBuffer.INDEX_COUNT = indexBuffer.size () - startIndex;
+
+			modelView->AddGroupBuffer (groupBuffer);
+		}
 	}
+
+	ObjectBuffer objectBuffer = BindModelVertexData (vertexBuffer, indexBuffer);
+
+	modelView->SetObjectBuffer (objectBuffer);
 
 	return Resource<ModelView> (modelView, model->GetName ());
 }
@@ -82,9 +154,84 @@ Resource<ModelView> RenderSystem::LoadAnimationModel (const Resource<Model>& mod
 	 * Create buffer data
 	*/
 
+	const AnimationModel* animModel = dynamic_cast<const AnimationModel*> (&*model);
+
+	std::map<std::size_t, std::size_t> indices;
+
+	std::vector<AnimatedVertexData> vertexBuffer;
+	std::vector<unsigned int> indexBuffer;
+
 	for_each_type (ObjectModel*, objModel, *model) {
-		ProcessAnimationObjectModel (model, modelView, objModel);
+		for (PolygonGroup* polyGroup : *objModel) {
+			std::size_t startIndex = indexBuffer.size ();
+
+			for (Polygon* polygon : *polyGroup) {
+				for(std::size_t j=0;j<polygon->VertexCount();j++) {
+
+					std::size_t index = 0;
+
+					std::size_t vertexPos = polygon->GetVertex (j);
+					std::size_t normalPos = polygon->GetNormal (j);
+					std::size_t texcoordPos = polygon->GetTexcoord (j);
+
+					std::size_t hashPos = hash (vertexPos, hash (normalPos, texcoordPos));
+
+					auto indexIt = indices.find (hashPos);
+
+					if (indexIt == indices.end ()) {
+						AnimatedVertexData vertexData;
+
+						glm::vec3 position = animModel->GetVertex (polygon->GetVertex(j));
+						vertexData.position[0] = position.x;
+						vertexData.position[1] = position.y;
+						vertexData.position[2] = position.z;
+
+						if (polygon->HaveNormals ()) {
+							glm::vec3 normal = animModel->GetNormal (polygon->GetNormal(j));
+							vertexData.normal[0] = normal.x;
+							vertexData.normal[1] = normal.y;
+							vertexData.normal[2] = normal.z;
+						}
+
+						if (animModel->HaveUV()) {
+							glm::vec2 texcoord = animModel->GetTexcoord (polygon->GetTexcoord(j));
+							vertexData.texcoord[0] = texcoord.x;
+							vertexData.texcoord[1] = texcoord.y;
+						}
+
+						VertexBoneInfo* vertexBoneInfo = animModel->GetVertexBoneInfo (polygon->GetVertex (j));
+
+						for (std::size_t k=0;k<4 && k<vertexBoneInfo->GetBoneIDsCount ();k++) {
+							vertexData.bones [k] = vertexBoneInfo->GetBoneID (k);
+							vertexData.weights [k] = vertexBoneInfo->GetBoneWeight (k);
+						}
+
+						vertexBuffer.push_back (vertexData);
+
+						index = vertexBuffer.size () - 1;
+
+						indices [hashPos] = index;
+					} else {
+						index = indexIt->second;
+					}
+
+					indexBuffer.push_back (index);
+				}
+			}
+
+			GroupBuffer groupBuffer;
+
+			groupBuffer.materialView = LoadMaterial (polyGroup->GetMaterial ());
+			groupBuffer.offset = startIndex;
+			groupBuffer.INDEX_COUNT = indexBuffer.size () - startIndex;
+
+			modelView->AddGroupBuffer (groupBuffer);
+		}
 	}
+
+	ObjectBuffer objectBuffer = BindAnimationModelVertexData (vertexBuffer, indexBuffer);
+
+	modelView->SetObjectBuffer (objectBuffer);
 
 	return Resource<ModelView> (modelView, model->GetName ());
 }
@@ -101,9 +248,83 @@ Resource<ModelView> RenderSystem::LoadNormalMapModel (const Resource<Model>& mod
 	 * Create buffer data
 	*/
 
+	std::map<std::size_t, std::size_t> indices;
+
+	std::vector<NormalMapVertexData> vertexBuffer;
+	std::vector<unsigned int> indexBuffer;
+
 	for_each_type (ObjectModel*, objModel, *model) {
-		ProcessNormalMapObjectModel (model, modelView, objModel);
+		for (PolygonGroup* polyGroup : *objModel) {
+			std::size_t startIndex = indexBuffer.size ();
+
+			for (Polygon* polygon : *polyGroup) {
+				for(std::size_t j=0;j<polygon->VertexCount();j++) {
+
+					std::size_t index = 0;
+
+					std::size_t vertexPos = polygon->GetVertex (j);
+					std::size_t normalPos = polygon->GetNormal (j);
+					std::size_t texcoordPos = polygon->GetTexcoord (j);
+
+					std::size_t hashPos = hash (vertexPos, hash (normalPos, texcoordPos));
+
+					auto indexIt = indices.find (hashPos);
+
+					if (indexIt == indices.end ()) {
+						NormalMapVertexData vertexData;
+
+						glm::vec3 position = model->GetVertex (polygon->GetVertex(j));
+						vertexData.position[0] = position.x;
+						vertexData.position[1] = position.y;
+						vertexData.position[2] = position.z;
+
+						if (polygon->HaveNormals ()) {
+							glm::vec3 normal = model->GetNormal (polygon->GetNormal(j));
+							vertexData.normal[0] = normal.x;
+							vertexData.normal[1] = normal.y;
+							vertexData.normal[2] = normal.z;
+						}
+
+						if (model->HaveUV()) {
+							glm::vec2 texcoord = model->GetTexcoord (polygon->GetTexcoord(j));
+							vertexData.texcoord[0] = texcoord.x;
+							vertexData.texcoord[1] = texcoord.y;
+						}
+
+						if (model->HaveUV ()) {
+							glm::vec3 tangent = CalculateTangent (model, polygon);
+
+							vertexData.tangent [0] = tangent.x;
+							vertexData.tangent [1] = tangent.y;
+							vertexData.tangent [2] = tangent.z;
+						}
+
+						vertexBuffer.push_back (vertexData);
+
+						index = vertexBuffer.size () - 1;
+
+						indices [hashPos] = index;
+					} else {
+						index = indexIt->second;
+					}
+
+					indexBuffer.push_back (index);
+				}
+			}
+
+			GroupBuffer groupBuffer;
+
+			groupBuffer.materialView = LoadMaterial (polyGroup->GetMaterial ());
+			groupBuffer.offset = startIndex;
+			groupBuffer.INDEX_COUNT = indexBuffer.size () - startIndex;
+
+			modelView->AddGroupBuffer (groupBuffer);
+		}
 	}
+
+	ObjectBuffer objectBuffer = BindNormalMapModelVertexData (vertexBuffer, indexBuffer);
+
+	modelView->SetObjectBuffer (objectBuffer);
 
 	return Resource<ModelView> (modelView, model->GetName ());
 }
@@ -120,9 +341,83 @@ Resource<ModelView> RenderSystem::LoadLightMapModel (const Resource<Model>& mode
 	 * Create buffer data
 	*/
 
+	const LightMapModel* lmModel = dynamic_cast<const LightMapModel*> (&*model);
+
+	std::map<std::size_t, std::size_t> indices;
+
+	std::vector<LightMapVertexData> vertexBuffer;
+	std::vector<unsigned int> indexBuffer;
+
 	for_each_type (ObjectModel*, objModel, *model) {
-		ProcessLightMapObjectModel (model, modelView, objModel);
+		for (PolygonGroup* polyGroup : *objModel) {
+			std::size_t startIndex = indexBuffer.size ();
+
+			for (Polygon* polygon : *polyGroup) {
+				for(std::size_t j=0;j<polygon->VertexCount();j++) {
+
+					std::size_t index = 0;
+
+					std::size_t vertexPos = polygon->GetVertex (j);
+					std::size_t normalPos = polygon->GetNormal (j);
+					std::size_t texcoordPos = polygon->GetTexcoord (j);
+
+					std::size_t hashPos = hash (vertexPos, hash (normalPos, texcoordPos));
+
+					auto indexIt = indices.find (hashPos);
+
+					if (indexIt == indices.end ()) {
+						LightMapVertexData vertexData;
+
+						glm::vec3 position = model->GetVertex (polygon->GetVertex(j));
+						vertexData.position[0] = position.x;
+						vertexData.position[1] = position.y;
+						vertexData.position[2] = position.z;
+
+						if (polygon->HaveNormals ()) {
+							glm::vec3 normal = model->GetNormal (polygon->GetNormal(j));
+							vertexData.normal[0] = normal.x;
+							vertexData.normal[1] = normal.y;
+							vertexData.normal[2] = normal.z;
+						}
+
+						if (model->HaveUV()) {
+							glm::vec2 texcoord = model->GetTexcoord (polygon->GetTexcoord(j));
+							vertexData.texcoord[0] = texcoord.x;
+							vertexData.texcoord[1] = texcoord.y;
+						}
+
+						if (lmModel->HaveLightMapUV ()) {
+							glm::vec2 lmTexcoord = lmModel->GetLightMapTexcoord (polygon->GetTexcoord (j));
+							vertexData.lmTexcoord [0] = lmTexcoord.x;
+							vertexData.lmTexcoord [1] = lmTexcoord.y;
+						}
+
+						vertexBuffer.push_back (vertexData);
+
+						index = vertexBuffer.size () - 1;
+
+						indices [hashPos] = index;
+					} else {
+						index = indexIt->second;
+					}
+
+					indexBuffer.push_back (index);
+				}
+			}
+
+			GroupBuffer groupBuffer;
+
+			groupBuffer.materialView = LoadMaterial (polyGroup->GetMaterial ());
+			groupBuffer.offset = startIndex;
+			groupBuffer.INDEX_COUNT = indexBuffer.size () - startIndex;
+
+			modelView->AddGroupBuffer (groupBuffer);
+		}
 	}
+
+	ObjectBuffer objectBuffer = BindLightMapModelVertexData (vertexBuffer, indexBuffer);
+
+	modelView->SetObjectBuffer (objectBuffer);
 
 	return Resource<ModelView> (modelView, model->GetName ());
 }
@@ -140,7 +435,15 @@ Resource<ModelView> RenderSystem::LoadTextGUI (const std::string& text, const Re
 	 * Create buffer data
 	*/
 
-	modelView->AddObjectBuffer (ProcessTextGUI (text, font));
+	ObjectBuffer objectBuffer = ProcessTextGUI (text, font);
+
+	modelView->SetObjectBuffer (objectBuffer);
+
+	GroupBuffer groupBuffer;
+	groupBuffer.INDEX_COUNT = objectBuffer.PolygonsCount * 3;
+	groupBuffer.offset = 0;
+
+	modelView->AddGroupBuffer (groupBuffer);
 
 	return Resource<ModelView> (modelView, "Text" + text);
 }
@@ -154,38 +457,31 @@ void RenderSystem::CreateInstanceModelView (Resource<ModelView>& modelView,
 	GL::BindBuffer(GL_ARRAY_BUFFER, instanceID);
 	GL::BufferData(GL_ARRAY_BUFFER, size, buffer, GL_DYNAMIC_DRAW);
 
-	for (ObjectBuffer& objectBuffer : *modelView) {
-		objectBuffer.VBO_INSTANCE_INDEX = instanceID;
+	ObjectBuffer& objectBuffer = modelView->GetObjectBuffer ();
 
-		GL::BindVertexArray(objectBuffer.VAO_INDEX);
-		GL::BindBuffer(GL_ARRAY_BUFFER, objectBuffer.VBO_INSTANCE_INDEX);
+	objectBuffer.VBO_INSTANCE_INDEX = instanceID;
 
-		for (BufferAttribute attr : attributes) {
-			GL::EnableVertexAttribArray (attr.index);
+	GL::BindVertexArray(objectBuffer.VAO_INDEX);
+	GL::BindBuffer(GL_ARRAY_BUFFER, objectBuffer.VBO_INSTANCE_INDEX);
 
-			if (attr.type == BufferAttribute::AttrType::ATTR_F) {
-				GL::VertexAttribPointer (attr.index, attr.size, GL_FLOAT, GL_FALSE, attr.stride, (void*) attr.pointer);
-			}
-			GL::VertexAttribDivisor (attr.index, 1);
+	for (BufferAttribute attr : attributes) {
+		GL::EnableVertexAttribArray (attr.index);
+
+		if (attr.type == BufferAttribute::AttrType::ATTR_F) {
+			GL::VertexAttribPointer (attr.index, attr.size, GL_FLOAT, GL_FALSE, attr.stride, (void*) attr.pointer);
 		}
+		GL::VertexAttribDivisor (attr.index, 1);
 	}
 }
 
 void RenderSystem::UpdateInstanceModelView (Resource<ModelView>& modelView, std::size_t size, std::size_t instancesCount, unsigned char* buffer)
 {
-	ObjectBuffer objectBuffer;
-
-	for (ObjectBuffer objBuffer : *modelView) {
-		objectBuffer = objBuffer;
-		break;
-	}
+	ObjectBuffer& objectBuffer = modelView->GetObjectBuffer ();
 
 	GL::BindBuffer(GL_ARRAY_BUFFER, objectBuffer.VBO_INSTANCE_INDEX);
 	GL::BufferSubData(GL_ARRAY_BUFFER, 0, size, buffer);
 
-	for (ObjectBuffer& objectBuffer : *modelView) {
-		objectBuffer.INSTANCES_COUNT = instancesCount;
-	}
+	objectBuffer.INSTANCES_COUNT = instancesCount;
 }
 
 Resource<MaterialView> RenderSystem::LoadMaterial (const Resource<Material>& material)
@@ -272,62 +568,6 @@ Resource<Texture> RenderSystem::SaveTexture (const Resource<TextureView>& textur
 	return Resource<Texture> (texture, texture->GetName ());
 }
 
-void RenderSystem::ProcessObjectModel (const Resource<Model>& model, ModelView* modelView, ObjectModel* objModel)
-{
-	for (PolygonGroup* polyGroup : *objModel) {
-		ObjectBuffer objectBuffer = ProcessModelPolygonGroup (model, polyGroup);
-
-		modelView->AddObjectBuffer (objectBuffer);
-	}
-}
-
-// For the moment I clone the vertex/normal/texture tuple for every one
-// Maybe will be a good idea to delete the duplicates, low priority TODO:
-ObjectBuffer RenderSystem::ProcessModelPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup)
-{
-	std::vector<VertexData> vertexBuffer;
-	std::vector<unsigned int> indexBuffer;
-
-	std::size_t polygonIndex = 0;
-
-	for (Polygon* polygon : *polyGroup) {
-		for(std::size_t j=0;j<polygon->VertexCount();j++) {
-			VertexData vertexData;
-
-			glm::vec3 position = model->GetVertex (polygon->GetVertex(j));
-			vertexData.position[0] = position.x;
-			vertexData.position[1] = position.y;
-			vertexData.position[2] = position.z;
-
-			if (polygon->HaveNormals ()) {
-				glm::vec3 normal = model->GetNormal (polygon->GetNormal(j));
-				vertexData.normal[0] = normal.x;
-				vertexData.normal[1] = normal.y;
-				vertexData.normal[2] = normal.z;
-			}
-
-			if (model->HaveUV()) {
-				glm::vec2 texcoord = model->GetTexcoord (polygon->GetTexcoord(j));
-				vertexData.texcoord[0] = texcoord.x;
-				vertexData.texcoord[1] = texcoord.y;
-			}
-
-			vertexBuffer.push_back (vertexData);
-		}
-
-		indexBuffer.push_back(3 * (unsigned int) polygonIndex);
-		indexBuffer.push_back(3 * (unsigned int) polygonIndex + 1);
-		indexBuffer.push_back(3 * (unsigned int) polygonIndex + 2);
-
-		polygonIndex ++;
-	}
-
-	ObjectBuffer objectBuffer = BindModelVertexData (vertexBuffer, indexBuffer);
-	objectBuffer.materialView = LoadMaterial (polyGroup->GetMaterial ());
-
-	return objectBuffer;
-}
-
 ObjectBuffer RenderSystem::BindModelVertexData (const std::vector<VertexData>& vBuf, const std::vector<unsigned int>& iBuf)
 {
 	unsigned int VAO, VBO, IBO;
@@ -355,80 +595,14 @@ ObjectBuffer RenderSystem::BindModelVertexData (const std::vector<VertexData>& v
 	GL::EnableVertexAttribArray(2);																	//activare pipe 2
 	GL::VertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,sizeof(VertexData),(void*)(sizeof(float) * 6));		//trimite texcoorduri pe pipe 2
 
-	//numar de indecsi
-	std::size_t indexCount = iBuf.size();
-
 	ObjectBuffer objectBuffer;
 	objectBuffer.VAO_INDEX = VAO;
 	objectBuffer.VBO_INDEX = VBO;
 	objectBuffer.IBO_INDEX = IBO;
 	objectBuffer.VBO_INSTANCE_INDEX = 0;
-	objectBuffer.INDEX_COUNT = indexCount;
 
-	return objectBuffer;
-}
-
-void RenderSystem::ProcessAnimationObjectModel (const Resource<Model>& model, ModelView* modelView, ObjectModel* objModel)
-{
-	for (PolygonGroup* polyGroup : *objModel) {
-		ObjectBuffer objectBuffer = ProcessAnimationModelPolygonGroup (model, polyGroup);
-
-		modelView->AddObjectBuffer (objectBuffer);
-	}
-}
-
-// For the moment I clone the vertex/normal/texture tuple for every one
-// Maybe will be a good idea to delete the duplicates, low priority TODO:
-ObjectBuffer RenderSystem::ProcessAnimationModelPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup)
-{
-	const AnimationModel* animModel = dynamic_cast<const AnimationModel*> (&*model);
-
-	std::vector<AnimatedVertexData> vertexBuffer;
-	std::vector<unsigned int> indexBuffer;
-
-	std::size_t polygonIndex = 0;
-
-	for (Polygon* polygon : *polyGroup) {
-		for(std::size_t j=0;j<polygon->VertexCount();j++) {
-			AnimatedVertexData vertexData;
-
-			glm::vec3 position = animModel->GetVertex (polygon->GetVertex(j));
-			vertexData.position[0] = position.x;
-			vertexData.position[1] = position.y;
-			vertexData.position[2] = position.z;
-
-			if (polygon->HaveNormals ()) {
-				glm::vec3 normal = animModel->GetNormal (polygon->GetNormal(j));
-				vertexData.normal[0] = normal.x;
-				vertexData.normal[1] = normal.y;
-				vertexData.normal[2] = normal.z;
-			}
-
-			if (animModel->HaveUV()) {
-				glm::vec2 texcoord = animModel->GetTexcoord (polygon->GetTexcoord(j));
-				vertexData.texcoord[0] = texcoord.x;
-				vertexData.texcoord[1] = texcoord.y;
-			}
-
-			VertexBoneInfo* vertexBoneInfo = animModel->GetVertexBoneInfo (polygon->GetVertex (j));
-
-			for (std::size_t k=0;k<4 && k<vertexBoneInfo->GetBoneIDsCount ();k++) {
-				vertexData.bones [k] = vertexBoneInfo->GetBoneID (k);
-				vertexData.weights [k] = vertexBoneInfo->GetBoneWeight (k);
-			}
-
-			vertexBuffer.push_back (vertexData);
-		}
-
-		indexBuffer.push_back (3 * (unsigned int) polygonIndex);
-		indexBuffer.push_back (3 * (unsigned int) polygonIndex + 1);
-		indexBuffer.push_back (3 * (unsigned int) polygonIndex + 2);
-
-		polygonIndex ++;
-	}
-
-	ObjectBuffer objectBuffer = BindAnimationModelVertexData (vertexBuffer, indexBuffer);
-	objectBuffer.materialView = LoadMaterial (polyGroup->GetMaterial ());
+	objectBuffer.VerticesCount = vBuf.size ();
+	objectBuffer.PolygonsCount = iBuf.size () / 3;
 
 	return objectBuffer;
 }
@@ -464,79 +638,14 @@ ObjectBuffer RenderSystem::BindAnimationModelVertexData (const std::vector<Anima
 	GL::EnableVertexAttribArray(4);
 	GL::VertexAttribPointer(4,4,GL_FLOAT,GL_FALSE,sizeof(AnimatedVertexData),(void*)(sizeof(float) * 12));
 
-	//numar de indecsi
-	std::size_t indexCount = iBuf.size();
-
 	ObjectBuffer objectBuffer;
 	objectBuffer.VAO_INDEX = VAO;
 	objectBuffer.VBO_INDEX = VBO;
 	objectBuffer.IBO_INDEX = IBO;
 	objectBuffer.VBO_INSTANCE_INDEX = 0;
-	objectBuffer.INDEX_COUNT = indexCount;
 
-	return objectBuffer;
-}
-
-void RenderSystem::ProcessNormalMapObjectModel (const Resource<Model>& model, ModelView* modelView, ObjectModel* objModel)
-{
-	for (PolygonGroup* polyGroup : *objModel) {
-		ObjectBuffer objectBuffer = ProcessNormalMapModelPolygonGroup (model, polyGroup);
-
-		modelView->AddObjectBuffer (objectBuffer);
-	}
-}
-
-// For the moment I clone the vertex/normal/texture tuple for every one
-// Maybe will be a good idea to delete the duplicates, low priority TODO:
-ObjectBuffer RenderSystem::ProcessNormalMapModelPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup)
-{
-	std::vector<NormalMapVertexData> vertexBuffer;
-	std::vector<unsigned int> indexBuffer;
-
-	std::size_t polygonIndex = 0;
-
-	for (Polygon* polygon : *polyGroup) {
-		for (std::size_t j = 0; j<polygon->VertexCount (); j++) {
-			NormalMapVertexData vertexData;
-
-			glm::vec3 position = model->GetVertex (polygon->GetVertex (j));
-			vertexData.position [0] = position.x;
-			vertexData.position [1] = position.y;
-			vertexData.position [2] = position.z;
-
-			if (polygon->HaveNormals ()) {
-				glm::vec3 normal = model->GetNormal (polygon->GetNormal (j));
-				vertexData.normal [0] = normal.x;
-				vertexData.normal [1] = normal.y;
-				vertexData.normal [2] = normal.z;
-			}
-
-			if (model->HaveUV ()) {
-				glm::vec2 texcoord = model->GetTexcoord (polygon->GetTexcoord (j));
-				vertexData.texcoord [0] = texcoord.x;
-				vertexData.texcoord [1] = texcoord.y;
-			}
-
-			if (model->HaveUV ()) {
-				glm::vec3 tangent = CalculateTangent (model, polygon);
-
-				vertexData.tangent [0] = tangent.x;
-				vertexData.tangent [1] = tangent.y;
-				vertexData.tangent [2] = tangent.z;
-			}
-
-			vertexBuffer.push_back (vertexData);
-		}
-
-		indexBuffer.push_back (3 * (unsigned int) polygonIndex);
-		indexBuffer.push_back (3 * (unsigned int) polygonIndex + 1);
-		indexBuffer.push_back (3 * (unsigned int) polygonIndex + 2);
-
-		++ polygonIndex;
-	}
-
-	ObjectBuffer objectBuffer = BindNormalMapModelVertexData (vertexBuffer, indexBuffer);
-	objectBuffer.materialView = LoadMaterial (polyGroup->GetMaterial ());
+	objectBuffer.VerticesCount = vBuf.size ();
+	objectBuffer.PolygonsCount = iBuf.size () / 3;
 
 	return objectBuffer;
 }
@@ -570,15 +679,14 @@ ObjectBuffer RenderSystem::BindNormalMapModelVertexData (const std::vector<Norma
 	GL::EnableVertexAttribArray (3);																			//activare pipe 2
 	GL::VertexAttribPointer (3, 3, GL_FLOAT, GL_FALSE, sizeof (NormalMapVertexData), (void*) (sizeof (float) * 8));	//trimite texcoorduri pe pipe 2
 
-	//numar de indecsi
-	std::size_t indexCount = iBuf.size ();
-
 	ObjectBuffer objectBuffer;
 	objectBuffer.VAO_INDEX = VAO;
 	objectBuffer.VBO_INDEX = VBO;
 	objectBuffer.IBO_INDEX = IBO;
 	objectBuffer.VBO_INSTANCE_INDEX = 0;
-	objectBuffer.INDEX_COUNT = indexCount;
+
+	objectBuffer.VerticesCount = vBuf.size ();
+	objectBuffer.PolygonsCount = iBuf.size () / 3;
 
 	return objectBuffer;
 }
@@ -650,70 +758,6 @@ glm::vec3 RenderSystem::CalculateTangent (const Resource<Model>& model, Polygon*
 	return glm::normalize (tangent);
 }
 
-void RenderSystem::ProcessLightMapObjectModel (const Resource<Model>& model, ModelView* modelView, ObjectModel* objModel)
-{
-	for (PolygonGroup* polyGroup : *objModel) {
-		ObjectBuffer objectBuffer = ProcessLightMapModelPolygonGroup (model, polyGroup);
-
-		modelView->AddObjectBuffer (objectBuffer);
-	}
-}
-
-// For the moment I clone the vertex/normal/texture tuple for every one
-// Maybe will be a good idea to delete the duplicates, low priority TODO:
-ObjectBuffer RenderSystem::ProcessLightMapModelPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup)
-{
-	const LightMapModel* lmModel = dynamic_cast<const LightMapModel*> (&*model);
-
-	std::vector<LightMapVertexData> vertexBuffer;
-	std::vector<unsigned int> indexBuffer;
-
-	std::size_t polygonIndex = 0;
-
-	for (Polygon* polygon : *polyGroup) {
-		for (std::size_t j = 0; j<polygon->VertexCount (); j++) {
-			LightMapVertexData vertexData;
-
-			glm::vec3 position = lmModel->GetVertex (polygon->GetVertex (j));
-			vertexData.position [0] = position.x;
-			vertexData.position [1] = position.y;
-			vertexData.position [2] = position.z;
-
-			if (polygon->HaveNormals ()) {
-				glm::vec3 normal = lmModel->GetNormal (polygon->GetNormal (j));
-				vertexData.normal [0] = normal.x;
-				vertexData.normal [1] = normal.y;
-				vertexData.normal [2] = normal.z;
-			}
-
-			if (lmModel->HaveUV ()) {
-				glm::vec2 texcoord = lmModel->GetTexcoord (polygon->GetTexcoord (j));
-				vertexData.texcoord [0] = texcoord.x;
-				vertexData.texcoord [1] = texcoord.y;
-			}
-
-			if (lmModel->HaveLightMapUV ()) {
-				glm::vec2 lmTexcoord = lmModel->GetLightMapTexcoord (polygon->GetTexcoord (j));
-				vertexData.lmTexcoord [0] = lmTexcoord.x;
-				vertexData.lmTexcoord [1] = lmTexcoord.y;
-			}
-
-			vertexBuffer.push_back (vertexData);
-		}
-
-		indexBuffer.push_back (3 * (unsigned int) polygonIndex);
-		indexBuffer.push_back (3 * (unsigned int) polygonIndex + 1);
-		indexBuffer.push_back (3 * (unsigned int) polygonIndex + 2);
-
-		++ polygonIndex;
-	}
-
-	ObjectBuffer objectBuffer = BindLightMapModelVertexData (vertexBuffer, indexBuffer);
-	objectBuffer.materialView = LoadMaterial (polyGroup->GetMaterial ());
-
-	return objectBuffer;
-}
-
 ObjectBuffer RenderSystem::BindLightMapModelVertexData (const std::vector<LightMapVertexData>& vBuf, const std::vector<unsigned int>& iBuf)
 {
 	unsigned int VAO, VBO, IBO;
@@ -743,15 +787,14 @@ ObjectBuffer RenderSystem::BindLightMapModelVertexData (const std::vector<LightM
 	GL::EnableVertexAttribArray (3);																			//activare pipe 2
 	GL::VertexAttribPointer (3, 2, GL_FLOAT, GL_FALSE, sizeof (LightMapVertexData), (void*) (sizeof (float) * 8));	//trimite texcoorduri pe pipe 2
 
-	//numar de indecsi
-	std::size_t indexCount = iBuf.size ();
-
 	ObjectBuffer objectBuffer;
 	objectBuffer.VAO_INDEX = VAO;
 	objectBuffer.VBO_INDEX = VBO;
 	objectBuffer.IBO_INDEX = IBO;
 	objectBuffer.VBO_INSTANCE_INDEX = 0;
-	objectBuffer.INDEX_COUNT = indexCount;
+
+	objectBuffer.VerticesCount = vBuf.size ();
+	objectBuffer.PolygonsCount = iBuf.size () / 3;
 
 	return objectBuffer;
 }
@@ -816,7 +859,6 @@ ObjectBuffer RenderSystem::ProcessTextGUI (const std::string& text, const Resour
 	}	
 
 	ObjectBuffer objectBuffer = BindTextGUIVertexData (vertexBuffer, indexBuffer);
-	// objectBuffer.MAT_NAME = polyGroup->GetMaterialName ();
 
 	return objectBuffer;
 }
@@ -846,15 +888,14 @@ ObjectBuffer RenderSystem::BindTextGUIVertexData (const std::vector<TextGUIVerte
 	GL::EnableVertexAttribArray(1);																	//activare pipe 1
 	GL::VertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,sizeof(TextGUIVertexData),(void*)(sizeof(float) * 2));		//trimite normale pe pipe 1
 
-	//numar de indecsi
-	std::size_t indexCount = iBuf.size();
-
 	ObjectBuffer objectBuffer;
 	objectBuffer.VAO_INDEX = VAO;
 	objectBuffer.VBO_INDEX = VBO;
 	objectBuffer.IBO_INDEX = IBO;
 	objectBuffer.VBO_INSTANCE_INDEX = 0;
-	objectBuffer.INDEX_COUNT = indexCount;
+
+	objectBuffer.VerticesCount = vBuf.size ();
+	objectBuffer.PolygonsCount = iBuf.size () / 3;
 
 	return objectBuffer;
 }

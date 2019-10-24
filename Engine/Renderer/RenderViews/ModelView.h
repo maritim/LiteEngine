@@ -15,25 +15,41 @@ struct ObjectBuffer
 	unsigned int VBO_INDEX;
 	unsigned int VBO_INSTANCE_INDEX;
 	unsigned int IBO_INDEX;
+	std::size_t INSTANCES_COUNT;
+
+	std::size_t VerticesCount;
+	std::size_t PolygonsCount;
+};
+
+struct GroupBuffer
+{
 	Resource<MaterialView> materialView;
 	std::size_t INDEX_COUNT;
-	std::size_t INSTANCES_COUNT;
+	std::size_t offset;
 };
 
 class ModelView : public Object
 {
 protected:
-	std::vector<ObjectBuffer> _objectBuffers;
+	ObjectBuffer _objectBuffer;
+	std::vector<GroupBuffer> _groupBuffers;
 
 public:
 	~ModelView ();
 
 	virtual void Draw ();
 
-	void AddObjectBuffer (const ObjectBuffer& objectBuffer);
+	void SetObjectBuffer (const ObjectBuffer& objectBuffer);
 
-	std::vector<ObjectBuffer>::iterator begin ();
-	std::vector<ObjectBuffer>::iterator end ();
+	void AddGroupBuffer (const GroupBuffer& groupBuffer);
+
+	ObjectBuffer& GetObjectBuffer ();
+
+	std::size_t GetVerticesCount () const;
+	std::size_t GetPolygonsCount () const;
+
+	std::vector<GroupBuffer>::iterator begin ();
+	std::vector<GroupBuffer>::iterator end ();
 };
 
 #endif

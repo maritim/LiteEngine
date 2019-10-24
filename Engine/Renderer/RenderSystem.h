@@ -76,22 +76,12 @@ public:
 
 	static Resource<Texture> SaveTexture (const Resource<TextureView>& textureView);
 private:
-	static void ProcessObjectModel (const Resource<Model>& model, ModelView* modelView, ObjectModel* objModel);
-	static ObjectBuffer ProcessModelPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup);
 	static ObjectBuffer BindModelVertexData (const std::vector<VertexData>& vBuf, const std::vector<unsigned int>& iBuf);
-
-	static void ProcessAnimationObjectModel (const Resource<Model>& model, ModelView* modelView, ObjectModel* objModel);
-	static ObjectBuffer ProcessAnimationModelPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup);
 	static ObjectBuffer BindAnimationModelVertexData (const std::vector<AnimatedVertexData>& vBuf, const std::vector<unsigned int>& iBuf);
-
-	static void ProcessNormalMapObjectModel (const Resource<Model>& model, ModelView* modelView, ObjectModel* objModel);
-	static ObjectBuffer ProcessNormalMapModelPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup);
 	static ObjectBuffer BindNormalMapModelVertexData (const std::vector<NormalMapVertexData>& vBuf, const std::vector<unsigned int>& iBuf);
-	static glm::vec3 CalculateTangent (const Resource<Model>& model, Polygon* poly);
-
-	static void ProcessLightMapObjectModel (const Resource<Model>& model, ModelView* modelView, ObjectModel* objModel);
-	static ObjectBuffer ProcessLightMapModelPolygonGroup (const Resource<Model>& model, PolygonGroup* polyGroup);
 	static ObjectBuffer BindLightMapModelVertexData (const std::vector<LightMapVertexData>& vBuf, const std::vector<unsigned int>& iBuf);
+
+	static glm::vec3 CalculateTangent (const Resource<Model>& model, Polygon* poly);
 
 	static ObjectBuffer ProcessTextGUI (const std::string& text, const Resource<Font>& font);
 	static ObjectBuffer BindTextGUIVertexData (const std::vector<TextGUIVertexData>& vBuf, const std::vector<unsigned int>& iBuf);
