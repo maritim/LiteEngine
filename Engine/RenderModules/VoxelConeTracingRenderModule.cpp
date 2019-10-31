@@ -2,7 +2,6 @@
 
 #include "RenderPasses/ResultFrameBufferGenerationRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelizationRenderPass.h"
-#include "RenderPasses/Voxelization/VoxelAlphaUpdateRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelDirectionalShadowMapRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelRadianceInjectionRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelMipmapRenderPass.h"
@@ -47,7 +46,6 @@ void VoxelConeTracingRenderModule::Init ()
 
 	_renderPasses.push_back (new ResultFrameBufferGenerationRenderPass ());
 	_renderPasses.push_back (new VoxelizationRenderPass ());
-	_renderPasses.push_back (new VoxelAlphaUpdateRenderPass ());
 	_renderPasses.push_back (new VoxelDirectionalShadowMapRenderPass ());
 	_renderPasses.push_back (new VoxelRadianceInjectionRenderPass ());
 	_renderPasses.push_back (new VoxelMipmapRenderPass ());

@@ -91,7 +91,7 @@ void main()
 
 		vec4 voxelColor = texelFetch(volumeTexture, voxelPos, 0);
 
-		if (voxelColor.a == 0.0)  {
+		if (voxelColor.a == 0)  {
 			return;
 		}
 
@@ -105,17 +105,14 @@ void main()
 		 * Do nothing is the voxel is not in the shadow
 		*/
 
-		if (!IsInShadow (voxelWorldPos)) {
-			// imageStore
-			return;
+		if (IsInShadow (voxelWorldPos)) {
+			voxelColor.rgb = vec3 (0);
 		}
 
 		/*
 		 * Store shadow color into voxel
 		*/
 
-		vec3 shadowColor = vec3 (0.0);
-
-		imageStore(voxelVolume, voxelPos, vec4 (shadowColor, 1.0));		
+		imageStore(voxelVolume, voxelPos, vec4 (voxelColor.rgb, 1.0));		
 	}
 }
