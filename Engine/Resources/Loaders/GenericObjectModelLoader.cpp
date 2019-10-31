@@ -160,6 +160,7 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 
 		std::string directory = FileSystem::GetDirectory (filename);
 		textureName = directory + textureName;
+		textureName = FileSystem::FormatFilename (textureName);
 
 		Resource<Texture> texture = Resources::LoadTexture (std::string (textureName));
 
@@ -174,6 +175,7 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 
 		std::string directory = FileSystem::GetDirectory (filename);
 		textureName = directory + textureName;
+		textureName = FileSystem::FormatFilename (textureName);
 
 		Resource<Texture> texture = Resources::LoadTexture (std::string (textureName));
 
@@ -187,6 +189,18 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 	aiColor4D specCol;
 	aiGetMaterialColor (assimpMaterial, AI_MATKEY_COLOR_SPECULAR, &specCol);
 	material->specularColor = glm::vec3 (specCol.r, specCol.g, specCol.b);
+
+	float shininess;
+	aiGetMaterialFloat (assimpMaterial, AI_MATKEY_SHININESS, &shininess);
+	material->shininess = shininess;
+
+	float transparency;
+	aiGetMaterialFloat (assimpMaterial, AI_MATKEY_OPACITY, &transparency);
+	material->transparency = 1.0 - transparency;
+
+	float refractiveIndex;
+	aiGetMaterialFloat (assimpMaterial, AI_MATKEY_REFRACTI, &refractiveIndex);
+	material->refractiveIndex = refractiveIndex;
 
 	polyGroup->SetMaterial (Resource<Material> (material, material->name));
 }

@@ -142,6 +142,15 @@ void VoxelizationRenderPass::GeometryVoxelizationPass (const RenderScene* render
 	*/
 
 	for (RenderObject* renderObject : *renderScene) {
+
+		/*
+		 * Check if it's active
+		*/
+
+		if (renderObject->IsActive () == false) {
+			continue;
+		}
+
 		if (renderObject->GetRenderStage () != RenderStage::RENDER_STAGE_DEFERRED) {
 			continue;
 		}

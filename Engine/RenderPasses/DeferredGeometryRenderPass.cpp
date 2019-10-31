@@ -177,10 +177,10 @@ void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, c
 	GL::CullFace (GL_BACK);
 
 	/*
-	 * Enable Blending
+	 * Disable Blending
 	*/
 
-	GL::Enable (GL_BLEND);
+	GL::Disable (GL_BLEND);
 
 	/*
 	* Render scene entities to framebuffer at Deferred Rendering Stage

@@ -906,6 +906,8 @@ void RenderSystem::ProcessMaterial (const Resource<Material>& material, Material
 	materialView->diffuseColor = material->diffuseColor;
 	materialView->specularColor = material->specularColor;
 	materialView->shininess = material->shininess;
+	materialView->transparency = material->transparency;
+	materialView->refractiveIndex = material->refractiveIndex;
 	materialView->shaderName = material->shaderName;
 
 	if (material->ambientTexture != nullptr) {

@@ -23,6 +23,7 @@ public:
 	glm::vec3 specularColor;
 	float shininess;
 	float transparency;
+	float refractiveIndex;
 	int illum;
 	std::pair<int, int> blending;
 	Resource<Texture> ambientTexture;

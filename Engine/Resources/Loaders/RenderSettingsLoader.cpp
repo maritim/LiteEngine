@@ -175,8 +175,11 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	std::string bordering = xmlElem->Attribute ("bordering");
 	std::string mipmapLevels = xmlElem->Attribute ("mipmapLevels");
 	std::string indirectIntensity = xmlElem->Attribute ("indirectIntensity");
+	std::string refractiveIndirectIntensity = xmlElem->Attribute ("refractiveIndirectIntensity");
 	std::string diffuseConeDistance = xmlElem->Attribute ("diffuseConeDistance");
 	std::string specularConeDistance = xmlElem->Attribute ("specularConeDistance");
+	std::string refractiveConeRatio = xmlElem->Attribute ("refractiveConeRatio");
+	std::string refractiveConeDistance = xmlElem->Attribute ("refractiveConeDistance");
 	std::string shadowConeRatio = xmlElem->Attribute ("shadowConeRatio");
 	std::string shadowConeDistance = xmlElem->Attribute ("shadowConeDistance");
 
@@ -185,8 +188,11 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	settings->vct_bordering = Extensions::StringExtend::ToBool (bordering);
 	settings->vct_mipmap_levels = std::stoi (mipmapLevels);
 	settings->vct_indirect_intensity = std::stof (indirectIntensity);
+	settings->vct_indirect_refractive_intensity = std::stof (refractiveIndirectIntensity);
 	settings->vct_diffuse_cone_distance = std::stof (diffuseConeDistance);
 	settings->vct_specular_cone_distance = std::stof (specularConeDistance);
+	settings->vct_refractive_cone_distance = std::stof (refractiveConeDistance);
+	settings->vct_refractive_cone_ratio = std::stof (refractiveConeRatio);
 	settings->vct_shadow_cone_ratio = std::stof (shadowConeRatio);
 	settings->vct_shadow_cone_distance = std::stof (shadowConeDistance);
 }

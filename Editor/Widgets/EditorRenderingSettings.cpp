@@ -89,7 +89,7 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 	int lastRenderMode = renderModes [_settings->renderMode];
 	int renderMode = lastRenderMode;
 
-	const char* items[] = { "Direct Light", "Voxel Cone Tracing", "Reflective Shadow Mapping", "Light Propagation Volumes", "Screen Space Directional Occlusion"};
+	const char* items[] = { "Direct Light", "Voxel Cone Tracing", "Reflective Shadow Mapping", "Light Propagation Volumes", "Screen Space Global Illumination"};
 	ImGui::Combo("Render Module", &renderMode, items, 5);
 
 	const char* srenderModes[] = {
@@ -127,6 +127,7 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			(std::size_t) std::log2 (_settings->vct_voxels_size));
 
 		ImGui::InputFloat ("Indirect Light Intensity", &_settings->vct_indirect_intensity, 0.1f);
+		ImGui::InputFloat ("Refractive Indirect Light Intensity", &_settings->vct_indirect_refractive_intensity, 0.1f);
 
         ImGui::Separator();
 
@@ -135,6 +136,11 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
         ImGui::Separator();
 
 		ImGui::SliderFloat ("Specular Cone Distance", &_settings->vct_specular_cone_distance, 0.0f, 1.0f);
+
+        ImGui::Separator();
+
+		ImGui::SliderFloat ("Refractive Cone Ratio", &_settings->vct_refractive_cone_ratio, 0.0f, 1.0f, "%3f", 10.0f);
+		ImGui::SliderFloat ("Refractive Cone Distance", &_settings->vct_refractive_cone_distance, 0.0f, 1.0f);
 
         ImGui::Separator();
 
@@ -197,6 +203,9 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.65f;
 
+					ImGui::Text ("Depth Map");
+					ShowImage (rsmStat->rsmDepthMapID, glm::ivec2 (windowWidth, windowWidth));
+
 					ImGui::Text ("Position Map");
 					ShowImage (rsmStat->rsmPosMapID, glm::ivec2 (windowWidth, windowWidth));
 
@@ -205,9 +214,6 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 					ImGui::Text ("Flux Map");
 					ShowImage (rsmStat->rsmFluxMapID, glm::ivec2 (windowWidth, windowWidth));
-
-					ImGui::Text ("Cache Map");
-					ShowImage (rsmStat->rsmCacheMapID, glm::ivec2 (windowWidth, windowWidth));
 				}
 
 				ImGui::TreePop();
@@ -225,7 +231,7 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
     ImGui::Spacing();
 
-	if (ImGui::CollapsingHeader ("Screen Space Directional Occlusion")) {
+	if (ImGui::CollapsingHeader ("Screen Space Global Illumination")) {
 
 		float scale = _settings->ssdo_scale;
 		ImGui::InputFloat ("Scale", &scale);
@@ -276,7 +282,7 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 				FrameBuffer2DVolume* ssdoShadowVolume = ssdoStat->ssdoShadowVolume;
 
-				ImGui::Text ("SSDO Map");
+				ImGui::Text ("SSDO Shadow Map");
 				ShowImage (ssdoShadowVolume->GetColorTextureID (), glm::ivec2 (width, height));
 			}
 

@@ -27,10 +27,13 @@ uniform int volumeMipmapLevels;
 
 uniform float diffuseConeDistance;
 uniform float specularConeDistance;
+uniform float refractiveConeRatio;
+uniform float refractiveConeDistance;
 uniform float shadowConeRatio;
 uniform float shadowConeDistance;
 
 uniform float indirectIntensity;
+uniform float refractiveIndirectIntensity;
 
 #include "deferred.glsl"
 #include "AmbientLight/ambientLight.glsl"
@@ -147,12 +150,27 @@ vec3 CalcIndirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shini
 	vec3 eyeToFragment = normalize (in_position - cameraPosition);
 	vec3 reflectionDir = reflect (eyeToFragment, in_normal);
 
-	float specularConeRatio = pow (0.1, in_shininess);
+	float specularConeRatio = 1.0 / in_shininess;
 		
 	vec3 reflectTraceOrigin = GetPositionInVolume (in_position);
 	specularLight = voxelTraceCone (reflectTraceOrigin, reflectionDir, specularConeRatio, specularConeDistance).xyz;
 
 	return specularLight;
+}
+
+vec3 CalcIndirectRefractiveLight (vec3 in_position, vec3 in_normal, float in_refractiveIndex)
+{
+	vec3 refractiveLight;
+
+	vec3 eyeToFragment = normalize (in_position - cameraPosition);
+	vec3 refractiveDir = refract (eyeToFragment, in_normal, 1.0 / in_refractiveIndex);
+
+	// float refractiveConeRatio = 0.1;
+
+	vec3 refractTraceOrigin = GetPositionInVolume (in_position);
+	refractiveLight = voxelTraceCone (refractTraceOrigin, refractiveDir, refractiveConeRatio, refractiveConeDistance).xyz;
+
+	return refractiveLight;
 }
 
 vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal)
@@ -255,7 +273,8 @@ float CalcShadow (vec3 in_position)
 	return 1.0 - occlusion;
 }
 
-vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
+vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess,
+	float in_transparency, float in_refractiveIndex)
 {
 	// Compute fragment world position and world normal
 	vec3 worldPosition = vec3 (inverseViewMatrix * vec4 (in_position, 1.0));
@@ -272,6 +291,8 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	vec3 indirectDiffuseColor = CalcIndirectDiffuseLight (worldPosition, worldNormal);
 	vec3 indirectSpecularColor = CalcIndirectSpecularLight (worldPosition, worldNormal, in_shininess);
 
+	vec3 indirectRefractiveColor = CalcIndirectRefractiveLight (worldPosition, worldNormal, in_refractiveIndex);
+
 	float ambientOcclusion = CalcOcclusion (worldPosition, worldNormal);
 
 	// Calculate ambient light
@@ -282,9 +303,13 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// return vec3 (shadow);
 	// return indirectDiffuseColor;
 	// return indirectSpecularColor;
-	return (directDiffuseColor + indirectDiffuseColor * indirectIntensity) * in_diffuse
-		   + (directSpecularColor + indirectSpecularColor * indirectIntensity) * in_specular
+	// return refractiveColor;
+	vec3 directLight = directDiffuseColor * in_diffuse + directSpecularColor * in_specular;
+	vec3 indirectLight = (indirectDiffuseColor * indirectIntensity) * in_diffuse
+		   + (indirectSpecularColor * indirectIntensity) * in_specular
 		   + ambientColor * in_diffuse;
+
+	return mix (indirectLight, indirectRefractiveColor * refractiveIndirectIntensity, in_transparency) + directLight;
 }
 
 void main()
@@ -295,8 +320,11 @@ void main()
 	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
 	vec3 in_specular = texture2D (gSpecularMap, texCoord).xyz;
 	float in_shininess = texture2D (gSpecularMap, texCoord).w;
+	float in_transparency = texture2D (gDiffuseMap, texCoord).w;
+	float in_refractiveIndex = texture2D (gNormalMap, texCoord).w;
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcDirectionalLight (in_position, in_normal, in_diffuse, in_specular, in_shininess);
+	out_color = CalcDirectionalLight (in_position, in_normal, in_diffuse, in_specular, in_shininess,
+		in_transparency, in_refractiveIndex);
 } 

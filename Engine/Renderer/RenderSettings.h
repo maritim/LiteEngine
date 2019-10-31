@@ -69,8 +69,11 @@ struct RenderSettings : public Object
 	bool vct_bordering;
 	std::size_t vct_mipmap_levels;
 	float vct_indirect_intensity;
+	float vct_indirect_refractive_intensity;
 	float vct_diffuse_cone_distance;
 	float vct_specular_cone_distance;
+	float vct_refractive_cone_ratio;
+	float vct_refractive_cone_distance;
 	float vct_shadow_cone_ratio;
 	float vct_shadow_cone_distance;
 	bool vct_debug_show_voxels;

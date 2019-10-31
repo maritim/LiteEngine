@@ -219,14 +219,18 @@ void MaterialLibraryLoader::ProcessDefaultAttributes(std::ifstream &file, Materi
 	}
 	else if (fileType == "d" || fileType == "Tr")
 	{
-		float transparency = 1.0f;
+		float transparency = 0.0f;
 		file >> transparency;
 
-		if (fileType == "Tr") {
-			transparency = 1.0f - transparency;
+		if (fileType == "d") {
+			transparency = 1.0 - transparency;
 		}
 
 		currentMaterial->transparency = transparency;
+	}
+	else if (fileType == "Ni")
+	{
+		file >> currentMaterial->refractiveIndex;
 	}
 	else if (fileType == "illum")
 	{

@@ -16,6 +16,8 @@ uniform vec3 MaterialDiffuse;
 uniform vec3 MaterialSpecular;
 
 uniform float MaterialShininess;
+uniform float MaterialTransparency;
+uniform float MaterialRefractiveIndex;
 
 uniform sampler2D DiffuseMap;
 uniform sampler2D SpecularMap;
@@ -80,7 +82,7 @@ void main()
 	*/
 
 	out_position = vec4 (geom_position, 1.0);
-	out_diffuse = vec4 (diffuseMap, 1);
-	out_normal = vec4 (normal, 1.0);
-	out_specular = vec4 (specularMap, 1.0);
+	out_diffuse = vec4 (diffuseMap, MaterialTransparency);
+	out_normal = vec4 (normal, MaterialRefractiveIndex);
+	out_specular = vec4 (specularMap, MaterialShininess);
 }

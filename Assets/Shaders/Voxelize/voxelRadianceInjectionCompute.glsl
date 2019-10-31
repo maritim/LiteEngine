@@ -91,7 +91,7 @@ void main()
 
 		vec4 voxelColor = texelFetch(volumeTexture, voxelPos, 0);
 
-		if (voxelColor.a == 0)  {
+		if (voxelColor.a < 1)  {
 			return;
 		}
 
@@ -113,6 +113,6 @@ void main()
 		 * Store shadow color into voxel
 		*/
 
-		imageStore(voxelVolume, voxelPos, vec4 (voxelColor.rgb, 1.0));		
+		imageStore(voxelVolume, voxelPos, voxelColor);		
 	}
 }

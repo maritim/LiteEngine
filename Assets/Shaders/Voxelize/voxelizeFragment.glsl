@@ -1,6 +1,7 @@
 #version 420 core
 
-uniform layout (binding = 0, r32ui) coherent volatile uimage3D voxelVolume;
+// uniform layout (binding = 0, r32ui) coherent volatile uimage3D voxelVolume;
+uniform layout (binding = 0, rgba8) coherent volatile image3D voxelVolume;
 
 layout (location = 0) out vec4 fragColor;
 
@@ -12,6 +13,8 @@ uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
 
 uniform vec3 MaterialDiffuse;
+
+uniform float MaterialTransparency;
 
 uniform sampler2D DiffuseMap;
 
@@ -88,5 +91,6 @@ void main()
 	 * Save in texture
 	*/
 
-	ImageAtomicAverageRGBA8 (voxelVolume, ivec3 (coords), fragmentColor);
+	imageStore (voxelVolume, ivec3 (coords), vec4 (fragmentColor, 1.0 - MaterialTransparency));
+	// ImageAtomicAverageRGBA8 (voxelVolume, ivec3 (coords), fragmentColor);
 }

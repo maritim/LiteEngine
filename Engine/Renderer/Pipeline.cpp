@@ -401,8 +401,8 @@ void Pipeline::SendMaterial(Resource<MaterialView> mat, Shader* shader)
 	 * Set material blending mode
 	*/
 
-	GL::Enable (GL_BLEND);
-	GL::BlendFunc (mat->blending.first, mat->blending.second);
+	// GL::Enable (GL_BLEND);
+	// GL::BlendFunc (mat->blending.first, mat->blending.second);
 
 	/*
 	 * Send basic material attributes to shader
@@ -412,7 +412,8 @@ void Pipeline::SendMaterial(Resource<MaterialView> mat, Shader* shader)
 	// GL::Uniform3fv (shader->GetUniformLocation ("MaterialAmbient"), 1, glm::value_ptr (mat->ambientColor));
 	GL::Uniform3fv (shader->GetUniformLocation ("MaterialSpecular"), 1, glm::value_ptr (mat->specularColor));
 	GL::Uniform1f (shader->GetUniformLocation ("MaterialShininess"), mat->shininess);
-	// glUniform1f (shader->GetUniformLocation ("MaterialTransparency"), mat->transparency);
+	GL::Uniform1f (shader->GetUniformLocation ("MaterialTransparency"), mat->transparency);
+	GL::Uniform1f (shader->GetUniformLocation ("MaterialRefractiveIndex"), mat->refractiveIndex);
 
 	/*
 	 * Send maps to shader
