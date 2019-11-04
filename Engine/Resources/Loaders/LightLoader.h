@@ -33,6 +33,10 @@ private:
 	void ProcessSpotExponent (TiXmlElement* xmlElem, SpotLight* light);
 	void ProcessSpotDirection (TiXmlElement* xmlElem, SpotLight* light);
 
+	void ProcessShadowResolution (TiXmlElement* xmlElem, Light::Shadow& shadow);
+	void ProcessShadowCascades (TiXmlElement* xmlElem, Light::Shadow& shadow);
+	void ProcessShadowBias (TiXmlElement* xmlElem, Light::Shadow& shadow);
+
 	Color GetColor (TiXmlElement* xmlElem);
 };
 

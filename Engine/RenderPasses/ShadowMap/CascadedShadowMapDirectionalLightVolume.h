@@ -3,11 +3,11 @@
 
 #include "RenderPasses/ShadowMap/ShadowMapVolumeI.h"
 
+#include <glm/vec2.hpp>
+
 #include "RenderPasses/ShadowMap/ShadowMapVolume.h"
 
 #include "Systems/Camera/Camera.h"
-
-#include "Wrappers/OpenGL/GL.h"
 
 #define SHADOW_MAP_FBO_NOT_INIT 330
 
@@ -17,7 +17,7 @@ protected:
 	std::size_t _cascadedLevels;
 
 	std::vector<ShadowMapVolume*> _shadowMaps;
-	std::vector<std::pair<GLuint, GLuint>> _shadowMapResolutions;
+	std::vector<glm::ivec2> _shadowMapResolutions;
 
 	std::vector<Camera*> _lightCameras;
 	std::vector<float> _shadowMapZEnd;
@@ -40,6 +40,7 @@ public:
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
 
 	ShadowMapVolume* GetShadowMapVolume (std::size_t cascadedLevel);
+	std::size_t GetCascadesCount () const;
 
 	void Clear ();
 };

@@ -36,40 +36,6 @@ void DirectionalLightExponentialShadowMapRenderPass::Init ()
 	ShaderManager::Instance ()->AddShader (_animationShaderName,
 		"Assets/Shaders/ShadowMap/shadowMapVertexAnimation.glsl",
 		"Assets/Shaders/ShadowMap/exponentialShadowMapFragment.glsl");
-
-	/*
-	 * Initialize settings
-	*/
-
-	InitSettings ();
-
-	/*
-	 * Initialize shadow map volume
-	*/
-
-	InitShadowMapVolume ();
-}
-
-void DirectionalLightExponentialShadowMapRenderPass::Notify (Object* sender, const SettingsObserverArgs& args)
-{
-	/*
-	 *
-	*/
-
-	DirectionalLightShadowMapRenderPass::Notify (sender, args);
-
-	std::string name = args.GetName ();
-
-	/*
-	 * Update directional light exponential shadow map
-	*/
-
-	if (name == "esm_exponential") {
-		_exponential = SettingsManager::Instance ()->GetValue<int> ("esm_exponential", _exponential);
-
-		auto volume = (ExponentialCascadedShadowMapDirectionalLightVolume*) _volume;
-		volume->SetExponential (_exponential);
-	}
 }
 
 std::vector<PipelineAttribute> DirectionalLightExponentialShadowMapRenderPass::GetCustomAttributes () const
@@ -89,58 +55,22 @@ std::vector<PipelineAttribute> DirectionalLightExponentialShadowMapRenderPass::G
 	return attributes;
 }
 
-void DirectionalLightExponentialShadowMapRenderPass::InitSettings ()
-{
-	/*
-	 * 
-	*/
-
-	DirectionalLightShadowMapRenderPass::InitSettings ();
-
-	/*
-	 * Initialize directional exponential light shadow map
-	*/
-
-	_exponential = SettingsManager::Instance ()->GetValue<int> ("esm_exponential", _exponential);
-
-	/*
-	 * Attach to settings manager
-	*/
-
-	SettingsManager::Instance ()->Attach ("esm_exponential", this);
-}
-
-void DirectionalLightExponentialShadowMapRenderPass::ClearSettings ()
-{
-	/*
-	 * Detach
-	*/
-
-	SettingsManager::Instance ()->Detach ("esm_exponential", this);
-
-	/*
-	 *
-	*/
-
-	DirectionalLightShadowMapRenderPass::ClearSettings ();
-}
-
-void DirectionalLightExponentialShadowMapRenderPass::InitShadowMapVolume ()
+void DirectionalLightExponentialShadowMapRenderPass::InitShadowMapVolume (const RenderLightObject* renderLightObject)
 {
 	/*
 	 * Initialize shadow map volume
 	*/
 
-	if (!_volume->Init (_cascades, _resolution)) {
-		Console::LogError (std::string () + "Exponential Shadow map cannot be initialized!" +
-			" It is not possible to continue the process. End now!");
-		exit (EXPONENTIAL_SHADOW_MAP_FBO_NOT_INIT);
-	}
+	// if (!_volume->Init (_cascades, _resolution)) {
+	// 	Console::LogError (std::string () + "Exponential Shadow map cannot be initialized!" +
+	// 		" It is not possible to continue the process. End now!");
+	// 	exit (EXPONENTIAL_SHADOW_MAP_FBO_NOT_INIT);
+	// }
 
-	for (std::size_t index = 0; index < _cascades; index ++) {
-		_volume->SetLightCamera (index, new OrthographicCamera ());
-	}
+	// for (std::size_t index = 0; index < _cascades; index ++) {
+	// 	_volume->SetLightCamera (index, new OrthographicCamera ());
+	// }
 
-	auto volume = (ExponentialCascadedShadowMapDirectionalLightVolume*) _volume;
-	volume->SetExponential (_exponential);
+	// auto volume = (ExponentialCascadedShadowMapDirectionalLightVolume*) _volume;
+	// volume->SetExponential (_exponential);
 }

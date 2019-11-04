@@ -19,6 +19,7 @@ public:
 	void SetColor (const Color& color);
 	void SetIntensity (float intensity);
 	void SetShadowCasting (bool castShadows);
+	void SetShadow (const Light::Shadow& shadow);
 };
 
 #endif

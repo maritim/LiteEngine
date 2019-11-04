@@ -12,15 +12,10 @@ public:
 	DirectionalLightExponentialShadowMapRenderPass ();
 
 	void Init ();
-
-	void Notify (Object* sender, const SettingsObserverArgs& args);
 protected:
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
 
-	void InitSettings ();
-	void ClearSettings ();
-
-	void InitShadowMapVolume ();
+	void InitShadowMapVolume (const RenderLightObject* renderLightObject);
 };
 
 #endif

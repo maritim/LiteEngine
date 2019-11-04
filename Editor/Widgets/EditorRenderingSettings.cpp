@@ -493,40 +493,6 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 		}
 	}
 
-    ImGui::Spacing();
-
-	if (ImGui::CollapsingHeader ("Shadow Mapping")) {
-
-		int lastCascadesCount = SettingsManager::Instance ()->GetValue<int> ("sm_cascades", 0);
-		int cascadesCount = lastCascadesCount;
-		ImGui::SliderInt ("Cascades Count", &cascadesCount, 1, 4);
-
-		glm::vec2 lastResolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("sm_resolution", glm::vec2 (0, 0));
-		int resolution [2] { (int) lastResolution.x, (int) lastResolution.y };
-		ImGui::InputInt2 ("Resolution", resolution);
-
-		if (lastCascadesCount != cascadesCount) {
-			SettingsManager::Instance ()->SetValue ("sm_cascades", std::to_string (cascadesCount));
-		}
-
-		if (lastResolution.x != resolution [0] || lastResolution.y != resolution [1]) {
-			SettingsManager::Instance ()->SetValue ("sm_resolution",
-				std::to_string (resolution [0]) + "," + std::to_string (resolution [1]));
-		}
-
-		if (ImGui::TreeNode ("Exponential Shadow Mapping")) {
-			int lastExponential = SettingsManager::Instance ()->GetValue<int> ("esm_exponential", 0);
-			int exponential = lastExponential;
-			ImGui::SliderInt ("Exponential", &exponential, 0, 200);
-
-			if (lastExponential != exponential) {
-				SettingsManager::Instance ()->SetValue ("esm_exponential", std::to_string (exponential));
-			}
-
-			ImGui::TreePop();
-		}
-	}
-
 	ImGui::End();
 }
 

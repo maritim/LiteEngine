@@ -182,6 +182,23 @@ void EditorInspector::ShowLight (SceneObject* object)
 			bool castShadows = light->IsCastingShadows ();
 			ImGui::Checkbox ("Cast Shadows", &castShadows);
 			light->SetShadowCasting (castShadows);
+
+			if (ImGui::TreeNode ("Shadow")) {
+				Light::Shadow shadow = light->GetShadow ();
+
+				std::size_t limit1 = 1, limit2 = 4;
+				ImGui::SliderScalar ("Cascades Count", ImGuiDataType_U32, &shadow.cascadesCount, &limit1, &limit2);
+
+				int resolution [2] = { shadow.resolution.x, shadow.resolution.y };
+				ImGui::InputInt2 ("Resolution", resolution);
+				shadow.resolution = glm::ivec2 (resolution [0], resolution [1]);
+
+				ImGui::SliderFloat ("Bias", &shadow.bias, 0.0f, 1.0f);
+
+				light->SetShadow (shadow);
+
+				ImGui::TreePop();
+			}
 		}
 	}
 }

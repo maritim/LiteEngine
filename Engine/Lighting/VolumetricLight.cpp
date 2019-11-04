@@ -38,3 +38,16 @@ void VolumetricLight::SetShadowCasting (bool castShadows)
 
 	_renderLightObject->SetShadowCasting (castShadows);
 }
+
+void VolumetricLight::SetShadow (const Light::Shadow& shadow)
+{
+	Light::SetShadow (shadow);
+
+	RenderLightObject::Shadow lightShadow;
+
+	lightShadow.resolution = shadow.resolution;
+	lightShadow.cascadesCount = shadow.cascadesCount;
+	lightShadow.bias = shadow.bias;
+
+	_renderLightObject->SetLightShadow (lightShadow);
+}

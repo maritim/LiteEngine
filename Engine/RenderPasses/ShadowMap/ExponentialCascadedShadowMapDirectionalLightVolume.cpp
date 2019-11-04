@@ -26,13 +26,9 @@ bool ExponentialCascadedShadowMapDirectionalLightVolume::Init (std::size_t casca
 	}
 
 	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
-		_shadowMapResolutions [index] = std::pair<GLuint, GLuint> (
-			resolution.x, resolution.y
-		);
+		_shadowMapResolutions [index] = resolution;
 
-		if (!_shadowMaps [index]->Init (
-				_shadowMapResolutions [index].first,
-				_shadowMapResolutions [index].second)) {
+		if (!_shadowMaps [index]->Init (_shadowMapResolutions [index])) {
 			Console::LogError ("Exponential Shadow Map Frame Buffer is not complete!");
 			return false;
 		}

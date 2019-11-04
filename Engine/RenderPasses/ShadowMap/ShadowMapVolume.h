@@ -6,7 +6,7 @@
 class ShadowMapVolume : public FrameBuffer2DVolume
 {
 public:
-	bool Init (std::size_t bufferWidth, std::size_t bufferHeight);
+	bool Init (const glm::ivec2& size);
 
 	void BindForReading ();
 	void BindForWriting ();

@@ -11,10 +11,21 @@
 
 class ENGINE_API Light : public SceneObject
 {
+public:
+	struct Shadow
+	{
+		glm::ivec2 resolution;
+		std::size_t cascadesCount;
+		float bias;
+
+		Shadow ();
+	};
+
 protected:
 	Color _color;
 	float _intensity;
 	bool _castShadows;
+	Shadow _shadow;
 
 public:
 	Light ();
@@ -23,10 +34,12 @@ public:
 	Color GetColor () const;
 	float GetIntensity () const;
 	bool IsCastingShadows () const;
+	Light::Shadow GetShadow () const;
 
 	virtual void SetColor (const Color& color);
 	virtual void SetIntensity (float intensity);
 	virtual void SetShadowCasting (bool castShadows);
+	virtual void SetShadow (const Light::Shadow& shadow);
 
 	virtual void Update () = 0;
 };

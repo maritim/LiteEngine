@@ -89,6 +89,28 @@ void LightLoader::ProcessShadows (TiXmlElement* xmlElem, Light* light)
 	if (casting) {
 		light->SetShadowCasting (Extensions::StringExtend::ToBool (casting));
 	}
+
+	Light::Shadow shadow;
+
+	TiXmlElement* content = xmlElem->FirstChildElement ();
+
+	while (content) {
+		std::string name = content->Value ();
+
+		if (name == "Resolution") {
+			ProcessShadowResolution (content, shadow);
+		}
+		else if (name == "Cascades") {
+			ProcessShadowCascades (content, shadow);
+		}
+		else if (name == "Bias") {
+			ProcessShadowBias (content, shadow);
+		}
+
+		content = content->NextSiblingElement ();
+	}
+
+	light->SetShadow (shadow);
 }
 
 void LightLoader::ProcessPointLight (TiXmlElement* xmlElem, Light* light)
@@ -191,6 +213,38 @@ void LightLoader::ProcessSpotDirection (TiXmlElement* xmlElem, SpotLight* light)
 	}
 
 	light->SetSpotDirection (direction);
+}
+
+void LightLoader::ProcessShadowResolution (TiXmlElement* xmlElem, Light::Shadow& shadow)
+{
+	const char* width = xmlElem->Attribute ("width");
+	const char* height = xmlElem->Attribute ("height");
+
+	if (width) {
+		shadow.resolution.x = std::stoi (width);
+	}
+
+	if (height) {
+		shadow.resolution.y = std::stoi (height);
+	}
+}
+
+void LightLoader::ProcessShadowCascades (TiXmlElement* xmlElem, Light::Shadow& shadow)
+{
+	const char* count = xmlElem->Attribute ("count");
+
+	if (count) {
+		shadow.cascadesCount = std::stoi (count);
+	}
+}
+
+void LightLoader::ProcessShadowBias (TiXmlElement* xmlElem, Light::Shadow& shadow)
+{
+	const char* value = xmlElem->Attribute ("value");
+
+	if (value) {
+		shadow.bias = std::stof (value);
+	}
 }
 
 Color LightLoader::GetColor (TiXmlElement* xmlElem)

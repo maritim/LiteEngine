@@ -6,6 +6,7 @@
 #include "Core/Console/Console.h"
 
 CascadedShadowMapDirectionalLightVolume::CascadedShadowMapDirectionalLightVolume () :
+	_cascadedLevels (0),
 	_shadowMaps (),
 	_shadowMapResolutions (),
 	_lightCameras (),
@@ -49,13 +50,9 @@ bool CascadedShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels, 
 	*/
 
 	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
-		_shadowMapResolutions [index] = std::pair<GLuint, GLuint> (
-			resolution.x, resolution.y
-		);
+		_shadowMapResolutions [index] = resolution;
 
-		if (!_shadowMaps [index]->Init (
-				_shadowMapResolutions [index].first,
-				_shadowMapResolutions [index].second)) {
+		if (!_shadowMaps [index]->Init (_shadowMapResolutions [index])) {
 			Console::LogError ("Shadow Map Frame Buffer is not complete!");
 			return false;
 		}
@@ -79,7 +76,7 @@ void CascadedShadowMapDirectionalLightVolume::BindForShadowMapCatch (std::size_t
 	 * Change resolution on viewport as shadow map size
 	*/
 
-	GL::Viewport (0, 0, _shadowMapResolutions [cascadedLevel].first, _shadowMapResolutions [cascadedLevel].second);
+	GL::Viewport (0, 0, _shadowMapResolutions [cascadedLevel].x, _shadowMapResolutions [cascadedLevel].y);
 
 	/*
 	 * Bind shadow map cascade for writing
@@ -227,6 +224,11 @@ ShadowMapVolume* CascadedShadowMapDirectionalLightVolume::GetShadowMapVolume (st
 	return _shadowMaps [cascadedLevel];
 }
 
+std::size_t CascadedShadowMapDirectionalLightVolume::GetCascadesCount () const
+{
+	return _cascadedLevels;
+}
+
 void CascadedShadowMapDirectionalLightVolume::Clear ()
 {
 	/*
@@ -245,6 +247,8 @@ void CascadedShadowMapDirectionalLightVolume::Clear ()
 		delete _shadowMaps [index];
 	}
 
+	_shadowMaps.clear ();
+
 	/*
 	 * Delete light cameras
 	*/
@@ -252,4 +256,6 @@ void CascadedShadowMapDirectionalLightVolume::Clear ()
 	for (std::size_t index = 0; index < _cascadedLevels; index++) {
 		delete _lightCameras [index];
 	}
+
+	_lightCameras.clear ();
 }

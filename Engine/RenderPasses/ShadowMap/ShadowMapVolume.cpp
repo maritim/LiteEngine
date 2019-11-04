@@ -4,8 +4,14 @@
 
 #include "Core/Console/Console.h"
 
-bool ShadowMapVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
+bool ShadowMapVolume::Init (const glm::ivec2& size)
 {
+	/*
+	 * Keep framebuffer size
+	*/
+
+	_size = size;
+
 	/*
 	 * Create framebuffer
 	*/
@@ -33,7 +39,7 @@ bool ShadowMapVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
 	GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
 	GL::TexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
-	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, bufferWidth, bufferHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, size.x, size.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 	GL::FramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _colorBuffer, 0);
 
