@@ -152,20 +152,26 @@ void RenderSettingsLoader::ProcessGamma (TiXmlElement* xmlElem, RenderSettings* 
 void RenderSettingsLoader::ProcessRSM (TiXmlElement* xmlElem, RenderSettings* settings)
 {
 	std::string resolution = xmlElem->Attribute ("resolution");
+	std::string scale = xmlElem->Attribute ("scale");
 	std::string bias = xmlElem->Attribute ("bias");
 	std::string samples = xmlElem->Attribute ("samples");
 	std::string radius = xmlElem->Attribute ("radius");
 	std::string intensity = xmlElem->Attribute ("intensity");
-	std::string caching = xmlElem->Attribute ("caching");
+	std::string noiseEnabled = xmlElem->Attribute ("noiseEnabled");
+	std::string noiseSize = xmlElem->Attribute ("noiseSize");
+	std::string blurEnabled = xmlElem->Attribute ("blurEnabled");
 
 	auto vresolution = Extensions::StringExtend::Split (resolution, ",");
 
 	settings->rsm_resolution = glm::ivec2 (std::stoi (vresolution [0]), std::stoi (vresolution [1]));
+	settings->rsm_scale = std::stof (scale);
 	settings->rsm_bias = std::stof (bias);
 	settings->rsm_samples = std::stoi (samples);
 	settings->rsm_radius = std::stof (radius);
 	settings->rsm_intensity = std::stof (intensity);
-	settings->rsm_caching = Extensions::StringExtend::ToBool (caching);
+	settings->rsm_noise_enabled = Extensions::StringExtend::ToBool (noiseEnabled);
+	settings->rsm_noise_size = std::stoi (noiseSize);
+	settings->rsm_blur_enabled = Extensions::StringExtend::ToBool (blurEnabled);
 }
 
 void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings)

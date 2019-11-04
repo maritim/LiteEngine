@@ -19,8 +19,10 @@
 
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMSamplesGenerationRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMNoiseGenerationRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMIndirectLightRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMBlurRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightRenderPass.h"
-#include "RenderPasses/ReflectiveShadowMapping/RSMCachingRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/IdleRenderPass.h"
@@ -54,7 +56,9 @@ void ReflectiveShadowMappingRenderModule::Init ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 		.Attach (new RSMDirectionalLightAccumulationRenderPass ())
 		.Attach (new RSMSamplesGenerationRenderPass ())
-		.Attach (new RSMCachingRenderPass ())
+		.Attach (new RSMNoiseGenerationRenderPass ())
+		.Attach (new RSMIndirectLightRenderPass ())
+		.Attach (new RSMBlurRenderPass ())
 		.Attach (new RSMDirectionalLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());

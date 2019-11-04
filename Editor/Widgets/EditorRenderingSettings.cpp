@@ -176,6 +176,12 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 	if (ImGui::CollapsingHeader ("Reflective Shadow Mapping")) {
 
+		float scale = _settings->rsm_scale;
+		ImGui::InputFloat ("Scale", &scale);
+		if (scale > 0) {
+			_settings->rsm_scale = scale;
+		}
+
 		glm::ivec2 lastRSMResolution = _settings->rsm_resolution;
 		int rsmResolution [2] = { lastRSMResolution.x, lastRSMResolution.y };
 		ImGui::InputInt2 ("Resolution", rsmResolution);
@@ -187,17 +193,28 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 		ImGui::SliderFloat ("Shadow Bias", &_settings->rsm_bias, 0.0001, 0.2, "%5f");
 		ImGui::SliderFloat ("Sample Radius", &_settings->rsm_radius, 0.001, 0.2);
 		ImGui::SliderFloat ("Indirect Light Intensity", &_settings->rsm_intensity, 0, 5);
-		ImGui::Checkbox ("Caching", &_settings->rsm_caching);
+
+		ImGui::Separator();
+
+		ImGui::Checkbox ("Noise Enabled", &_settings->rsm_noise_enabled);
+		ImGui::InputScalar ("Noise Size", ImGuiDataType_U32, &_settings->rsm_noise_size);
+
+		ImGui::Separator();
+
+		ImGui::Checkbox ("Blur Enabled", &_settings->rsm_blur_enabled);
+
+		ImGui::Separator();
 
 		if (ImGui::TreeNode ("Debug")) {
+
+			StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
+			RSMStatisticsObject* rsmStat = nullptr;
+
+			if (stat != nullptr) {
+				rsmStat = dynamic_cast<RSMStatisticsObject*> (stat);
+			}
+
 			if (ImGui::TreeNode ("Reflective Shadow Map")) {
-
-				StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
-				RSMStatisticsObject* rsmStat = nullptr;
-
-				if (stat != nullptr) {
-					rsmStat = dynamic_cast<RSMStatisticsObject*> (stat);
-				}
 
 				if (rsmStat != nullptr) {
 
@@ -214,6 +231,26 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 					ImGui::Text ("Flux Map");
 					ShowImage (rsmStat->rsmFluxMapID, glm::ivec2 (windowWidth, windowWidth));
+				}
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNode ("Indirect Light")) {
+
+				if (rsmStat != nullptr) {
+
+					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
+
+					FrameBuffer2DVolume* rsmIndirectMapVolume = rsmStat->rsmIndirectMapVolume;
+
+					glm::ivec2 rsmMapSize = rsmIndirectMapVolume->GetSize ();
+
+					int rsmMapWidth = windowWidth;
+					int rsmMapHeight = ((float) rsmMapSize.y / rsmMapSize.x) * rsmMapWidth;
+
+					ImGui::Text ("Indirect Light Map");
+					ShowImage (rsmIndirectMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
 				}
 
 				ImGui::TreePop();

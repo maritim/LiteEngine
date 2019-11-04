@@ -3,6 +3,8 @@
 
 #include "StatisticsObject.h"
 
+#include "RenderPasses/FrameBuffer2DVolume.h"
+
 struct ENGINE_API RSMStatisticsObject : public StatisticsObject
 {
 	unsigned int rsmPosMapID;
@@ -10,7 +12,8 @@ struct ENGINE_API RSMStatisticsObject : public StatisticsObject
 	unsigned int rsmFluxMapID;
 	unsigned int rsmDepthMapID;
 
-	unsigned int rsmCacheMapID;
+	unsigned int rsmNoiseMapID;
+	FrameBuffer2DVolume* rsmIndirectMapVolume;
 };
 
 #endif

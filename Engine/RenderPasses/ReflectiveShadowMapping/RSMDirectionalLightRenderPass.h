@@ -19,8 +19,6 @@ public:
 
 	void Clear ();
 protected:
-	void DirectionalLightPass (const RenderScene*, const Camera*, RenderVolumeCollection*);
-
 	void LockShader (const RenderLightObject*);
 
 	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings) const;

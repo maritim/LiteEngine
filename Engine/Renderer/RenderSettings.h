@@ -58,11 +58,14 @@ struct RenderSettings : public Object
 	bool gamma_enabled;
 
 	glm::ivec2 rsm_resolution;
+	float rsm_scale;
 	float rsm_bias;
 	std::size_t rsm_samples;
 	float rsm_radius;
 	float rsm_intensity;
-	bool rsm_caching;
+	bool rsm_noise_enabled;
+	std::size_t rsm_noise_size;
+	bool rsm_blur_enabled;
 
 	std::size_t vct_voxels_size;
 	bool vct_continuous_voxelization;

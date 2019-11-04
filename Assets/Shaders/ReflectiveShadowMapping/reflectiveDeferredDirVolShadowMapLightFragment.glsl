@@ -26,15 +26,9 @@ uniform sampler2D rsmFluxMap;
 
 uniform mat4 rsmLightSpaceMatrix;
 
-layout(std140) uniform rsmSamples
-{
-	int rsmSamplesCount;
-	vec2 rsmSample[200];
-};
-
 uniform float rsmBias;
-uniform float rsmRadius;
-uniform float rsmIntensity;
+
+uniform sampler2D indirectMap;
 
 #include "deferred.glsl"
 #include "AmbientLight/ambientLight.glsl"
@@ -69,44 +63,6 @@ vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shinine
 	return specularColor;
 }
 
-/*
- * Indirect Illumination Calculation
- * Thanks to: http://ericpolman.com/reflective-shadow-maps-part-2-the-implementation/
-*/
-
-vec3 CalcIndirectDiffuseLight (vec3 worldSpacePos, vec3 worldSpaceNormal)
-{
-	vec3 indirectColor = vec3 (0.0);
-
-	vec4 lightSpacePos = rsmLightSpaceMatrix * vec4 (worldSpacePos, 1.0);
-	vec3 rsmProjCoords = lightSpacePos.xyz / lightSpacePos.w;
-
-	rsmProjCoords = rsmProjCoords * 0.5 + 0.5;
-
-	for (int index = 0; index < rsmSamplesCount; index ++) {
-		vec2 rnd = rsmSample [index];
-
-		vec2 coords = rsmProjCoords.xy + rnd * rsmRadius;
-
-		vec3 rsmWorldSpacePos = texture2D (rsmPositionMap, coords).xyz;
-		vec3 rsmWorldSpaceNormal = texture2D (rsmNormalMap, coords).xyz;
-		vec3 rsmFlux = texture2D (rsmFluxMap, coords).xyz;
-
-		vec3 result = rsmFlux *
-			((max (0.0, dot (rsmWorldSpaceNormal, worldSpacePos - rsmWorldSpacePos))
-				* max (0.0, dot (worldSpaceNormal, rsmWorldSpacePos - worldSpacePos)))
-			/ pow (length (worldSpacePos - rsmWorldSpacePos), 4.0));
-
-		float dist = length (rnd);
-
-		result = result * dist * dist;
-
-		indirectColor += result;
-	}
-
-	return indirectColor * rsmIntensity;
-}
-
 float CalcDirectionalShadowContribution (vec3 worldSpacePos)
 {
 	vec4 lightSpacePos = rsmLightSpaceMatrix * vec4 (worldSpacePos, 1.0);
@@ -133,7 +89,7 @@ float CalcDirectionalShadowContribution (vec3 worldSpacePos)
 	return shadow;
 }
 
-vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
+vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess, vec3 in_indirect)
 {
 	// Compute fragment world position and world normal
 	vec3 worldPosition = vec3 (inverseViewMatrix * vec4 (in_position, 1.0));
@@ -145,8 +101,6 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 
 	directDiffuseColor = shadow * directDiffuseColor;
 
-	vec3 indirectDiffuseColor = CalcIndirectDiffuseLight (worldPosition, worldNormal);
-
 	vec3 directSpecularColor = CalcDirectSpecularLight (worldPosition, worldNormal, in_shininess);
 
 	directSpecularColor = shadow * directSpecularColor;
@@ -154,8 +108,9 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// Calculate ambient light
 	vec3 ambientColor = in_diffuse * CalcAmbientLight ();
 
-	return ((directDiffuseColor + indirectDiffuseColor) * in_diffuse
-			+ directSpecularColor * in_specular) * lightIntensity + ambientColor;
+	// return in_indirect;
+	return (directDiffuseColor * in_diffuse
+			+ directSpecularColor * in_specular) * lightIntensity + (in_indirect * in_diffuse) + ambientColor;
 }
 
 void main()
@@ -166,8 +121,9 @@ void main()
 	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
 	vec3 in_specular = texture2D (gSpecularMap, texCoord).xyz;
 	float in_shininess = texture2D (gSpecularMap, texCoord).w;
+	vec3 in_indirect = texture2D (indirectMap, texCoord).xyz;
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
+	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_shininess, in_indirect);
 } 
