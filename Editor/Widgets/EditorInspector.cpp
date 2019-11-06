@@ -178,6 +178,14 @@ void EditorInspector::ShowLight (SceneObject* object)
 		lightIntensity = std::max (lightIntensity, 0.0f);
 		light->SetIntensity (lightIntensity);
 
+		if (lightType == 2) {
+			PointLight* pointLight = dynamic_cast<PointLight*> (light);
+
+			float lightRange = pointLight->GetRange ();
+			ImGui::InputFloat ("Range", &lightRange, 0.1f);
+			pointLight->SetRange (lightRange);
+		}
+
 		if (lightType < 4) {
 			bool castShadows = light->IsCastingShadows ();
 			ImGui::Checkbox ("Cast Shadows", &castShadows);

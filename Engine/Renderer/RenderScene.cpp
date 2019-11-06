@@ -77,16 +77,6 @@ AABBVolume* RenderScene::GetBoundingBox () const
 	return _boundingBox;
 }
 
-std::set<RenderObject*>::const_iterator RenderScene::begin () const
-{
-	return _renderObjects.begin ();
-}
-
-std::set<RenderObject*>::const_iterator RenderScene::end () const
-{
-	return _renderObjects.end ();
-}
-
 void RenderScene::UpdateBoundingBox ()
 {
 	AABBVolume::AABBVolumeInformation* volume = _boundingBox->GetVolumeInformation ();

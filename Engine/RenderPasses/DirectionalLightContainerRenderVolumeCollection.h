@@ -17,7 +17,7 @@ public:
 	DirectionalLightContainerRenderVolumeCollection ();
 	~DirectionalLightContainerRenderVolumeCollection ();
 
-	void Reset ();
+	void Reset (const RenderScene*);
 	RenderVolumeI* GetNextVolume (const RenderScene* renderScene, const RenderSettings& settings);
 };
 

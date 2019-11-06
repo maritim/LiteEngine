@@ -2,8 +2,14 @@
 
 <Light type="POINT_LIGHT">
 	<Color r="255" g="255" b="255" />
+	<Intensity value="1.0" />
 
 	<Point>
-		<Attenuation constant="1.0" linear="0.1" quadratic="0.01" />
+		<Range value="7" />
 	</Point>
+
+	<Shadows casting="false">
+		<Resolution width="512" height="512" />
+		<Bias value="0.5" />
+	</Shadows>
 </Light>

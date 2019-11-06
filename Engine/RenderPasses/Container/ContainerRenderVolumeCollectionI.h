@@ -12,7 +12,7 @@ class ContainerRenderVolumeCollectionI : public Object
 public:
 	virtual ~ContainerRenderVolumeCollectionI () = 0;
 
-	virtual void Reset () = 0;
+	virtual void Reset (const RenderScene*) = 0;
 	virtual RenderVolumeI* GetNextVolume (const RenderScene*, const RenderSettings&) = 0;
 };
 

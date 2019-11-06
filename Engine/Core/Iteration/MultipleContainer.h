@@ -11,39 +11,39 @@
  * Do nothing and explicitly show an error.
 */
 
-#define MULTIPLE_CONTAINER_TEMPLATE \
+#define MULTIPLE_CONTAINER_TEMPLATE(containerType) \
 public: \
 	template<typename T> \
-	typename std::vector<T>::iterator begin (); \
+	typename std::containerType<T>::iterator begin (); \
 	template<typename T> \
-	typename std::vector<T>::iterator end (); \
+	typename std::containerType<T>::iterator end (); \
 	template<typename T> \
-	typename std::vector<T>::const_iterator begin () const; \
+	typename std::containerType<T>::const_iterator begin () const; \
 	template<typename T> \
-	typename std::vector<T>::const_iterator end () const;
+	typename std::containerType<T>::const_iterator end () const;
 
 /*
  *
 */
 
-#define MULTIPLE_CONTAINER_SPECIALIZATION(type, class, container) \
+#define MULTIPLE_CONTAINER_SPECIALIZATION(containerType, type, class, container) \
 template<> \
-inline std::vector<type>::iterator class::begin<type> () \
+inline std::containerType<type>::iterator class::begin<type> () \
 { \
 	return container.begin (); \
 } \
 template<> \
-inline std::vector<type>::iterator class::end<type> () \
+inline std::containerType<type>::iterator class::end<type> () \
 { \
 	return container.end (); \
 } \
 template<> \
-inline std::vector<type>::const_iterator class::begin<type> () const \
+inline std::containerType<type>::const_iterator class::begin<type> () const \
 { \
 	return container.begin (); \
 } \
 template<> \
-inline std::vector<type>::const_iterator class::end<type> () const \
+inline std::containerType<type>::const_iterator class::end<type> () const \
 { \
 	return container.end (); \
 }

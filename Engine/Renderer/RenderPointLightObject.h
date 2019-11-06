@@ -3,19 +3,17 @@
 
 #include "Renderer/RenderLightObject.h"
 
-#include <glm/vec3.hpp>
-
 class RenderPointLightObject : public RenderLightObject
 {
 protected:
-	glm::vec3 _attenuation;
+	float _lightRange;
 
 public:
 	RenderPointLightObject ();
 
-	void SetLightAttenuation (const glm::vec3& attenuation);
+	void SetLightRange (float lightRange);
 protected:
-	std::vector<PipelineAttribute> GetCustomAttributes ();
+	std::vector<PipelineAttribute> GetCustomAttributes () const;
 };
 
 #endif

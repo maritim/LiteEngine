@@ -12,7 +12,7 @@ DirectionalLightContainerRenderVolumeCollection::~DirectionalLightContainerRende
 	delete _volumetricLightVolume;
 }
 
-void DirectionalLightContainerRenderVolumeCollection::Reset ()
+void DirectionalLightContainerRenderVolumeCollection::Reset (const RenderScene* renderScene)
 {
 	_iterations = 0;
 }

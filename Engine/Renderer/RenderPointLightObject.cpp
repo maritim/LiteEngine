@@ -1,29 +1,29 @@
 #include "RenderPointLightObject.h"
 
 RenderPointLightObject::RenderPointLightObject () :
-	_attenuation (0, 0, 1)
+	_lightRange (0.0f)
 {
 
 }
 
-void RenderPointLightObject::SetLightAttenuation (const glm::vec3& attenuation)
+void RenderPointLightObject::SetLightRange (float lightRange)
 {
-	_attenuation = attenuation;
+	_lightRange = lightRange;
 }
 
-std::vector<PipelineAttribute> RenderPointLightObject::GetCustomAttributes ()
+std::vector<PipelineAttribute> RenderPointLightObject::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes = RenderLightObject::GetCustomAttributes ();
 
-	PipelineAttribute attenuation;
+	PipelineAttribute lightRange;
 
-	attenuation.type = PipelineAttribute::AttrType::ATTR_3F;
+	lightRange.type = PipelineAttribute::AttrType::ATTR_1F;
 
-	attenuation.name = "attenuationComp";
+	lightRange.name = "lightRange";
 
-	attenuation.value = _attenuation;
+	lightRange.value.x = _lightRange;
 
-	attributes.push_back (attenuation);
+	attributes.push_back (lightRange);
 
 	return attributes;
 }

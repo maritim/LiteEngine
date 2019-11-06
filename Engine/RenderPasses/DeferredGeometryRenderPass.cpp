@@ -194,7 +194,7 @@ void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, c
 	std::size_t drawnPolygonsCount = 0;
 	std::size_t drawnObjectsCount = 0;
 
-	for (RenderObject* renderObject : *renderScene) {
+	for_each_type (RenderObject*, renderObject, *renderScene) {
 
 		/*
 		 * Check if it's active

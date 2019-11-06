@@ -77,7 +77,7 @@ void ForwardRenderPass::ForwardPass (const RenderScene* renderScene)
 
 	std::vector<RenderObject*> renderObjects;
 
-	for (RenderObject* renderObject : *renderScene) {
+	for_each_type (RenderObject*, renderObject, *renderScene) {
 
 		/*
 		 * Check if it's active

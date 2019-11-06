@@ -2,11 +2,6 @@
 
 layout(location = 0) out vec3 out_color;
 
-uniform sampler2D gPositionMap;
-uniform sampler2D gNormalMap;
-uniform sampler2D gDiffuseMap;
-uniform sampler2D gSpecularMap;
-
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelViewMatrix;
@@ -18,15 +13,10 @@ uniform vec3 cameraPosition;
 
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
+uniform float lightIntensity;
+uniform float lightRange;
 
-uniform vec3 attenuationComp;
-
-uniform vec2 screenSize;
-
-vec2 CalcTexCoord()
-{
-	return gl_FragCoord.xy / screenSize;
-}
+#include "deferred.glsl"
 
 vec3 CalcPointLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
 {
@@ -34,13 +24,14 @@ vec3 CalcPointLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_
 	vec3 lightDirection = vec3 (viewMatrix * vec4 (lightPosition, 1)) - in_position;
 
 	// Distance from fragment to light source
-	float dist = length (lightDirection);
+	float dist2 = dot (lightDirection, lightDirection);
 
 	// Normalize light direction
 	lightDirection = normalize (lightDirection);
 
 	// Compute point light attenuation over distance
-	float attenuation = 1.0 / (attenuationComp.x + attenuationComp.y * dist + attenuationComp.z * dist * dist);
+	float attenuation = 1.0 / (dist2 + 1);
+	attenuation = pow (clamp (1.0 - pow (dist2 / (lightRange * lightRange), 2), 0.0, 1.0), 2);
 
 	// Diffuse light intensity
 	float diffuseLightIntensity = max (dot (in_normal, lightDirection), 0.0);
@@ -56,9 +47,9 @@ vec3 CalcPointLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_
 	float specularLightIntensity = pow (max (dot (surface2view, reflection), 0.0), in_shininess);
 
 	// Compute specular color
-	vec3 specularColor = lightColor * in_diffuse * in_specular * specularLightIntensity * attenuation;
+	vec3 specularColor = lightColor * in_specular * specularLightIntensity * attenuation;
 
-	return diffuseColor;// + specularColor;
+	return (diffuseColor + specularColor) * lightIntensity;
 }
 
 void main()

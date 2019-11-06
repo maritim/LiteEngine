@@ -141,7 +141,7 @@ void VoxelizationRenderPass::GeometryVoxelizationPass (const RenderScene* render
 	* Render geometry
 	*/
 
-	for (RenderObject* renderObject : *renderScene) {
+	for_each_type (RenderObject*, renderObject, *renderScene) {
 
 		/*
 		 * Check if it's active

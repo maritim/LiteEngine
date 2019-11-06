@@ -11,7 +11,7 @@
 #include "Renderer/RenderManager.h"
 
 PointLight::PointLight () :
-	_attenuation (0, 0, 1)
+	_range (0.0f)
 {
 	_renderLightObject = new RenderPointLightObject ();
 
@@ -40,12 +40,17 @@ void PointLight::Update ()
 	}
 }
 
-void PointLight::SetAttenuation (const glm::vec3& attenuation)
+float PointLight::GetRange () const
 {
-	_attenuation = attenuation;
+	return _range;
+}
+
+void PointLight::SetRange (float range)
+{
+	_range = range;
 
 	auto renderLightObject = (RenderPointLightObject*) _renderLightObject;
-	renderLightObject->SetLightAttenuation (_attenuation);
+	renderLightObject->SetLightRange (_range);
 
 	UpdateScale ();
 }
@@ -65,25 +70,8 @@ void PointLight::OnDetachedFromScene ()
 void PointLight::UpdateScale ()
 {
 	/*
-	 * TODO: Move this somewhere else
-	*/
-
-	float minIntensity = 5.0f;
-
-	/*
-	 * Compute light intensity distance
-	*/
-
-	glm::vec3 color = _color.ToVector3 ();
-	float maxLightChannel = std::fmax (std::fmax (color.x, color.y), color.z);
-
-	float dist = (-_attenuation.y + std::sqrt (_attenuation.y * _attenuation.y -
-		4 * _attenuation.z * (_attenuation.x - (256.0f / minIntensity) * maxLightChannel))) /
-		(2 * _attenuation.z);
-
-	/*
 	 * Set light volume scale based on light distance
 	*/
 
-	_transform->SetScale (glm::vec3 (dist));
+	_transform->SetScale (glm::vec3 (_range));
 }

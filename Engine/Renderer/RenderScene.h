@@ -44,10 +44,12 @@ public:
 	RenderAmbientLightObject* GetRenderAmbientLightObject () const;
 	AABBVolume* GetBoundingBox () const;
 
-	std::set<RenderObject*>::const_iterator begin () const;
-	std::set<RenderObject*>::const_iterator end () const;
+	MULTIPLE_CONTAINER_TEMPLATE (set)
 protected:
 	void UpdateBoundingBox ();
 };
+
+MULTIPLE_CONTAINER_SPECIALIZATION (set, RenderObject*, RenderScene, _renderObjects);
+MULTIPLE_CONTAINER_SPECIALIZATION (set, RenderPointLightObject*, RenderScene, _renderPointLightObjects);
 
 #endif

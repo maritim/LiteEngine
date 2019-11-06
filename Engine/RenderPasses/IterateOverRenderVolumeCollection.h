@@ -16,7 +16,7 @@ public:
 	IterateOverRenderVolumeCollection (std::size_t iterations);
 	~IterateOverRenderVolumeCollection ();
 
-	void Reset ();
+	void Reset (const RenderScene*);
 	RenderVolumeI* GetNextVolume (const RenderScene* renderScene, const RenderSettings&);
 };
 

@@ -123,8 +123,8 @@ void LightLoader::ProcessPointLight (TiXmlElement* xmlElem, Light* light)
 	{
 		std::string name = content->Value ();
 
-		if (name == "Attenuation") {
-			ProcessAttenuation (content, pointLight);
+		if (name == "Range") {
+			ProcessRange (content, pointLight);
 		}
 
 		content = content->NextSiblingElement ();
@@ -155,27 +155,11 @@ void LightLoader::ProcessSpotLight (TiXmlElement* xmlElem, Light* light)
 	}
 }
 
-void LightLoader::ProcessAttenuation (TiXmlElement* xmlElem, PointLight* light)
+void LightLoader::ProcessRange (TiXmlElement* xmlElem, PointLight* light)
 {
-	const char* constant = xmlElem->Attribute ("constant");
-	const char* linear = xmlElem->Attribute ("linear");
-	const char* quadratic = xmlElem->Attribute ("quadratic");
+	const char* value = xmlElem->Attribute ("value");
 
-	glm::vec3 attenuation (0.0f);
-
-	if (constant) {
-		attenuation.x = std::stof (constant);
-	}
-
-	if (linear) {
-		attenuation.y = std::stof (linear);
-	}
-
-	if (quadratic) {
-		attenuation.z = std::stof (quadratic);
-	}
-
-	light->SetAttenuation (attenuation);
+	light->SetRange (std::stof (value));
 }
 
 void LightLoader::ProcessSpotCutoff (TiXmlElement* xmlElem, SpotLight* light)

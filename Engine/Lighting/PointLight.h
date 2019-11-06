@@ -3,17 +3,17 @@
 
 #include "VolumetricLight.h"
 
-#include <glm/vec3.hpp>
-
 class PointLight : public VolumetricLight
 {
 protected:
-	glm::vec3 _attenuation;
+	float _range;
 
 public:
 	PointLight ();
 
-	void SetAttenuation (const glm::vec3& attenuation);
+	float GetRange () const;
+
+	void SetRange (float range);
 
 	void SetActive (bool isActive);
 

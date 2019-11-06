@@ -74,7 +74,7 @@ public:
 	void GenerateSmoothNormals ();
 	void Repair ();
 
-	MULTIPLE_CONTAINER_TEMPLATE
+	MULTIPLE_CONTAINER_TEMPLATE (vector)
 
 	~Model ();
 
@@ -84,7 +84,7 @@ protected:
 	void CalculateBoundingBox (const glm::vec3& vertex);
 };
 
-MULTIPLE_CONTAINER_SPECIALIZATION (ObjectModel*, Model, _objectModels);
-MULTIPLE_CONTAINER_SPECIALIZATION (glm::vec3, Model, _vertices);
+MULTIPLE_CONTAINER_SPECIALIZATION (vector, ObjectModel*, Model, _objectModels);
+MULTIPLE_CONTAINER_SPECIALIZATION (vector, glm::vec3, Model, _vertices);
 
 #endif

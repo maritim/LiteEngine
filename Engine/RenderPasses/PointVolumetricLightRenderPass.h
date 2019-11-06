@@ -20,6 +20,8 @@ protected:
 	void PointLightDrawPass (const RenderScene*, const Camera*, RenderLightObject*, RenderVolumeCollection*);
 
 	virtual void LockShader (const RenderLightObject*) = 0;
+
+	std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection*) const;
 };
 
 #endif

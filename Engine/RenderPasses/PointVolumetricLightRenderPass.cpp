@@ -86,6 +86,8 @@ void PointVolumetricLightRenderPass::EndPointLightPass ()
 	*/
 
 	Pipeline::UnlockShader ();
+
+	GL::Disable (GL_DEPTH_CLAMP);
 }
 
 void PointVolumetricLightRenderPass::PointLightStencilPass (const RenderScene* renderScene, const Camera* camera,
@@ -122,6 +124,12 @@ void PointVolumetricLightRenderPass::PointLightStencilPass (const RenderScene* r
 	*/
 
 	GL::Disable (GL_CULL_FACE);
+
+	/*
+	 * Ignore near and far planes
+	*/
+
+	GL::Enable (GL_DEPTH_CLAMP);
 
 	/*
 	 * Send camera to pipeline
@@ -194,6 +202,12 @@ void PointVolumetricLightRenderPass::PointLightDrawPass (const RenderScene* rend
 	GL::CullFace (GL_FRONT);
 
 	/*
+	 * Ignore near and far planes
+	*/
+
+	GL::Enable (GL_DEPTH_CLAMP);
+
+	/*
 	 * Send camera to pipeline
 	*/
 
@@ -201,8 +215,27 @@ void PointVolumetricLightRenderPass::PointLightDrawPass (const RenderScene* rend
 	Pipeline::SendCamera (camera);
 
 	/*
+	 * Send custom attributes
+	*/
+
+	Pipeline::SendCustomAttributes ("", GetCustomAttributes (rvc));
+
+	/*
 	 * Draw the volumetric light.
 	*/
 
 	renderLightObject->Draw ();
+}
+
+std::vector<PipelineAttribute> PointVolumetricLightRenderPass::GetCustomAttributes (RenderVolumeCollection* rvc) const
+{
+	std::vector<PipelineAttribute> attributes;
+
+	for (RenderVolumeI* renderVolume : *rvc) {
+		std::vector<PipelineAttribute> volumeAttributes = renderVolume->GetCustomAttributes ();
+
+		attributes.insert (attributes.end (), volumeAttributes.begin (), volumeAttributes.end ());
+	}
+
+	return attributes;
 }

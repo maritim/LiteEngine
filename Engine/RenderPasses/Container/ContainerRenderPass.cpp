@@ -50,7 +50,7 @@ RenderVolumeCollection* ContainerRenderPass::Execute (const RenderScene* renderS
 	 * Reset render container volume
 	*/
 
-	_renderVolumeCollection->Reset ();
+	_renderVolumeCollection->Reset (renderScene);
 
 	/*
 	 * Iterate every render volume provided by specialization

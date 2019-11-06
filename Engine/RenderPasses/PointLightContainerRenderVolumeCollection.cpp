@@ -12,22 +12,20 @@ PointLightContainerRenderVolumeCollection::~PointLightContainerRenderVolumeColle
 	delete _volumetricLightVolume;
 }
 
-void PointLightContainerRenderVolumeCollection::Reset ()
+void PointLightContainerRenderVolumeCollection::Reset (const RenderScene* renderScene)
 {
-	// _pointLightsIterator = LightsManager::Instance ()->begin<PointLight*> ();
+	_pointLightsIterator = renderScene->begin<RenderPointLightObject*> ();
 }
 
 RenderVolumeI* PointLightContainerRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene, const RenderSettings& settings)
 {
-	return nullptr;
+	if (_pointLightsIterator == renderScene->end<RenderPointLightObject*> ()) {
+		return nullptr;
+	}
 
-	// if (_pointLightsIterator == LightsManager::Instance ()->end<PointLight*> ()) {
-	// 	return nullptr;
-	// }
+	_volumetricLightVolume->SetRenderLightObject (*_pointLightsIterator);
 
-	// _volumetricLightVolume->SetVolumetricLight (*_pointLightsIterator);
+	_pointLightsIterator ++;
 
-	// _pointLightsIterator ++;
-
-	// return _volumetricLightVolume;
+	return _volumetricLightVolume;
 }

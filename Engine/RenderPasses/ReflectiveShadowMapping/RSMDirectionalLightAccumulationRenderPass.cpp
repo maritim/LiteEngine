@@ -156,7 +156,7 @@ void RSMDirectionalLightAccumulationRenderPass::ShadowMapGeometryPass (const Ren
 	* Render scene entities to framebuffer at Deferred Rendering Stage
 	*/
 
-	for (RenderObject* renderObject : *renderScene) {
+	for_each_type (RenderObject*, renderObject, *renderScene) {
 
 		/*
 		 * Check if it's active

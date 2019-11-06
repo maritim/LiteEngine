@@ -27,7 +27,7 @@ private:
 	void ProcessPointLight (TiXmlElement* xmlElem, Light* light);
 	void ProcessSpotLight (TiXmlElement* xmlElem, Light* light);
 
-	void ProcessAttenuation (TiXmlElement* xmlElem, PointLight* light);
+	void ProcessRange (TiXmlElement* xmlElem, PointLight* light);
 
 	void ProcessSpotCutoff (TiXmlElement* xmlElem, SpotLight* light);
 	void ProcessSpotExponent (TiXmlElement* xmlElem, SpotLight* light);

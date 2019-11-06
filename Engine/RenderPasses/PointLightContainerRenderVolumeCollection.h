@@ -6,19 +6,19 @@
 #include <vector>
 
 #include "RenderPasses/VolumetricLightVolume.h"
-#include "Lighting/PointLight.h"
+#include "Renderer/RenderPointLightObject.h"
 
 class ENGINE_API PointLightContainerRenderVolumeCollection : public ContainerRenderVolumeCollectionI
 {
 protected:
-	std::vector<PointLight*>::iterator _pointLightsIterator;
+	std::set<RenderPointLightObject*>::iterator _pointLightsIterator;
 	VolumetricLightVolume* _volumetricLightVolume;
 
 public:
 	PointLightContainerRenderVolumeCollection ();
 	~PointLightContainerRenderVolumeCollection ();
 
-	void Reset ();
+	void Reset (const RenderScene*);
 	RenderVolumeI* GetNextVolume (const RenderScene*, const RenderSettings&);
 };
 

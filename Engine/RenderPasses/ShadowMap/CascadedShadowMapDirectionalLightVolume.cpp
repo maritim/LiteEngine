@@ -258,4 +258,7 @@ void CascadedShadowMapDirectionalLightVolume::Clear ()
 	}
 
 	_lightCameras.clear ();
+
+	_shadowMapResolutions.clear ();
+	_shadowMapZEnd.clear ();
 }

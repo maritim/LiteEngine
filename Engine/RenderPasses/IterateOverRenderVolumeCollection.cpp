@@ -13,7 +13,7 @@ IterateOverRenderVolumeCollection::~IterateOverRenderVolumeCollection ()
 	delete _idleRenderVolume;
 }
 
-void IterateOverRenderVolumeCollection::Reset ()
+void IterateOverRenderVolumeCollection::Reset (const RenderScene* renderScene)
 {
 	_iterationsElapsed = 0;
 }
