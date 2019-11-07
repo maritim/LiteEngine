@@ -126,7 +126,7 @@ void Pipeline::SetObjectTransform (const Transform* transform)
 
 	glm::mat4 rotation = glm::mat4_cast(rotationq);
 
-	_modelMatrix = translate * scale * rotation;
+	_modelMatrix = translate * rotation * scale;
 }
 
 void Pipeline::ClearObjectTransform ()

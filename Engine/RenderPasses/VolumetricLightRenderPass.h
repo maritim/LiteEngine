@@ -1,12 +1,12 @@
-#ifndef POINTVOLUMETRICLIGHTRENDERPASS_H
-#define POINTVOLUMETRICLIGHTRENDERPASS_H
+#ifndef VOLUMETRICLIGHTRENDERPASS_H
+#define VOLUMETRICLIGHTRENDERPASS_H
 
 #include "RenderPasses/VolumetricLightRenderPassI.h"
 
-class ENGINE_API PointVolumetricLightRenderPass : public VolumetricLightRenderPassI
+class ENGINE_API VolumetricLightRenderPass : public VolumetricLightRenderPassI
 {
 public:
-	~PointVolumetricLightRenderPass ();
+	~VolumetricLightRenderPass ();
 
 	RenderVolumeCollection* Execute (const RenderScene*, const Camera*, const RenderSettings&, RenderVolumeCollection* );
 protected:

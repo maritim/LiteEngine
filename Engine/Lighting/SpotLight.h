@@ -1,30 +1,27 @@
 #ifndef SPOTLIGHT_H
 #define SPOTLIGHT_H
 
-#include "VolumetricLight.h"
+#include "PointLight.h"
 
-class SpotLight : public VolumetricLight
+class SpotLight : public PointLight
 {
 protected:
-	float _constantAttenuation, _linearAttenuation, _quadraticAttenuation;
-	float _spotCutoff, _spotExponent;
-	glm::vec3 _spotDirection;
+	float _spotCutoff;
+	float _spotOuterCutoff;
 
 public:
 	SpotLight ();
 
-	void Update ();
-
-	glm::vec3 GetSpotDirection () const;
 	float GetSpotCutoff () const;
-	float GetSpotExponent () const;
+	float GetSpotOuterCutoff () const;
 
-	void SetSpotDirection (const glm::vec3& spotDirection);
 	void SetSpotCutoff (float spotCutoff);
-	void SetSpotExponent (float spotExponent);
+	void SetSpotOuterCutoff (float spotOuterCutoff);
 
 	void OnAttachedToScene ();
 	void OnDetachedFromScene ();
+protected:
+	void UpdateTransform ();
 };
 
 #endif

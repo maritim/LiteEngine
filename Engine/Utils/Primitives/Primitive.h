@@ -13,7 +13,7 @@ class Primitive : public Singleton<Primitive>
 	friend class Singleton<Primitive>;
 
 public:
-	enum Type { QUAD = 0, CUBE, SPHERE, TRIANGULAR_PYRAMID, SQUARE_PYRAMID, CYLINDER, CONE };
+	enum Type { QUAD = 0, CUBE, SPHERE, TRIANGULAR_PYRAMID, SQUARE_PYRAMID, CONE, CYLINDER };
 
 private:
 	std::vector<Resource<Model>> _primitives;

@@ -1,20 +1,20 @@
-#ifndef DEFERREDPOINTLIGHTRENDERPASS_H
-#define DEFERREDPOINTLIGHTRENDERPASS_H
+#ifndef DEFERREDSPOTLIGHTRENDERPASS_H
+#define DEFERREDSPOTLIGHTRENDERPASS_H
 
 #include "RenderPasses/VolumetricLightRenderPass.h"
 
 #include <string>
 
-class ENGINE_API DeferredPointLightRenderPass : public VolumetricLightRenderPass
+class ENGINE_API DeferredSpotLightRenderPass : public VolumetricLightRenderPass
 {
-	DECLARE_RENDER_PASS(DeferredPointLightRenderPass)
+	DECLARE_RENDER_PASS(DeferredSpotLightRenderPass)
 
 protected:
 	std::string _shaderName;
 	std::string _shadowShaderName;
 
 public:
-	DeferredPointLightRenderPass ();
+	DeferredSpotLightRenderPass ();
 
 	void Init (const RenderSettings& settings);
 

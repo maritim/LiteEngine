@@ -2,10 +2,16 @@
 
 <Light type="SPOT_LIGHT">
 	<Color r="255" g="255" b="255" />
+	<Intensity value="1" />
 
 	<Spot>
-		<Cutoff value="360" />
-		<Exponent value="1.0" />
-		<Direction x="1.0" y="1.0" z="1.0" />
+		<Range value="7" />
+		<Cutoff value="0" />
+		<OuterCutoff value="45" />
 	</Spot>
+
+	<Shadows casting="false">
+		<Resolution width="512" height="512" />
+		<Bias value="0.5" />
+	</Shadows>
 </Light>

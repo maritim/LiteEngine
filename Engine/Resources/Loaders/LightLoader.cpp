@@ -141,14 +141,14 @@ void LightLoader::ProcessSpotLight (TiXmlElement* xmlElem, Light* light)
 	{
 		std::string name = content->Value ();
 
-		if (name == "Cutoff") {
+		if (name == "Range") {
+			ProcessRange (content, spotLight);
+		}
+		else if (name == "Cutoff") {
 			ProcessSpotCutoff (content, spotLight);
 		}
-		else if (name == "Exponent") {
-			ProcessSpotExponent (content, spotLight);
-		}
-		else if (name == "Direction") {
-			ProcessSpotDirection (content, spotLight);
+		else if (name == "OuterCutoff") {
+			ProcessSpotOuterCutoff (content, spotLight);
 		}
 
 		content = content->NextSiblingElement ();
@@ -169,34 +169,11 @@ void LightLoader::ProcessSpotCutoff (TiXmlElement* xmlElem, SpotLight* light)
 	light->SetSpotCutoff (std::stof (value));
 }
 
-void LightLoader::ProcessSpotExponent (TiXmlElement* xmlElem, SpotLight* light)
+void LightLoader::ProcessSpotOuterCutoff (TiXmlElement* xmlElem, SpotLight* light)
 {
 	std::string value = xmlElem->Attribute ("value");
 
-	light->SetSpotExponent (std::stof (value));
-}
-
-void LightLoader::ProcessSpotDirection (TiXmlElement* xmlElem, SpotLight* light)
-{
-	glm::vec3 direction;
-
-	const char* x = xmlElem->Attribute ("x");
-	const char* y = xmlElem->Attribute ("y");
-	const char* z = xmlElem->Attribute ("z");
-
-	if (x) {
-		direction.x = std::stof (x);
-	}
-
-	if (y) {
-		direction.y = std::stof (y);
-	}
-
-	if (z) {
-		direction.z = std::stof (z);
-	}
-
-	light->SetSpotDirection (direction);
+	light->SetSpotOuterCutoff (std::stof (value));
 }
 
 void LightLoader::ProcessShadowResolution (TiXmlElement* xmlElem, Light::Shadow& shadow)

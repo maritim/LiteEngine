@@ -60,6 +60,16 @@ void RenderManager::DetachRenderPointLightObject (RenderPointLightObject* render
 	_renderScene->DetachRenderPointLightObject (renderPointLightObject);
 }
 
+void RenderManager::AttachRenderSpotLightObject (RenderSpotLightObject* renderSpotLightObject)
+{
+	_renderScene->AttachRenderSpotLightObject (renderSpotLightObject);
+}
+
+void RenderManager::DetachRenderSpotLightObject (RenderSpotLightObject* renderSpotLightObject)
+{
+	_renderScene->DetachRenderSpotLightObject (renderSpotLightObject);
+}
+
 void RenderManager::SetRenderAmbientLightObject (RenderAmbientLightObject* renderAmbientLightObject)
 {
 	_renderScene->SetRenderAmbientLightObject (renderAmbientLightObject);

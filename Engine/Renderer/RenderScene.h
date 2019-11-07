@@ -7,6 +7,7 @@
 #include "RenderSkyboxObject.h"
 #include "RenderDirectionalLightObject.h"
 #include "RenderPointLightObject.h"
+#include "RenderSpotLightObject.h"
 #include "RenderAmbientLightObject.h"
 
 #include "Core/Intersections/AABBVolume.h"
@@ -19,6 +20,7 @@ protected:
 
 	RenderDirectionalLightObject* _renderDirectionalLightObject;
 	std::set<RenderPointLightObject*> _renderPointLightObjects;
+	std::set<RenderSpotLightObject*> _renderSpotLightObjects;
 	RenderAmbientLightObject* _renderAmbientLightObject;
 
 	AABBVolume* _boundingBox;
@@ -37,6 +39,9 @@ public:
 	void AttachRenderPointLightObject (RenderPointLightObject*);
 	void DetachRenderPointLightObject (RenderPointLightObject*);
 
+	void AttachRenderSpotLightObject (RenderSpotLightObject*);
+	void DetachRenderSpotLightObject (RenderSpotLightObject*);
+
 	void SetRenderAmbientLightObject (RenderAmbientLightObject*);
 
 	RenderSkyboxObject* GetRenderSkyboxObject () const;
@@ -51,5 +56,6 @@ protected:
 
 MULTIPLE_CONTAINER_SPECIALIZATION (set, RenderObject*, RenderScene, _renderObjects);
 MULTIPLE_CONTAINER_SPECIALIZATION (set, RenderPointLightObject*, RenderScene, _renderPointLightObjects);
+MULTIPLE_CONTAINER_SPECIALIZATION (set, RenderSpotLightObject*, RenderScene, _renderSpotLightObjects);
 
 #endif

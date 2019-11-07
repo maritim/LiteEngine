@@ -7,6 +7,7 @@ RenderScene::RenderScene () :
 	_renderSkyboxObject (nullptr),
 	_renderDirectionalLightObject (nullptr),
 	_renderPointLightObjects (),
+	_renderSpotLightObjects (),
 	_renderAmbientLightObject (nullptr),
 	_boundingBox (new AABBVolume (new AABBVolume::AABBVolumeInformation ()))
 {
@@ -50,6 +51,16 @@ void RenderScene::AttachRenderPointLightObject (RenderPointLightObject* renderPo
 void RenderScene::DetachRenderPointLightObject (RenderPointLightObject* renderPointLightObject)
 {
 	_renderPointLightObjects.erase (renderPointLightObject);
+}
+
+void RenderScene::AttachRenderSpotLightObject (RenderSpotLightObject* renderSpotLightObject)
+{
+	_renderSpotLightObjects.insert (renderSpotLightObject);
+}
+
+void RenderScene::DetachRenderSpotLightObject (RenderSpotLightObject* renderSpotLightObject)
+{
+	_renderSpotLightObjects.erase (renderSpotLightObject);
 }
 
 void RenderScene::SetRenderAmbientLightObject (RenderAmbientLightObject* renderAmbientLightObject)

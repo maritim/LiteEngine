@@ -1,14 +1,14 @@
-#include "PointVolumetricLightRenderPass.h"
+#include "VolumetricLightRenderPass.h"
 
 #include "Renderer/Pipeline.h"
 #include "RenderPasses/GBuffer.h"
 
-PointVolumetricLightRenderPass::~PointVolumetricLightRenderPass ()
+VolumetricLightRenderPass::~VolumetricLightRenderPass ()
 {
 
 }
 
-RenderVolumeCollection* PointVolumetricLightRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
+RenderVolumeCollection* VolumetricLightRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -32,7 +32,7 @@ RenderVolumeCollection* PointVolumetricLightRenderPass::Execute (const RenderSce
 	return rvc;
 }
 
-bool PointVolumetricLightRenderPass::IsAvailable (const RenderLightObject*) const
+bool VolumetricLightRenderPass::IsAvailable (const RenderLightObject*) const
 {
 	/*
 	 * Always execute directional volumetric light render sub pass
@@ -41,7 +41,7 @@ bool PointVolumetricLightRenderPass::IsAvailable (const RenderLightObject*) cons
 	return true;
 }
 
-void PointVolumetricLightRenderPass::StartPointLightPass (RenderVolumeCollection* rvc)
+void VolumetricLightRenderPass::StartPointLightPass (RenderVolumeCollection* rvc)
 {
 	/*
 	 * Bind light accumulation framebuffer for writing
@@ -52,7 +52,7 @@ void PointVolumetricLightRenderPass::StartPointLightPass (RenderVolumeCollection
 	resultFrameBufferVolume->BindForWriting ();
 }
 
-void PointVolumetricLightRenderPass::PointLightPass (const RenderScene* renderScene, const Camera* camera, RenderVolumeCollection* rvc)
+void VolumetricLightRenderPass::PointLightPass (const RenderScene* renderScene, const Camera* camera, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Get volumetric light from render volume collection
@@ -79,7 +79,7 @@ void PointVolumetricLightRenderPass::PointLightPass (const RenderScene* renderSc
 	PointLightDrawPass (renderScene, camera, renderLightObject, rvc);
 }
 
-void PointVolumetricLightRenderPass::EndPointLightPass ()
+void VolumetricLightRenderPass::EndPointLightPass ()
 {
 	/*
 	 * Unlock current locked shader for further rendering
@@ -90,7 +90,7 @@ void PointVolumetricLightRenderPass::EndPointLightPass ()
 	GL::Disable (GL_DEPTH_CLAMP);
 }
 
-void PointVolumetricLightRenderPass::PointLightStencilPass (const RenderScene* renderScene, const Camera* camera,
+void VolumetricLightRenderPass::PointLightStencilPass (const RenderScene* renderScene, const Camera* camera,
 	RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
 {
 	/*
@@ -145,7 +145,7 @@ void PointVolumetricLightRenderPass::PointLightStencilPass (const RenderScene* r
 	renderLightObject->Draw ();
 }
 
-void PointVolumetricLightRenderPass::PointLightDrawPass (const RenderScene* renderScene, const Camera* camera,
+void VolumetricLightRenderPass::PointLightDrawPass (const RenderScene* renderScene, const Camera* camera,
 	RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
 {
 	/*
@@ -227,7 +227,7 @@ void PointVolumetricLightRenderPass::PointLightDrawPass (const RenderScene* rend
 	renderLightObject->Draw ();
 }
 
-std::vector<PipelineAttribute> PointVolumetricLightRenderPass::GetCustomAttributes (RenderVolumeCollection* rvc) const
+std::vector<PipelineAttribute> VolumetricLightRenderPass::GetCustomAttributes (RenderVolumeCollection* rvc) const
 {
 	std::vector<PipelineAttribute> attributes;
 

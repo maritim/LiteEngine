@@ -9,6 +9,7 @@
 #include "Lighting/Light.h"
 #include "Lighting/DirectionalLight.h"
 #include "Lighting/PointLight.h"
+#include "Lighting/SpotLight.h"
 #include "Lighting/AmbientLight.h"
 
 #include "Mesh/Model.h"
@@ -161,6 +162,9 @@ void EditorInspector::ShowLight (SceneObject* object)
 		if (dynamic_cast<PointLight*> (light) != nullptr) {
 			lightType = 2;
 		}
+		if (dynamic_cast<SpotLight*> (light) != nullptr) {
+			lightType = 3;
+		}
 		if (dynamic_cast<AmbientLight*> (light) != nullptr) {
 			lightType = 4;
 		}
@@ -178,7 +182,7 @@ void EditorInspector::ShowLight (SceneObject* object)
 		lightIntensity = std::max (lightIntensity, 0.0f);
 		light->SetIntensity (lightIntensity);
 
-		if (lightType == 2) {
+		if (lightType == 2 || lightType == 3) {
 			PointLight* pointLight = dynamic_cast<PointLight*> (light);
 
 			float lightRange = pointLight->GetRange ();
@@ -186,7 +190,23 @@ void EditorInspector::ShowLight (SceneObject* object)
 			pointLight->SetRange (lightRange);
 		}
 
+		if (lightType == 3) {
+			SpotLight* spotLight = dynamic_cast<SpotLight*> (light);
+
+			ImGui::Separator ();
+
+			float spotCutoff = spotLight->GetSpotCutoff ();
+			ImGui::InputFloat ("Inner Cone Angle", &spotCutoff, 0.1f);
+			spotLight->SetSpotCutoff (spotCutoff);
+
+			float spotOuterCutoff = spotLight->GetSpotOuterCutoff ();
+			ImGui::InputFloat ("Outer Cone Angle", &spotOuterCutoff, 0.1f);
+			spotLight->SetSpotOuterCutoff (spotOuterCutoff);
+		}
+
 		if (lightType < 4) {
+			ImGui::Separator ();
+
 			bool castShadows = light->IsCastingShadows ();
 			ImGui::Checkbox ("Cast Shadows", &castShadows);
 			light->SetShadowCasting (castShadows);

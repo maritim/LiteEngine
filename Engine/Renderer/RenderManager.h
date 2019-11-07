@@ -51,6 +51,9 @@ public:
 	void AttachRenderPointLightObject (RenderPointLightObject*);
 	void DetachRenderPointLightObject (RenderPointLightObject*);
 
+	void AttachRenderSpotLightObject (RenderSpotLightObject*);
+	void DetachRenderSpotLightObject (RenderSpotLightObject*);
+
 	void SetRenderAmbientLightObject (RenderAmbientLightObject*);
 
 	void Clear ();

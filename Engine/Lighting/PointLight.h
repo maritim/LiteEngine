@@ -22,7 +22,7 @@ public:
 	void OnAttachedToScene ();
 	void OnDetachedFromScene ();
 protected:
-	void UpdateScale ();
+	virtual void UpdateTransform ();
 };
 
 #endif

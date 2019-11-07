@@ -36,7 +36,7 @@ void PointLight::Update ()
 	*/
 
 	if (_transform->GetScale ().x < 2.0f) {
-		UpdateScale ();
+		UpdateTransform ();
 	}
 }
 
@@ -52,7 +52,7 @@ void PointLight::SetRange (float range)
 	auto renderLightObject = (RenderPointLightObject*) _renderLightObject;
 	renderLightObject->SetLightRange (_range);
 
-	UpdateScale ();
+	UpdateTransform ();
 }
 
 void PointLight::OnAttachedToScene ()
@@ -67,7 +67,7 @@ void PointLight::OnDetachedFromScene ()
 	RenderManager::Instance ()->DetachRenderPointLightObject (renderLightObject);
 }
 
-void PointLight::UpdateScale ()
+void PointLight::UpdateTransform ()
 {
 	/*
 	 * Set light volume scale based on light distance

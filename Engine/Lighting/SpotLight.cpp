@@ -2,22 +2,25 @@
 
 #include "Utils/Primitives/Primitive.h"
 
+#include "Renderer/RenderSpotLightObject.h"
+
+#include "Renderer/RenderSystem.h"
+#include "Renderer/RenderManager.h"
+
+#include "Utils/Extensions/MathExtend.h"
+
 SpotLight::SpotLight () :
-	_spotCutoff (360.0),
-	_spotExponent (1.0),
-	_spotDirection (1.0, 1.0, 1.0)
+	_spotCutoff (0.0f),
+	_spotOuterCutoff (0.0f)
 {
-	//SetVolume (Primitive::Instance ()->Create (Primitive::Type::CONE));
-}
+	delete _renderLightObject;
+	_renderLightObject = new RenderSpotLightObject ();
 
-void SpotLight::Update ()
-{
-	
-}
+	Resource<Model> model = Primitive::Instance ()->Create (Primitive::Type::CONE);
+	Resource<ModelView> modelView = RenderSystem::LoadModel (model);
 
-glm::vec3 SpotLight::GetSpotDirection () const
-{
-	return _spotDirection;
+	_renderLightObject->SetTransform (_transform);
+	_renderLightObject->SetModelView (modelView);
 }
 
 float SpotLight::GetSpotCutoff () const
@@ -25,32 +28,53 @@ float SpotLight::GetSpotCutoff () const
 	return _spotCutoff;
 }
 
-float SpotLight::GetSpotExponent () const
+float SpotLight::GetSpotOuterCutoff () const
 {
-	return _spotExponent;
-}
-
-void SpotLight::SetSpotDirection (const glm::vec3& spotDirection)
-{
-	_spotDirection = spotDirection;
+	return _spotOuterCutoff;
 }
 
 void SpotLight::SetSpotCutoff (float spotCutoff)
 {
 	_spotCutoff = spotCutoff;
+
+	auto renderLightObject = (RenderSpotLightObject*) _renderLightObject;
+	renderLightObject->SetLightSpotCutoff (_spotCutoff);
+
+	UpdateTransform ();
 }
 
-void SpotLight::SetSpotExponent (float spotExponent)
+void SpotLight::SetSpotOuterCutoff (float spotOuterCutoff)
 {
-	_spotExponent = spotExponent;
+	_spotOuterCutoff = spotOuterCutoff;
+
+	auto renderLightObject = (RenderSpotLightObject*) _renderLightObject;
+	renderLightObject->SetLightSpotOuterCutoff (_spotOuterCutoff);
+
+	UpdateTransform ();
 }
 
 void SpotLight::OnAttachedToScene ()
 {
-	//LightsManager::Instance ()->AddSpotLight (this);
+	auto renderLightObject = (RenderSpotLightObject*) _renderLightObject;
+	RenderManager::Instance ()->AttachRenderSpotLightObject (renderLightObject);
 }
 
 void SpotLight::OnDetachedFromScene ()
 {
-	//LightsManager::Instance ()->RemoveSpotLight (this);
+	auto renderLightObject = (RenderSpotLightObject*) _renderLightObject;
+	RenderManager::Instance ()->DetachRenderSpotLightObject (renderLightObject);
+}
+
+void SpotLight::UpdateTransform ()
+{
+	/*
+	 * Set light volume scale based on light distance
+	*/
+
+	glm::vec3 scale (0.0f);
+
+	scale.x = _range;
+	scale.y = scale.z = _range * std::tan (DEG2RAD * _spotOuterCutoff) * 2;
+
+	_transform->SetScale (scale);
 }

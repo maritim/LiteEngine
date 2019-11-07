@@ -30,8 +30,7 @@ private:
 	void ProcessRange (TiXmlElement* xmlElem, PointLight* light);
 
 	void ProcessSpotCutoff (TiXmlElement* xmlElem, SpotLight* light);
-	void ProcessSpotExponent (TiXmlElement* xmlElem, SpotLight* light);
-	void ProcessSpotDirection (TiXmlElement* xmlElem, SpotLight* light);
+	void ProcessSpotOuterCutoff (TiXmlElement* xmlElem, SpotLight* light);
 
 	void ProcessShadowResolution (TiXmlElement* xmlElem, Light::Shadow& shadow);
 	void ProcessShadowCascades (TiXmlElement* xmlElem, Light::Shadow& shadow);

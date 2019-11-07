@@ -7,7 +7,7 @@
 
 Primitive::Primitive ()
 {
-	const static std::size_t primitivesCount = 5;
+	const static std::size_t primitivesCount = 7;
 	const static std::string primitive_filenames[] = {
 		"Assets/Primitives/Quad.obj",
 		"Assets/Primitives/Cube.obj",
