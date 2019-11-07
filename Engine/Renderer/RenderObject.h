@@ -46,6 +46,7 @@ public:
 	bool IsActive () const;
 
 	virtual void Draw ();
+	virtual void DrawGeometry ();
 };
 
 #endif

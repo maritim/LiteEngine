@@ -38,6 +38,7 @@ public:
 	~ModelView ();
 
 	virtual void Draw ();
+	virtual void DrawGeometry ();
 
 	void SetObjectBuffer (const ObjectBuffer& objectBuffer);
 

@@ -23,15 +23,15 @@ RenderSkyboxObject::~RenderSkyboxObject ()
 
 void RenderSkyboxObject::Draw ()
 {
-	Pipeline::SetShader (ShaderManager::Instance ()->GetShader (_shaderName));
+	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
 
 	Pipeline::SetObjectTransform (Transform::Default ());
 
-	Pipeline::UpdateMatrices (ShaderManager::Instance ()->GetShader (_shaderName));
-
 	Pipeline::SendCustomAttributes (_shaderName, GetCustomAttributes ());
 
-	_modelView->Draw ();
+	_modelView->DrawGeometry ();
+
+	Pipeline::UnlockShader ();
 }
 
 void RenderSkyboxObject::SetCubeMap (const Resource<TextureView>& cubemapView)

@@ -27,6 +27,15 @@ void RenderAnimationObject::Draw ()
 	_modelView->Draw ();
 }
 
+void RenderAnimationObject::DrawGeometry ()
+{
+	Pipeline::SetObjectTransform (_transform);
+
+	Pipeline::SendCustomAttributes ("", GetCustomAttributes ());
+
+	_modelView->DrawGeometry ();
+}
+
 void RenderAnimationObject::SetAnimationModel (const Resource<Model>& animationModel)
 {
 	_animationModel = animationModel;

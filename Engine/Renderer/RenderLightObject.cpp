@@ -26,7 +26,7 @@ void RenderLightObject::Draw ()
 
 	Pipeline::SendCustomAttributes ("", GetCustomAttributes ());
 
-	_modelView->Draw ();
+	_modelView->DrawGeometry ();
 }
 
 void RenderLightObject::SetLightColor (const Color& color)

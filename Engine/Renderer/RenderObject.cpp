@@ -95,3 +95,10 @@ void RenderObject::Draw ()
 
 	_modelView->Draw ();
 }
+
+void RenderObject::DrawGeometry ()
+{
+	Pipeline::SetObjectTransform (_transform);
+
+	_modelView->DrawGeometry ();
+}

@@ -18,10 +18,28 @@ void ModelView::Draw ()
 	GL::BindVertexArray(_objectBuffer.VAO_INDEX);
 
 	for (std::size_t i=0;i<_groupBuffers.size ();i++) {
-		if (_groupBuffers [i].materialView != nullptr) {
-			Pipeline::SendMaterial (_groupBuffers [i].materialView);
+		Pipeline::SendMaterial (_groupBuffers [i].materialView);
+
+		//comanda desenare
+		if (_objectBuffer.VBO_INSTANCE_INDEX == 0) {
+			GL::DrawElements (GL_TRIANGLES, _groupBuffers [i].INDEX_COUNT, GL_UNSIGNED_INT,
+				(void*) (sizeof (unsigned int) * _groupBuffers [i].offset));
 		}
 
+		if (_objectBuffer.VBO_INSTANCE_INDEX != 0) {
+			GL::DrawElementsInstanced(GL_TRIANGLES, _groupBuffers [i].INDEX_COUNT, GL_UNSIGNED_INT,
+				(void*) (sizeof (unsigned int) * _groupBuffers [i].offset), _objectBuffer.INSTANCES_COUNT);
+		}
+	}
+}
+
+void ModelView::DrawGeometry ()
+{
+	Pipeline::UpdateMatrices (nullptr);
+	//bind pe containerul de stare de geometrie (vertex array object)
+	GL::BindVertexArray(_objectBuffer.VAO_INDEX);
+
+	for (std::size_t i=0;i<_groupBuffers.size ();i++) {
 		//comanda desenare
 		if (_objectBuffer.VBO_INSTANCE_INDEX == 0) {
 			GL::DrawElements (GL_TRIANGLES, _groupBuffers [i].INDEX_COUNT, GL_UNSIGNED_INT,

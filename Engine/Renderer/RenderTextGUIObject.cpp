@@ -46,14 +46,16 @@ void RenderTextGUIObject::Draw ()
 	GL::Enable (GL_BLEND);
 	GL::BlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Pipeline::SetShader (ShaderManager::Instance ()->GetShader (_shaderName));
+	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
 
 	Pipeline::SetObjectTransform (_transform);
 	Pipeline::UpdateMatrices (ShaderManager::Instance ()->GetShader (_shaderName));
 
 	Pipeline::SendCustomAttributes (_shaderName, GetUniformAttributes ());
 
-	_modelView->Draw ();
+	_modelView->DrawGeometry ();
+
+	Pipeline::UnlockShader ();
 }
 
 std::vector<PipelineAttribute> RenderTextGUIObject::GetUniformAttributes ()

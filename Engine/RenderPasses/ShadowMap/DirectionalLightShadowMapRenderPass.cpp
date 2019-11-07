@@ -319,10 +319,7 @@ void DirectionalLightShadowMapRenderPass::Render (const RenderScene* renderScene
 		 * Render object on shadow map
 		*/
 
-		renderObject->Draw ();
-
-		//TODO: Fix this
-		// renderObject->DrawGeometry ();
+		renderObject->DrawGeometry ();
 	}
 }
 

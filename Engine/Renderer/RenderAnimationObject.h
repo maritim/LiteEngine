@@ -28,6 +28,7 @@ public:
 	RenderAnimationObject ();
 
 	void Draw ();
+	void DrawGeometry ();
 
 	//TODO: Fix this
 	void SetAnimationModel (const Resource<Model>& animationModel);
