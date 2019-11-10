@@ -26,6 +26,10 @@
 #include "RenderPasses/DeferredPointLightRenderPass.h"
 #include "RenderPasses/PointLightContainerRenderVolumeCollection.h"
 
+#include "RenderPasses/DeferredSpotLightRenderPass.h"
+#include "RenderPasses/ShadowMap/DeferredSpotLightShadowMapRenderPass.h"
+#include "RenderPasses/SpotLightContainerRenderVolumeCollection.h"
+
 #include "RenderPasses/IdleRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRAccumulationRenderPass.h"
@@ -58,6 +62,11 @@ void SceneRenderModule::Init ()
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new PointLightContainerRenderVolumeCollection ())
 		.Attach (new DeferredPointLightRenderPass ())
+		.Build ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new SpotLightContainerRenderVolumeCollection ())
+		.Attach (new DeferredSpotLightShadowMapRenderPass ())
+		.Attach (new DeferredSpotLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()

@@ -9,8 +9,6 @@
 
 #include "Systems/Camera/Camera.h"
 
-#define SHADOW_MAP_FBO_NOT_INIT 330
-
 class CascadedShadowMapDirectionalLightVolume : public ShadowMapVolumeI
 {
 protected:

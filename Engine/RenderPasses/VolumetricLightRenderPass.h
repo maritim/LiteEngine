@@ -19,11 +19,11 @@ protected:
 	bool IsAvailable (const RenderLightObject*) const;
 
 	void StartPointLightPass (RenderVolumeCollection*);
-	void PointLightPass (const RenderScene*, const Camera*, RenderVolumeCollection*);
+	void PointLightPass (const RenderScene*, const Camera*, const RenderSettings&, RenderVolumeCollection*);
 	void EndPointLightPass ();
 
-	void PointLightStencilPass (const RenderScene*, const Camera*, RenderLightObject*, RenderVolumeCollection*);
-	void PointLightDrawPass (const RenderScene*, const Camera*, RenderLightObject*, RenderVolumeCollection*);
+	void PointLightStencilPass (const RenderScene*, const Camera*, const RenderSettings&, RenderLightObject*, RenderVolumeCollection*);
+	void PointLightDrawPass (const RenderScene*, const Camera*, const RenderSettings&, RenderLightObject*, RenderVolumeCollection*);
 
 	virtual void LockShader (const RenderLightObject*) = 0;
 

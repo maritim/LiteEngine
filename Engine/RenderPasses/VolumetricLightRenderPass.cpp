@@ -39,7 +39,7 @@ RenderVolumeCollection* VolumetricLightRenderPass::Execute (const RenderScene* r
 	 * Draw volumetric lights
 	*/
 
-	PointLightPass (renderScene, camera, rvc);
+	PointLightPass (renderScene, camera, settings, rvc);
 
 	/*
 	 * End directional light pass
@@ -70,7 +70,8 @@ void VolumetricLightRenderPass::StartPointLightPass (RenderVolumeCollection* rvc
 	resultFrameBufferVolume->BindForWriting ();
 }
 
-void VolumetricLightRenderPass::PointLightPass (const RenderScene* renderScene, const Camera* camera, RenderVolumeCollection* rvc)
+void VolumetricLightRenderPass::PointLightPass (const RenderScene* renderScene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Get volumetric light from render volume collection
@@ -82,13 +83,13 @@ void VolumetricLightRenderPass::PointLightPass (const RenderScene* renderScene, 
 	 * Draw point light for stencil pass
 	*/
 
-	PointLightStencilPass (renderScene, camera, renderLightObject, rvc);
+	PointLightStencilPass (renderScene, camera, settings, renderLightObject, rvc);
 
 	/*
 	 * Draw volumetric point light
 	*/
 
-	PointLightDrawPass (renderScene, camera, renderLightObject, rvc);
+	PointLightDrawPass (renderScene, camera, settings, renderLightObject, rvc);
 }
 
 void VolumetricLightRenderPass::EndPointLightPass ()
@@ -103,13 +104,20 @@ void VolumetricLightRenderPass::EndPointLightPass ()
 }
 
 void VolumetricLightRenderPass::PointLightStencilPass (const RenderScene* renderScene, const Camera* camera,
-	RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
+	const RenderSettings& settings, RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Lock stencil volumetric light shader
 	*/
 
 	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_stencilShaderName));
+
+	/*
+	 * Set viewport
+	*/
+
+	GL::Viewport (settings.viewport.x, settings.viewport.y,
+		settings.viewport.width, settings.viewport.height);
 
 	/*
 	 * No rendering target
@@ -170,7 +178,7 @@ void VolumetricLightRenderPass::PointLightStencilPass (const RenderScene* render
 }
 
 void VolumetricLightRenderPass::PointLightDrawPass (const RenderScene* renderScene, const Camera* camera,
-	RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
+	const RenderSettings& settings, RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Bind all render volumes
@@ -185,6 +193,13 @@ void VolumetricLightRenderPass::PointLightDrawPass (const RenderScene* renderSce
 	*/
 
 	LockShader (renderLightObject);
+
+	/*
+	 * Set viewport
+	*/
+
+	GL::Viewport (settings.viewport.x, settings.viewport.y,
+		settings.viewport.width, settings.viewport.height);
 
 	/*
 	 * Bind light accumulation framebuffer for writing

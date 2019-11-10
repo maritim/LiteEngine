@@ -3,6 +3,8 @@
 
 #include "RenderPasses/FrameBuffer2DVolume.h"
 
+#define SHADOW_MAP_FBO_NOT_INIT 330
+
 class ShadowMapVolume : public FrameBuffer2DVolume
 {
 public:

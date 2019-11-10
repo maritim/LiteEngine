@@ -33,9 +33,9 @@ void DeferredSpotLightRenderPass::Init (const RenderSettings& settings)
 	 * Shader for directional light with shadow casting
 	*/
 
-	// ShaderManager::Instance ()->AddShader (_shadowShaderName,
-	// 	"Assets/Shaders/ShadowMap/deferredDirVolShadowMapLightVertex.glsl",
-	// 	"Assets/Shaders/ShadowMap/deferredDirVolShadowMapLightFragment.glsl");
+	ShaderManager::Instance ()->AddShader (_shadowShaderName,
+		"Assets/Shaders/deferredSpotVolLightVertex.glsl",
+		"Assets/Shaders/deferredSpotVolShadowMapLightFragment.glsl");
 }
 
 void DeferredSpotLightRenderPass::Clear ()
@@ -57,9 +57,9 @@ void DeferredSpotLightRenderPass::LockShader (const RenderLightObject* renderLig
 	 * Lock shader for shadow directional light
 	*/
 
-	// if (volumetricLight->IsCastingShadows () == true) {
-	// 	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shadowShaderName));
-	// }
+	if (renderLightObject->IsCastingShadows () == true) {
+		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shadowShaderName));
+	}
 
 	/*
 	 * Lock general shader for directional light

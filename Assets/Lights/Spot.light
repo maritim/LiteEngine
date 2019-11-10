@@ -10,7 +10,7 @@
 		<OuterCutoff value="45" />
 	</Spot>
 
-	<Shadows casting="false">
+	<Shadows casting="true">
 		<Resolution width="512" height="512" />
 		<Bias value="0.5" />
 	</Shadows>

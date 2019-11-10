@@ -29,6 +29,7 @@
 #include "RenderPasses/PointLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/DeferredSpotLightRenderPass.h"
+#include "RenderPasses/ShadowMap/DeferredSpotLightShadowMapRenderPass.h"
 #include "RenderPasses/SpotLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/IdleRenderPass.h"
@@ -66,6 +67,7 @@ void DirectLightingRenderModule::Init ()
 		.Build ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new SpotLightContainerRenderVolumeCollection ())
+		.Attach (new DeferredSpotLightShadowMapRenderPass ())
 		.Attach (new DeferredSpotLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
