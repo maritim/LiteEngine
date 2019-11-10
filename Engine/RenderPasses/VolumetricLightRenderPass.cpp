@@ -1,11 +1,29 @@
 #include "VolumetricLightRenderPass.h"
 
 #include "Renderer/Pipeline.h"
-#include "RenderPasses/GBuffer.h"
+
+#include "Managers/ShaderManager.h"
+
+VolumetricLightRenderPass::VolumetricLightRenderPass () :
+	_stencilShaderName ("STENCIL_VOLUMETRIC_LIGHT")
+{
+
+}
 
 VolumetricLightRenderPass::~VolumetricLightRenderPass ()
 {
 
+}
+
+void VolumetricLightRenderPass::Init (const RenderSettings& settings)
+{
+	/*
+	 * Shader for stencil volumetric light render pass
+	*/
+
+	ShaderManager::Instance ()->AddShader (_stencilShaderName,
+		"Assets/Shaders/deferredStencilVolLightVertex.glsl",
+		"Assets/Shaders/deferredStencilVolLightFragment.glsl");
 }
 
 RenderVolumeCollection* VolumetricLightRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -61,12 +79,6 @@ void VolumetricLightRenderPass::PointLightPass (const RenderScene* renderScene, 
 	RenderLightObject* renderLightObject = GetRenderLightObject (rvc);
 
 	/*
-	 * Lock shader for volumetric point light
-	*/
-
-	LockShader (renderLightObject);
-
-	/*
 	 * Draw point light for stencil pass
 	*/
 
@@ -93,6 +105,12 @@ void VolumetricLightRenderPass::EndPointLightPass ()
 void VolumetricLightRenderPass::PointLightStencilPass (const RenderScene* renderScene, const Camera* camera,
 	RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
 {
+	/*
+	 * Lock stencil volumetric light shader
+	*/
+
+	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_stencilShaderName));
+
 	/*
 	 * No rendering target
 	*/
@@ -143,6 +161,12 @@ void VolumetricLightRenderPass::PointLightStencilPass (const RenderScene* render
 	*/
 
 	renderLightObject->Draw ();
+
+	/*
+	 * Unlock shader
+	*/
+
+	Pipeline::UnlockShader ();
 }
 
 void VolumetricLightRenderPass::PointLightDrawPass (const RenderScene* renderScene, const Camera* camera,
@@ -155,6 +179,12 @@ void VolumetricLightRenderPass::PointLightDrawPass (const RenderScene* renderSce
 	for (RenderVolumeI* renderVolume : *rvc) {
 		renderVolume->BindForReading ();
 	}
+
+	/*
+	 * Lock shader for volumetric point light
+	*/
+
+	LockShader (renderLightObject);
 
 	/*
 	 * Bind light accumulation framebuffer for writing
@@ -218,16 +248,23 @@ void VolumetricLightRenderPass::PointLightDrawPass (const RenderScene* renderSce
 	 * Send custom attributes
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes (rvc));
+	Pipeline::SendCustomAttributes ("", GetCustomAttributes (camera, renderLightObject, rvc));
+
+	/*
+	 * Send custom attributes
+	*/
+
+	Pipeline::SendCustomAttributes ("", GetCustomAttributes (renderLightObject));
 
 	/*
 	 * Draw the volumetric light.
 	*/
 
-	renderLightObject->Draw ();
+	renderLightObject->DrawGeometry ();
 }
 
-std::vector<PipelineAttribute> VolumetricLightRenderPass::GetCustomAttributes (RenderVolumeCollection* rvc) const
+std::vector<PipelineAttribute> VolumetricLightRenderPass::GetCustomAttributes (const Camera* camera,
+	const RenderLightObject* renderLightObject, RenderVolumeCollection* rvc) const
 {
 	std::vector<PipelineAttribute> attributes;
 
@@ -236,6 +273,44 @@ std::vector<PipelineAttribute> VolumetricLightRenderPass::GetCustomAttributes (R
 
 		attributes.insert (attributes.end (), volumeAttributes.begin (), volumeAttributes.end ());
 	}
+
+	/*
+	 * Add render light object
+	*/
+
+	PipelineAttribute lightPosition;
+	PipelineAttribute lightDirection;
+	PipelineAttribute lightColor;
+	PipelineAttribute lightIntensity;
+
+	lightPosition.type = PipelineAttribute::AttrType::ATTR_3F;
+	lightDirection.type = PipelineAttribute::AttrType::ATTR_3F;
+	lightColor.type = PipelineAttribute::AttrType::ATTR_3F;
+	lightIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+
+	lightPosition.name = "lightPosition";
+	lightDirection.name = "lightDirection";
+	lightColor.name = "lightColor";
+	lightIntensity.name = "lightIntensity";
+
+	glm::mat4 viewMatrix = glm::mat4_cast (camera->GetRotation ());
+	viewMatrix =  glm::translate (viewMatrix, camera->GetPosition () * -1.0f);
+
+	glm::vec3 lightPos = renderLightObject->GetTransform ()->GetPosition ();
+	lightPos = viewMatrix * glm::vec4 (lightPos, 1.0f);
+
+	glm::vec3 lightDir = renderLightObject->GetTransform ()->GetRotation () * glm::vec3 (0, 0, -1);
+	lightDir = glm::normalize (glm::vec3 (viewMatrix * glm::vec4 (lightDir, 0.0f)));
+
+	lightPosition.value = lightPos;
+	lightDirection.value = lightDir;
+	lightColor.value = renderLightObject->GetLightColor ().ToVector3 ();
+	lightIntensity.value.x = renderLightObject->GetLightIntensity ();
+
+	attributes.push_back (lightPosition);
+	attributes.push_back (lightDirection);
+	attributes.push_back (lightColor);
+	attributes.push_back (lightIntensity);
 
 	return attributes;
 }

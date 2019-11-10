@@ -73,8 +73,8 @@ void SpotLight::UpdateTransform ()
 
 	glm::vec3 scale (0.0f);
 
-	scale.x = _range;
-	scale.y = scale.z = _range * std::tan (DEG2RAD * _spotOuterCutoff) * 2;
+	scale.z = _range;
+	scale.x = scale.y = _range * std::tan (DEG2RAD * _spotOuterCutoff) * 2;
 
 	_transform->SetScale (scale);
 }

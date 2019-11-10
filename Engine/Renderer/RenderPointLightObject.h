@@ -12,8 +12,8 @@ public:
 	RenderPointLightObject ();
 
 	void SetLightRange (float lightRange);
-protected:
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
+
+	float GetLightRange () const;
 };
 
 #endif

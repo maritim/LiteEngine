@@ -51,13 +51,14 @@ PostProcessMapVolume* SSDORenderPass::CreatePostProcessVolume () const
 	return ssdoMapVolume;
 }
 
-std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach post process volume attributes to pipeline
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (settings, rvc);
+	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (camera, settings, rvc);
 
 	/*
 	 * Attach screen space directional occlusion attributes to pipeline

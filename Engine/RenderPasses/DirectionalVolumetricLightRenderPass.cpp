@@ -111,7 +111,7 @@ void DirectionalVolumetricLightRenderPass::DirectionalLightPass (const RenderSce
 	 * Send custom attributes
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes (rvc));
+	Pipeline::SendCustomAttributes ("", GetCustomAttributes (camera, renderLightObject, rvc));
 
 	/*
 	 * Send custom attributes
@@ -123,7 +123,7 @@ void DirectionalVolumetricLightRenderPass::DirectionalLightPass (const RenderSce
 	 * Draw volumetric light
 	*/
 
-	renderLightObject->Draw ();
+	renderLightObject->DrawGeometry ();
 }
 
 void DirectionalVolumetricLightRenderPass::EndDirectionalLightPass ()
@@ -135,7 +135,8 @@ void DirectionalVolumetricLightRenderPass::EndDirectionalLightPass ()
 	Pipeline::UnlockShader ();
 }
 
-std::vector<PipelineAttribute> DirectionalVolumetricLightRenderPass::GetCustomAttributes (RenderVolumeCollection* rvc) const
+std::vector<PipelineAttribute> DirectionalVolumetricLightRenderPass::GetCustomAttributes (const Camera* camera,
+	const RenderLightObject* renderLightObject, RenderVolumeCollection* rvc) const
 {
 	std::vector<PipelineAttribute> attributes;
 
@@ -144,6 +145,35 @@ std::vector<PipelineAttribute> DirectionalVolumetricLightRenderPass::GetCustomAt
 
 		attributes.insert (attributes.end (), volumeAttributes.begin (), volumeAttributes.end ());
 	}
+
+	/*
+	 * Add render light object
+	*/
+
+	PipelineAttribute lightDirection;
+	PipelineAttribute lightColor;
+	PipelineAttribute lightIntensity;
+
+	lightDirection.type = PipelineAttribute::AttrType::ATTR_3F;
+	lightColor.type = PipelineAttribute::AttrType::ATTR_3F;
+	lightIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+
+	lightDirection.name = "lightDirection";
+	lightColor.name = "lightColor";
+	lightIntensity.name = "lightIntensity";
+
+	glm::vec3 lightDir = renderLightObject->GetTransform ()->GetRotation () * glm::vec3 (0, 0, -1);
+
+	glm::mat3 viewMatrix = glm::mat3_cast (camera->GetRotation ());
+	lightDir = glm::normalize (viewMatrix * lightDir);
+
+	lightDirection.value = lightDir;
+	lightColor.value = renderLightObject->GetLightColor ().ToVector3 ();
+	lightIntensity.value.x = renderLightObject->GetLightIntensity ();
+
+	attributes.push_back (lightDirection);
+	attributes.push_back (lightColor);
+	attributes.push_back (lightIntensity);
 
 	return attributes;
 }

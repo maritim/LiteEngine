@@ -32,13 +32,14 @@ PostProcessMapVolume* BloomAccumulationRenderPass::CreatePostProcessVolume () co
 	return volume;
 }
 
-std::vector<PipelineAttribute> BloomAccumulationRenderPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> BloomAccumulationRenderPass::GetCustomAttributes (const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach post process volume attributes to pipeline
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (settings, rvc);
+	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (camera, settings, rvc);
 
 	/*
 	 * Attach bloom attributes to pipeline

@@ -19,13 +19,14 @@ PostProcessMapVolume* HorizontalGaussianBlurRenderPass::CreatePostProcessVolume 
 	return blurMapVolume;
 }
 
-std::vector<PipelineAttribute> HorizontalGaussianBlurRenderPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> HorizontalGaussianBlurRenderPass::GetCustomAttributes (const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach post process volume attributes to pipeline
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (settings, rvc);
+	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (camera, settings, rvc);
 
 	/*
 	 * Attach horizontal gaussian blur attributes to pipeline

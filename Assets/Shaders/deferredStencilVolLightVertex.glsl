@@ -13,5 +13,5 @@ uniform mat3 normalWorldMatrix;
 
 void main()
 {
-	gl_Position = vec4 (in_position, 1);
+	gl_Position = modelViewProjectionMatrix * vec4 (in_position, 1);
 }

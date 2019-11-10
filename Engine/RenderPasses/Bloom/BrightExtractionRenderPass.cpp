@@ -34,13 +34,14 @@ PostProcessMapVolume* BrightExtractionRenderPass::CreatePostProcessVolume () con
 	return blurMapVolume;
 }
 
-std::vector<PipelineAttribute> BrightExtractionRenderPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> BrightExtractionRenderPass::GetCustomAttributes (const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach post process volume attributes to pipeline
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (settings, rvc);
+	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (camera, settings, rvc);
 
 	/*
 	 * Attach bloom attributes to pipeline

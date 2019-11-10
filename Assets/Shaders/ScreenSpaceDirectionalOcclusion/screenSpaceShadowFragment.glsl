@@ -18,7 +18,7 @@ uniform mat3 normalWorldMatrix;
 uniform vec3 cameraPosition;
 uniform vec2 cameraZLimits;
 
-uniform vec3 lightPosition;
+uniform vec3 lightDirection;
 
 uniform vec2 screenSize;
 
@@ -34,9 +34,6 @@ vec2 CalcTexCoord()
 
 float CalcShadow (vec3 in_position)
 {
-	// The position is also a direction for Directional Lights
-	vec3 lightDirection = normalize (vec3 (viewMatrix * vec4 (lightPosition, 0)));
-
 	mat4 pixelProjectionMatrix = mat4 (
 		0.5f * screenSize.x, 0, 0, 0,
 		0, 0.5f * screenSize.y, 0, 0,
@@ -46,7 +43,7 @@ float CalcShadow (vec3 in_position)
 	vec2 reflectionPos;
 	vec3 reflectionViewPos;
 
-	bool intersect = traceScreenSpaceRay (in_position, lightDirection, pixelProjectionMatrix,
+	bool intersect = traceScreenSpaceRay (in_position, -lightDirection, pixelProjectionMatrix,
 		gPositionMap, screenSize, 1, -cameraZLimits.x, ssdoShadowStride, 5, 500,
 		100.0f, reflectionPos, reflectionViewPos);
 

@@ -31,7 +31,8 @@ protected:
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 	virtual void EndPostProcessPass ();
 
-	virtual std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc);
+	virtual std::vector<PipelineAttribute> GetCustomAttributes (const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	virtual void ReinitPostProcessVolume (const RenderSettings& settings);
 

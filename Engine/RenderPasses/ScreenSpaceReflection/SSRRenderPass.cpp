@@ -51,13 +51,14 @@ PostProcessMapVolume* SSRRenderPass::CreatePostProcessVolume () const
 	return ssrMapVolume;
 }
 
-std::vector<PipelineAttribute> SSRRenderPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> SSRRenderPass::GetCustomAttributes (const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach post process volume attributes to pipeline
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (settings, rvc);
+	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (camera, settings, rvc);
 
 	/*
 	 * Attach screen space ambient occlusion attributes to pipeline

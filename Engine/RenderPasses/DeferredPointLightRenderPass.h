@@ -21,6 +21,8 @@ public:
 	void Clear ();
 protected:
 	void LockShader (const RenderLightObject*);
+
+	std::vector<PipelineAttribute> GetCustomAttributes (const RenderLightObject*) const;
 };
 
 #endif

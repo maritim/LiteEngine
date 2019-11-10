@@ -28,17 +28,15 @@ protected:
 public:
 	RenderLightObject ();
 
-	void Draw ();
-
 	void SetLightColor (const Color& color);
 	void SetLightIntensity (float intensity);
 	void SetShadowCasting (bool castShadows);
 	void SetLightShadow (const RenderLightObject::Shadow& lightShadow);
 
+	Color GetLightColor () const;
+	float GetLightIntensity () const;
 	bool IsCastingShadows () const;
 	RenderLightObject::Shadow GetShadow () const;
-protected:
-	virtual std::vector<PipelineAttribute> GetCustomAttributes () const;
 };
 
 #endif

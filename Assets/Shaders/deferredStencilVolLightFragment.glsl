@@ -1,7 +1,5 @@
 #version 330 core
 
-// layout(location = 0) out vec3 out_color;
-
 uniform sampler2D gPositionMap;
 uniform sampler2D gNormalMap;
 uniform sampler2D gDiffuseMap;
@@ -16,5 +14,5 @@ uniform mat3 normalWorldMatrix;
 
 void main()
 {
-	discard;
+
 } 

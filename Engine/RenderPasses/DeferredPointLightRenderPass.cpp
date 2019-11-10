@@ -14,6 +14,12 @@ DeferredPointLightRenderPass::DeferredPointLightRenderPass () :
 void DeferredPointLightRenderPass::Init (const RenderSettings& settings)
 {
 	/*
+	 * Initialize volumetric light render pass
+	*/
+
+	VolumetricLightRenderPass::Init (settings);
+
+	/*
 	 * Shader for general directional light with no shadow casting
 	*/
 
@@ -60,4 +66,23 @@ void DeferredPointLightRenderPass::LockShader (const RenderLightObject* renderLi
 	if (renderLightObject->IsCastingShadows () == false) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
 	}
+}
+
+std::vector<PipelineAttribute> DeferredPointLightRenderPass::GetCustomAttributes (const RenderLightObject* renderLightObject) const
+{
+	auto renderPointLightObject = dynamic_cast<const RenderPointLightObject*> (renderLightObject);
+
+	std::vector<PipelineAttribute> attributes;
+
+	PipelineAttribute lightRange;
+
+	lightRange.type = PipelineAttribute::AttrType::ATTR_1F;
+
+	lightRange.name = "lightRange";
+
+	lightRange.value.x = renderPointLightObject->GetLightRange ();
+
+	attributes.push_back (lightRange);
+
+	return attributes;
 }

@@ -21,7 +21,7 @@ uniform float lightRange;
 vec3 CalcPointLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
 {
 	// Vector direction from fragment to light source
-	vec3 lightDirection = vec3 (viewMatrix * vec4 (lightPosition, 1)) - in_position;
+	vec3 lightDirection = lightPosition - in_position;
 
 	// Distance from fragment to light source
 	float dist2 = dot (lightDirection, lightDirection);

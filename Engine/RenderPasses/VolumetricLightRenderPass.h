@@ -5,8 +5,14 @@
 
 class ENGINE_API VolumetricLightRenderPass : public VolumetricLightRenderPassI
 {
+protected:
+	std::string _stencilShaderName;
+
 public:
+	VolumetricLightRenderPass ();
 	~VolumetricLightRenderPass ();
+
+	void Init (const RenderSettings&);
 
 	RenderVolumeCollection* Execute (const RenderScene*, const Camera*, const RenderSettings&, RenderVolumeCollection* );
 protected:
@@ -21,7 +27,9 @@ protected:
 
 	virtual void LockShader (const RenderLightObject*) = 0;
 
-	std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection*) const;
+	std::vector<PipelineAttribute> GetCustomAttributes (const Camera*, const RenderLightObject*, RenderVolumeCollection*) const;
+
+	virtual std::vector<PipelineAttribute> GetCustomAttributes (const RenderLightObject*) const = 0;
 };
 
 #endif

@@ -16,7 +16,8 @@ protected:
 	glm::ivec2 GetPostProcessVolumeResolution (const RenderSettings& settings) const;
 	PostProcessMapVolume* CreatePostProcessVolume () const;
 
-	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc);
+	std::vector<PipelineAttribute> GetCustomAttributes (const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 };
 
 #endif

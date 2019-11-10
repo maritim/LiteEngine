@@ -18,7 +18,7 @@ protected:
 
 	virtual void LockShader (const RenderLightObject*) = 0;
 
-	std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection*) const;
+	std::vector<PipelineAttribute> GetCustomAttributes (const Camera*, const RenderLightObject*, RenderVolumeCollection*) const;
 
 	virtual std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings&) const = 0;
 };

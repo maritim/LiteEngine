@@ -141,7 +141,7 @@ void PostProcessRenderPass::PostProcessPass (const RenderScene* renderScene, con
 	 * Send custom uniforms
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes (settings, rvc));
+	Pipeline::SendCustomAttributes ("", GetCustomAttributes (camera, settings, rvc));
 
 	/*
 	 * Draw a screen covering triangle
@@ -175,7 +175,8 @@ void PostProcessRenderPass::UpdatePostProcessSettings (const RenderSettings& set
 	}
 }
 
-std::vector<PipelineAttribute> PostProcessRenderPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> PostProcessRenderPass::GetCustomAttributes (const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach all volume attributes to pipeline

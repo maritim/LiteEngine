@@ -211,11 +211,7 @@ Camera* VoxelDirectionalShadowMapRenderPass::GetLightCamera (const RenderScene* 
 		exit (230);
 	}
 
-	Transform* lightTransform = renderLightObject->GetTransform ();
-
-	glm::vec3 lightDir = glm::normalize (lightTransform->GetPosition ()) * -1.0f;
-	glm::quat lightDirQuat = glm::toQuat (glm::lookAt (glm::vec3 (0), lightDir, glm::vec3 (0, 1, 0)));
-	glm::mat4 lightView = glm::translate (glm::mat4_cast (lightDirQuat), glm::vec3 (0));
+	glm::quat lightRotation = glm::conjugate (renderLightObject->GetTransform ()->GetRotation ());
 
 	glm::vec3 cuboidExtendsMin = glm::vec3 (std::numeric_limits<float>::max ());
 	glm::vec3 cuboidExtendsMax = glm::vec3 (-std::numeric_limits<float>::min ());
@@ -228,14 +224,13 @@ Camera* VoxelDirectionalShadowMapRenderPass::GetLightCamera (const RenderScene* 
 	for (int x = 0; x <= 1; x ++) {
 		for (int y = 0; y <= 1; y ++) {
 			for (int z = 0; z <= 1; z ++) {
-				glm::vec4 cuboidCorner = glm::vec4 (
+				glm::vec3 cuboidCorner = glm::vec3 (
 					x == 0 ? bBox->minVertex.x : bBox->maxVertex.x,
 					y == 0 ? bBox->minVertex.y : bBox->maxVertex.y,
-					z == 0 ? bBox->minVertex.z : bBox->maxVertex.z,
-					1.0f
+					z == 0 ? bBox->minVertex.z : bBox->maxVertex.z
 				);
 
-				cuboidCorner = lightView * cuboidCorner;
+				cuboidCorner = lightRotation * cuboidCorner;
 
 				cuboidExtendsMin.x = std::min (cuboidExtendsMin.x, cuboidCorner.x);
 				cuboidExtendsMin.y = std::min (cuboidExtendsMin.y, cuboidCorner.y);
@@ -248,7 +243,7 @@ Camera* VoxelDirectionalShadowMapRenderPass::GetLightCamera (const RenderScene* 
 		}
 	}
 
-	lightCamera->SetRotation (lightDirQuat);
+	lightCamera->SetRotation (lightRotation);
 
 	lightCamera->SetOrthographicInfo (
 		cuboidExtendsMin.x, cuboidExtendsMax.x,

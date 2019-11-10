@@ -14,8 +14,9 @@ public:
 
 	void SetLightSpotCutoff (float lightSpotCutoff);
 	void SetLightSpotOuterCutoff (float lightSpotOuterCutoff);
-protected:
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
+
+	float GetLightSpotCutoff () const;
+	float GetLightSpotOuterCutoff () const;
 };
 
 #endif

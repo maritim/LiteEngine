@@ -15,7 +15,7 @@ uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
 
-uniform vec3 lightPosition;
+uniform vec3 lightDirection;
 uniform vec3 lightColor;
 
 uniform sampler3D volumeTexture;
@@ -175,11 +175,8 @@ vec3 CalcIndirectRefractiveLight (vec3 in_position, vec3 in_normal, float in_ref
 
 vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal)
 {
-	// The position is also a direction for Directional Lights
-	vec3 lightDirection = normalize (lightPosition);
-
 	// Diffuse contribution
-	float dCont = max (dot (in_normal, lightDirection), 0.0);
+	float dCont = max (dot (in_normal, -lightDirection), 0.0);
 
 	// Attenuation is 1.0 for Directional Lights
 	vec3 diffuseColor = lightColor * dCont;
@@ -189,11 +186,8 @@ vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal)
 
 vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shininess)
 {
-	// The position is also a direction for Directional Lights
-	vec3 lightDirection = normalize (lightPosition);
-
-	vec3 surface2view = normalize (cameraPosition - in_position);
-	vec3 reflection = reflect (-lightDirection, in_normal);
+	vec3 surface2view = normalize (-in_position);
+	vec3 reflection = reflect (lightDirection, in_normal);
 
 	// Specular contribution
 	float sCont = pow (max (dot (surface2view, reflection), 0.0), in_shininess);
@@ -265,10 +259,9 @@ float CalcShadow (vec3 in_position)
 {
 	vec3 voxelPos = GetPositionInVolume (in_position);
 
-	// The position is also a direction for Directional Lights
-	vec3 lightDirection = normalize (lightPosition);
+	vec3 lightDir = vec3 (inverseViewMatrix * vec4 (-lightDirection, 0.0));
 
-	float occlusion = voxelTraceConeOcclusion (voxelPos, lightDirection, shadowConeRatio, shadowConeDistance);
+	float occlusion = voxelTraceConeOcclusion (voxelPos, lightDir, shadowConeRatio, shadowConeDistance);
 
 	return 1.0 - occlusion;
 }
@@ -280,8 +273,8 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	vec3 worldPosition = vec3 (inverseViewMatrix * vec4 (in_position, 1.0));
 	vec3 worldNormal = normalMatrix * inverseNormalWorldMatrix * in_normal;
 
-	vec3 directDiffuseColor = CalcDirectDiffuseLight (worldPosition, worldNormal);
-	vec3 directSpecularColor = CalcDirectSpecularLight (worldPosition, worldNormal, in_shininess);
+	vec3 directDiffuseColor = CalcDirectDiffuseLight (in_position, in_normal);
+	vec3 directSpecularColor = CalcDirectSpecularLight (in_position, in_normal, in_shininess);
 
 	float shadow = CalcShadow (worldPosition);
 

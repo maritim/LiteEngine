@@ -53,13 +53,14 @@ PostProcessMapVolume* SSDOShadowRenderPass::CreatePostProcessVolume () const
 	return ssdoShadowVolume;
 }
 
-std::vector<PipelineAttribute> SSDOShadowRenderPass::GetCustomAttributes (const RenderSettings& settings, RenderVolumeCollection* rvc)
+std::vector<PipelineAttribute> SSDOShadowRenderPass::GetCustomAttributes (const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Attach post process volume attributes to pipeline
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (settings, rvc);
+	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (camera, settings, rvc);
 
 	/*
 	 * Get volumetric light volume from render volume collection
@@ -79,25 +80,30 @@ std::vector<PipelineAttribute> SSDOShadowRenderPass::GetCustomAttributes (const 
 
 	PipelineAttribute ssdoShadowResolution;
 	PipelineAttribute ssdoShadowStride;
-	PipelineAttribute lightPosition;
+	PipelineAttribute lightDirection;
 
 	ssdoShadowResolution.type = PipelineAttribute::AttrType::ATTR_2F;
 	ssdoShadowStride.type = PipelineAttribute::AttrType::ATTR_1I;
-	lightPosition.type = PipelineAttribute::AttrType::ATTR_3F;
+	lightDirection.type = PipelineAttribute::AttrType::ATTR_3F;
 
 	ssdoShadowResolution.name = "ssdoShadowResolution";
 	ssdoShadowStride.name = "ssdoShadowStride";
-	lightPosition.name = "lightPosition";
+	lightDirection.name = "lightDirection";
+
+	glm::vec3 lightDir = renderLightObject->GetTransform ()->GetRotation () * glm::vec3 (0, 0, -1);
+
+	glm::mat3 viewMatrix = glm::mat3_cast (camera->GetRotation ());
+	lightDir = glm::normalize (viewMatrix * lightDir);
 
 	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssdo_shadow_scale);
 
 	ssdoShadowResolution.value = glm::vec3 (resolution, 0.0f);
 	ssdoShadowStride.value.x = settings.ssdo_shadow_stride;
-	lightPosition.value = renderLightObject->GetTransform ()->GetPosition ();
+	lightDirection.value = lightDir;
 
 	attributes.push_back (ssdoShadowResolution);
 	attributes.push_back (ssdoShadowStride);
-	attributes.push_back (lightPosition);
+	attributes.push_back (lightDirection);
 
 	return attributes;
 }

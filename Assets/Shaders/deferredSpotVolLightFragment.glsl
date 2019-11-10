@@ -24,16 +24,15 @@ uniform float lightSpotOuterCutoff;
 vec3 CalcSpotLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
 {
 	// Vector direction from fragment to light source
-	vec3 lightDirectionView = vec3 (viewMatrix * vec4 (lightPosition, 1)) - in_position;
-	vec3 lightDirView = vec3 (viewMatrix * vec4 (lightDirection, 0));
+	vec3 lightDir = lightPosition - in_position;
 
 	// Distance from fragment to light source
-	float dist2 = dot (lightDirectionView, lightDirectionView);
+	float dist2 = dot (lightDir, lightDir);
 
 	// Normalize light direction
-	lightDirectionView = normalize (lightDirectionView);
+	lightDir = normalize (lightDir);
 
-	float theta = dot (lightDirectionView, normalize(-lightDirView));
+	float theta = dot (lightDir, normalize(-lightDirection));
 	float epsilon = lightSpotCutoff - lightSpotOuterCutoff;
 	float spotAttenuation = clamp ((theta - lightSpotOuterCutoff) / epsilon, 0.0, 1.0);
 
@@ -42,14 +41,14 @@ vec3 CalcSpotLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_s
 	attenuation = pow (clamp (1.0 - pow (dist2 / (lightRange * lightRange), 2), 0.0, 1.0), 2) * spotAttenuation;
 
 	// Diffuse light intensity
-	float diffuseLightIntensity = max (dot (in_normal, lightDirectionView), 0.0);
+	float diffuseLightIntensity = max (dot (in_normal, lightDir), 0.0);
 
 	// Compute diffuse color
 	vec3 diffuseColor = lightColor * in_diffuse * diffuseLightIntensity * attenuation;
 
 	// Vector from fragment to camera position
 	vec3 surface2view = normalize (-in_position);
-	vec3 reflection = reflect (-lightDirectionView, in_normal);
+	vec3 reflection = reflect (-lightDir, in_normal);
 
 	// Specular light intensity
 	float specularLightIntensity = pow (max (dot (surface2view, reflection), 0.0), in_shininess);

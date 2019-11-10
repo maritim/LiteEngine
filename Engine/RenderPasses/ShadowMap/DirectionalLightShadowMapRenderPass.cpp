@@ -16,7 +16,8 @@
 
 #include "SceneNodes/SceneLayer.h"
 
-#include "Systems/Settings/SettingsManager.h"
+#include "Debug/Statistics/StatisticsManager.h"
+#include "Debug/Statistics/LightStatisticsObject.h"
 
 DirectionalLightShadowMapRenderPass::DirectionalLightShadowMapRenderPass () :
 	_staticShaderName ("STATIC_SHADOW_MAP"),
@@ -105,6 +106,18 @@ void DirectionalLightShadowMapRenderPass::ShadowMapPass (const RenderScene* rend
 
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
+	StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("LightStatisticsObject");
+	LightStatisticsObject* lightStatisticsObject = nullptr;
+
+	if (stat == nullptr) {
+		stat = new LightStatisticsObject ();
+		StatisticsManager::Instance ()->SetStatisticsObject ("LightStatisticsObject", stat);
+	}
+
+	lightStatisticsObject = dynamic_cast<LightStatisticsObject*> (stat);
+
+	lightStatisticsObject->dirLightShadowMaps.clear ();
+
 	for (std::size_t index = 0; index < shadow.cascadesCount; index++) {
 		_volume->BindForShadowMapCatch (index);
 
@@ -112,6 +125,8 @@ void DirectionalLightShadowMapRenderPass::ShadowMapPass (const RenderScene* rend
 
 		SendLightCamera (lightCamera);
 		Render (renderScene, lightCamera);
+
+		lightStatisticsObject->dirLightShadowMaps.push_back (_volume->GetShadowMapVolume (index));
 	}
 }
 
@@ -192,11 +207,7 @@ void DirectionalLightShadowMapRenderPass::UpdateLightCameras (const Camera* view
 {
 	const float LIGHT_CAMERA_OFFSET = 100.0f;
 
-	Transform* lightTransform = renderLightObject->GetTransform ();
-
-	glm::vec3 lightDir = glm::normalize(lightTransform->GetPosition()) * -1.0f;
-	glm::quat lightDirQuat = glm::toQuat(glm::lookAt(glm::vec3 (0), lightDir, glm::vec3(0, 1, 0)));
-	glm::mat4 lightView = glm::translate (glm::mat4_cast (lightDirQuat), glm::vec3 (0));
+	glm::quat lightRotation = glm::conjugate (renderLightObject->GetTransform ()->GetRotation ());
 
 	glm::mat4 cameraView = glm::translate(glm::mat4_cast(viewCamera->GetRotation()), viewCamera->GetPosition() * -1.0f);
 	glm::mat4 cameraProjection = viewCamera->GetProjectionMatrix();
@@ -222,7 +233,7 @@ void DirectionalLightShadowMapRenderPass::UpdateLightCameras (const Camera* view
 					cuboidCorner = invCameraProjView * cuboidCorner;
 					cuboidCorner /= cuboidCorner.w;
 
-					cuboidCorner = lightView * cuboidCorner;
+					cuboidCorner = glm::vec4 (lightRotation * glm::vec3 (cuboidCorner), 0.0f);
 
 					cuboidExtendsMin.x = std::min(cuboidExtendsMin.x, cuboidCorner.x);
 					cuboidExtendsMin.y = std::min(cuboidExtendsMin.y, cuboidCorner.y);
@@ -235,7 +246,7 @@ void DirectionalLightShadowMapRenderPass::UpdateLightCameras (const Camera* view
 			}
 		}
 
-		lightCamera->SetRotation(lightDirQuat);
+		lightCamera->SetRotation(lightRotation);
 
 		lightCamera->SetOrthographicInfo (
 			cuboidExtendsMin.x, cuboidExtendsMax.x,
