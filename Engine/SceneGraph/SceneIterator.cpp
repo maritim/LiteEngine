@@ -1,15 +1,13 @@
 #include "SceneIterator.h"
 
-SceneIterator::SceneIterator (const Scene* scene, std::size_t startPos) :
-	_currentPos (startPos),
-	_scene (scene)
+SceneIterator::SceneIterator (Transform* transform)
 {
-	/*
-	 * Find first active scene object
-	*/
+	if (transform == nullptr) {
+		return;
+	}
 
-	-- _currentPos;
-	++ (*this);
+	_transforms.push (transform);
+	_childIt.push (transform->begin<Transform*> ());
 }
 
 SceneIterator::~SceneIterator ()
@@ -19,18 +17,30 @@ SceneIterator::~SceneIterator ()
 
 SceneIterator& SceneIterator::operator ++ ()
 {
-	for (++_currentPos; _currentPos < _scene->_sceneObjects.size () && 
-		!_scene->_sceneObjects [_currentPos]->IsActive ();_currentPos ++);
+	while (_transforms.empty () == false &&
+		_childIt.top () == _transforms.top ()->end<Transform*> ()) {
+
+		_childIt.pop ();
+		_transforms.pop ();
+	}
+
+	if (_transforms.empty () == false) {
+		_transforms.push (*_childIt.top ());
+
+		_childIt.top () ++;
+
+		_childIt.push (_transforms.top ()->begin<Transform*> ());
+	}
 
 	return *this;
 }
 
 bool SceneIterator::operator != (const SceneIterator& other)
 {
-	return other._scene == _scene && _currentPos != other._currentPos;
+	return !_transforms.empty ();
 }
 
 SceneObject* SceneIterator::operator* ()
 {
-	return _scene->_sceneObjects [_currentPos];
+	return _transforms.top ()->GetSceneObject ();
 }

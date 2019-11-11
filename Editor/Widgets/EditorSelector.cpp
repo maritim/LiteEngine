@@ -48,18 +48,11 @@ void EditorSelector::UpdateFocusedObject ()
 
 	SceneObject* focusedObject = EditorSelection::Instance ()->GetActive ();
 
-	bool exists = false;
-
-	for (std::size_t index = 0; index < scene->GetObjectsCount (); index ++) {
-		if (focusedObject != scene->GetObject (index)) {
-			continue;
-		}
-
-		exists = true;
-		break;
+	if (focusedObject == nullptr) {
+		return;
 	}
 
-	if (exists == false) {
+	if (scene->GetObject (focusedObject->GetName ()) == nullptr) {
 		EditorSelection::Instance ()->SetActive (nullptr);
 	}
 }
@@ -108,6 +101,14 @@ SceneObject* EditorSelector::GetSelectedObject (const glm::ivec2& pos)
 		// }
 
 		/*
+		 * Check if it's active
+		*/
+
+		if (sceneObject->IsActive () == false) {
+			continue;
+		}
+
+		/*
 		 * Ignore objects without collider
 		*/
 
@@ -135,16 +136,7 @@ SceneObject* EditorSelector::GetSelectedObject (const glm::ivec2& pos)
 		Resource<Model> model = gameObject->GetMesh ();
 		Transform* transform = sceneObject->GetTransform ();
 
-		glm::vec3 position = transform->GetPosition ();
-		glm::vec3 scalev = transform->GetScale ();
-		glm::quat rotationq = transform->GetRotation ();
-
-		glm::mat4 translate = glm::translate (glm::mat4 (1.f), glm::vec3 (position.x, position.y, position.z));
-		glm::mat4 scale = glm::scale (glm::mat4 (1.f), glm::vec3 (scalev.x, scalev.y, scalev.z));
-
-		glm::mat4 rotation = glm::mat4_cast (rotationq);
-
-		glm::mat4 modelMatrix = translate * scale * rotation;
+		glm::mat4 modelMatrix = transform->GetModelMatrix ();
 		glm::mat4 invModelMatrix = glm::inverse (modelMatrix);
 
 		glm::vec3 modelOrigin = glm::vec3 (invModelMatrix * glm::vec4 (origin, 1.0f));

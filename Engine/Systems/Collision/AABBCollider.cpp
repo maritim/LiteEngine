@@ -24,15 +24,7 @@ void AABBCollider::Rebuild (const Resource<Model>& mesh, Transform* transform)
 	 * Calculate model matrix.
 	*/
 
-	glm::vec3 position = transform->GetPosition ();
-	glm::vec3 scalev = transform->GetScale ();
-	glm::quat rotationq = transform->GetRotation ();
-
-	glm::mat4 translate = glm::translate (glm::mat4 (1.f), glm::vec3 (position.x, position.y, position.z));
-	glm::mat4 scale = glm::scale (glm::mat4 (1.f), glm::vec3 (scalev.x, scalev.y, scalev.z));
-	glm::mat4 rotation = glm::mat4_cast (rotationq);
-
-	glm::mat4 modelMatrix = translate * scale * rotation;
+	glm::mat4 modelMatrix = transform->GetModelMatrix ();
 
 	/*
 	 * Calculate AABB from model bounding box

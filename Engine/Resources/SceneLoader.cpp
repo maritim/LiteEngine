@@ -339,7 +339,7 @@ void SceneLoader::ProcessLight (TiXmlElement* xmlElem, Scene* scene)
 
 void SceneLoader::ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneObject* sceneObject)
 {
-	Transform transform;
+	Transform* transform = sceneObject->GetTransform ();
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -348,13 +348,13 @@ void SceneLoader::ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneOb
 		std::string name = content->Value ();
 
 		if (name == "Position") {
-			transform.SetPosition (GetPosition (content));
+			transform->SetPosition (GetPosition (content));
 		}
 		else if (name == "Rotation") {
-			transform.SetRotation (GetRotation (content));
+			transform->SetRotation (GetRotation (content));
 		}
 		else if (name == "Scale") {
-			transform.SetScale (GetScale (content));
+			transform->SetScale (GetScale (content));
 		}
 
 		content = content->NextSiblingElement ();
@@ -364,12 +364,8 @@ void SceneLoader::ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneOb
 	if (parentName != NULL) {
 		SceneObject* parent =  scene->GetObject (parentName);
 
-		sceneObject->GetTransform ()->SetParent (parent->GetTransform ());
-	}	
-
-	sceneObject->GetTransform ()->SetPosition (transform.GetPosition ());
-	sceneObject->GetTransform ()->SetRotation (transform.GetRotation ());
-	sceneObject->GetTransform ()->SetScale (transform.GetScale ());
+		transform->SetParent (parent->GetTransform ());
+	}
 }
 
 glm::vec3 SceneLoader::GetPosition (TiXmlElement* xmlElem)

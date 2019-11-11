@@ -71,10 +71,4 @@ void SceneManager::LoadNextScene (const std::string& sceneName)
 		Console::LogError ("An error occured while tryng to load " + sceneName);
 		std::exit(SCENE_LOADING_ERROR_CODE);
 	}
-
-	/*
-	 * Initialization of scene (need cleanup of last scene)
-	*/
-
-	_current->Init ();
 }

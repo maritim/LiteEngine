@@ -1,11 +1,14 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <vector>
+#include "Core/Interfaces/Object.h"
+
 #include <string>
 
 #include "SceneObject.h"
 #include "Skybox/Skybox.h"
+
+#include "SceneRoot.h"
 
 #include "Core/Intersections/AABBVolume.h"
 
@@ -13,13 +16,13 @@
 
 class SceneIterator;
 
-class ENGINE_API Scene
+class ENGINE_API Scene : public Object
 {
 	friend class SceneIterator;
 
-private:
-	std::vector<SceneObject*> _sceneObjects;
 protected:
+	SceneRoot* _sceneRoot;
+
 	std::string _name;
 	Skybox* _skybox;
 	AABBVolume* _boundingBox;
@@ -28,7 +31,7 @@ public:
 	Scene ();
 	virtual ~Scene ();
 
-	void Init ();
+	SceneRoot* GetRoot () const;
 
 	void SetName (const std::string& name);
 	std::string GetName () const;
@@ -40,17 +43,17 @@ public:
 	void DetachObject (SceneObject*);
 
 	SceneObject* GetObject (const std::string& name) const;
-	SceneObject* GetObject (std::size_t index) const;
 
-	std::size_t GetObjectsCount () const;
 	AABBVolume* GetBoundingBox () const;
 
 	SceneIterator begin () const;
 	SceneIterator end () const;
 
 	void Update ();
-private:
+protected:
 	void UpdateBoundingBox (SceneObject* object);
+
+	void Clear (SceneObject* object);
 };
 
 #endif

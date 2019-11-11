@@ -10,7 +10,7 @@
 #include "Core/Console/Console.h"
 
 Scene::Scene () :
-	_sceneObjects (),
+	_sceneRoot (new SceneRoot ()),
 	_name (""),
 	_skybox (nullptr),
 	_boundingBox (new AABBVolume (new AABBVolume::AABBVolumeInformation ()))
@@ -18,9 +18,9 @@ Scene::Scene () :
 
 }
 
-void Scene::Init ()
+SceneRoot* Scene::GetRoot () const
 {
-
+	return _sceneRoot;
 }
 
 void Scene::SetSkybox (Skybox *skybox)
@@ -43,7 +43,9 @@ Skybox* Scene::GetSkybox () const
 
 void Scene::AttachObject (SceneObject* object)
 {
-	_sceneObjects.push_back (object);
+	if (object->GetTransform ()->GetParent () == nullptr) {
+		object->GetTransform ()->SetParent (_sceneRoot->GetTransform ());
+	}
 
 	object->OnAttachedToScene ();
 
@@ -56,17 +58,9 @@ void Scene::AttachObject (SceneObject* object)
 
 void Scene::DetachObject (SceneObject* object)
 {
-	auto it = std::find (_sceneObjects.begin (), _sceneObjects.end (), object);
+	object->GetTransform ()->DetachParent ();
 
-	if (it == _sceneObjects.end ()) {
-		Console::LogWarning ("Try to remove an invalid object. Something must be wrong here...");
-
-		return ;
-	}
-
-	_sceneObjects.erase (it);
-
-	(*it)->OnDetachedFromScene ();
+	object->OnDetachedFromScene ();
 
 	// TODO: Recalculate Bounding Box when detach object
 }
@@ -82,23 +76,6 @@ SceneObject* Scene::GetObject (const std::string& name) const
 	Console::LogError ("There is no object with name " + name + " in scene.");
 
 	return nullptr;
-}
-
-SceneObject* Scene::GetObject (std::size_t index) const
-{
-	if (index >= _sceneObjects.size ()) {
-		Console::LogWarning ("Scene object index exceed objects count for " + _name + ". " +
-			std::to_string (_sceneObjects.size ()) + " < " + std::to_string (index));
-
-		return nullptr;
-	}
-
-	return _sceneObjects [index];
-}
-
-std::size_t Scene::GetObjectsCount () const
-{
-	return _sceneObjects.size();
 }
 
 AABBVolume* Scene::GetBoundingBox () const
@@ -125,17 +102,10 @@ std::string Scene::GetName () const
 
 Scene::~Scene ()
 {
-	for (std::size_t i=0;i<_sceneObjects.size ();i++) {
-		_sceneObjects [i]->OnDetachedFromScene ();
-
-		delete _sceneObjects [i];
-	}
+	Clear (_sceneRoot);
 
 	delete _skybox;
 	delete _boundingBox;
-
-	_sceneObjects.clear ();
-	_sceneObjects.shrink_to_fit ();
 }
 
 void Scene::UpdateBoundingBox (SceneObject* sceneObject)
@@ -168,12 +138,30 @@ void Scene::UpdateBoundingBox (SceneObject* sceneObject)
 		std::max (volume->maxVertex.z, sceneObjectVolume->maxVertex.z));
 }
 
+void Scene::Clear (SceneObject* object)
+{
+	std::vector<Transform*> children;
+
+	for_each_type (Transform*, child, *object->GetTransform ()) {
+		children.push_back (child);
+	}
+
+	for (auto child : children) {
+		Clear (child->GetSceneObject ());
+	}
+
+	object->GetTransform ()->DetachParent ();
+	object->OnDetachedFromScene ();
+
+	delete object;
+}
+
 SceneIterator Scene::begin () const
 {
-	return SceneIterator (this, 0);
+	return SceneIterator (_sceneRoot->GetTransform ());
 }
 
 SceneIterator Scene::end () const
 {
-	return SceneIterator (this, _sceneObjects.size ());
+	return SceneIterator (nullptr);
 }

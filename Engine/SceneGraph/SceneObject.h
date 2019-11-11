@@ -7,6 +7,8 @@
 
 #include "Transform.h"
 
+class Transform;
+
 class ENGINE_API SceneObject : public Object
 {
 protected:

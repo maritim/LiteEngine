@@ -3,7 +3,8 @@
 
 #include "Core/Interfaces/Object.h"
 
-#include "Scene.h"
+#include <stack>
+
 #include "SceneObject.h"
 
 class Scene;
@@ -13,8 +14,8 @@ class ENGINE_API SceneIterator : public Object
 	friend class Scene;
 
 private:
-	std::size_t _currentPos;
-	const Scene* _scene;
+	std::stack<Transform*> _transforms;
+	std::stack<std::set<Transform*>::iterator> _childIt;
 
 public:
 	~SceneIterator ();
@@ -23,7 +24,7 @@ public:
 	bool operator != (const SceneIterator& other);
 	SceneObject* operator* ();
 private:
-	SceneIterator (const Scene* scene, std::size_t startPos);
+	SceneIterator (Transform*);
 };
 
 #endif

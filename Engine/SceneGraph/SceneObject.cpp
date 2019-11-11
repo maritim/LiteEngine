@@ -1,11 +1,10 @@
 #include "SceneObject.h"
 
 #include "Transform.h"
-#include "Renderer/Renderer.h"
 #include "SceneNodes/SceneLayer.h"
 
 SceneObject::SceneObject () :
-	_transform (new Transform ()),
+	_transform (new Transform (this)),
 	_sceneLayers ((int) SceneLayer::STATIC),
 	_isActive (true)
 {

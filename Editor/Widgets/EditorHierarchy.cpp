@@ -19,44 +19,61 @@ void EditorHierarchy::Show ()
 
 void EditorHierarchy::ShowHierarchy ()
 {
-	SceneObject* focusedObject = EditorSelection::Instance ()->GetActive ();
-
 	if (ImGui::Begin("Hierarchy", NULL)) {
 
 		Scene* scene = SceneManager::Instance ()->Current ();
 
-		for (std::size_t objectIndex = 0; objectIndex < scene->GetObjectsCount (); objectIndex ++) {
+		SceneRoot* sceneRoot = scene->GetRoot ();
 
-			SceneObject* object = scene->GetObject (objectIndex);
-
-			ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_Leaf;
-
-			if (focusedObject == object) {
-				node_flags |= ImGuiTreeNodeFlags_Selected;
-			}
-
-			if (object->IsActive () == false) {
-				auto col = ImGui::GetStyleColorVec4 (ImGuiCol_Text);
-				col = ImVec4 (col.x / 2, col.y / 2, col.z / 2, col.w);
-				ImGui::PushStyleColor (ImGuiCol_Text, col);
-			}
-
-			if (ImGui::TreeNodeEx (object->GetName ().c_str (), node_flags)) {
-
-				if (ImGui::IsItemClicked()) {
-					if (focusedObject != object) {
-						EditorSelection::Instance ()->SetActive (object);
-					}
-				}
-
-				ImGui::TreePop ();
-			}
-
-			if (object->IsActive () == false) {
-				ImGui::PopStyleColor ();
-			}
+		for_each_type (Transform*, child, *sceneRoot->GetTransform ()) {
+			ShowHierarchy (child->GetSceneObject ());
 		}
 	}
 
 	ImGui::End();
+}
+
+void EditorHierarchy::ShowHierarchy (SceneObject* sceneObject)
+{
+	SceneObject* focusedObject = EditorSelection::Instance ()->GetActive ();
+
+	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow;
+
+	if (focusedObject == sceneObject) {
+		node_flags |= ImGuiTreeNodeFlags_Selected;
+	}
+
+	if (sceneObject->GetTransform ()->GetChildrenCount () == 0) {
+		node_flags |= ImGuiTreeNodeFlags_Leaf;
+	}
+
+	auto col = ImGui::GetStyleColorVec4 (ImGuiCol_Text);
+
+	if (sceneObject->GetTransform ()->GetParent ()->GetSceneObject ()->IsActive () == false) {
+		col = ImVec4 (col.x * 2, col.y * 2, col.z * 2, col.w);
+	}
+
+	if (sceneObject->IsActive () == false) {
+		col = ImVec4 (col.x / 2, col.y / 2, col.z / 2, col.w);
+	}
+
+	ImGui::PushStyleColor (ImGuiCol_Text, col);
+
+	bool open = ImGui::TreeNodeEx (sceneObject->GetName ().c_str (), node_flags);
+
+	if (ImGui::IsItemClicked()) {
+		if (focusedObject != sceneObject) {
+			EditorSelection::Instance ()->SetActive (sceneObject);
+		}
+	}
+
+	if (open) {
+		for_each_type (Transform*, child, *sceneObject->GetTransform ()) {
+			ShowHierarchy (child->GetSceneObject ());
+		}
+
+		ImGui::TreePop ();
+	}
+
+	ImGui::PopStyleColor ();
 }

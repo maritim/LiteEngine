@@ -117,16 +117,7 @@ void Pipeline::SendCamera (const Camera* camera)
 
 void Pipeline::SetObjectTransform (const Transform* transform)
 {
-	glm::vec3 position = transform->GetPosition ();
-	glm::vec3 scalev = transform->GetScale ();
-	glm::quat rotationq = transform->GetRotation ();
-
-	glm::mat4 translate = glm::translate (glm::mat4 (1.f), glm::vec3 (position.x, position.y, position.z));
-	glm::mat4 scale = glm::scale (glm::mat4 (1.f), glm::vec3 (scalev.x, scalev.y, scalev.z));
-
-	glm::mat4 rotation = glm::mat4_cast(rotationq);
-
-	_modelMatrix = translate * rotation * scale;
+	_modelMatrix = transform->GetModelMatrix ();
 }
 
 void Pipeline::ClearObjectTransform ()
