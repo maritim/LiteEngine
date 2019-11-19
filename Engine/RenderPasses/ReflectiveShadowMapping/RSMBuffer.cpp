@@ -33,6 +33,9 @@ bool RSMBuffer::Init (const glm::ivec2& size)
 	 * Create the 2D depth buffer texture
 	*/
 
+	GL::DeleteTextures (1, &m_depthTexture);
+
+	GL::GenTextures (1, &m_depthTexture);
 	GL::BindTexture (GL_TEXTURE_2D, m_depthTexture);
 
 	GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -47,7 +50,7 @@ bool RSMBuffer::Init (const glm::ivec2& size)
 	GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
 	GL::TexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
-	GL::TexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, _size.x, _size.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	GL::TexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32, _size.x, _size.y);
 
 	GL::BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 	GL::FramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
@@ -75,11 +78,4 @@ bool RSMBuffer::Init (const glm::ivec2& size)
 	}
 
 	return true;
-}
-
-void RSMBuffer::BindForReading ()
-{
-	/*
-	 * Do nothing
-	*/
 }

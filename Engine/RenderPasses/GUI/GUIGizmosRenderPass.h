@@ -27,12 +27,13 @@ public:
 protected:
 	void StartGizmoDraw (RenderVolumeCollection* rvc);
 
-	void DrawGizmos (const Camera* camera);
-	void DrawLines (const Camera* camera);
+	void DrawGizmos (const Camera* camera, const RenderSettings& settings);
+	void DrawLines (const Camera* camera, const RenderSettings& settings);
 
 	void AddLine (std::vector<float>&, std::size_t stride, const GizmoLine& line);
 
-	void DrawData (const std::vector<float>& data, const std::vector<unsigned int>& indices, const Camera* camera, bool depth = false);
+	void DrawData (const std::vector<float>& data, const std::vector<unsigned int>& indices,
+		const Camera* camera, const RenderSettings& settings, bool depth = false);
 };
 
 #endif

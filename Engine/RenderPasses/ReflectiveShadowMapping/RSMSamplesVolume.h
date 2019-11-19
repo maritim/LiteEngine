@@ -11,7 +11,7 @@ struct RSMSamples
 {
 	int samplesCount;
 	int samplesCountPadding [3];
-	float samples [800];
+	float samples [2000];
 };
 
 class RSMSamplesVolume : public RenderVolumeI

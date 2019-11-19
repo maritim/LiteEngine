@@ -22,13 +22,6 @@ PointLight::PointLight () :
 	_renderLightObject->SetModelView (modelView);
 }
 
-void PointLight::SetActive (bool isActive)
-{
-	SceneObject::SetActive (isActive);
-
-	_renderLightObject->SetActive (isActive);
-}
-
 void PointLight::Update ()
 {
 	/*

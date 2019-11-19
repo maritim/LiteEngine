@@ -25,10 +25,6 @@ void DirectionalLight::Update ()
 
 void DirectionalLight::OnAttachedToScene ()
 {
-	if (_isActive == false) {
-		return;
-	}
-
 	auto renderLightObject = (RenderDirectionalLightObject*) _renderLightObject;
 
 	RenderManager::Instance ()->SetRenderDirectionalLightObject (renderLightObject);

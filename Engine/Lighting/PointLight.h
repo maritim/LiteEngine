@@ -15,8 +15,6 @@ public:
 
 	void SetRange (float range);
 
-	void SetActive (bool isActive);
-
 	void Update ();
 
 	void OnAttachedToScene ();

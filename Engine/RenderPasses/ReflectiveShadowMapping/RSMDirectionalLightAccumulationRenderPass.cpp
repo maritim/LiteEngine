@@ -4,31 +4,19 @@
 #include <glm/gtc/quaternion.hpp>
 #include <algorithm>
 
-#include "Managers/ShaderManager.h"
 #include "Cameras/OrthographicCamera.h"
+
+#include "Managers/ShaderManager.h"
 
 #include "Renderer/Pipeline.h"
 
-#include "Core/Intersections/Intersection.h"
-
-#include "Core/Console/Console.h"
-
 #include "SceneNodes/SceneLayer.h"
-
-#include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/RSMStatisticsObject.h"
 
 RSMDirectionalLightAccumulationRenderPass::RSMDirectionalLightAccumulationRenderPass () :
 	_staticShaderName ("STATIC_REFLECTIVE_SHADOW_MAP"),
-	_animationShaderName ("ANIMATION_REFLECTIVE_SHADOW_MAP"),
-	_reflectiveShadowMapVolume (new RSMVolume ())
+	_animationShaderName ("ANIMATION_REFLECTIVE_SHADOW_MAP")
 {
 
-}
-
-RSMDirectionalLightAccumulationRenderPass::~RSMDirectionalLightAccumulationRenderPass ()
-{
-	delete _reflectiveShadowMapVolume;
 }
 
 void RSMDirectionalLightAccumulationRenderPass::Init (const RenderSettings& settings)
@@ -38,178 +26,21 @@ void RSMDirectionalLightAccumulationRenderPass::Init (const RenderSettings& sett
 	*/
 
 	ShaderManager::Instance ()->AddShader (_staticShaderName,
-		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapVertex.glsl",
-		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapFragment.glsl");
+		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapAccumulationVertex.glsl",
+		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapAccumulationFragment.glsl");
 
 	/*
 	 * Shader for animated objects
 	*/
 
 	ShaderManager::Instance ()->AddShader (_animationShaderName,
-		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapVertexAnimation.glsl",
-		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapFragment.glsl");
-
-	/*
-	 * Initialize reflective shadow map volume
-	*/
-
-	InitRSMVolume (settings);
+		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapAccumulationVertexAnimation.glsl",
+		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapAccumulationFragment.glsl");
 }
 
-RenderVolumeCollection* RSMDirectionalLightAccumulationRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
-	const RenderSettings& settings, RenderVolumeCollection* rvc)
-{
-	/*
-	 * Update volumes
-	*/
-
-	UpdateRSMVolume (settings);
-
-	/*
-	* Start shadow map drawing process
-	*/
-
-	StartShadowMapPass ();
-
-	/*
-	* Calculate light camera for shadow map
-	*/
-
-	Camera* lightCamera = GetLightCamera (renderScene, camera);
-	_reflectiveShadowMapVolume->SetLightCamera (lightCamera);
-
-	/*
-	* Render geometry on shadow map
-	*/
-
-	ShadowMapGeometryPass (renderScene, lightCamera, settings);
-
-	/*
-	* End shadow map drawing process
-	*/
-
-	EndShadowMapPass ();
-
-	return rvc->Insert ("ReflectiveShadowMapVolume", _reflectiveShadowMapVolume);
-}
-
-bool RSMDirectionalLightAccumulationRenderPass::IsAvailable (const RenderLightObject* renderLightObject) const
-{
-	/*
-	 * Execute reflective shadow map accumulation sub pass only if light is casting shadows
-	*/
-
-	return renderLightObject->IsCastingShadows ();
-}
-
-void RSMDirectionalLightAccumulationRenderPass::Clear ()
-{
-	_reflectiveShadowMapVolume->Clear ();
-}
-
-void RSMDirectionalLightAccumulationRenderPass::StartShadowMapPass ()
-{
-	/*
-	* Bind shadow map volume for writing
-	*/
-
-	_reflectiveShadowMapVolume->BindForWriting ();
-}
-
-void RSMDirectionalLightAccumulationRenderPass::ShadowMapGeometryPass (const RenderScene* renderScene, const Camera* lightCamera,
-	const RenderSettings& settings)
-{
-	/*
-	* Send light camera
-	*/
-
-	Pipeline::CreateProjection (lightCamera->GetProjectionMatrix ());
-	Pipeline::SendCamera (lightCamera);
-
-	/*
-	 * Clear framebuffer
-	*/
-
-	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-	/*
-	* Shadow map is a depth test
-	*/
-
-	GL::Enable (GL_DEPTH_TEST);
-	GL::DepthMask (GL_TRUE);
-
-	/*
-	* Doesn't really matter
-	*/
-
-	GL::Enable (GL_BLEND);
-	GL::BlendFunc (GL_ONE, GL_ZERO);
-
-	/*
-	* Light camera
-	*/
-
-	FrustumVolume* frustum = lightCamera->GetFrustumVolume ();
-
-	/*
-	* Render scene entities to framebuffer at Deferred Rendering Stage
-	*/
-
-	for_each_type (RenderObject*, renderObject, *renderScene) {
-
-		/*
-		 * Check if it's active
-		*/
-
-		if (renderObject->IsActive () == false) {
-			continue;
-		}
-
-		if (renderObject->GetRenderStage () != RenderStage::RENDER_STAGE_DEFERRED) {
-			continue;
-		}
-
-		/*
-		* Culling Check
-		*/
-
-		if (renderObject->GetCollider () != nullptr) {
-			GeometricPrimitive* primitive = renderObject->GetCollider ()->GetGeometricPrimitive ();
-			if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
-				continue;
-			}
-		}
-
-		/*
-		* Lock shader based on scene object layers
-		*/
-
-		LockShader (renderObject->GetSceneLayers ());
-
-		/*
-		* Render object on shadow map
-		*/
-
-		renderObject->Draw ();
-	}
-}
-
-void RSMDirectionalLightAccumulationRenderPass::EndShadowMapPass ()
-{
-	_reflectiveShadowMapVolume->EndDrawing ();
-}
-
-Camera* RSMDirectionalLightAccumulationRenderPass::GetLightCamera (const RenderScene* renderScene, const Camera* viewCamera)
+Camera* RSMDirectionalLightAccumulationRenderPass::GetLightCamera (const RenderScene* renderScene, const RenderLightObject* renderLightObject)
 {
 	const float LIGHT_CAMERA_OFFSET = 50.0f;
-
-	auto renderLightObject = renderScene->GetRenderDirectionalLightObject ();
-
-	if (renderLightObject == nullptr) {
-		Console::LogError ("There is no active directional light to render. End now!");
-		exit (230);
-	}
 
 	glm::quat lightRotation = glm::conjugate (renderLightObject->GetTransform ()->GetRotation ());
 
@@ -277,48 +108,4 @@ void RSMDirectionalLightAccumulationRenderPass::LockShader (int sceneLayers)
 	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
 		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
 	}
-}
-
-void RSMDirectionalLightAccumulationRenderPass::InitRSMVolume (const RenderSettings& settings)
-{
-	if (!_reflectiveShadowMapVolume->Init (settings.rsm_resolution, 1)) {
-		Console::LogError (std::string () + "Reflective shadow map cannot be initialized!" +
-			"It is not possible to continue the process. End now!");
-		exit (REFLECTIVE_SHADOW_MAP_FBO_NOT_INIT);
-	}
-}
-
-void RSMDirectionalLightAccumulationRenderPass::UpdateRSMVolume (const RenderSettings& settings)
-{
-	glm::ivec2 rsmSize = _reflectiveShadowMapVolume->GetSize ();
-
-	if (rsmSize != settings.rsm_resolution) {
-
-		/*
-		 * Clear framebuffer
-		*/
-
-		_reflectiveShadowMapVolume->Clear ();
-
-		/*
-		 * Initialize framebuffer
-		*/
-
-		InitRSMVolume (settings);
-	}
-
-	StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
-	RSMStatisticsObject* rsmStatisticsObject = nullptr;
-
-	if (stat == nullptr) {
-		stat = new RSMStatisticsObject ();
-		StatisticsManager::Instance ()->SetStatisticsObject ("RSMStatisticsObject", stat);
-	}
-
-	rsmStatisticsObject = dynamic_cast<RSMStatisticsObject*> (stat);
-
-	rsmStatisticsObject->rsmPosMapID = _reflectiveShadowMapVolume->GetCascade (0)->GetColorBuffer (0);
-	rsmStatisticsObject->rsmNormalMapID = _reflectiveShadowMapVolume->GetCascade (0)->GetColorBuffer (1);
-	rsmStatisticsObject->rsmFluxMapID = _reflectiveShadowMapVolume->GetCascade (0)->GetColorBuffer (2);
-	rsmStatisticsObject->rsmDepthMapID = _reflectiveShadowMapVolume->GetCascade (0)->GetDepthBuffer ();
 }

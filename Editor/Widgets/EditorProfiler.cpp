@@ -56,7 +56,7 @@ void EditorProfiler::ShowProfiler ()
 
     ImGui::Separator ();
 
-    ImGui::BeginChild("OuterRegion", ImVec2(0, 150), false);
+    ImGui::BeginChild("OuterRegion", ImVec2(0, 100), false);
 
     if (_profilerType == (int) ProfilerType::CPUProfiler) {
         ShowProfilerEvents (_profilerCPUFrameTimeStat, _profilerCPUStats);

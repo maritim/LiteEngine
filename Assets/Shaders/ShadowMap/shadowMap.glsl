@@ -2,18 +2,12 @@ uniform sampler2DShadow shadowMap;
 
 uniform mat4 lightSpaceMatrix;
 
+uniform float shadowBias;
+
 float ShadowCalculation (vec4 lightSpacePos)
 {
 	// perform perspective divide
 	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
-
-	if(projCoords.z > 1.0)
-		return 0.0;
-
-	// Transform to [0,1] range
-	projCoords = projCoords * 0.5 + 0.5;
-
-	float bias = 0.0000001;
 
 	// Check whether current frag pos is in shadow
 	float shadow = 0.0;
@@ -23,8 +17,8 @@ float ShadowCalculation (vec4 lightSpacePos)
 	{
 		for(int y = -1; y <= 1; ++y)
 		{
-			vec3 samplePos = vec3 (projCoords.xy + vec2 (x, y) * texelSize, projCoords.z);
-			shadow += texture (shadowMap, samplePos, bias);
+			vec3 samplePos = vec3 (projCoords.xy + vec2 (x, y) * texelSize, projCoords.z - shadowBias);
+			shadow += texture (shadowMap, samplePos, shadowBias);
 		}    
 	}
 

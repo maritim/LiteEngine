@@ -40,7 +40,7 @@ RenderVolumeCollection* GUIGizmosRenderPass::Execute (const RenderScene* renderS
 	 * Draw gizmos
 	*/
 
-	DrawGizmos (camera);
+	DrawGizmos (camera, settings);
 
 	return rvc;
 }
@@ -65,12 +65,12 @@ void GUIGizmosRenderPass::StartGizmoDraw (RenderVolumeCollection* rvc)
 	framebuffer->BindForWriting ();
 }
 
-void GUIGizmosRenderPass::DrawGizmos (const Camera* camera)
+void GUIGizmosRenderPass::DrawGizmos (const Camera* camera, const RenderSettings& settings)
 {
-	DrawLines (camera);
+	DrawLines (camera, settings);
 }
 
-void GUIGizmosRenderPass::DrawLines (const Camera* camera)
+void GUIGizmosRenderPass::DrawLines (const Camera* camera, const RenderSettings& settings)
 {
 	const std::vector<GizmoLine>& lines = Gizmo::GetLines ();
 
@@ -124,8 +124,8 @@ void GUIGizmosRenderPass::DrawLines (const Camera* camera)
 		}
 	}
 
-	DrawData (renderData, indices, camera);
-	DrawData (depthRenderData, depthIndices, camera, true);
+	DrawData (renderData, indices, camera, settings);
+	DrawData (depthRenderData, depthIndices, camera, settings, true);
 }
 
 void GUIGizmosRenderPass::AddLine (std::vector<float>& renderData, std::size_t stride, const GizmoLine& line)
@@ -145,8 +145,13 @@ void GUIGizmosRenderPass::AddLine (std::vector<float>& renderData, std::size_t s
 	renderData [stride + 11] = line.color.z;
 }
 
-void GUIGizmosRenderPass::DrawData (const std::vector<float>& renderData, const std::vector<unsigned int>& indices, const Camera* camera, bool depthTest)
+void GUIGizmosRenderPass::DrawData (const std::vector<float>& renderData, const std::vector<unsigned int>& indices,
+	const Camera* camera, const RenderSettings& settings, bool depthTest)
 {
+	if (renderData.size () == 0) {
+		return;
+	}
+
 	unsigned int VAO;
 	GL::GenVertexArrays(1 , &VAO);
 	GL::BindVertexArray(VAO);
@@ -161,10 +166,18 @@ void GUIGizmosRenderPass::DrawData (const std::vector<float>& renderData, const 
 	GL::BindBuffer (GL_ELEMENT_ARRAY_BUFFER, IBO);
 	GL::BufferData (GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * indices.size (), indices.data (), GL_STATIC_DRAW);
 
+	/*
+	 * Set viewport
+	*/
+
+	GL::Viewport (settings.viewport.x, settings.viewport.y,
+		settings.viewport.width, settings.viewport.height);
+
 	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
 
-	Pipeline::SetObjectTransform (Transform::Default ());
+	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
 	Pipeline::SendCamera (camera);
+	Pipeline::SetObjectTransform (Transform::Default ());
 
 	Pipeline::UpdateMatrices (nullptr);
 
@@ -176,6 +189,14 @@ void GUIGizmosRenderPass::DrawData (const std::vector<float>& renderData, const 
 		GL::Disable (GL_DEPTH_TEST);
 	}
 
+	/*
+	 * Ignore near and far planes
+	*/
+
+	GL::Enable (GL_DEPTH_CLAMP);
+
+	GL::Disable (GL_CULL_FACE);
+
 	GL::Enable (GL_BLEND);
 	GL::BlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -185,6 +206,8 @@ void GUIGizmosRenderPass::DrawData (const std::vector<float>& renderData, const 
 	GL::VertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof (float) * 6, (void*)(sizeof(float) * 3));
 
 	GL::DrawElements(GL_LINES, indices.size (), GL_UNSIGNED_INT, 0);
+
+	GL::Disable (GL_DEPTH_CLAMP);
 
 	Pipeline::UnlockShader ();
 

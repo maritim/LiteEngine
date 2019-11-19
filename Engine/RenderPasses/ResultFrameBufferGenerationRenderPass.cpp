@@ -37,6 +37,7 @@ RenderVolumeCollection* ResultFrameBufferGenerationRenderPass::Execute (const Re
 	 * Clear light accumulation buffer
 	*/
 
+	GL::DepthMask (GL_TRUE);
 	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	return rvc->Insert ("ResultFrameBuffer2DVolume", _frameBuffer);

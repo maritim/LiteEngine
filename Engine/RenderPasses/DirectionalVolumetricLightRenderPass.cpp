@@ -81,6 +81,10 @@ void DirectionalVolumetricLightRenderPass::DirectionalLightPass (const RenderSce
 	GL::Viewport (settings.viewport.x, settings.viewport.y,
 		settings.viewport.width, settings.viewport.height);
 
+	GL::Enable (GL_STENCIL_TEST);
+	GL::StencilFunc (GL_EQUAL, 1, 0xFF);
+	GL::StencilOp (GL_KEEP, GL_KEEP, GL_KEEP);
+
 	/*
 	 * Disable depth test
 	*/
@@ -133,6 +137,8 @@ void DirectionalVolumetricLightRenderPass::EndDirectionalLightPass ()
 	*/
 
 	Pipeline::UnlockShader ();
+
+	GL::Disable (GL_STENCIL_TEST);
 }
 
 std::vector<PipelineAttribute> DirectionalVolumetricLightRenderPass::GetCustomAttributes (const Camera* camera,

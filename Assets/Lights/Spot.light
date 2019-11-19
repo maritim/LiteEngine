@@ -5,13 +5,13 @@
 	<Intensity value="1" />
 
 	<Spot>
-		<Range value="7" />
+		<Range value="120" />
 		<Cutoff value="0" />
-		<OuterCutoff value="45" />
+		<OuterCutoff value="30" />
 	</Spot>
 
 	<Shadows casting="true">
 		<Resolution width="512" height="512" />
-		<Bias value="0.5" />
+		<Bias value="0.0001" />
 	</Shadows>
 </Light>

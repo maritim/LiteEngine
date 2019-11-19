@@ -6,6 +6,8 @@
 #include "RenderPasses/DeferredBlitRenderPass.h"
 #include "RenderPasses/ForwardRenderPass.h"
 #include "RenderPasses/GUI/GUIGizmosRenderPass.h"
+#include "RenderPasses/GUI/GUIRenderPass.h"
+#include "RenderPasses/WindowBlitRenderPass.h"
 
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
@@ -23,7 +25,13 @@
 #include "RenderPasses/ReflectiveShadowMapping/RSMIndirectLightRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMBlurRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
+
+#include "RenderPasses/ReflectiveShadowMapping/RSMSpotLightAccumulationRenderPass.h"
+#include "RenderPasses/DeferredSpotLightRenderPass.h"
+#include "RenderPasses/ShadowMap/DeferredSpotLightShadowMapRenderPass.h"
+#include "RenderPasses/SpotLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/IdleRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
@@ -61,6 +69,16 @@ void ReflectiveShadowMappingRenderModule::Init ()
 		.Attach (new RSMBlurRenderPass ())
 		.Attach (new RSMDirectionalLightRenderPass ())
 		.Build ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new SpotLightContainerRenderVolumeCollection ())
+		.Attach (new RSMSpotLightAccumulationRenderPass ())
+		.Attach (new RSMSamplesGenerationRenderPass ())
+		.Attach (new RSMNoiseGenerationRenderPass ())
+		.Attach (new RSMIndirectLightRenderPass ())
+		.Attach (new RSMBlurRenderPass ())
+		.Attach (new DeferredSpotLightRenderPass ())
+		.Attach (new RSMRenderPass ())
+		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
@@ -82,8 +100,10 @@ void ReflectiveShadowMappingRenderModule::Init ()
 			.Build ())
 		.Attach (new HDRRenderPass ())
 		.Attach (new GammaCorrectionRenderPass ())
+		.Attach (new DeferredBlitRenderPass ())
 		.Build ());
-	_renderPasses.push_back (new DeferredBlitRenderPass ());
 	_renderPasses.push_back (new ForwardRenderPass ());
+	// _renderPasses.push_back (new WindowBlitRenderPass());
 	_renderPasses.push_back (new GUIGizmosRenderPass ());
+	// _renderPasses.push_back (new GUIRenderPass ());
 }

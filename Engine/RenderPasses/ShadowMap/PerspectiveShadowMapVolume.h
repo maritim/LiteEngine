@@ -9,6 +9,7 @@ class PerspectiveShadowMapVolume : public ShadowMapVolume
 {
 protected:
 	PerspectiveCamera* _lightCamera;
+	float _shadowBias;
 
 public:
 	PerspectiveShadowMapVolume ();
@@ -16,6 +17,8 @@ public:
 	bool Init (PerspectiveCamera* lightCamera, const glm::ivec2& size);
 
 	void Clear ();
+
+	void SetShadowBias (float shadowBias);
 
 	PerspectiveCamera* GetLightCamera ();
 

@@ -17,8 +17,6 @@ public:
 	RSMBuffer ();
 	
 	bool Init(const glm::ivec2& size);
-
-	void BindForReading ();
 };
 
 #endif

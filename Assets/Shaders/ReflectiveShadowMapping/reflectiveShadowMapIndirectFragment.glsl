@@ -15,17 +15,10 @@ uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
 
-uniform sampler2DShadow rsmShadowMap;
-uniform sampler2D rsmPositionMap;
-uniform sampler2D rsmNormalMap;
-uniform sampler2D rsmFluxMap;
-
-uniform mat4 rsmLightSpaceMatrix;
-
 layout(std140) uniform rsmSamples
 {
 	int rsmSamplesCount;
-	vec2 rsmSample[200];
+	vec2 rsmSample[2000];
 };
 
 uniform sampler2D noiseMap;
@@ -37,6 +30,7 @@ uniform float rsmIntensity;
 uniform int rsmNoiseEnabled;
 
 #include "deferred.glsl"
+#include "ReflectiveShadowMapping/reflectiveShadowMapping.glsl"
 
 float rand(vec2 co){
   return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
@@ -60,10 +54,8 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
 
 	vec3 indirectColor = vec3 (0.0);
 
-	vec4 lightSpacePos = rsmLightSpaceMatrix * vec4 (worldSpacePos, 1.0);
+	vec4 lightSpacePos = lightSpaceMatrix * vec4 (worldSpacePos, 1.0);
 	vec3 rsmProjCoords = lightSpacePos.xyz / lightSpacePos.w;
-
-	rsmProjCoords = rsmProjCoords * 0.5 + 0.5;
 
 	// vec2 texCoord = CalcTexCoordRSM();
 
@@ -73,14 +65,14 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
 
 	vec2 noiseTexcoord = worldSpacePos.xy + worldSpacePos.yz + worldSpacePos.xz;
 
-	vec2 randomVec = normalize (texture (noiseMap, noiseTexcoord).xy);
-	// float r = 2 * 3.14 * rand (noiseTexcoord);
-	// vec2 randomVec = vec2 (cos (r), sin (r));
+	// vec2 randomVec = normalize (texture (noiseMap, noiseTexcoord).xy);
+	float r = 2 * 3.14 * rand (noiseTexcoord);
+	vec2 randomVec = vec2 (cos (r), sin (r));
 	mat2 tangentMatrix = mat2 (randomVec, vec2 (-randomVec.y, randomVec.x));
 
 	// return vec3 (randomVec, 0);
 
-	for (int index = 0; index < rsmSamplesCount; index ++) {
+	for (int index = 10; index < rsmSamplesCount; index ++) {
 
 		vec2 rnd = rsmSample [index].xy;
 
@@ -106,7 +98,7 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
 		indirectColor += result;
 	}
 
-	return indirectColor * rsmIntensity;
+	return clamp (indirectColor * rsmIntensity, 0.0, 1.0);
 }
 
 void main()

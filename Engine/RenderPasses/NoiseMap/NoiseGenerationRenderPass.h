@@ -7,8 +7,6 @@
 
 class ENGINE_API NoiseGenerationRenderPass : public ContainerRenderSubPassI
 {
-	DECLARE_RENDER_PASS(NoiseGenerationRenderPass)
-
 protected:
 	NoiseMapVolume* _noiseMapVolume;
 

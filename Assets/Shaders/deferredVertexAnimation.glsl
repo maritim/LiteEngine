@@ -35,5 +35,7 @@ void main()
 	vec4 localNormal = boneTransform * vec4 (in_normal, 0.0);
 	vert_normal = (normalWorldMatrix * vec3 (localNormal)).xyz;
 
+	vert_normal = normalize (vert_normal);
+
 	vert_texcoord = in_texcoord;
 }

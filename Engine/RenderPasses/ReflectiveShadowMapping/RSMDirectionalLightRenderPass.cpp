@@ -45,15 +45,5 @@ std::vector<PipelineAttribute> RSMDirectionalLightRenderPass::GetCustomAttribute
 {
 	std::vector<PipelineAttribute> attributes;
 
-	PipelineAttribute rsmBias;
-
-	rsmBias.type = PipelineAttribute::AttrType::ATTR_1F;
-
-	rsmBias.name = "rsmBias";
-
-	rsmBias.value.x = settings.rsm_bias;
-
-	attributes.push_back (rsmBias);
-
 	return attributes;
 }

@@ -19,6 +19,16 @@ void SpotLightContainerRenderVolumeCollection::Reset (const RenderScene* renderS
 
 RenderVolumeI* SpotLightContainerRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene, const RenderSettings& settings)
 {
+	while (_spotLightsIterator != renderScene->end<RenderSpotLightObject*> ()) {
+		auto spotLightObject = *_spotLightsIterator;
+
+		if (spotLightObject->IsActive () == true) {
+			break;
+		}
+
+		_spotLightsIterator ++;
+	}
+
 	if (_spotLightsIterator == renderScene->end<RenderSpotLightObject*> ()) {
 		return nullptr;
 	}

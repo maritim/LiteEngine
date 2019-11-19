@@ -20,6 +20,8 @@ protected:
 	std::vector<Camera*> _lightCameras;
 	std::vector<float> _shadowMapZEnd;
 
+	float _shadowBias;
+
 public:
 	CascadedShadowMapDirectionalLightVolume ();
 	~CascadedShadowMapDirectionalLightVolume ();
@@ -29,6 +31,7 @@ public:
 
 	void SetLightCamera (std::size_t cascadedLevel, Camera* lightCamera);
 	void SetCameraLimit (std::size_t cascadedLevel, float zLimit);
+	void SetShadowBias (float shadowBias);
 
 	Camera* GetLightCamera (std::size_t cascadedLevel);
 	float GetCameraLimit (std::size_t cascadedLevel);

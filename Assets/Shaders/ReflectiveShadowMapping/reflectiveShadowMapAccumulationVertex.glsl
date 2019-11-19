@@ -30,5 +30,7 @@ void main()
 	vert_position = vec3 (modelMatrix * vec4 (in_position, 1));
 	vert_normal = normalMatrix * in_normal;
 
+	vert_normal = normalize (vert_normal);
+
 	vert_texcoord = in_texcoord;
 }

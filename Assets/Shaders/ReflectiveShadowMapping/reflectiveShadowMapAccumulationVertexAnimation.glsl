@@ -16,6 +16,8 @@ uniform mat3 normalWorldMatrix;
 uniform mat4 boneTransforms[253];
 
 out vec3 vert_position;
+out vec3 vert_normal;
+out vec2 vert_texcoord;
 
 void main()
 {
@@ -27,4 +29,15 @@ void main()
 	vec4 localPosition = boneTransform * vec4 (in_position, 1);
 
 	gl_Position =  modelViewProjectionMatrix * localPosition;
+
+	/*
+	 * Emit position on the world
+	*/
+
+	vert_position = (modelViewMatrix * localPosition).xyz;
+
+	vec4 localNormal = boneTransform * vec4 (in_normal, 0.0);
+	vert_normal = (normalWorldMatrix * vec3 (localNormal)).xyz;
+
+	vert_texcoord = in_texcoord;
 }

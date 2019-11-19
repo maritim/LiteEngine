@@ -8,6 +8,8 @@ uniform mat4 lightSpaceMatrices[CASCADED_SHADOW_MAP_LEVELS];
 
 uniform float clipZLevels[CASCADED_SHADOW_MAP_LEVELS];
 
+uniform float shadowBias;
+
 /*
  * Shadow Calculation
  * Thanks to: https://learnopengl.com/#!Advanced-Lighting/Shadows/Shadow-Mapping
@@ -15,17 +17,6 @@ uniform float clipZLevels[CASCADED_SHADOW_MAP_LEVELS];
 
 float ShadowCalculation (vec4 lightSpacePos, int cascadedLevel)
 {
-	// perform perspective divide
-	vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
-
-	if(projCoords.z > 1.0)
-		return 0.0;
-
-	// Transform to [0,1] range
-	projCoords = projCoords * 0.5 + 0.5;
-
-	float bias = 0.0000001;
-
 	// Check whether current frag pos is in shadow
 	float shadow = 0.0;
 
@@ -34,8 +25,8 @@ float ShadowCalculation (vec4 lightSpacePos, int cascadedLevel)
 	{
 		for(int y = -1; y <= 1; ++y)
 		{
-			vec3 samplePos = vec3 (projCoords.xy + vec2 (x, y) * texelSize, projCoords.z);
-			shadow += texture (shadowMaps [cascadedLevel], samplePos, bias);
+			vec3 samplePos = vec3 (lightSpacePos.xy + vec2 (x, y) * texelSize, lightSpacePos.z - shadowBias);
+			shadow += texture (shadowMaps [cascadedLevel], samplePos, shadowBias);
 		}    
 	}
 

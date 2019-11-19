@@ -182,17 +182,11 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			_settings->rsm_scale = scale;
 		}
 
-		glm::ivec2 lastRSMResolution = _settings->rsm_resolution;
-		int rsmResolution [2] = { lastRSMResolution.x, lastRSMResolution.y };
-		ImGui::InputInt2 ("Resolution", rsmResolution);
-		_settings->rsm_resolution = glm::ivec2 (rsmResolution [0], rsmResolution [1]);
-
-		std::size_t limit1 = 1, limit2 = 200;
+		std::size_t limit1 = 1, limit2 = 500;
 		ImGui::SliderScalar ("Samples Size", ImGuiDataType_U32, &_settings->rsm_samples, &limit1, &limit2);
 
-		ImGui::SliderFloat ("Shadow Bias", &_settings->rsm_bias, 0.0001, 0.2, "%5f");
-		ImGui::SliderFloat ("Sample Radius", &_settings->rsm_radius, 0.001, 0.2);
-		ImGui::SliderFloat ("Indirect Light Intensity", &_settings->rsm_intensity, 0, 5);
+		ImGui::SliderFloat ("Sample Radius", &_settings->rsm_radius, 0.001, 1.0);
+		ImGui::InputFloat ("Indirect Light Intensity", &_settings->rsm_intensity, 0.1);
 
 		ImGui::Separator();
 

@@ -10,7 +10,8 @@ CascadedShadowMapDirectionalLightVolume::CascadedShadowMapDirectionalLightVolume
 	_shadowMaps (),
 	_shadowMapResolutions (),
 	_lightCameras (),
-	_shadowMapZEnd ()
+	_shadowMapZEnd (),
+	_shadowBias (0.0f)
 {
 
 }
@@ -104,14 +105,19 @@ std::vector<PipelineAttribute> CascadedShadowMapDirectionalLightVolume::GetCusto
 	std::vector<PipelineAttribute> attributes;
 
 	PipelineAttribute cascadesCount;
+	PipelineAttribute shadowBias;
 
 	cascadesCount.name = "cascadesCount";
+	shadowBias.name = "shadowBias";
 
 	cascadesCount.type = PipelineAttribute::AttrType::ATTR_1I;
+	shadowBias.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	cascadesCount.value.x = _cascadedLevels;
+	shadowBias.value.x = _shadowBias;
 
 	attributes.push_back (cascadesCount);
+	attributes.push_back (shadowBias);
 
 	for (std::size_t index = 0; index<_cascadedLevels; index++) {
 
@@ -131,8 +137,9 @@ std::vector<PipelineAttribute> CascadedShadowMapDirectionalLightVolume::GetCusto
 
 		glm::mat4 lightProjection = _lightCameras [index]->GetProjectionMatrix ();
 		glm::mat4 lightView = glm::translate (glm::mat4_cast(_lightCameras [index]->GetRotation ()), _lightCameras [index]->GetPosition () * -1.0f);
+		glm::mat4 screenMatrix = glm::scale (glm::translate (glm::mat4 (1), glm::vec3 (0.5f)), glm::vec3 (0.5f));
 
-		lightSpaceMatrix.matrix = lightProjection * lightView;
+		lightSpaceMatrix.matrix = screenMatrix * lightProjection * lightView;
 
 		clipZLevel.value.x = _shadowMapZEnd [index];
 
@@ -180,6 +187,11 @@ void CascadedShadowMapDirectionalLightVolume::SetCameraLimit (std::size_t cascad
 	*/
 
 	_shadowMapZEnd [cascadedLevel] = zLimit;
+}
+
+void CascadedShadowMapDirectionalLightVolume::SetShadowBias (float shadowBias)
+{
+	_shadowBias = shadowBias;
 }
 
 Camera* CascadedShadowMapDirectionalLightVolume::GetLightCamera (std::size_t cascadedLevel)

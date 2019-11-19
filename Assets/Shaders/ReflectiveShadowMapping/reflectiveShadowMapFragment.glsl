@@ -1,50 +1,21 @@
-#version 330 core
+#version 330
 
-layout(location = 0) out vec4 out_position;
-layout(location = 1) out vec4 out_normal;
-layout(location = 2) out vec4 out_flux;
+layout(location = 0) out vec3 out_color;
 
-uniform vec3 MaterialDiffuse;
-uniform vec3 MaterialSpecular;
+uniform sampler2D indirectMap;
 
-uniform sampler2D DiffuseMap;
-uniform sampler2D SpecularMap;
-uniform sampler2D AlphaMap;
+#include "deferred.glsl"
 
-const vec3 nullInAlphaMap = vec3 (0.0);
-
-in vec3 vert_position;
-in vec3 vert_normal; 
-in vec2 vert_texcoord;
+vec3 CalcIndirectLight (vec3 in_diffuse, vec3 in_indirect)
+{
+	return in_diffuse * in_indirect;
+}
 
 void main()
 {
-	/*
-	 * Get color of diffuse and alpha map
-	*/
+	vec2 texCoord = CalcTexCoord();
+	vec3 in_diffuse = texture2D (gDiffuseMap, texCoord).xyz;
+	vec3 in_indirect = texture2D (indirectMap, texCoord).xyz;
 
-	vec3 diffuseMap = MaterialDiffuse * vec3 (texture2D (DiffuseMap, vert_texcoord.xy));
-	vec3 alphaMap = vec3 (texture2D (AlphaMap, vert_texcoord.xy));
-
-	/*
-	 * Check alpha texture
-	*/
-
-	if (alphaMap == nullInAlphaMap) {
-		discard;
-	}
-
-	/*
-	 * Renormalize normal vector
-	*/ 
-
-	vec3 norm = normalize (vert_normal);
-
-	/*
-	 * Output texel
-	*/
-
-	out_position = vec4 (vert_position, 1.0);
-	out_normal = vec4 (vert_normal, 1);
-	out_flux = vec4 (diffuseMap, 1);
+	out_color = CalcIndirectLight (in_diffuse, in_indirect);
 }

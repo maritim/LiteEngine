@@ -101,6 +101,8 @@ void VolumetricLightRenderPass::EndPointLightPass ()
 	Pipeline::UnlockShader ();
 
 	GL::Disable (GL_DEPTH_CLAMP);
+
+	GL::Disable (GL_STENCIL_TEST);
 }
 
 void VolumetricLightRenderPass::PointLightStencilPass (const RenderScene* renderScene, const Camera* camera,

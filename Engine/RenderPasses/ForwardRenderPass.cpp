@@ -65,13 +65,6 @@ void ForwardRenderPass::ForwardPass (const RenderScene* renderScene)
 	//TODO: Initialize camera projection here
 
 	/*
-	 * Enable depth test
-	*/
-
-	GL::Enable (GL_DEPTH_TEST);
-	GL::DepthMask (GL_TRUE);
-
-	/*
 	* Render scene entities to framebuffer at Forward Rendering Stage
 	*/
 
@@ -97,6 +90,14 @@ void ForwardRenderPass::ForwardPass (const RenderScene* renderScene)
 	std::sort (renderObjects.begin (), renderObjects.end (), cmpForwardPass);
 
 	for (RenderObject* renderObject : renderObjects) {
+
+		/*
+		 * Enable depth test
+		*/
+
+		GL::Enable (GL_DEPTH_TEST);
+		GL::DepthMask (GL_TRUE);
+
 		renderObject->Draw ();
 	}
 }

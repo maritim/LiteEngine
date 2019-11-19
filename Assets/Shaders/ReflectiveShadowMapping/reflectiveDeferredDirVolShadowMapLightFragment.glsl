@@ -19,19 +19,11 @@ uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform float lightIntensity;
 
-uniform sampler2DShadow rsmShadowMap;
-uniform sampler2D rsmPositionMap;
-uniform sampler2D rsmNormalMap;
-uniform sampler2D rsmFluxMap;
-
-uniform mat4 rsmLightSpaceMatrix;
-
-uniform float rsmBias;
-
 uniform sampler2D indirectMap;
 
 #include "deferred.glsl"
 #include "AmbientLight/ambientLight.glsl"
+#include "ReflectiveShadowMapping/reflectiveShadowMapping.glsl"
 
 vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal)
 {
@@ -57,37 +49,11 @@ vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shinine
 	return specularColor;
 }
 
-float CalcDirectionalShadowContribution (vec3 worldSpacePos)
-{
-	vec4 lightSpacePos = rsmLightSpaceMatrix * inverseViewMatrix * vec4 (worldSpacePos, 1.0);
-	vec3 rsmProjCoords = lightSpacePos.xyz / lightSpacePos.w;
-
-	if(rsmProjCoords.z > 1.0)
-		return 0.0;
-
-	rsmProjCoords = rsmProjCoords * 0.5 + 0.5;
-
-	// Check whether current frag pos is in shadow
-	float shadow = 0.0;
-
-	vec2 texelSize = 1.0 / textureSize(rsmShadowMap, 0);
-	for(int x = -1; x <= 1; ++x) {
-		for(int y = -1; y <= 1; ++y) {
-			vec3 samplePos = vec3 (rsmProjCoords.xy + vec2 (x, y) * texelSize, rsmProjCoords.z - rsmBias);
-			shadow += texture (rsmShadowMap, samplePos, 0);
-		}
-	}
-
-	shadow /= 9.0;
-
-	return shadow;
-}
-
 vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess, vec3 in_indirect)
 {
 	vec3 directDiffuseColor = CalcDirectDiffuseLight (in_position, in_normal);
 
-	float shadow = CalcDirectionalShadowContribution (in_position);
+	float shadow = CalcShadowContribution (in_position);
 
 	directDiffuseColor = shadow * directDiffuseColor;
 
@@ -98,7 +64,6 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// Calculate ambient light
 	vec3 ambientColor = in_diffuse * CalcAmbientLight ();
 
-	// return in_indirect;
 	return (directDiffuseColor * in_diffuse
 			+ directSpecularColor * in_specular) * lightIntensity + (in_indirect * in_diffuse) + ambientColor;
 }

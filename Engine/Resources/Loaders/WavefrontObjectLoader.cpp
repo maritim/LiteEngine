@@ -95,13 +95,8 @@ Object* WavefrontObjectLoader::Load(const std::string& filename)
 
 	objFile.close();
 
-	// Really need this parameter?
-	if (indexNormalization) {
-		IndexNormalization (model);
-	}
-
 	model->GenerateMissingNormals ();
-	//model->GenerateSmoothNormals ();
+	model->GenerateSmoothNormals ();
 
 	// major priority TODO: Investigate this
 	Triangulation::ConvexTriangulation (model);
@@ -209,7 +204,6 @@ void WavefrontObjectLoader::ReadFace(std::ifstream& file, Model* model, PolygonG
 		if (line[i] == '-' || isdigit(line[i])) {
 			if (line [i] == '-') {
 				vertexSign = -1;
-				indexNormalization = true;
 				i ++;
 			}
 
@@ -217,7 +211,9 @@ void WavefrontObjectLoader::ReadFace(std::ifstream& file, Model* model, PolygonG
 				vertexPosition = vertexPosition * 10 + line[i]-'0';
 			}
 
-			vertexPosition *= vertexSign;
+			if (vertexSign == -1) {
+				vertexPosition = model->VertexCount () - vertexPosition + 1;
+			}
 		}
 
 		if (line[i] == '/') {
@@ -226,7 +222,6 @@ void WavefrontObjectLoader::ReadFace(std::ifstream& file, Model* model, PolygonG
 
 			if (line [i] == '-') {
 				uvSign = -1;
-				indexNormalization = true;
 				++ i;
 			}
 
@@ -234,14 +229,15 @@ void WavefrontObjectLoader::ReadFace(std::ifstream& file, Model* model, PolygonG
 				vertexTexturePosition = vertexTexturePosition * 10 + line[i] - '0';
 			}
 
-			vertexTexturePosition *= uvSign;
+			if (uvSign == -1) {
+				vertexTexturePosition = model->TexcoordsCount () - vertexTexturePosition + 1;
+			}
 
 			if (line[i] == '/') {
 				i++;
 
 				if (line [i] == '-') {
 					normalSign = -1;
-					indexNormalization = true;
 					++ i;
 				}
 
@@ -249,7 +245,9 @@ void WavefrontObjectLoader::ReadFace(std::ifstream& file, Model* model, PolygonG
 					vertexNormalPosition = vertexNormalPosition * 10 + line[i] - '0';
 				}
 
-				vertexNormalPosition *= normalSign;
+				if (normalSign == -1) {
+					vertexNormalPosition = model->NormalsCount () - vertexNormalPosition + 1;
+				}
 			}
 		}
 
@@ -267,36 +265,4 @@ void WavefrontObjectLoader::ReadFace(std::ifstream& file, Model* model, PolygonG
 	currentPolyGroup->SetMaterial (curMat);
 
 	currentPolyGroup->AddPolygon (face);
-}
-
-// If faces are declared by the absolute positions (-1 = latest position,
-// -2 = position before and go on), This will normalize the positions
-void WavefrontObjectLoader::IndexNormalization (Model* model)
-{
-	for_each_type (ObjectModel*, objModel, *model) {
-		for (PolygonGroup* polyGroup : *objModel) {
-			for (Polygon* polygon : *polyGroup) {
-				for (std::size_t l=0;l<polygon->VertexCount ();l++) {
-					int verPos = polygon->GetVertex (l);
-					if (verPos < 0) {
-						polygon->SetVertex ((int) model->VertexCount () + verPos + 1, l);
-					}
-
-					if (polygon->HaveNormals ()) {
-						int norPos = polygon->GetNormal (l);
-						if (norPos < 0) {
-							polygon->SetNormal ((int) model->NormalsCount () + norPos + 1, l);
-						}
-					}
-
-					if (polygon->HaveUV ()) {
-						int texPos = polygon->GetTexcoord (l);
-						if (texPos < 0) {
-							polygon->SetTexcoord ((int) model->TexcoordsCount () + texPos + 1, l);
-						}
-					}
-				}
-			}
-		}
-	}
 }

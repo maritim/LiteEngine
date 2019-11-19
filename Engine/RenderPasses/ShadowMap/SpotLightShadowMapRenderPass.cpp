@@ -228,6 +228,8 @@ void SpotLightShadowMapRenderPass::UpdateShadowMapVolume (const RenderLightObjec
 
 		InitShadowMapVolume (renderLightObject);
 	}
+
+	_volume->SetShadowBias (shadow.bias);
 }
 
 void SpotLightShadowMapRenderPass::InitShadowMapVolume (const RenderLightObject* renderLightObject)

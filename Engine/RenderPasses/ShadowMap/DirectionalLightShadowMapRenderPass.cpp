@@ -16,9 +16,6 @@
 
 #include "SceneNodes/SceneLayer.h"
 
-#include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/LightStatisticsObject.h"
-
 DirectionalLightShadowMapRenderPass::DirectionalLightShadowMapRenderPass () :
 	_staticShaderName ("STATIC_SHADOW_MAP"),
 	_animationShaderName ("ANIMATION_SHADOW_MAP"),
@@ -106,18 +103,6 @@ void DirectionalLightShadowMapRenderPass::ShadowMapPass (const RenderScene* rend
 
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
-	StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("LightStatisticsObject");
-	LightStatisticsObject* lightStatisticsObject = nullptr;
-
-	if (stat == nullptr) {
-		stat = new LightStatisticsObject ();
-		StatisticsManager::Instance ()->SetStatisticsObject ("LightStatisticsObject", stat);
-	}
-
-	lightStatisticsObject = dynamic_cast<LightStatisticsObject*> (stat);
-
-	lightStatisticsObject->dirLightShadowMaps.clear ();
-
 	for (std::size_t index = 0; index < shadow.cascadesCount; index++) {
 		_volume->BindForShadowMapCatch (index);
 
@@ -125,8 +110,6 @@ void DirectionalLightShadowMapRenderPass::ShadowMapPass (const RenderScene* rend
 
 		SendLightCamera (lightCamera);
 		Render (renderScene, lightCamera);
-
-		lightStatisticsObject->dirLightShadowMaps.push_back (_volume->GetShadowMapVolume (index));
 	}
 }
 
@@ -389,6 +372,8 @@ void DirectionalLightShadowMapRenderPass::UpdateShadowMapVolume (const RenderLig
 
 		InitShadowMapVolume (renderLightObject);
 	}
+
+	_volume->SetShadowBias (shadow.bias);
 }
 
 void DirectionalLightShadowMapRenderPass::InitShadowMapVolume (const RenderLightObject* renderLightObject)

@@ -28,6 +28,34 @@ vec2 CalcTexCoord()
 	return gl_FragCoord.xy / rsmResolution;
 }
 
+float Grayscale (vec3 color)
+{
+	return color.r * 0.3 + color.g * 0.59 + color.b * 0.11;
+}
+
+vec3 CalcMedian (vec2 texCoord)
+{
+	vec3 v[9];
+
+	for (int x = -1; x <= 1; x += 1) {
+		for (int y = -1; y <= 1; y += 1) {
+			v[(x + 1) * 3 + y + 1] = texture2D(indirectMap, texCoord + vec2(float (x), float (y)) / rsmResolution).xyz;
+		}
+	}
+
+	for (int i = 0; i < 9; i++) {
+		for (int j = i+1; j < 9; j++) {
+			if (Grayscale (v [i]) > Grayscale (v [j])) {
+				vec3 aux = v [i];
+				v [i] = v [j];
+				v [j] = aux;
+			}
+		}
+	}
+
+	return v [4];
+}
+
 vec3 CalcBlur (vec2 texCoord)
 {
 	vec3 center = texture2D(indirectMap, texCoord).xyz;
@@ -67,4 +95,5 @@ void main()
 	vec2 texCoord = CalcTexCoord();
 
 	out_color = CalcBlur (texCoord);
+	// out_color = CalcMedian (texCoord);
 }

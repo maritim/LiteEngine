@@ -5,6 +5,8 @@
 
 class ENGINE_API SSAONoiseGenerationRenderPass : public NoiseGenerationRenderPass
 {
+	DECLARE_RENDER_PASS(SSAONoiseGenerationRenderPass)
+
 public:
 	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;

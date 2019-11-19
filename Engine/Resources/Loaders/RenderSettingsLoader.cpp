@@ -151,9 +151,7 @@ void RenderSettingsLoader::ProcessGamma (TiXmlElement* xmlElem, RenderSettings* 
 
 void RenderSettingsLoader::ProcessRSM (TiXmlElement* xmlElem, RenderSettings* settings)
 {
-	std::string resolution = xmlElem->Attribute ("resolution");
 	std::string scale = xmlElem->Attribute ("scale");
-	std::string bias = xmlElem->Attribute ("bias");
 	std::string samples = xmlElem->Attribute ("samples");
 	std::string radius = xmlElem->Attribute ("radius");
 	std::string intensity = xmlElem->Attribute ("intensity");
@@ -161,11 +159,7 @@ void RenderSettingsLoader::ProcessRSM (TiXmlElement* xmlElem, RenderSettings* se
 	std::string noiseSize = xmlElem->Attribute ("noiseSize");
 	std::string blurEnabled = xmlElem->Attribute ("blurEnabled");
 
-	auto vresolution = Extensions::StringExtend::Split (resolution, ",");
-
-	settings->rsm_resolution = glm::ivec2 (std::stoi (vresolution [0]), std::stoi (vresolution [1]));
 	settings->rsm_scale = std::stof (scale);
-	settings->rsm_bias = std::stof (bias);
 	settings->rsm_samples = std::stoi (samples);
 	settings->rsm_radius = std::stof (radius);
 	settings->rsm_intensity = std::stof (intensity);

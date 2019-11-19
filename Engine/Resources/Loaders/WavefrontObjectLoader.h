@@ -27,7 +27,6 @@ private:
 	void ReadFace(std::ifstream& file, Model* model, PolygonGroup* polyGroup, bool& indexNorm, const Resource<Material>& curMat);
 	std::pair<ObjectModel*, PolygonGroup*> ReadObject(std::ifstream& file, Model* model);
 	PolygonGroup* ReadPolygonGroup(std::ifstream& file, ObjectModel* objModel);
-	void IndexNormalization(Model* model);
 };
 
 #endif
