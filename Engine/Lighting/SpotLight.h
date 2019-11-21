@@ -3,7 +3,7 @@
 
 #include "PointLight.h"
 
-class SpotLight : public PointLight
+class ENGINE_API SpotLight : public PointLight
 {
 protected:
 	float _spotCutoff;

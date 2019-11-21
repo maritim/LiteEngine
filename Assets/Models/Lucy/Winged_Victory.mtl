@@ -1,0 +1,16 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 20.08.2010 18:13:43
+
+newmtl Winged_Victory_Stamdard
+	Ns 10.0000
+	Ni 1.3300
+	d 0.1
+	Tf 1.0000 1.0000 1.0000
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 0.5880 0.5880 0.5880
+	Ke 0.0000 0.0000 0.0000
+	map_Kd WV_colormix.jpg
+	map_Ks WV_refl_mix.jpg
+	map_bump WV_NORMALBUMP.jpg

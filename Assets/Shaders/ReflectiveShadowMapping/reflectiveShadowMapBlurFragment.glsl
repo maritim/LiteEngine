@@ -28,66 +28,54 @@ vec2 CalcTexCoord()
 	return gl_FragCoord.xy / rsmResolution;
 }
 
-float Grayscale (vec3 color)
+#define SIGMA 10.0
+#define BSIGMA 0.1
+#define MSIZE 20
+
+float normpdf(in float x, in float sigma)
 {
-	return color.r * 0.3 + color.g * 0.59 + color.b * 0.11;
+	return 0.39894*exp(-0.5*x*x/(sigma*sigma))/sigma;
 }
 
-vec3 CalcMedian (vec2 texCoord)
+float normpdf3(in vec3 v, in float sigma)
 {
-	vec3 v[9];
-
-	for (int x = -1; x <= 1; x += 1) {
-		for (int y = -1; y <= 1; y += 1) {
-			v[(x + 1) * 3 + y + 1] = texture2D(indirectMap, texCoord + vec2(float (x), float (y)) / rsmResolution).xyz;
-		}
-	}
-
-	for (int i = 0; i < 9; i++) {
-		for (int j = i+1; j < 9; j++) {
-			if (Grayscale (v [i]) > Grayscale (v [j])) {
-				vec3 aux = v [i];
-				v [i] = v [j];
-				v [j] = aux;
-			}
-		}
-	}
-
-	return v [4];
+	return 0.39894*exp(-0.5*dot(v,v)/(sigma*sigma))/sigma;
 }
 
 vec3 CalcBlur (vec2 texCoord)
 {
-	vec3 center = texture2D(indirectMap, texCoord).xyz;
-	vec3 color = vec3(0.0);
-	float total = 0.0;
-	for (float x = -4.0; x <= 4.0; x += 1.0) {
-		for (float y = -4.0; y <= 4.0; y += 1.0) {
-			vec3 sample = texture2D(indirectMap, texCoord + vec2(x, y) / rsmResolution).xyz;
-			float weight = 1.0 - abs(dot(sample - center, vec3(0.25)));
-			weight = pow(weight, 1);
-			color += sample * weight;
-			total += weight;
+	vec3 c = texture2D ( indirectMap, texCoord ).rgb;
+		
+	//declare stuff
+	const int kSize = (MSIZE-1)/2;
+	float kernel[MSIZE];
+	vec3 final_colour = vec3(0.0);
+	
+	//create the 1-D kernel
+	float Z = 0.0;
+	for (int j = 0; j <= kSize; ++j)
+	{
+		kernel[kSize+j] = kernel[kSize-j] = normpdf(float(j), SIGMA);
+	}
+	
+	
+	vec3 cc;
+	float factor;
+	float bZ = 1.0/normpdf(0.0, BSIGMA);
+	//read out the texels
+	for (int i=-kSize; i <= kSize; ++i)
+	{
+		for (int j=-kSize; j <= kSize; ++j)
+		{
+			cc = texture2D(indirectMap, vec2(0.0, 0.0) + ( gl_FragCoord.xy + vec2(float(i),float(j)) ) / rsmResolution ).rgb;
+			factor = normpdf3(cc-c, BSIGMA)*bZ*kernel[kSize+j]*kernel[kSize+i];
+			Z += factor;
+			final_colour += factor*cc;
+
 		}
 	}
 
-	return color / total;
-
-	// vec3 color = vec3 (0.0);
-
-	// vec2 texelSize = 1.0 / rsmResolution;
-
-	// for (float x = -1; x <= 1; ++x) {
-	// 	for (float y = -1; y <= 1; ++y) {
-	// 		vec2 offset = vec2 (x, y) * texelSize;
-	// 		// float weight = 1.0 - abs(dot(sample.rgb - center.rgb, vec3(0.25)));
-	// 		color += texture2D (indirectMap, texCoord + offset).xyz;
-	// 	}
-	// }
-
-	// color = color / 9;
-
-	return color;
+	return final_colour/Z;
 }
 
 void main()
@@ -95,5 +83,4 @@ void main()
 	vec2 texCoord = CalcTexCoord();
 
 	out_color = CalcBlur (texCoord);
-	// out_color = CalcMedian (texCoord);
 }

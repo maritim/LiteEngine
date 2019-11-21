@@ -5,6 +5,81 @@
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/RSMStatisticsObject.h"
 
+RSMIndirectLightRenderPass::RSMIndirectLightRenderPass () :
+	_lastPostProcessMapVolume (nullptr)
+{
+
+}
+
+RSMIndirectLightRenderPass::~RSMIndirectLightRenderPass ()
+{
+	delete _lastPostProcessMapVolume;
+}
+
+void RSMIndirectLightRenderPass::Init (const RenderSettings& settings)
+{
+	/*
+	 * Initialize post process render pass
+	*/
+
+	PostProcessRenderPass::Init (settings);
+
+	/*
+	 * Initialize last post process map volume
+	*/
+
+	_lastPostProcessMapVolume = CreatePostProcessVolume ();
+
+	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution (settings);
+
+	if (!_lastPostProcessMapVolume->Init (volumeResolution)) {
+		Console::LogError (std::string () + "Post-process volume cannot be initialized!" +
+			"It is not possible to continue the process. End now!");
+		exit (POST_PROCESS_MAP_VOLUME_NOT_INIT);
+	}
+
+	/*
+	 * Initialize ping-pong buffers
+	*/
+
+	auto rsmIndirectMapVolume = (RSMIndirectLightMapVolume*) _postProcessMapVolume;
+	auto rsmLastIndirectMapVolume = (RSMIndirectLightMapVolume*) _lastPostProcessMapVolume;
+
+	rsmIndirectMapVolume->SetCurrent(true);
+	rsmLastIndirectMapVolume->SetCurrent(false);
+}
+
+RenderVolumeCollection* RSMIndirectLightRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
+{
+	/*
+	 * Execute post process render pass
+	*/
+
+	rvc = PostProcessRenderPass::Execute (renderScene, camera, settings, rvc);
+
+	/*
+	 * Keep current camera view projection matrix
+	*/
+
+	return rvc->Insert ("LastIndirectMap", _lastPostProcessMapVolume);
+}
+
+void RSMIndirectLightRenderPass::Clear ()
+{
+	/*
+	 * Clear last post processing volume
+	*/
+
+	_lastPostProcessMapVolume->Clear ();
+
+	/*
+	 * Clear post process render pass
+	*/
+
+	PostProcessRenderPass::Clear ();
+}
+
 bool RSMIndirectLightRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
@@ -38,6 +113,7 @@ glm::ivec2 RSMIndirectLightRenderPass::GetPostProcessVolumeResolution (const Ren
 
 		rsmStatisticsObject = dynamic_cast<RSMStatisticsObject*> (stat);
 
+		rsmStatisticsObject->rsmLastIndirectMapVolume = _lastPostProcessMapVolume;
 		rsmStatisticsObject->rsmIndirectMapVolume = _postProcessMapVolume;
 	}
 

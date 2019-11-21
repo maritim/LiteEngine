@@ -13,7 +13,7 @@
 
 	<Gamma enabled="false" />
 
-	<RSM scale="0.5" samples="400" radius="0.12" intensity="1" noiseEnabled="true" noiseSize="4" blurEnabled="true" />
+	<RSM scale="0.5" samples="400" radius="0.12" intensity="1" noiseEnabled="true" temporalFilterEnabled="true" blurEnabled="true" />
 	<VCT voxelsSize="512" continuousVoxelization="false" bordering="false"
 		mipmapLevels="6" indirectIntensity="1" refractiveIndirectIntensity="1" diffuseConeDistance="0.3"
 		specularConeDistance="0.6" refractiveConeRatio="0.1" refractiveConeDistance="0.6"

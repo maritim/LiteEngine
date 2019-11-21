@@ -3,7 +3,7 @@
 
 #include "VolumetricLight.h"
 
-class PointLight : public VolumetricLight
+class ENGINE_API PointLight : public VolumetricLight
 {
 protected:
 	float _range;

@@ -21,9 +21,11 @@
 
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMSamplesGenerationRenderPass.h"
-#include "RenderPasses/ReflectiveShadowMapping/RSMNoiseGenerationRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMIndirectLightRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMTemporalFilterRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMMedianFilterRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMBlurRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMIndirectSwapRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
@@ -64,18 +66,22 @@ void ReflectiveShadowMappingRenderModule::Init ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 		.Attach (new RSMDirectionalLightAccumulationRenderPass ())
 		.Attach (new RSMSamplesGenerationRenderPass ())
-		.Attach (new RSMNoiseGenerationRenderPass ())
 		.Attach (new RSMIndirectLightRenderPass ())
+		.Attach (new RSMTemporalFilterRenderPass ())
+		.Attach (new RSMMedianFilterRenderPass ())
 		.Attach (new RSMBlurRenderPass ())
+		.Attach (new RSMIndirectSwapRenderPass ())
 		.Attach (new RSMDirectionalLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new SpotLightContainerRenderVolumeCollection ())
 		.Attach (new RSMSpotLightAccumulationRenderPass ())
 		.Attach (new RSMSamplesGenerationRenderPass ())
-		.Attach (new RSMNoiseGenerationRenderPass ())
 		.Attach (new RSMIndirectLightRenderPass ())
+		.Attach (new RSMTemporalFilterRenderPass ())
+		.Attach (new RSMMedianFilterRenderPass ())
 		.Attach (new RSMBlurRenderPass ())
+		.Attach (new RSMIndirectSwapRenderPass ())
 		.Attach (new DeferredSpotLightRenderPass ())
 		.Attach (new RSMRenderPass ())
 		.Build ());
@@ -103,7 +109,7 @@ void ReflectiveShadowMappingRenderModule::Init ()
 		.Attach (new DeferredBlitRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new ForwardRenderPass ());
-	// _renderPasses.push_back (new WindowBlitRenderPass());
+	_renderPasses.push_back (new WindowBlitRenderPass());
 	_renderPasses.push_back (new GUIGizmosRenderPass ());
-	// _renderPasses.push_back (new GUIRenderPass ());
+	_renderPasses.push_back (new GUIRenderPass ());
 }

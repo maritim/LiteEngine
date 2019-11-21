@@ -48,24 +48,19 @@
 		</Transform>
 	</GameObject>
 
-	<Light InstanceID="41" name="Sun" path="Assets/Lights/PrototypeSceneSun.light" isActive="false">
+	<Light InstanceID="41" name="Sun" path="Assets/Lights/Directional.light" isActive="true">
+		<Transform>
+			<Rotation x="-80" y="0" z="0" />
+		</Transform>
+	</Light>
+	<Light InstanceID="43" name="LightBulb" path="Assets/Lights/Point.light" isActive="true">
 		<Transform>
 			<Position x="1" y="1" z="1" />
 		</Transform>
 	</Light>
-	<Light InstanceID="40" name="ShadowsSun" path="Assets/Lights/ShadowsSun.light" isActive="true">
-		<Transform>
-			<Position x="0.5" y="1" z="1" />
-		</Transform>
-	</Light>
-	<Light InstanceID="43" name="LightBulb" path="Assets/Lights/PrototypeScenePoint.light" isActive="false">
-		<Transform>
-			<Position x="-1" y="-1" z="-1" />
-		</Transform>
-	</Light>
 	<Light InstanceID="43" name="AmbientLight" path="Assets/Lights/Ambient.light" isActive="true" />
 
-	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" isActive="false" >
+<!-- 	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" isActive="false" >
 		<Transform>
 			<Position x=-10 z=-0.5 />
 			<Rotation />
@@ -107,5 +102,5 @@
 			<Rotation />
 			<Scale />
 		</Transform>
-	</ParticleSystem>
+	</ParticleSystem> -->
 </Scene>

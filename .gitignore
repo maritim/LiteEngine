@@ -62,3 +62,6 @@ TODOS
 /x86/
 /x64/
 /.vs/
+
+# Don't want to ignore .objs files in Assets
+!Assets/*.obj

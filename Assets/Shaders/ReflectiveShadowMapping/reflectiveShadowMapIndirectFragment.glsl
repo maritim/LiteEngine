@@ -21,9 +21,6 @@ layout(std140) uniform rsmSamples
 	vec2 rsmSample[2000];
 };
 
-uniform sampler2D noiseMap;
-uniform vec2 noiseSize;
-
 uniform vec2 rsmResolution;
 uniform float rsmRadius;
 uniform float rsmIntensity;
@@ -59,13 +56,8 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
 
 	// vec2 texCoord = CalcTexCoordRSM();
 
-	// vec2 noiseScale = screenSize / noiseSize;
-
-	// vec3 randomVec = texture (noiseMap, texCoord * noiseScale).xyz;
-
 	vec2 noiseTexcoord = worldSpacePos.xy + worldSpacePos.yz + worldSpacePos.xz;
 
-	// vec2 randomVec = normalize (texture (noiseMap, noiseTexcoord).xy);
 	float r = 2 * 3.14 * rand (noiseTexcoord);
 	vec2 randomVec = vec2 (cos (r), sin (r));
 	mat2 tangentMatrix = mat2 (randomVec, vec2 (-randomVec.y, randomVec.x));

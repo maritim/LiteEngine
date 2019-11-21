@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Scene name="VXGI Test" >
+	<!-- <Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" /> -->
+
+	<NormalMapGameObject InstanceID="0" name="Lucy" meshpath="Assets/Models/Lucy/Winged_Victory.obj" isActive="true" >
+		<Transform>
+			<Position />
+			<Rotation y="30" />
+			<Scale x ="0.06" y="0.06" z="0.06"/>
+		</Transform>
+		<Components>
+			<Component name="FlyCameraController" />
+			<Component name="StatsView" />
+		</Components>
+	</NormalMapGameObject>
+
+	<GameObject InstanceID="0" name="Wall" meshpath="Assets/Models/CornellBox/CornellBox_Empty_3sides.obj" isActive="true" >
+		<Transform>
+			<Position />
+			<Rotation />
+			<Scale x="10" y="10" z="10" />
+		</Transform>
+	</GameObject>
+
+	<Light InstanceID="41" name="Directional" path="Assets/Lights/Directional.light" isActive="false">
+		<Transform>
+			<Rotation x="-45" y="45" z="0" />
+		</Transform>
+	</Light>
+	<Light InstanceID="40" name="Spot" path="Assets/Lights/Spot.light" isActive="true">
+		<Transform>
+			<Position x="15" y="33" z="12" />
+			<Rotation x="-45" y="45" z="0" />
+		</Transform>
+	</Light>
+
+	<Light InstanceID="43" name="AmbientLight" path="Assets/Lights/Ambient.light" isActive="false" />
+</Scene>

@@ -190,17 +190,17 @@ void GenericObjectModelLoader::ProcessMaterial (PolygonGroup* polyGroup, aiMesh*
 	aiGetMaterialColor (assimpMaterial, AI_MATKEY_COLOR_SPECULAR, &specCol);
 	material->specularColor = glm::vec3 (specCol.r, specCol.g, specCol.b);
 
-	float shininess;
-	aiGetMaterialFloat (assimpMaterial, AI_MATKEY_SHININESS, &shininess);
-	material->shininess = shininess;
+	//float shininess = 0.0f;
+	//aiGetMaterialFloat (assimpMaterial, AI_MATKEY_SHININESS, &shininess);
+	//material->shininess = shininess;
 
-	float transparency;
-	aiGetMaterialFloat (assimpMaterial, AI_MATKEY_OPACITY, &transparency);
-	material->transparency = 1.0 - transparency;
+	//float transparency = 0.0f;
+	//aiGetMaterialFloat (assimpMaterial, AI_MATKEY_OPACITY, &transparency);
+	//material->transparency = 1.0 - transparency;
 
-	float refractiveIndex;
-	aiGetMaterialFloat (assimpMaterial, AI_MATKEY_REFRACTI, &refractiveIndex);
-	material->refractiveIndex = refractiveIndex;
+	//float refractiveIndex = 0.0f;
+	//aiGetMaterialFloat (assimpMaterial, AI_MATKEY_REFRACTI, &refractiveIndex);
+	//material->refractiveIndex = refractiveIndex;
 
 	polyGroup->SetMaterial (Resource<Material> (material, material->name));
 }

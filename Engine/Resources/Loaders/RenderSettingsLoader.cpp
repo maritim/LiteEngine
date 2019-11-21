@@ -156,7 +156,7 @@ void RenderSettingsLoader::ProcessRSM (TiXmlElement* xmlElem, RenderSettings* se
 	std::string radius = xmlElem->Attribute ("radius");
 	std::string intensity = xmlElem->Attribute ("intensity");
 	std::string noiseEnabled = xmlElem->Attribute ("noiseEnabled");
-	std::string noiseSize = xmlElem->Attribute ("noiseSize");
+	std::string temporalFilterEnabled = xmlElem->Attribute ("temporalFilterEnabled");
 	std::string blurEnabled = xmlElem->Attribute ("blurEnabled");
 
 	settings->rsm_scale = std::stof (scale);
@@ -164,7 +164,7 @@ void RenderSettingsLoader::ProcessRSM (TiXmlElement* xmlElem, RenderSettings* se
 	settings->rsm_radius = std::stof (radius);
 	settings->rsm_intensity = std::stof (intensity);
 	settings->rsm_noise_enabled = Extensions::StringExtend::ToBool (noiseEnabled);
-	settings->rsm_noise_size = std::stoi (noiseSize);
+	settings->rsm_temporal_filter_enabled = Extensions::StringExtend::ToBool (noiseEnabled);
 	settings->rsm_blur_enabled = Extensions::StringExtend::ToBool (blurEnabled);
 }
 

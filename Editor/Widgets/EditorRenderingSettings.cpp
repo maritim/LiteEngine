@@ -191,10 +191,10 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 		ImGui::Separator();
 
 		ImGui::Checkbox ("Noise Enabled", &_settings->rsm_noise_enabled);
-		ImGui::InputScalar ("Noise Size", ImGuiDataType_U32, &_settings->rsm_noise_size);
 
 		ImGui::Separator();
 
+		ImGui::Checkbox ("Temporal Filter Enabled", &_settings->rsm_temporal_filter_enabled);
 		ImGui::Checkbox ("Blur Enabled", &_settings->rsm_blur_enabled);
 
 		ImGui::Separator();

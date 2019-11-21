@@ -62,7 +62,7 @@ struct RenderSettings : public Object
 	float rsm_radius;
 	float rsm_intensity;
 	bool rsm_noise_enabled;
-	std::size_t rsm_noise_size;
+	bool rsm_temporal_filter_enabled;
 	bool rsm_blur_enabled;
 
 	std::size_t vct_voxels_size;
