@@ -44,6 +44,8 @@ struct RenderSettings : public Object
 	std::size_t ssr_stride;
 	float ssr_intensity;
 
+	bool taa_enabled;
+
 	bool bloom_enabled;
 	float bloom_scale;
 	float bloom_threshold;

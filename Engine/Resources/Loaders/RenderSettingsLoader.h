@@ -15,6 +15,7 @@ protected:
 	void ProcessRenderMode (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessSSAO (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessSSR (TiXmlElement* xmlElem, RenderSettings* settings);
+	void ProcessTAA (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessBloom (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessHDR (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessLUT (TiXmlElement* xmlElem, RenderSettings* settings);

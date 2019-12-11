@@ -19,6 +19,16 @@ void PointLightContainerRenderVolumeCollection::Reset (const RenderScene* render
 
 RenderVolumeI* PointLightContainerRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene, const RenderSettings& settings)
 {
+	while (_pointLightsIterator != renderScene->end<RenderPointLightObject*> ()) {
+		auto pointLightObject = *_pointLightsIterator;
+
+		if (pointLightObject->IsActive () == true) {
+			break;
+		}
+
+		_pointLightsIterator ++;
+	}
+
 	if (_pointLightsIterator == renderScene->end<RenderPointLightObject*> ()) {
 		return nullptr;
 	}

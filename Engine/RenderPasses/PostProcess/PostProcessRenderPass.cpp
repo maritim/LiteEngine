@@ -1,5 +1,7 @@
 #include "PostProcessRenderPass.h"
 
+#include "RenderPasses/GBuffer.h"
+
 #include "Renderer/Pipeline.h"
 #include "Managers/ShaderManager.h"
 
@@ -131,7 +133,7 @@ void PostProcessRenderPass::PostProcessPass (const RenderScene* renderScene, con
 	 * Update matrices
 	*/
 
-	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
+	Pipeline::CreateProjection (((GBuffer*) rvc->GetRenderVolume ("GBuffer"))->GetProjectionMatrix ());
 	Pipeline::SendCamera (camera);
 	Pipeline::SetObjectTransform (Transform::Default ());
 

@@ -32,6 +32,8 @@
 #include "RenderPasses/IdleRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRAccumulationRenderPass.h"
+#include "RenderPasses/TemporalAntialiasing/TAARenderPass.h"
+#include "RenderPasses/TemporalAntialiasing/TAASwapRenderPass.h"
 #include "RenderPasses/Bloom/BrightExtractionRenderPass.h"
 #include "RenderPasses/Bloom/BloomHorizontalBlurRenderPass.h"
 #include "RenderPasses/Bloom/BloomVerticalBlurRenderPass.h"
@@ -56,6 +58,11 @@ void ScreenSpaceDirectionalOcclusionRenderModule::Init ()
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
 		.Attach (new IdleRenderPass ())
+		.Attach (ContainerRenderPass::Builder ()
+			.Volume (new IterateOverRenderVolumeCollection (1))
+			.Attach	(new TAARenderPass ())
+			.Attach (new TAASwapRenderPass ())
+			.Build ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new BrightExtractionRenderPass ())

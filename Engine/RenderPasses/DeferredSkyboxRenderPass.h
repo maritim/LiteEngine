@@ -19,7 +19,8 @@ public:
 	void Clear ();
 protected:
 	void StartSkyboxPass (RenderVolumeCollection* rvc);
-	void SkyboxPass (const RenderScene* renderScene, const Camera* camera, const RenderSettings& settings);
+	void SkyboxPass (const RenderScene* renderScene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 };
 
 #endif

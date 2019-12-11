@@ -1,5 +1,7 @@
 #include "VolumetricLightRenderPass.h"
 
+#include "RenderPasses/GBuffer.h"
+
 #include "Renderer/Pipeline.h"
 
 #include "Managers/ShaderManager.h"
@@ -163,7 +165,7 @@ void VolumetricLightRenderPass::PointLightStencilPass (const RenderScene* render
 	 * Send camera to pipeline
 	*/
 
-	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
+	Pipeline::CreateProjection (((GBuffer*) rvc->GetRenderVolume ("GBuffer"))->GetProjectionMatrix ());
 	Pipeline::SendCamera (camera);
 
 	/*
@@ -258,7 +260,7 @@ void VolumetricLightRenderPass::PointLightDrawPass (const RenderScene* renderSce
 	 * Send camera to pipeline
 	*/
 
-	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
+	Pipeline::CreateProjection (((GBuffer*) rvc->GetRenderVolume ("GBuffer"))->GetProjectionMatrix ());
 	Pipeline::SendCamera (camera);
 
 	/*

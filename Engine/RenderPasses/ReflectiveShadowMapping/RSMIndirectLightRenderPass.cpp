@@ -30,13 +30,7 @@ void RSMIndirectLightRenderPass::Init (const RenderSettings& settings)
 
 	_lastPostProcessMapVolume = CreatePostProcessVolume ();
 
-	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution (settings);
-
-	if (!_lastPostProcessMapVolume->Init (volumeResolution)) {
-		Console::LogError (std::string () + "Post-process volume cannot be initialized!" +
-			"It is not possible to continue the process. End now!");
-		exit (POST_PROCESS_MAP_VOLUME_NOT_INIT);
-	}
+	InitRSMIndirectMapVolume (settings);
 
 	/*
 	 * Initialize ping-pong buffers
@@ -52,6 +46,12 @@ void RSMIndirectLightRenderPass::Init (const RenderSettings& settings)
 RenderVolumeCollection* RSMIndirectLightRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
+	/*
+	 * Update temporal anti-aliasing map volume
+	*/
+
+	UpdateRSMIndirectMapVolume (settings);
+
 	/*
 	 * Execute post process render pass
 	*/
@@ -168,4 +168,41 @@ std::vector<PipelineAttribute> RSMIndirectLightRenderPass::GetCustomAttributes (
 	attributes.push_back (rsmNoiseEnabled);
 
 	return attributes;
+}
+
+void RSMIndirectLightRenderPass::UpdateRSMIndirectMapVolume (const RenderSettings& settings)
+{
+	glm::ivec2 framebufferSize = GetPostProcessVolumeResolution (settings);
+
+	glm::ivec2 rsmIndirectMapSize = _lastPostProcessMapVolume->GetSize ();
+
+	if (rsmIndirectMapSize != framebufferSize) {
+
+		/*
+		 * Clear temporal anti-aliasing map volume
+		*/
+
+		_lastPostProcessMapVolume->Clear ();
+
+		/*
+		 * Initialize temporal anti-aliasing map volume
+		*/
+
+		InitRSMIndirectMapVolume (settings);
+	}
+}
+
+void RSMIndirectLightRenderPass::InitRSMIndirectMapVolume (const RenderSettings& settings)
+{
+	/*
+	 * Initialize temporal anti-aliasing map volume
+	*/
+
+	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution (settings);
+
+	if (!_lastPostProcessMapVolume->Init (volumeResolution)) {
+		Console::LogError (std::string () + "Post-process volume cannot be initialized!" +
+			"It is not possible to continue the process. End now!");
+		exit (POST_PROCESS_MAP_VOLUME_NOT_INIT);
+	}
 }

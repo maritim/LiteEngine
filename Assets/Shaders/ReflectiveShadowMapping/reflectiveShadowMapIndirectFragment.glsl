@@ -64,7 +64,7 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
 
 	// return vec3 (randomVec, 0);
 
-	for (int index = 10; index < rsmSamplesCount; index ++) {
+	for (int index = 0; index < rsmSamplesCount; index ++) {
 
 		vec2 rnd = rsmSample [index].xy;
 

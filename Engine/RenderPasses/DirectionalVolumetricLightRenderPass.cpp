@@ -1,5 +1,7 @@
 #include "DirectionalVolumetricLightRenderPass.h"
 
+#include "RenderPasses/GBuffer.h"
+
 #include "Renderer/Pipeline.h"
 
 DirectionalVolumetricLightRenderPass::~DirectionalVolumetricLightRenderPass ()
@@ -108,7 +110,7 @@ void DirectionalVolumetricLightRenderPass::DirectionalLightPass (const RenderSce
 	 * Send camera to pipeline
 	*/
 
-	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
+	Pipeline::CreateProjection (((GBuffer*) rvc->GetRenderVolume ("GBuffer"))->GetProjectionMatrix ());
 	Pipeline::SendCamera (camera);
 
 	/*

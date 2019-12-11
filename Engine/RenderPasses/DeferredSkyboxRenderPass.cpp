@@ -1,5 +1,7 @@
 #include "DeferredSkyboxRenderPass.h"
 
+#include "RenderPasses/GBuffer.h"
+
 #include "Renderer/Pipeline.h"
 
 #include "Wrappers/OpenGL/GL.h"
@@ -27,7 +29,7 @@ RenderVolumeCollection* DeferredSkyboxRenderPass::Execute (const RenderScene* re
 	 * Render skybox
 	*/
 
-	SkyboxPass (renderScene, camera, settings);
+	SkyboxPass (renderScene, camera, settings, rvc);
 
 	return rvc;
 }
@@ -60,7 +62,8 @@ void DeferredSkyboxRenderPass::StartSkyboxPass (RenderVolumeCollection* rvc)
 	resultFrameBuffer->BindForWriting ();
 }
 
-void DeferredSkyboxRenderPass::SkyboxPass (const RenderScene* renderScene, const Camera* camera, const RenderSettings& settings)
+void DeferredSkyboxRenderPass::SkyboxPass (const RenderScene* renderScene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
 	 * Set viewport
@@ -80,7 +83,7 @@ void DeferredSkyboxRenderPass::SkyboxPass (const RenderScene* renderScene, const
 
 	GL::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
+	Pipeline::CreateProjection (((GBuffer*) rvc->GetRenderVolume ("GBuffer"))->GetProjectionMatrix ());
 	Pipeline::SendCamera (camera);
 
 	/*

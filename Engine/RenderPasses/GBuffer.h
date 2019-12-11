@@ -19,11 +19,19 @@ public:
     };
 protected:
     unsigned int _depthTextureView;
+    glm::mat4 _projectionMatrix;
+    glm::vec2 _frustumJitter;
 
 public:
     GBuffer();
 
     bool Init (const glm::ivec2& size);
+
+    void SetProjectionMatrix (const glm::mat4& projectionMatrix);
+    void SetFrustumJitter (const glm::vec2& frustumJitter);
+
+    const glm::mat4& GetProjectionMatrix () const;
+    const glm::vec2& GetFrustumJitter () const;
 
     std::vector<PipelineAttribute> GetCustomAttributes () const;
 }; 

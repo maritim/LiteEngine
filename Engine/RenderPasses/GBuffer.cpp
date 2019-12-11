@@ -4,7 +4,9 @@
 
 GBuffer::GBuffer () :
 	MultipleRenderTargetsVolume (GBUFFER_NUM_TEXTURES),
-	_depthTextureView (0)
+	_depthTextureView (0),
+	_projectionMatrix (1.0f),
+	_frustumJitter (0.0f)
 {
 
 }
@@ -20,6 +22,26 @@ bool GBuffer::Init (const glm::ivec2& size)
 		GL_DEPTH24_STENCIL8, 0, 1, 0, 1);
 
 	return true;
+}
+
+void GBuffer::SetProjectionMatrix (const glm::mat4& projectionMatrix)
+{
+	_projectionMatrix = projectionMatrix;
+}
+
+void GBuffer::SetFrustumJitter (const glm::vec2& frustumJitter)
+{
+	_frustumJitter = frustumJitter;
+}
+
+const glm::mat4& GBuffer::GetProjectionMatrix () const
+{
+	return _projectionMatrix;
+}
+
+const glm::vec2& GBuffer::GetFrustumJitter () const
+{
+	return _frustumJitter;
 }
 
 std::vector<PipelineAttribute> GBuffer::GetCustomAttributes () const

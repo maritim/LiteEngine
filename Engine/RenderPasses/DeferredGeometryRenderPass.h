@@ -7,6 +7,8 @@
 
 #include "GBuffer.h"
 
+#include "Utils/Sequences/HaltonGenerator.h"
+
 class ENGINE_API DeferredGeometryRenderPass : public ContainerRenderSubPassI
 {
 	DECLARE_RENDER_PASS(DeferredGeometryRenderPass)
@@ -17,6 +19,7 @@ protected:
 	std::string _lightMapShaderName;
 	std::string _animationShaderName;
 	GBuffer* _frameBuffer;
+	HaltonGenerator _haltonGenerator;
 
 public:
 	DeferredGeometryRenderPass ();
@@ -30,7 +33,7 @@ public:
 
 	void Clear ();
 protected:
-	void UpdateCamera (const Camera* camera);
+	void UpdateCamera (const Camera* camera, const RenderSettings& settings);
 
 	void PrepareDrawing ();
 	void GeometryPass (const RenderScene* renderScene, const Camera* camera, const RenderSettings& settings);

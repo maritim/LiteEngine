@@ -25,7 +25,8 @@ DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
 	_normalMapShaderName ("NORMAL_MAP_DEFERRED_GEOMETRY"),
 	_lightMapShaderName ("LIGHT_MAP_DEFERRED_GEOMETRY"),
 	_animationShaderName ("ANIMATION_DEFERRED_GEOMETRY"),
-	_frameBuffer (new GBuffer ())
+	_frameBuffer (new GBuffer ()),
+	_haltonGenerator (2, 3)
 {
 
 }
@@ -93,7 +94,7 @@ RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const RenderScene* 
 	* Send Camera to Pipeline
 	*/
 
-	UpdateCamera (camera);
+	UpdateCamera (camera, settings);
 
 	/*
 	* Deferred Rendering: Prepare for rendering
@@ -306,10 +307,30 @@ void DeferredGeometryRenderPass::LockShader (int sceneLayers)
 * pipeline's job
 */
 
-void DeferredGeometryRenderPass::UpdateCamera (const Camera* camera)
+void DeferredGeometryRenderPass::UpdateCamera (const Camera* camera, const RenderSettings& settings)
 {
-	// Create Projection
-	Pipeline::CreateProjection (camera);
+	if (settings.taa_enabled == true) {
+		glm::vec2 jitter = _haltonGenerator.Next () * 2.0f - 1.0f;
+
+		jitter /= glm::vec2 (settings.viewport.width, settings.viewport.height);
+
+		_frameBuffer->SetFrustumJitter (jitter);
+
+		glm::mat4 projectionMatrix = camera->GetProjectionMatrix ();
+		glm::mat4 jitteringMatrix = glm::translate (glm::mat4 (1.0f), glm::vec3 (jitter, 0.0f));
+		projectionMatrix = jitteringMatrix * projectionMatrix;
+
+		_frameBuffer->SetProjectionMatrix (projectionMatrix);
+	}
+
+	if (settings.taa_enabled == false) {
+		_frameBuffer->SetFrustumJitter (glm::vec2 (0.0f));
+
+		_frameBuffer->SetProjectionMatrix (camera->GetProjectionMatrix ());
+	}
+
+	// Create projection matrix
+	Pipeline::CreateProjection (_frameBuffer->GetProjectionMatrix ());
 
 	// Create View Matrix
 	Pipeline::SendCamera (camera);

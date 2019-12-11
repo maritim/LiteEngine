@@ -34,6 +34,9 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 		else if (name == "SSR") {
 			ProcessSSR (content, settings);
 		}
+		else if (name == "TAA") {
+			ProcessTAA (content, settings);
+		}
 		else if (name == "Bloom") {
 			ProcessBloom (content, settings);
 		}
@@ -109,6 +112,13 @@ void RenderSettingsLoader::ProcessSSR (TiXmlElement* xmlElem, RenderSettings* se
 	settings->ssr_thickness = std::stof (thickness);
 	settings->ssr_stride = std::stoul (stride);
 	settings->ssr_intensity = std::stof (intensity);
+}
+
+void RenderSettingsLoader::ProcessTAA (TiXmlElement* xmlElem, RenderSettings* settings)
+{
+	std::string enabled = xmlElem->Attribute ("enabled");
+
+	settings->taa_enabled = Extensions::StringExtend::ToBool (enabled);
 }
 
 void RenderSettingsLoader::ProcessBloom (TiXmlElement* xmlElem, RenderSettings* settings)

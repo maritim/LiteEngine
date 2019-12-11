@@ -6,6 +6,8 @@
 	<SSAO enabled="true" scale="0.5" samples="32" noiseSize="4" radius="0.2" bias="0.025" blurEnabled="true" />
 	<SSR enabled="false" scale="0.5" iterations="1000" roughness="0.035" thickness="0.1" stride="2" intensity="5" />
 
+	<TAA enabled="true" />
+
 	<Bloom enabled="false" scale="0.5" threshold="0.5" intensity="0.4" />
 
 	<HDR enabled="false" exposure="2" />

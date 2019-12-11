@@ -429,6 +429,13 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			ImGui::TreePop();
 		}
 
+		if (ImGui::TreeNode ("Temporal Anti-aliasing")) {
+
+			ImGui::Checkbox ("Enabled", &_settings->taa_enabled);
+
+			ImGui::TreePop();
+		}
+
 		if (ImGui::TreeNode ("Bloom")) {
 
 			ImGui::Checkbox ("Enabled", &_settings->bloom_enabled);
