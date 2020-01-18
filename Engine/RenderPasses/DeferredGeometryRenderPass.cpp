@@ -310,7 +310,7 @@ void DeferredGeometryRenderPass::LockShader (int sceneLayers)
 void DeferredGeometryRenderPass::UpdateCamera (const Camera* camera, const RenderSettings& settings)
 {
 	if (settings.taa_enabled == true) {
-		glm::vec2 jitter = _haltonGenerator.Next () * 2.0f - 1.0f;
+		glm::vec2 jitter = _haltonGenerator.Next () - 0.5f;
 
 		jitter /= glm::vec2 (settings.viewport.width, settings.viewport.height);
 
