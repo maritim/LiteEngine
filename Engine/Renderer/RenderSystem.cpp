@@ -8,6 +8,7 @@
 #include "Texture/CubeMap.h"
 
 #include "Renderer/RenderViews/CubeMapView.h"
+#include "RenderViews/TextureLUTView.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
@@ -533,6 +534,23 @@ Resource<TextureView> RenderSystem::LoadCubeMap (const Resource<Texture>& textur
 	cubeMapView->SetGPUIndex (LoadCubeMapGPU (texture));
 
 	return Resource<TextureView> (cubeMapView, texture->GetName ());
+}
+
+Resource<TextureView> RenderSystem::LoadTextureLUT (const Resource<Texture>& texture)
+{
+	if (Resource<TextureView>::GetResource (texture->GetName ()) != nullptr) {
+		return Resource<TextureView>::GetResource (texture->GetName ());
+	}
+
+	TextureLUTView* lutTextureView = new TextureLUTView ();
+
+	/*
+	 * Load texture in GPU
+	*/
+
+	lutTextureView->SetGPUIndex (LoadTextureLUTGPU (texture));
+
+	return Resource<TextureView> (lutTextureView, texture->GetName ());
 }
 
 // Resource<ShaderView> RenderSystem::LoadShader (const Resource<ShaderContent>& shaderContent)
@@ -1066,6 +1084,40 @@ unsigned int RenderSystem::LoadCubeMapGPU (const Resource<Texture>& texture)
 		GL::TexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);      //we repeat the pixels in the edge of the texture, it will hide that 1px wide line at the edge of the cube, which you have seen in the video
 		GL::TexParameteri(GL_TEXTURE_CUBE_MAP,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);      //we do it for vertically and horizontally (previous line)		
 	}
+
+	return gpuIndex;
+}
+
+unsigned int RenderSystem::LoadTextureLUTGPU (const Resource<Texture>& texture)
+{
+	unsigned int gpuIndex = 0;
+
+	Size size (texture->GetSize ());
+
+	GL::GenTextures(1, &gpuIndex);
+	GL::BindTexture(GL_TEXTURE_3D, gpuIndex);
+
+	/*
+	 * Texture properties
+	*/
+
+	GL::TexParameteri(GL_TEXTURE_3D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	GL::TexParameteri(GL_TEXTURE_3D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	GL::TexParameteri(GL_TEXTURE_3D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+	GL::TexParameteri(GL_TEXTURE_3D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+	GL::TexParameteri(GL_TEXTURE_3D,GL_TEXTURE_WRAP_R,GL_CLAMP_TO_EDGE);
+
+	GL::TexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, size.height, size.height, size.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture->GetPixels ());
+
+	/*
+	 * Unbind current texture index
+	*/
+
+	GL::BindTexture (GL_TEXTURE_3D, 0);
+
+	/*
+	 * Update texture
+	*/
 
 	return gpuIndex;
 }

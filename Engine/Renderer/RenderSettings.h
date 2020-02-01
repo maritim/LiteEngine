@@ -56,6 +56,7 @@ struct RenderSettings : public Object
 
 	bool lut_enabled;
 	std::string lut_texture_path;
+	float lut_intensity;
 
 	bool gamma_enabled;
 

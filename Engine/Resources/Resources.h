@@ -17,7 +17,6 @@
 #include "Texture/Texture.h"
 #include "Texture/TextureAtlas.h"
 #include "Texture/CubeMap.h"
-#include "Texture/TextureLUT.h"
 #include "VisualEffects/ParticleSystem/ParticleSystem.h"
 #include "Skybox/Skybox.h"
 #include "Systems/Collision/BulletCollider.h"
@@ -47,7 +46,6 @@ public:
 	static Resource<Texture> LoadTexture (const std::string& filename);
 	static Resource<Texture> LoadTextureAtlas (const std::string& filename);
 	static Resource<Texture> LoadCubemap (const std::vector<std::string>& filenames);
-	static TextureLUT* LoadTextureLUT (const std::string& filename);
 
 	static Resource<Font> LoadBitmapFont (const std::string& filename); 
 

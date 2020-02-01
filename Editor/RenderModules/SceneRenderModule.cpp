@@ -40,6 +40,7 @@
 #include "RenderPasses/Bloom/BloomVerticalBlurRenderPass.h"
 #include "RenderPasses/Bloom/BloomAccumulationRenderPass.h"
 #include "RenderPasses/HighDynamicRange/HDRRenderPass.h"
+#include "RenderPasses/TextureLUT/TextureLUTRenderPass.h"
 #include "RenderPasses/GammaCorrection/GammaCorrectionRenderPass.h"
 
 void SceneRenderModule::Init ()
@@ -95,6 +96,7 @@ void SceneRenderModule::Init ()
 			.Attach (new BloomAccumulationRenderPass ())
 			.Build ())
 		.Attach (new HDRRenderPass ())
+		.Attach (new TextureLUTRenderPass ())
 		.Attach (new GammaCorrectionRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredBlitRenderPass ());

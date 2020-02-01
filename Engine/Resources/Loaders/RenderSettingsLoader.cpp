@@ -147,9 +147,11 @@ void RenderSettingsLoader::ProcessLUT (TiXmlElement* xmlElem, RenderSettings* se
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
 	std::string path = xmlElem->Attribute ("path");
+	std::string intensity = xmlElem->Attribute ("intensity");
 
 	settings->lut_enabled = Extensions::StringExtend::ToBool (enabled);
 	settings->lut_texture_path = path;
+	settings->lut_intensity = std::stof (intensity);
 }
 
 void RenderSettingsLoader::ProcessGamma (TiXmlElement* xmlElem, RenderSettings* settings)

@@ -470,8 +470,12 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 				_lastLUTTexturePath = lutTexturePath;
 			}
 
-			auto texSize = _lutTexture->GetSize ();
-			ImGui::Image((void*)(intptr_t) _lutTextureView->GetGPUIndex (), ImVec2(texSize.width, texSize.height));
+			int windowWidth = ImGui::GetWindowWidth() * 0.6f;
+
+			auto imageSize = _lutTexture->GetSize ();
+			imageSize.height = windowWidth * ((float) imageSize.height / imageSize.width);
+			imageSize.width = windowWidth;
+			ImGui::Image((void*)(intptr_t) _lutTextureView->GetGPUIndex (), ImVec2(imageSize.width, imageSize.height));
 
 			ImGui::SameLine ();
 
@@ -482,6 +486,8 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			if (strlen (path) > 0) {
 				_settings->lut_texture_path = path;				
 			}
+
+			ImGui::SliderFloat ("Intensity", &_settings->lut_intensity, 0.0f, 1.0f);
 
 			ImGui::TreePop ();
 		}

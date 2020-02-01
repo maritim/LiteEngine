@@ -71,6 +71,7 @@ public:
 
 	static Resource<TextureView> LoadTexture (const Resource<Texture>& texture);
 	static Resource<TextureView> LoadCubeMap (const Resource<Texture>& texture);
+	static Resource<TextureView> LoadTextureLUT (const Resource<Texture>& texture);
 
 	// static Resource<ShaderView> LoadShader (const Resource<ShaderContent>& shaderContent);
 
@@ -90,6 +91,7 @@ private:
 
 	static unsigned int LoadTextureGPU (const Resource<Texture>& texture);
 	static unsigned int LoadCubeMapGPU (const Resource<Texture>& texture);
+	static unsigned int LoadTextureLUTGPU (const Resource<Texture>& texture);
 };
 
 #endif

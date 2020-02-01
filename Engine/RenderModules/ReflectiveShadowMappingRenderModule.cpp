@@ -45,6 +45,7 @@
 #include "RenderPasses/Bloom/BloomVerticalBlurRenderPass.h"
 #include "RenderPasses/Bloom/BloomAccumulationRenderPass.h"
 #include "RenderPasses/HighDynamicRange/HDRRenderPass.h"
+#include "RenderPasses/TextureLUT/TextureLUTRenderPass.h"
 #include "RenderPasses/GammaCorrection/GammaCorrectionRenderPass.h"
 
 void ReflectiveShadowMappingRenderModule::Init ()
@@ -112,6 +113,7 @@ void ReflectiveShadowMappingRenderModule::Init ()
 			.Attach (new BloomAccumulationRenderPass ())
 			.Build ())
 		.Attach (new HDRRenderPass ())
+		.Attach (new TextureLUTRenderPass ())
 		.Attach (new GammaCorrectionRenderPass ())
 		.Attach (new DeferredBlitRenderPass ())
 		.Build ());

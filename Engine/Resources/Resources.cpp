@@ -22,7 +22,6 @@
 #include "Loaders/TextureLoader.h"
 #include "Loaders/TextureAtlasLoader.h"
 #include "Loaders/CubeMapLoader.h"
-#include "Loaders/TextureLUTLoader.h"
 #include "Loaders/ParticleSystemLoader.h"
 #include "Loaders/SkyboxLoader.h"
 #include "Loaders/BitmapFontLoader.h"
@@ -238,17 +237,6 @@ Resource<Texture> Resources::LoadTextureAtlas (const std::string& filename)
 	delete texAtlasLoader;
 
 	return Resource<Texture> (texAtlas, filename);
-}
-
-TextureLUT* Resources::LoadTextureLUT (const std::string& filename)
-{
-	TextureLUTLoader* textureLUTLoader = new TextureLUTLoader ();
-
-	TextureLUT* lutTexture = (TextureLUT*) textureLUTLoader->Load (filename);
-
-	delete textureLUTLoader;
-
-	return lutTexture;
 }
 
 Resource<Font> Resources::LoadBitmapFont (const std::string& filename)
