@@ -52,6 +52,9 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 		else if (name == "RSM") {
 			ProcessRSM (content, settings);
 		}
+		else if (name == "TRSM") {
+			ProcessTRSM (content, settings);
+		}
 		else if (name == "VCT") {
 			ProcessVCT (content, settings);
 		}
@@ -167,17 +170,20 @@ void RenderSettingsLoader::ProcessRSM (TiXmlElement* xmlElem, RenderSettings* se
 	std::string samples = xmlElem->Attribute ("samples");
 	std::string radius = xmlElem->Attribute ("radius");
 	std::string intensity = xmlElem->Attribute ("intensity");
-	std::string noiseEnabled = xmlElem->Attribute ("noiseEnabled");
-	std::string temporalFilterEnabled = xmlElem->Attribute ("temporalFilterEnabled");
-	std::string blurEnabled = xmlElem->Attribute ("blurEnabled");
 
 	settings->rsm_scale = std::stof (scale);
 	settings->rsm_samples = std::stoi (samples);
 	settings->rsm_radius = std::stof (radius);
 	settings->rsm_intensity = std::stof (intensity);
-	settings->rsm_noise_enabled = Extensions::StringExtend::ToBool (noiseEnabled);
-	settings->rsm_temporal_filter_enabled = Extensions::StringExtend::ToBool (noiseEnabled);
-	settings->rsm_blur_enabled = Extensions::StringExtend::ToBool (blurEnabled);
+}
+
+void RenderSettingsLoader::ProcessTRSM (TiXmlElement* xmlElem, RenderSettings* settings)
+{
+	std::string temporalFilterEnabled = xmlElem->Attribute ("temporalFilterEnabled");
+	std::string blurEnabled = xmlElem->Attribute ("blurEnabled");
+
+	settings->trsm_temporal_filter_enabled = Extensions::StringExtend::ToBool (temporalFilterEnabled);
+	settings->trsm_blur_enabled = Extensions::StringExtend::ToBool (blurEnabled);
 }
 
 void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings)

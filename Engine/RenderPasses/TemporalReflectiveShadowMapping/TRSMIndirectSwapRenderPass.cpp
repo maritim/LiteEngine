@@ -1,19 +1,19 @@
-#include "RSMIndirectSwapRenderPass.h"
+#include "TRSMIndirectSwapRenderPass.h"
 
-#include "RSMIndirectLightMapVolume.h"
+#include "TRSMIndirectLightMapVolume.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
-void RSMIndirectSwapRenderPass::Init (const RenderSettings& settings)
+void TRSMIndirectSwapRenderPass::Init (const RenderSettings& settings)
 {
 
 }
 
-RenderVolumeCollection* RSMIndirectSwapRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
+RenderVolumeCollection* TRSMIndirectSwapRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
-	auto rsmLastIndirectMapVolume = (RSMIndirectLightMapVolume*) rvc->GetRenderVolume ("LastIndirectMap");
-	auto rsmIndirectMapVolume = (RSMIndirectLightMapVolume*) rvc->GetRenderVolume ("IndirectMap");
+	auto rsmLastIndirectMapVolume = (TRSMIndirectLightMapVolume*) rvc->GetRenderVolume ("LastIndirectMap");
+	auto rsmIndirectMapVolume = (TRSMIndirectLightMapVolume*) rvc->GetRenderVolume ("IndirectMap");
 
 	/*
 	 * Swap ping-pong buffers
@@ -42,12 +42,12 @@ RenderVolumeCollection* RSMIndirectSwapRenderPass::Execute (const RenderScene* r
 	return rvc;
 }
 
-void RSMIndirectSwapRenderPass::Clear ()
+void TRSMIndirectSwapRenderPass::Clear ()
 {
 
 }
 
-bool RSMIndirectSwapRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+bool TRSMIndirectSwapRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*

@@ -28,6 +28,10 @@ uniform float rsmIntensity;
 #include "deferred.glsl"
 #include "ReflectiveShadowMapping/reflectiveShadowMapping.glsl"
 
+float rand(vec2 co){
+  return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
 vec2 CalcTexCoordRSM ()
 {
 	return gl_FragCoord.xy / rsmResolution;	
@@ -49,9 +53,15 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
 	vec4 lightSpacePos = lightSpaceMatrix * vec4 (worldSpacePos, 1.0);
 	vec3 rsmProjCoords = lightSpacePos.xyz / lightSpacePos.w;
 
+	vec2 noiseTexcoord = worldSpacePos.xy + worldSpacePos.yz + worldSpacePos.xz;
+
+	float r = 2 * 3.14 * rand (noiseTexcoord);
+	vec2 randomVec = vec2 (cos (r), sin (r));
+	mat2 tangentMatrix = mat2 (randomVec, vec2 (-randomVec.y, randomVec.x));
+
 	for (int index = 0; index < rsmSamplesCount; index ++) {
 
-		vec2 rnd = rsmSample [index].xy;
+		vec2 rnd = tangentMatrix * rsmSample [index].xy;
 
 		vec2 coords = rsmProjCoords.xy + rnd * rsmRadius;
 

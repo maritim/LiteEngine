@@ -23,7 +23,7 @@ protected:
 public:
 	RSMSamplesVolume ();
 
-	bool Init (std::size_t samplesCount);
+	virtual bool Init (std::size_t samplesCount);
 
 	void BindForReading ();
 	void BindForWriting ();

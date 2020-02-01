@@ -83,19 +83,28 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 	renderModes ["SceneRenderModule"] = 0;
 	renderModes ["VoxelConeTracingRenderModule"] = 1;
 	renderModes ["ReflectiveShadowMappingRenderModule"] = 2;
-	renderModes ["LightPropagationVolumesModule"] = 3;
-	renderModes ["ScreenSpaceDirectionalOcclusionRenderModule"] = 4;
+	renderModes ["TemporalReflectiveShadowMappingRenderModule"] = 3;
+	renderModes ["LightPropagationVolumesModule"] = 4;
+	renderModes ["ScreenSpaceDirectionalOcclusionRenderModule"] = 5;
 
 	int lastRenderMode = renderModes [_settings->renderMode];
 	int renderMode = lastRenderMode;
 
-	const char* items[] = { "Direct Light", "Voxel Cone Tracing", "Reflective Shadow Mapping", "Light Propagation Volumes", "Screen Space Global Illumination"};
-	ImGui::Combo("Render Module", &renderMode, items, 5);
+	const char* items[] = { "Direct Light",
+		"Voxel Cone Tracing",
+		"Reflective Shadow Mapping",
+		"Temporal Reflective Shadow Mapping",
+		"Light Propagation Volumes",
+		"Screen Space Global Illumination"
+	};
+
+	ImGui::Combo("Render Module", &renderMode, items, 6);
 
 	const char* srenderModes[] = {
 		"SceneRenderModule",
 		"VoxelConeTracingRenderModule",
 		"ReflectiveShadowMappingRenderModule",
+		"TemporalReflectiveShadowMappingRenderModule",
 		"LightPropagationVolumesModule",
 		"ScreenSpaceDirectionalOcclusionRenderModule"
 	};
@@ -190,14 +199,7 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 		ImGui::Separator();
 
-		ImGui::Checkbox ("Noise Enabled", &_settings->rsm_noise_enabled);
-
-		ImGui::Separator();
-
-		ImGui::Checkbox ("Temporal Filter Enabled", &_settings->rsm_temporal_filter_enabled);
-		ImGui::Checkbox ("Blur Enabled", &_settings->rsm_blur_enabled);
-
-		ImGui::Separator();
+		ImGui::PushID ("RSMDebug");
 
 		if (ImGui::TreeNode ("Debug")) {
 
@@ -209,7 +211,6 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			}
 
 			if (ImGui::TreeNode ("Reflective Shadow Map")) {
-
 				if (rsmStat != nullptr) {
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.65f;
@@ -231,7 +232,6 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			}
 
 			if (ImGui::TreeNode ("Indirect Light")) {
-
 				if (rsmStat != nullptr) {
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
@@ -252,6 +252,72 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 			ImGui::TreePop();
 		}
+
+		ImGui::PopID ();
+	}
+
+    ImGui::Spacing();
+
+	if (ImGui::CollapsingHeader ("Temporal Reflective Shadow Mapping")) {
+
+		ImGui::Checkbox ("Temporal Filter Enabled", &_settings->trsm_temporal_filter_enabled);
+		ImGui::Checkbox ("Blur Enabled", &_settings->trsm_blur_enabled);
+
+		ImGui::Separator();
+
+		ImGui::PushID ("TRSMDebug");
+		if (ImGui::TreeNode ("Debug")) {
+
+			StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
+			RSMStatisticsObject* rsmStat = nullptr;
+
+			if (stat != nullptr) {
+				rsmStat = dynamic_cast<RSMStatisticsObject*> (stat);
+			}
+
+			if (ImGui::TreeNode ("Reflective Shadow Map")) {
+				if (rsmStat != nullptr) {
+
+					int windowWidth = ImGui::GetWindowWidth() * 0.65f;
+
+					ImGui::Text ("Depth Map");
+					ShowImage (rsmStat->rsmDepthMapID, glm::ivec2 (windowWidth, windowWidth));
+
+					ImGui::Text ("Position Map");
+					ShowImage (rsmStat->rsmPosMapID, glm::ivec2 (windowWidth, windowWidth));
+
+					ImGui::Text ("Normal Map");
+					ShowImage (rsmStat->rsmNormalMapID, glm::ivec2 (windowWidth, windowWidth));
+
+					ImGui::Text ("Flux Map");
+					ShowImage (rsmStat->rsmFluxMapID, glm::ivec2 (windowWidth, windowWidth));
+				}
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNode ("Indirect Light")) {
+				if (rsmStat != nullptr) {
+
+					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
+
+					FrameBuffer2DVolume* rsmIndirectMapVolume = rsmStat->rsmIndirectMapVolume;
+
+					glm::ivec2 rsmMapSize = rsmIndirectMapVolume->GetSize ();
+
+					int rsmMapWidth = windowWidth;
+					int rsmMapHeight = ((float) rsmMapSize.y / rsmMapSize.x) * rsmMapWidth;
+
+					ImGui::Text ("Indirect Light Map");
+					ShowImage (rsmIndirectMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop();
+		}
+		ImGui::PopID ();
 	}
 
 	ImGui::Spacing ();

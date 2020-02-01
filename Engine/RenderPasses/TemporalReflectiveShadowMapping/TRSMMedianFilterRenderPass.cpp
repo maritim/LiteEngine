@@ -1,31 +1,31 @@
-#include "RSMBlurRenderPass.h"
+#include "TRSMMedianFilterRenderPass.h"
 
-#include "RSMIndirectLightMapVolume.h"
+#include "TRSMIndirectLightMapVolume.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/RSMStatisticsObject.h"
 
-bool RSMBlurRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+bool TRSMMedianFilterRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Check if screen space ambient occlusion blur is enabled
 	*/
 
-	return settings.rsm_blur_enabled;
+	return settings.trsm_blur_enabled;
 }
 
-std::string RSMBlurRenderPass::GetPostProcessFragmentShaderPath () const
+std::string TRSMMedianFilterRenderPass::GetPostProcessFragmentShaderPath () const
 {
-	return "Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapBlurFragment.glsl";
+	return "Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapMedianFilterFragment.glsl";
 }
 
-std::string RSMBlurRenderPass::GetPostProcessVolumeName () const
+std::string TRSMMedianFilterRenderPass::GetPostProcessVolumeName () const
 {
 	return "IndirectMap";
 }
 
-glm::ivec2 RSMBlurRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
+glm::ivec2 TRSMMedianFilterRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
 	if (_postProcessMapVolume != nullptr) {
 		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
@@ -44,14 +44,14 @@ glm::ivec2 RSMBlurRenderPass::GetPostProcessVolumeResolution (const RenderSettin
 	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
 }
 
-PostProcessMapVolume* RSMBlurRenderPass::CreatePostProcessVolume () const
+PostProcessMapVolume* TRSMMedianFilterRenderPass::CreatePostProcessVolume () const
 {
-	RSMIndirectLightMapVolume* rsmIndirectLightMapVolume = new RSMIndirectLightMapVolume ();
+	TRSMIndirectLightMapVolume* trsmIndirectLightMapVolume = new TRSMIndirectLightMapVolume ();
 
-	return rsmIndirectLightMapVolume;
+	return trsmIndirectLightMapVolume;
 }
 
-std::vector<PipelineAttribute> RSMBlurRenderPass::GetCustomAttributes (const Camera* camera,
+std::vector<PipelineAttribute> TRSMMedianFilterRenderPass::GetCustomAttributes (const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*

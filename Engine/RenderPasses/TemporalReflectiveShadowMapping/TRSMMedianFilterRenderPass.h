@@ -1,11 +1,11 @@
-#ifndef RSMMEDIANFILTERRENDERPASS_H
-#define RSMMEDIALFILTERRENDERPASS_H
+#ifndef TRSMMEDIANFILTERRENDERPASS_H
+#define TRSMMEDIALFILTERRENDERPASS_H
 
 #include "RenderPasses/PostProcess/PostProcessRenderPass.h"
 
-class ENGINE_API RSMMedianFilterRenderPass : public PostProcessRenderPass
+class ENGINE_API TRSMMedianFilterRenderPass : public PostProcessRenderPass
 {
-	DECLARE_RENDER_PASS(RSMMedianFilterRenderPass)
+	DECLARE_RENDER_PASS(TRSMMedianFilterRenderPass)
 
 public:
 	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,

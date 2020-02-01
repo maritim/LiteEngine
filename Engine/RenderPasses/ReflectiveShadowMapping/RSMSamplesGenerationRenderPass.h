@@ -24,7 +24,7 @@ public:
 
 	void Clear ();
 protected:
-	void InitRSMSamplesVolume (const RenderSettings& settings);
+	virtual void InitRSMSamplesVolume (const RenderSettings& settings);
 	void UpdateRSMSamplesVolume (const RenderSettings& settings);
 };
 

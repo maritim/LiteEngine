@@ -1,11 +1,11 @@
-#ifndef RSMBLURRENDERPASS_H
-#define RSMBLURRENDERPASS_H
+#ifndef TRSMBLURRENDERPASS_H
+#define TRSMBLURRENDERPASS_H
 
 #include "RenderPasses/PostProcess/PostProcessRenderPass.h"
 
-class ENGINE_API RSMBlurRenderPass : public PostProcessRenderPass
+class ENGINE_API TRSMBlurRenderPass : public PostProcessRenderPass
 {
-	DECLARE_RENDER_PASS(RSMBlurRenderPass)
+	DECLARE_RENDER_PASS(TRSMBlurRenderPass)
 
 public:
 	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,

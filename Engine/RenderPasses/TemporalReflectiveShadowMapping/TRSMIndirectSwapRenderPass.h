@@ -1,11 +1,11 @@
-#ifndef RSMINDIRECTSWAPRENDERPASS_H
-#define RSMINDIRECTSWAPRENDERPASS_H
+#ifndef TRSMINDIRECTSWAPRENDERPASS_H
+#define TRSMINDIRECTSWAPRENDERPASS_H
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
-class RSMIndirectSwapRenderPass : public ContainerRenderSubPassI
+class TRSMIndirectSwapRenderPass : public ContainerRenderSubPassI
 {
-	DECLARE_RENDER_PASS(RSMIndirectSwapRenderPass)
+	DECLARE_RENDER_PASS(TRSMIndirectSwapRenderPass)
 
 public:
 	void Init (const RenderSettings& settings);

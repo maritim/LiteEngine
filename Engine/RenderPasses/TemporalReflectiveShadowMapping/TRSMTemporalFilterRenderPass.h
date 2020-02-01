@@ -1,13 +1,13 @@
-#ifndef RSMTEMPORALFILTERRENDERPASS_H
-#define RSMTEMPORALFILTERRENDERPASS_H
+#ifndef TRSMTEMPORALFILTERRENDERPASS_H
+#define TRSMTEMPORALFILTERRENDERPASS_H
 
 #include "RenderPasses/PostProcess/PostProcessRenderPass.h"
 
 #include <glm/mat4x4.hpp>
 
-class ENGINE_API RSMTemporalFilterRenderPass : public PostProcessRenderPass
+class ENGINE_API TRSMTemporalFilterRenderPass : public PostProcessRenderPass
 {
-	DECLARE_RENDER_PASS(RSMTemporalFilterRenderPass)
+	DECLARE_RENDER_PASS(TRSMTemporalFilterRenderPass)
 
 public:
 	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,

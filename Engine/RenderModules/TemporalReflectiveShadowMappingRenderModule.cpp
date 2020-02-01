@@ -1,4 +1,4 @@
-#include "ReflectiveShadowMappingRenderModule.h"
+#include "TemporalReflectiveShadowMappingRenderModule.h"
 
 #include "RenderPasses/ResultFrameBufferGenerationRenderPass.h"
 #include "RenderPasses/DeferredGeometryRenderPass.h"
@@ -20,10 +20,16 @@
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationRenderPass.h"
-#include "RenderPasses/ReflectiveShadowMapping/RSMSamplesGenerationRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMIndirectLightRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMRenderPass.h"
+
+#include "RenderPasses/TemporalReflectiveShadowMapping/TRSMSamplesGenerationRenderPass.h"
+#include "RenderPasses/TemporalReflectiveShadowMapping/TRSMIndirectLightRenderPass.h"
+#include "RenderPasses/TemporalReflectiveShadowMapping/TRSMTemporalFilterRenderPass.h"
+#include "RenderPasses/TemporalReflectiveShadowMapping/TRSMMedianFilterRenderPass.h"
+#include "RenderPasses/TemporalReflectiveShadowMapping/TRSMBlurRenderPass.h"
+#include "RenderPasses/TemporalReflectiveShadowMapping/TRSMIndirectSwapRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/ReflectiveShadowMapping/RSMSpotLightAccumulationRenderPass.h"
@@ -44,7 +50,7 @@
 #include "RenderPasses/TextureLUT/TextureLUTRenderPass.h"
 #include "RenderPasses/GammaCorrection/GammaCorrectionRenderPass.h"
 
-void ReflectiveShadowMappingRenderModule::Init ()
+void TemporalReflectiveShadowMappingRenderModule::Init ()
 {
 	/*
 	 * Initialize reflective shadow map render module as a collection of 
@@ -64,15 +70,23 @@ void ReflectiveShadowMappingRenderModule::Init ()
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 		.Attach (new RSMDirectionalLightAccumulationRenderPass ())
-		.Attach (new RSMSamplesGenerationRenderPass ())
-		.Attach (new RSMIndirectLightRenderPass ())
+		.Attach (new TRSMSamplesGenerationRenderPass ())
+		.Attach (new TRSMIndirectLightRenderPass ())
+		.Attach (new TRSMTemporalFilterRenderPass ())
+		.Attach (new TRSMMedianFilterRenderPass ())
+		.Attach (new TRSMBlurRenderPass ())
+		.Attach (new TRSMIndirectSwapRenderPass ())
 		.Attach (new RSMDirectionalLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new SpotLightContainerRenderVolumeCollection ())
 		.Attach (new RSMSpotLightAccumulationRenderPass ())
-		.Attach (new RSMSamplesGenerationRenderPass ())
-		.Attach (new RSMIndirectLightRenderPass ())
+		.Attach (new TRSMSamplesGenerationRenderPass ())
+		.Attach (new TRSMIndirectLightRenderPass ())
+		.Attach (new TRSMTemporalFilterRenderPass ())
+		.Attach (new TRSMMedianFilterRenderPass ())
+		.Attach (new TRSMBlurRenderPass ())
+		.Attach (new TRSMIndirectSwapRenderPass ())
 		.Attach (new DeferredSpotLightRenderPass ())
 		.Attach (new RSMRenderPass ())
 		.Build ());
