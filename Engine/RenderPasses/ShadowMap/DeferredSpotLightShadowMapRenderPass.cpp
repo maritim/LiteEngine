@@ -1,17 +1,11 @@
 #include "DeferredSpotLightShadowMapRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
 
 #include "SceneNodes/SceneLayer.h"
-
-DeferredSpotLightShadowMapRenderPass::DeferredSpotLightShadowMapRenderPass () :
-	_staticShaderName ("STATIC_SPOT_LIGHT_SHADOW_MAP"),
-	_animationShaderName ("ANIMATION_SPOT_LIGHT_SHADOW_MAP")
-{
-
-}
 
 void DeferredSpotLightShadowMapRenderPass::Init (const RenderSettings& settings)
 {
@@ -19,17 +13,23 @@ void DeferredSpotLightShadowMapRenderPass::Init (const RenderSettings& settings)
 	 * Shader for animated objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_staticShaderName,
+	Resource<Shader> staticShader = Resources::LoadShader ({
 		"Assets/Shaders/ShadowMap/shadowMapVertex.glsl",
-		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
+		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl"
+	});
+
+	_staticShaderView = RenderSystem::LoadShader (staticShader);
 
 	/*
 	 * Shader for animated objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_animationShaderName,
+	Resource<Shader> animationShader = Resources::LoadShader ({
 		"Assets/Shaders/ShadowMap/shadowMapVertexAnimation.glsl",
-		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
+		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl"
+	});
+
+	_animationShaderView = RenderSystem::LoadShader (animationShader);
 }
 
 void DeferredSpotLightShadowMapRenderPass::LockShader (int sceneLayers)
@@ -45,7 +45,7 @@ void DeferredSpotLightShadowMapRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if (sceneLayers & SceneLayer::ANIMATION) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+		Pipeline::LockShader (_animationShaderView);
 	}
 
 	/*
@@ -53,6 +53,6 @@ void DeferredSpotLightShadowMapRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+		Pipeline::LockShader (_staticShaderView);
 	}
 }

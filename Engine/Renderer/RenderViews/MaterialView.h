@@ -7,6 +7,7 @@
 
 #include "Core/Resources/Resource.h"
 #include "Renderer/RenderViews/TextureView.h"
+#include "Renderer/RenderViews/ShaderView.h"
 
 class MaterialView : public Object
 {
@@ -27,7 +28,7 @@ public:
 	Resource<TextureView> alphaTexture;
 	Resource<TextureView> bumpTexture;
 	Resource<TextureView> cubeTexture;
-	std::string shaderName;
+	Resource<ShaderView> shaderView;
 
 	MaterialView ();
 };

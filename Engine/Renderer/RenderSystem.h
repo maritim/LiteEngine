@@ -7,10 +7,13 @@
 #include "Mesh/Model.h"
 #include "Material/Material.h"
 #include "Texture/Texture.h"
+#include "Shader/Shader.h"
+#include "Shader/ShaderContent.h"
 
 #include "RenderViews/ModelView.h"
 #include "RenderViews/MaterialView.h"
 #include "RenderViews/TextureView.h"
+#include "RenderViews/ShaderView.h"
 
 #include "Fonts/Font.h"
 
@@ -73,7 +76,8 @@ public:
 	static Resource<TextureView> LoadCubeMap (const Resource<Texture>& texture);
 	static Resource<TextureView> LoadTextureLUT (const Resource<Texture>& texture);
 
-	// static Resource<ShaderView> LoadShader (const Resource<ShaderContent>& shaderContent);
+	static Resource<ShaderView> LoadShader (const Resource<Shader>& shader);
+	static Resource<ShaderView> LoadComputeShader (const Resource<Shader>& shader);
 
 	static Resource<Texture> SaveTexture (const Resource<TextureView>& textureView);
 private:
@@ -92,6 +96,9 @@ private:
 	static unsigned int LoadTextureGPU (const Resource<Texture>& texture);
 	static unsigned int LoadCubeMapGPU (const Resource<Texture>& texture);
 	static unsigned int LoadTextureLUTGPU (const Resource<Texture>& texture);
+
+	static unsigned int BuildShaderContent (const Resource<ShaderContent>& shaderContent, int shaderType);
+	static bool ShaderErrorCheck (unsigned int shader);
 };
 
 #endif

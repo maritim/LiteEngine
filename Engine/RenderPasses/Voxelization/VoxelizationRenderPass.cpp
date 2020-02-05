@@ -1,6 +1,7 @@
 #include "VoxelizationRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
 
@@ -11,8 +12,6 @@
 #include "SceneNodes/SceneLayer.h"
 
 VoxelizationRenderPass::VoxelizationRenderPass () :
-	_staticShaderName ("VOXELIZATION_PASS_STATIC_SHADER"),
-	_animationShaderName ("VOXELIZATION_PASS_ANIMATION_SHADER"),
 	_voxelVolume (new VoxelVolume ()),
 	_firstTime (true)
 {
@@ -36,19 +35,25 @@ void VoxelizationRenderPass::Init (const RenderSettings& settings)
 	 * Shader for static objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_staticShaderName,
+	Resource<Shader> staticShader = Resources::LoadShader ({
 		"Assets/Shaders/Voxelize/voxelizeVertex.glsl",
 		"Assets/Shaders/Voxelize/voxelizeFragment.glsl",
-		"Assets/Shaders/Voxelize/voxelizeGeometry.glsl");
+		"Assets/Shaders/Voxelize/voxelizeGeometry.glsl"
+	});
+
+	_staticShaderView = RenderSystem::LoadShader (staticShader);
 
 	/*
 	 * Shader for animated objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_animationShaderName,
-		"Assets/Shaders/Voxelize/voxelizeAnimationVertex.glsl",
+	Resource<Shader> animationShader = Resources::LoadShader ({
+		"Assets/Shaders/Voxelize/voxelizeVertex.glsl",
 		"Assets/Shaders/Voxelize/voxelizeFragment.glsl",
-		"Assets/Shaders/Voxelize/voxelizeGeometry.glsl");
+		"Assets/Shaders/Voxelize/voxelizeGeometry.glsl"
+	});
+
+	_animationShaderView = RenderSystem::LoadShader (animationShader);
 }
 
 RenderVolumeCollection* VoxelizationRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -165,7 +170,7 @@ void VoxelizationRenderPass::GeometryVoxelizationPass (const RenderScene* render
 		 * Send voxel volume attributes to pipeline
 		*/
 
-		Pipeline::SendCustomAttributes ("", _voxelVolume->GetCustomAttributes ());
+		Pipeline::SendCustomAttributes (nullptr, _voxelVolume->GetCustomAttributes ());
 
 		/*
 		 * Voxelize object
@@ -206,7 +211,7 @@ void VoxelizationRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if (sceneLayers & SceneLayer::ANIMATION) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+		Pipeline::LockShader (_animationShaderView);
 	}
 
 	/*
@@ -214,7 +219,7 @@ void VoxelizationRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+		Pipeline::LockShader (_staticShaderView);
 	}
 }
 

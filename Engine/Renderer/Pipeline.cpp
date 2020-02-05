@@ -8,7 +8,6 @@
 #include "Texture/Texture.h"
 #include "SceneGraph/Transform.h"
 #include "Material/Material.h"
-#include "Managers/ShaderManager.h"
 #include "Systems/Settings/SettingsManager.h"
 
 #include "Texture/Texture.h"
@@ -26,7 +25,8 @@ glm::mat4 Pipeline::_viewMatrix (0);
 glm::mat4 Pipeline::_projectionMatrix (0);
 const Camera* Pipeline::_currentCamera (nullptr);
 std::size_t Pipeline::_textureCount (0);
-Shader* Pipeline::_lockedShader(nullptr);
+
+Resource<ShaderView> Pipeline::_lockedShaderView (nullptr);
 
 Resource<MaterialView> Pipeline::_defaultMaterialView (nullptr);
 Resource<TextureView> Pipeline::_defaultTextureView (nullptr);
@@ -62,30 +62,30 @@ void Pipeline::Clear ()
 	_defaultTextureView = nullptr;
 }
 
-void Pipeline::SetShader (Shader* shader)
+void Pipeline::SetShader (const Resource<ShaderView>& shaderView)
 {
-	if (_lockedShader != nullptr) {
+	if (_lockedShaderView != nullptr) {
 		return;
 	}
 
 	_textureCount = 0;
 
-	GL::UseProgram (shader->GetProgram ());
+	GL::UseProgram (shaderView->GetProgram ());
 }
 
-void Pipeline::LockShader (Shader* shader)
+void Pipeline::LockShader (const Resource<ShaderView>& shaderView)
 {
-	if (_lockedShader != nullptr) {
+	if (_lockedShaderView != nullptr) {
 		return;
 	}
 
-	SetShader (shader);
-	_lockedShader = shader;
+	SetShader (shaderView);
+	_lockedShaderView = shaderView;
 }
 
 void Pipeline::UnlockShader ()
 {
-	_lockedShader = nullptr;
+	_lockedShaderView = nullptr;
 }
 
 void Pipeline::CreateProjection (const Camera* camera)
@@ -125,10 +125,12 @@ void Pipeline::ClearObjectTransform ()
 	_modelMatrix = glm::mat4 (1.0);
 }
 
-void Pipeline::UpdateMatrices (Shader* shader)
+void Pipeline::UpdateMatrices (const Resource<ShaderView>& shaderView)
 {
-	if (_lockedShader != nullptr) {
-		shader = _lockedShader;
+	auto currentShaderView = shaderView;
+
+	if (_lockedShaderView != nullptr) {
+		currentShaderView = _lockedShaderView;
 	}
 
 	glm::mat4 modelViewMatrix = _viewMatrix * _modelMatrix;
@@ -142,34 +144,34 @@ void Pipeline::UpdateMatrices (Shader* shader)
 	glm::mat4 inverseViewProjectionMatrix = glm::inverse (modelViewProjectionMatrix);
 	glm::mat3 inverseNormalWorldMatrix = glm::inverse (normalWorldMatrix);
 
-	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelMatrix"), 1, GL_FALSE, glm::value_ptr (_modelMatrix));
-	GL::UniformMatrix4fv (shader->GetUniformLocation ("viewMatrix"), 1, GL_FALSE, glm::value_ptr (_viewMatrix));
-	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelViewMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewMatrix));
-	GL::UniformMatrix4fv (shader->GetUniformLocation ("projectionMatrix"), 1, GL_FALSE, glm::value_ptr (_projectionMatrix));
-	GL::UniformMatrix4fv (shader->GetUniformLocation ("viewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (viewProjectionMatrix));
-	GL::UniformMatrix4fv (shader->GetUniformLocation ("modelViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewProjectionMatrix));
-	GL::UniformMatrix3fv (shader->GetUniformLocation ("normalMatrix"), 1, GL_FALSE, glm::value_ptr (normalMatrix));
-	GL::UniformMatrix3fv (shader->GetUniformLocation ("normalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (normalWorldMatrix));
-	GL::UniformMatrix4fv (shader->GetUniformLocation ("inverseViewMatrix"), 1, GL_FALSE, glm::value_ptr (inverseViewMatrix));
-	GL::UniformMatrix4fv (shader->GetUniformLocation ("inverseViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (inverseViewProjectionMatrix));
-	GL::UniformMatrix3fv (shader->GetUniformLocation ("inverseNormalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (inverseNormalWorldMatrix));
+	GL::UniformMatrix4fv (currentShaderView->GetUniformLocation ("modelMatrix"), 1, GL_FALSE, glm::value_ptr (_modelMatrix));
+	GL::UniformMatrix4fv (currentShaderView->GetUniformLocation ("viewMatrix"), 1, GL_FALSE, glm::value_ptr (_viewMatrix));
+	GL::UniformMatrix4fv (currentShaderView->GetUniformLocation ("modelViewMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewMatrix));
+	GL::UniformMatrix4fv (currentShaderView->GetUniformLocation ("projectionMatrix"), 1, GL_FALSE, glm::value_ptr (_projectionMatrix));
+	GL::UniformMatrix4fv (currentShaderView->GetUniformLocation ("viewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (viewProjectionMatrix));
+	GL::UniformMatrix4fv (currentShaderView->GetUniformLocation ("modelViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (modelViewProjectionMatrix));
+	GL::UniformMatrix3fv (currentShaderView->GetUniformLocation ("normalMatrix"), 1, GL_FALSE, glm::value_ptr (normalMatrix));
+	GL::UniformMatrix3fv (currentShaderView->GetUniformLocation ("normalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (normalWorldMatrix));
+	GL::UniformMatrix4fv (currentShaderView->GetUniformLocation ("inverseViewMatrix"), 1, GL_FALSE, glm::value_ptr (inverseViewMatrix));
+	GL::UniformMatrix4fv (currentShaderView->GetUniformLocation ("inverseViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr (inverseViewProjectionMatrix));
+	GL::UniformMatrix3fv (currentShaderView->GetUniformLocation ("inverseNormalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (inverseNormalWorldMatrix));
 
-	GL::Uniform3fv (shader->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_currentCamera->GetPosition ()));
-	GL::Uniform2f (shader->GetUniformLocation ("cameraZLimit"), _currentCamera->GetZNear (), _currentCamera->GetZFar ());
+	GL::Uniform3fv (currentShaderView->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_currentCamera->GetPosition ()));
+	GL::Uniform2f (currentShaderView->GetUniformLocation ("cameraZLimit"), _currentCamera->GetZNear (), _currentCamera->GetZFar ());
 
 	// TODO: Change this
 	bool gammaCorrectionEnabled = SettingsManager::Instance ()->GetValue<bool> ("gamma_correction", false);
 
-	GL::Uniform1f (shader->GetUniformLocation ("gamma"), gammaCorrectionEnabled ? 2.2f : 1.0f);
+	GL::Uniform1f (currentShaderView->GetUniformLocation ("gamma"), gammaCorrectionEnabled ? 2.2f : 1.0f);
 
 	// SendLights (shader);
 }
 
-void Pipeline::SendLights (Shader* shader)
+void Pipeline::SendLights (const Resource<ShaderView>& shaderView)
 {
-	if (_lockedShader != nullptr) {
-		shader = _lockedShader;
-	}
+	// if (_lockedShaderView != nullptr) {
+	// 	shaderView = _lockedShaderView;
+	// }
 
 	// Color ambientColor = LightsManager::Instance ()->GetAmbientColorLight ();
 
@@ -286,17 +288,17 @@ void Pipeline::SendLights (Shader* shader)
 	// glUniform1i (shader->GetUniformLocation ("directionalLightCount"), directionalLightCount);
 }
 
-void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::vector<PipelineAttribute>& attr)
+void Pipeline::SendCustomAttributes (const Resource<ShaderView>& shaderView, const std::vector<PipelineAttribute>& attr)
 {
-	Shader* shader = ShaderManager::Instance ()->GetShader (shaderName);
+	auto currentShaderView = shaderView;
 
-	if (_lockedShader != nullptr) {
-		shader = _lockedShader;
+	if (_lockedShaderView != nullptr) {
+		currentShaderView = _lockedShaderView;
 	}
 
 	for (std::size_t i=0;i<attr.size ();i++) {
 
-		int unifLoc = shader->GetUniformLocation (attr [i].name.c_str ());
+		int unifLoc = currentShaderView->GetUniformLocation (attr [i].name.c_str ());
 
 		switch (attr [i].type) {
 			case PipelineAttribute::ATTR_1I :
@@ -354,13 +356,13 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 					GL::UniformMatrix4fv (unifLoc, 1, GL_FALSE, glm::value_ptr (attr [i].matrix));
 				break;
 			case PipelineAttribute::ATTR_BLOCK : {
-					unsigned int uniBlockIndex = shader->GetUniformBlockIndex (attr [i].name.c_str ());
+					unsigned int uniBlockIndex = currentShaderView->GetUniformBlockIndex (attr [i].name.c_str ());
 
 					if (uniBlockIndex == GL_INVALID_INDEX) {
 						break;
 					}
 
-					GL::UniformBlockBinding (shader->GetProgram (), uniBlockIndex, 0);
+					GL::UniformBlockBinding (currentShaderView->GetProgram (), uniBlockIndex, 0);
 					GL::BindBufferBase (GL_UNIFORM_BUFFER, 0, (unsigned int) attr [i].value.x);
 				}
 				break;
@@ -368,25 +370,27 @@ void Pipeline::SendCustomAttributes (const std::string& shaderName, const std::v
 	}
 }
 
-void Pipeline::SendMaterial(Resource<MaterialView> mat, Shader* shader)
+void Pipeline::SendMaterial(Resource<MaterialView> mat, const Resource<ShaderView>& shaderView)
 {
 	if (mat == nullptr) {
 		mat = _defaultMaterialView;
 	}
 
-	if (shader == nullptr) {
-		shader = ShaderManager::Instance ()->GetShader (mat->shaderName);
+	auto currentShaderView = shaderView;
+
+	if (shaderView == nullptr) {
+		currentShaderView = mat->shaderView;
 	}
 
-	SetShader (shader);
+	SetShader (currentShaderView);
 
-	if (_lockedShader != nullptr) {
-		shader = _lockedShader;
+	if (_lockedShaderView != nullptr) {
+		currentShaderView = _lockedShaderView;
 	}
 
 	_textureCount = 0;
 
-	Pipeline::UpdateMatrices (shader);
+	Pipeline::UpdateMatrices (currentShaderView);
 
 	/*
 	 * Set material blending mode
@@ -399,12 +403,12 @@ void Pipeline::SendMaterial(Resource<MaterialView> mat, Shader* shader)
 	 * Send basic material attributes to shader
 	*/
 
-	GL::Uniform3fv (shader->GetUniformLocation ("MaterialDiffuse"), 1, glm::value_ptr (mat->diffuseColor));
+	GL::Uniform3fv (currentShaderView->GetUniformLocation ("MaterialDiffuse"), 1, glm::value_ptr (mat->diffuseColor));
 	// GL::Uniform3fv (shader->GetUniformLocation ("MaterialAmbient"), 1, glm::value_ptr (mat->ambientColor));
-	GL::Uniform3fv (shader->GetUniformLocation ("MaterialSpecular"), 1, glm::value_ptr (mat->specularColor));
-	GL::Uniform1f (shader->GetUniformLocation ("MaterialShininess"), mat->shininess);
-	GL::Uniform1f (shader->GetUniformLocation ("MaterialTransparency"), mat->transparency);
-	GL::Uniform1f (shader->GetUniformLocation ("MaterialRefractiveIndex"), mat->refractiveIndex);
+	GL::Uniform3fv (currentShaderView->GetUniformLocation ("MaterialSpecular"), 1, glm::value_ptr (mat->specularColor));
+	GL::Uniform1f (currentShaderView->GetUniformLocation ("MaterialShininess"), mat->shininess);
+	GL::Uniform1f (currentShaderView->GetUniformLocation ("MaterialTransparency"), mat->transparency);
+	GL::Uniform1f (currentShaderView->GetUniformLocation ("MaterialRefractiveIndex"), mat->refractiveIndex);
 
 	/*
 	 * Send maps to shader
@@ -424,35 +428,35 @@ void Pipeline::SendMaterial(Resource<MaterialView> mat, Shader* shader)
 
 	if (mat->diffuseTexture != nullptr) {
 		mat->diffuseTexture->Activate (_textureCount);
-		GL::Uniform1i (shader->GetUniformLocation ("DiffuseMap"), _textureCount);
+		GL::Uniform1i (currentShaderView->GetUniformLocation ("DiffuseMap"), _textureCount);
 		++ _textureCount;
 	} else {
-		GL::Uniform1i (shader->GetUniformLocation ("DiffuseMap"), 0);
+		GL::Uniform1i (currentShaderView->GetUniformLocation ("DiffuseMap"), 0);
 	}
 
 	if (mat->specularTexture != nullptr) {
 		mat->specularTexture->Activate (_textureCount);
-		GL::Uniform1i (shader->GetUniformLocation ("SpecularMap"), _textureCount);
+		GL::Uniform1i (currentShaderView->GetUniformLocation ("SpecularMap"), _textureCount);
 		++ _textureCount;
 	} else {
-		GL::Uniform1i (shader->GetUniformLocation ("SpecularMap"), 0);
+		GL::Uniform1i (currentShaderView->GetUniformLocation ("SpecularMap"), 0);
 	}
 
 	if (mat->bumpTexture != nullptr) {
 		mat->bumpTexture->Activate (_textureCount);
-		GL::Uniform1i (shader->GetUniformLocation ("NormalMap"), _textureCount);
+		GL::Uniform1i (currentShaderView->GetUniformLocation ("NormalMap"), _textureCount);
 		++ _textureCount;
 	} else {
-		GL::Uniform1i (shader->GetUniformLocation ("NormalMap"), 0);
+		GL::Uniform1i (currentShaderView->GetUniformLocation ("NormalMap"), 0);
 	}
 
-	 if (mat->alphaTexture != nullptr) {
+	if (mat->alphaTexture != nullptr) {
 		mat->alphaTexture->Activate (_textureCount);
-	 	GL::Uniform1i (shader->GetUniformLocation ("AlphaMap"), _textureCount);
-	 	++ _textureCount;
-	 } else {
-	 	GL::Uniform1i (shader->GetUniformLocation ("AlphaMap"), 0);
-	 }
+		GL::Uniform1i (currentShaderView->GetUniformLocation ("AlphaMap"), _textureCount);
+		++ _textureCount;
+	} else {
+		GL::Uniform1i (currentShaderView->GetUniformLocation ("AlphaMap"), 0);
+	}
 
 	/*
 	 * Send custom attributes

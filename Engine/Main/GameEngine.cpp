@@ -9,7 +9,6 @@
 #include "Systems/Physics/Physics.h"
 #include "Systems/GUI/GUI.h"
 
-#include "Managers/ShaderManager.h"
 #include "Managers/SceneManager.h"
 #include "Renderer/RenderManager.h"
 #include "Renderer/RenderModuleManager.h"
@@ -63,7 +62,6 @@ void GameEngine::Init ()
 
 void GameEngine::Clear ()
 {
-	ShaderManager::Instance()->Clear();
 	SceneManager::Instance()->Clear();
 	RenderManager::Instance()->Clear();
 	RenderModuleManager::Instance ()->Clear ();

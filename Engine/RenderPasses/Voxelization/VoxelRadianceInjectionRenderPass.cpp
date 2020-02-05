@@ -1,6 +1,7 @@
 #include "VoxelRadianceInjectionRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
 
@@ -12,8 +13,13 @@ VoxelRadianceInjectionRenderPass::VoxelRadianceInjectionRenderPass () :
 
 void VoxelRadianceInjectionRenderPass::Init (const RenderSettings& settings)
 {
-	ShaderManager::Instance ()->AddComputeShader ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER",
-		"Assets/Shaders/Voxelize/voxelRadianceInjectionCompute.glsl");
+	/*
+	 * Shader for voxel radiance injection render pass
+	*/
+
+	Resource<Shader> shader = Resources::LoadComputeShader ("Assets/Shaders/Voxelize/voxelRadianceInjectionCompute.glsl");
+
+	_shaderView = RenderSystem::LoadComputeShader (shader);
 }
 
 RenderVolumeCollection* VoxelRadianceInjectionRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -52,33 +58,35 @@ void VoxelRadianceInjectionRenderPass::Clear ()
 
 void VoxelRadianceInjectionRenderPass::StartRadianceInjectionPass ()
 {
-	Pipeline::SetShader (ShaderManager::Instance ()->GetShader ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER"));
+	Pipeline::SetShader (_shaderView);
 }
 
 void VoxelRadianceInjectionRenderPass::RadianceInjectPass (const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
+	auto shadowMapVolume = rvc->GetRenderVolume ("ShadowMapDirectionalLightVolume");
+	auto voxelVolume = rvc->GetRenderVolume ("VoxelVolume");
+
 	/*
 	 * Bind render volumes for reading
 	*/
 
-	rvc->GetRenderVolume ("ShadowMapDirectionalLightVolume")->BindForReading ();
+	shadowMapVolume->BindForReading ();
 
-	rvc->GetRenderVolume ("VoxelVolume")->BindForReading ();
+	voxelVolume->BindForReading ();
 
 	/*
 	 * Send custom attributes of render volumes to pipeline
 	*/
 
-	Pipeline::SendCustomAttributes ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER",
-		rvc->GetRenderVolume ("ShadowMapDirectionalLightVolume")->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (_shaderView, shadowMapVolume->GetCustomAttributes ());
 
-	Pipeline::SendCustomAttributes ("VOXEL_RADIANCE_INJECTION_PASS_COMPUTE_SHADER",
-		rvc->GetRenderVolume ("VoxelVolume")->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (_shaderView, voxelVolume->GetCustomAttributes ());
+
 	/*
 	 * Bind voxel volume for writing
 	*/
 
-	rvc->GetRenderVolume ("VoxelVolume")->BindForWriting ();
+	voxelVolume->BindForWriting ();
 
 	/*
 	 * Inject radiance

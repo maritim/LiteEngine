@@ -3,6 +3,8 @@
 
 #include "Renderer/RenderObject.h"
 
+#include "Renderer/RenderViews/ShaderView.h"
+
 #include "Renderer/PipelineAttribute.h"
 
 #include "Fonts/Font.h"
@@ -10,7 +12,7 @@
 class RenderTextGUIObject : public RenderObject
 {
 protected:
-	std::string _shaderName;
+	Resource<ShaderView> _shaderView;
 	Resource<Font> _font;
 	Resource<TextureView> _fontTextureView;
 

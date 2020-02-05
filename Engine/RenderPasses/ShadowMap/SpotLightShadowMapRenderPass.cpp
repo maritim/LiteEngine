@@ -4,6 +4,8 @@
 
 #include "Renderer/Pipeline.h"
 
+#include "Wrappers/OpenGL/GL.h"
+
 #include "Core/Console/Console.h"
 
 #include "SceneNodes/SceneLayer.h"
@@ -164,7 +166,7 @@ void SpotLightShadowMapRenderPass::ShadowMapPass (const RenderScene* renderScene
 		 * Send custom attributes
 		*/
 
-		Pipeline::SendCustomAttributes ("", GetCustomAttributes ());
+		Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes ());
 
 		/*
 		 * Render object on shadow map

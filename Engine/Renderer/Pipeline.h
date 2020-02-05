@@ -9,12 +9,11 @@
 
 #include "PipelineAttribute.h"
 
-#include "Shader/Shader.h"
-
 #include "Core/Resources/Resource.h"
 #include "Renderer/RenderSettings.h"
 #include "Renderer/RenderViews/MaterialView.h"
 #include "Renderer/RenderViews/TextureView.h"
+#include "Renderer/RenderViews/ShaderView.h"
 
 // TODO: Refactor this
 
@@ -29,7 +28,7 @@ private:
 
 	static std::size_t _textureCount;
 
-	static Shader* _lockedShader;
+	static Resource<ShaderView> _lockedShaderView;
 
 	static Resource<MaterialView> _defaultMaterialView;
 	static Resource<TextureView> _defaultTextureView;
@@ -38,9 +37,9 @@ public:
 	static void Init ();
 	static void Clear ();
 
-	static void SetShader (Shader* shader);
+	static void SetShader (const Resource<ShaderView>& shaderView);
 
-	static void LockShader (Shader* shader);
+	static void LockShader (const Resource<ShaderView>& shaderView);
 	static void UnlockShader ();
 
 	static void CreateProjection (const Camera* camera);
@@ -49,11 +48,11 @@ public:
 	static void SetObjectTransform (const Transform *transform);
 	static void SendCamera (const Camera* camera);
 
-	static void UpdateMatrices (Shader* shader);
-	static void SendLights (Shader* shader);
-	static void SendMaterial (Resource<MaterialView> materialView, Shader* shader = nullptr);
+	static void UpdateMatrices (const Resource<ShaderView>& shaderView);
+	static void SendLights (const Resource<ShaderView>& shaderView);
+	static void SendMaterial (Resource<MaterialView> materialView, const Resource<ShaderView>& shaderView = nullptr);
 	// TODO: Reimplement this
-	static void SendCustomAttributes (const std::string& shadername, 
+	static void SendCustomAttributes (const Resource<ShaderView>& shaderView,
 		const std::vector<PipelineAttribute>& attrs);
 
 	static void ClearObjectTransform ();

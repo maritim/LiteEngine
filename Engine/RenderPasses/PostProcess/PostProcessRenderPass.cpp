@@ -3,7 +3,9 @@
 #include "RenderPasses/GBuffer.h"
 
 #include "Renderer/Pipeline.h"
-#include "Managers/ShaderManager.h"
+
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Core/Console/Console.h"
 
@@ -24,9 +26,12 @@ void PostProcessRenderPass::Init (const RenderSettings& settings)
 	 * Initialize post processing shader
 	*/
 
-	ShaderManager::Instance ()->AddShader (GetPostProcessFragmentShaderPath (),
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/PostProcess/postProcessVertex.glsl",
-		GetPostProcessFragmentShaderPath ());
+		GetPostProcessFragmentShaderPath ()
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 
 	/*
 	 * Initialize post processing volume
@@ -127,7 +132,7 @@ void PostProcessRenderPass::PostProcessPass (const RenderScene* renderScene, con
 	 * Lock post-process shader
 	*/
 
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (GetPostProcessFragmentShaderPath ()));
+	Pipeline::LockShader (_shaderView);
 
 	/*
 	 * Update matrices
@@ -143,7 +148,7 @@ void PostProcessRenderPass::PostProcessPass (const RenderScene* renderScene, con
 	 * Send custom uniforms
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes (camera, settings, rvc));
+	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes (camera, settings, rvc));
 
 	/*
 	 * Draw a screen covering triangle

@@ -168,7 +168,7 @@ void RSMAccumulationRenderPass::ShadowMapGeometryPass (const RenderScene* render
 		 * Send custom attributes
 		*/
 
-		Pipeline::SendCustomAttributes ("", GetCustomAttributes (renderLightObject));
+		Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes (renderLightObject));
 
 		/*
 		* Render object on shadow map

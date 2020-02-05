@@ -17,6 +17,8 @@
 #include "Loaders/AnimationSkinLoader.h"
 #include "Loaders/AnimationClipLoader.h"
 #include "Loaders/WAVLoader.h"
+#include "Loaders/ShaderLoader.h"
+#include "Loaders/ComputeShaderLoader.h"
 #include "Loaders/ShaderContentLoader.h"
 #include "Loaders/MaterialLibraryLoader.h"
 #include "Loaders/TextureLoader.h"
@@ -182,15 +184,53 @@ AudioClip* Resources::LoadWAV (const std::string& filename)
 	return audioClip;
 }
 
-ShaderContent* Resources::LoadShaderContent (const std::string& filename)
+Resource<Shader> Resources::LoadShader (const std::vector<std::string>& filenames)
 {
+	std::string filename = filenames [0] + filenames [1] + (filenames.size () > 2 ? filenames [2] : "");
+
+	if (Resource<Shader>::GetResource (filename) != nullptr) {
+		return Resource<Shader>::GetResource (filename);
+	}
+
+	ShaderLoader* shaderLoader = new ShaderLoader ();
+
+	shaderLoader->SetFilenames (filenames);
+
+	Shader* shader = (Shader*)shaderLoader->Load (filename);
+
+	delete shaderLoader;
+
+	return Resource<Shader> (shader, filename);
+}
+
+Resource<Shader> Resources::LoadComputeShader (const std::string& filename)
+{
+	if (Resource<Shader>::GetResource (filename) != nullptr) {
+		return Resource<Shader>::GetResource (filename);
+	}
+
+	ComputeShaderLoader* computeShaderLoader = new ComputeShaderLoader ();
+
+	Shader* shader = (Shader*)computeShaderLoader->Load (filename);
+
+	delete computeShaderLoader;
+
+	return Resource<Shader> (shader, filename);
+}
+
+Resource<ShaderContent> Resources::LoadShaderContent (const std::string& filename)
+{
+	if (Resource<ShaderContent>::GetResource (filename) != nullptr) {
+		return Resource<ShaderContent>::GetResource (filename);
+	}
+
 	ShaderContentLoader* shaderContentLoader = new ShaderContentLoader ();
 
 	ShaderContent* shaderContent = (ShaderContent*)shaderContentLoader->Load (filename);
 
 	delete shaderContentLoader;
 
-	return shaderContent;
+	return Resource<ShaderContent> (shaderContent, filename);
 }
 
 Resource<Texture> Resources::LoadTexture(const std::string& filename)

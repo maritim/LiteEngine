@@ -4,8 +4,10 @@
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
 #include <vector>
-#include <string>
 #include <glm/vec2.hpp>
+
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
 
 #include "RenderPasses/PostProcess/PostProcessMapVolume.h"
 
@@ -14,6 +16,7 @@
 class ENGINE_API PostProcessRenderPass : public ContainerRenderSubPassI
 {
 protected:
+	Resource<ShaderView> _shaderView;
 	PostProcessMapVolume* _postProcessMapVolume;
 
 public:

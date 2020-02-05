@@ -45,9 +45,7 @@ void ShaderContentLoader::ProcessInclude (const std::string& line, std::string& 
 	std::string includeFilename = line.substr (line.find ('\"') + 1, line.rfind ('\"') - line.find ('\"') - 1);
 	std::string includeFilePath = shadersDirectory + includeFilename;
 
-	ShaderContent* shaderContent = Resources::LoadShaderContent (includeFilePath);
+	Resource<ShaderContent> shaderContent = Resources::LoadShaderContent (includeFilePath);
 
 	content += shaderContent->GetContent ();
-
-	delete shaderContent;
 }

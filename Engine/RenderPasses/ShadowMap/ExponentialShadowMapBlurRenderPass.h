@@ -4,6 +4,9 @@
 #include "RenderPasses/VolumetricLightRenderPassI.h"
 #include "Core/Observer/ObserverI.h"
 
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
+
 #include "ExponentialShadowMapBlurVolume.h"
 
 #include "Systems/Settings/SettingsObserverArgs.h"
@@ -11,7 +14,8 @@
 class ExponentialShadowMapBlurRenderPass : public VolumetricLightRenderPassI, public ObserverI<SettingsObserverArgs>
 {
 protected:
-	std::string _shaders [2];
+	Resource<ShaderView> _horizontalShaderViewer;
+	Resource<ShaderView> _verticalShaderViewer;
 	ExponentialShadowMapBlurVolume** _framebuffers;
 
 	glm::ivec2 _resolution;

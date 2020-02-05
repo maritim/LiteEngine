@@ -3,6 +3,9 @@
 
 #include "Renderer/RenderPassI.h"
 
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
+
 #include "VoxelShadowMapVolume.h"
 
 class VoxelDirectionalShadowMapRenderPass : public RenderPassI
@@ -10,8 +13,8 @@ class VoxelDirectionalShadowMapRenderPass : public RenderPassI
 	DECLARE_RENDER_PASS(VoxelDirectionalShadowMapRenderPass)
 
 protected:
-	std::string _staticShaderName;
-	std::string _animationShaderName;
+	Resource<ShaderView> _staticShaderView;
+	Resource<ShaderView> _animationShaderView;
 	VoxelShadowMapVolume* _voxelShadowMapVolume;
 
 	bool _firstTime;

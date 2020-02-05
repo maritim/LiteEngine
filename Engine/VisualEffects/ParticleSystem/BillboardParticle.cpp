@@ -4,8 +4,6 @@
 
 #include "Texture/TextureAtlas.h"
 
-#include "Managers/ShaderManager.h"
-
 #include "Renderer/RenderSystem.h"
 
 BillboardParticle::BillboardParticle () :
@@ -14,9 +12,9 @@ BillboardParticle::BillboardParticle () :
 	_textureAtlasView (nullptr),
 	_shaderName ("BILLBOARD")
 {
-	ShaderManager::Instance ()->AddShader (_shaderName,
-		"Assets/Shaders/Particles/billboardVertex.glsl",
-		"Assets/Shaders/Particles/billboardFragment.glsl");
+	// ShaderManager::Instance ()->AddShader (_shaderName,
+	// 	"Assets/Shaders/Particles/billboardVertex.glsl",
+	// 	"Assets/Shaders/Particles/billboardFragment.glsl");
 }
 
 void BillboardParticle::SetTextureAtlas (const Resource<Texture>& textureAtlas)

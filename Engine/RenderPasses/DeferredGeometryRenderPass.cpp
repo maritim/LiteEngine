@@ -4,7 +4,8 @@
 
 #include "ResultFrameBuffer2DVolume.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Core/Intersections/Intersection.h"
 
@@ -21,10 +22,6 @@
 #include "SceneNodes/SceneLayer.h"
 
 DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
-	_shaderName ("DEFERRED_GEOMETRY"),
-	_normalMapShaderName ("NORMAL_MAP_DEFERRED_GEOMETRY"),
-	_lightMapShaderName ("LIGHT_MAP_DEFERRED_GEOMETRY"),
-	_animationShaderName ("ANIMATION_DEFERRED_GEOMETRY"),
 	_frameBuffer (new GBuffer ()),
 	_haltonGenerator (2, 3)
 {
@@ -42,37 +39,49 @@ void DeferredGeometryRenderPass::Init (const RenderSettings& settings)
 	 * Shader for not animated objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shaderName,
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/deferredVertex.glsl",
 		"Assets/Shaders/deferredFragment.glsl",
-		"Assets/Shaders/deferredGeometry.glsl");
+		"Assets/Shaders/deferredGeometry.glsl"
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 
 	/*
 	 * Shader for not animated normal mapped objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_normalMapShaderName,
+	Resource<Shader> normalMapShader = Resources::LoadShader ({
 		"Assets/Shaders/deferredNormalMapVertex.glsl",
 		"Assets/Shaders/deferredNormalMapFragment.glsl",
-		"Assets/Shaders/deferredNormalMapGeometry.glsl");
+		"Assets/Shaders/deferredNormalMapGeometry.glsl"
+	});
+
+	_normalMapShaderView = RenderSystem::LoadShader (normalMapShader);
 
 	/*
 	 * Shader for not animated light mapped objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_lightMapShaderName,
+	Resource<Shader> lightMapShader = Resources::LoadShader ({
 		"Assets/Shaders/deferredLightMapVertex.glsl",
 		"Assets/Shaders/deferredLightMapFragment.glsl",
-		"Assets/Shaders/deferredLightMapGeometry.glsl");
+		"Assets/Shaders/deferredLightMapGeometry.glsl"
+	});
+
+	_lightMapShaderView = RenderSystem::LoadShader (lightMapShader);
 
 	/*
 	 * Shader for animations
 	*/
 
-	ShaderManager::Instance ()->AddShader (_animationShaderName,
+	Resource<Shader> animationShader = Resources::LoadShader ({
 		"Assets/Shaders/deferredVertexAnimation.glsl",
 		"Assets/Shaders/deferredFragment.glsl",
-		"Assets/Shaders/deferredGeometry.glsl");
+		"Assets/Shaders/deferredGeometry.glsl"
+	});
+
+	_animationShaderView = RenderSystem::LoadShader (animationShader);
 
 	/*
 	 * Initialize GBuffer volume
@@ -273,7 +282,7 @@ void DeferredGeometryRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if (sceneLayers & SceneLayer::ANIMATION) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+		Pipeline::LockShader (_animationShaderView);
 	}
 
 	/*
@@ -281,7 +290,7 @@ void DeferredGeometryRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if ((sceneLayers & SceneLayer::NORMAL_MAP) && (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC))) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_normalMapShaderName));
+		Pipeline::LockShader (_normalMapShaderView);
 	}
 
 	/*
@@ -289,7 +298,7 @@ void DeferredGeometryRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if ((sceneLayers & SceneLayer::LIGHT_MAP) && (sceneLayers & SceneLayer::STATIC)) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_lightMapShaderName));
+		Pipeline::LockShader (_lightMapShaderView);
 	}
 
 	/*
@@ -297,7 +306,7 @@ void DeferredGeometryRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if ((sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) && !(sceneLayers & SceneLayer::NORMAL_MAP)) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
+		Pipeline::LockShader (_shaderView);
 	}
 }
 

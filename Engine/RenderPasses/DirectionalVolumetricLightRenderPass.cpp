@@ -117,13 +117,13 @@ void DirectionalVolumetricLightRenderPass::DirectionalLightPass (const RenderSce
 	 * Send custom attributes
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes (camera, renderLightObject, rvc));
+	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes (camera, renderLightObject, rvc));
 
 	/*
 	 * Send custom attributes
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes (settings));
+	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes (settings));
 
 	/*
 	 * Draw volumetric light

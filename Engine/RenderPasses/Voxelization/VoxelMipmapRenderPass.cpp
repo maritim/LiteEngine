@@ -1,6 +1,7 @@
 #include "VoxelMipmapRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
 
@@ -14,8 +15,13 @@ VoxelMipmapRenderPass::VoxelMipmapRenderPass () :
 
 void VoxelMipmapRenderPass::Init (const RenderSettings& settings)
 {
-	ShaderManager::Instance ()->AddComputeShader ("VOXEL_MIPMAP_PASS_COMPUTE_SHADER",
-		"Assets/Shaders/Voxelize/voxelMipmapCompute.glsl");
+	/*
+	 * Shader for voxel mipmap render pass
+	*/
+
+	Resource<Shader> shader = Resources::LoadComputeShader ("Assets/Shaders/Voxelize/voxelMipmapCompute.glsl");
+
+	_shaderView = RenderSystem::LoadComputeShader (shader);
 }
 
 RenderVolumeCollection* VoxelMipmapRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -54,13 +60,12 @@ void VoxelMipmapRenderPass::Clear ()
 
 void VoxelMipmapRenderPass::StartVoxelMipmaping ()
 {
-	Pipeline::SetShader (ShaderManager::Instance ()->GetShader ("VOXEL_MIPMAP_PASS_COMPUTE_SHADER"));
+	Pipeline::SetShader (_shaderView);
 }
 
 void VoxelMipmapRenderPass::GenerateMipmaps (const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	std::size_t dstMipRes = ((int) settings.vct_voxels_size) >> 1;
-	Shader* computeShader = ShaderManager::Instance ()->GetShader ("VOXEL_MIPMAP_PASS_COMPUTE_SHADER");
 
 	VoxelVolume* voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
 
@@ -68,10 +73,10 @@ void VoxelMipmapRenderPass::GenerateMipmaps (const RenderSettings& settings, Ren
 
 	for (std::size_t mipLevel = 0; mipLevel < voxelVolume->GetVolumeMipmapLevels () - 1; mipLevel++) {
 
-		Pipeline::SendCustomAttributes ("VOXEL_MIPMAP_PASS_COMPUTE_SHADER", voxelVolume->GetCustomAttributes ());
+		Pipeline::SendCustomAttributes (_shaderView, voxelVolume->GetCustomAttributes ());
 
-		GL::Uniform1i (computeShader->GetUniformLocation ("SrcMipLevel"), mipLevel);
-		GL::Uniform1i (computeShader->GetUniformLocation ("DstMipRes"), dstMipRes);
+		GL::Uniform1i (_shaderView->GetUniformLocation ("SrcMipLevel"), mipLevel);
+		GL::Uniform1i (_shaderView->GetUniformLocation ("DstMipRes"), dstMipRes);
 
 		voxelVolume->BindForWriting (mipLevel + 1);
 

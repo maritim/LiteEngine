@@ -4,20 +4,10 @@
 
 #include "Systems/GUI/ImGui/imgui.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
-
-GUIRenderPass::GUIRenderPass () :
-	_shaderName ("GUI")
-{
-
-}
-
-GUIRenderPass::~GUIRenderPass ()
-{
-	Clear ();
-}
 
 void GUIRenderPass::Init (const RenderSettings& settings)
 {
@@ -25,9 +15,12 @@ void GUIRenderPass::Init (const RenderSettings& settings)
 	 * Shader for gui objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shaderName,
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/GUI/guiVertex.glsl",
-		"Assets/Shaders/GUI/guiFragment.glsl");
+		"Assets/Shaders/GUI/guiFragment.glsl"
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 
 	/*
 	 * Load font texture
@@ -135,7 +128,7 @@ void GUIRenderPass::EditorPass (const RenderSettings& settings)
 	 * Send custom attributes
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes ());
 
 	/*
 	 * Render
@@ -232,7 +225,7 @@ void GUIRenderPass::LockShader ()
 	 * Lock the shader for not animated normal mapped objects
 	*/
 
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
+	Pipeline::LockShader (_shaderView);
 }
 
 void GUIRenderPass::Clear ()

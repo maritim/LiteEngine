@@ -3,18 +3,17 @@
 
 #include "RenderPasses/DirectionalVolumetricLightRenderPass.h"
 
-#include <string>
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
 
 class VCTDirectionalLightRenderPass : public DirectionalVolumetricLightRenderPass
 {
 	DECLARE_RENDER_PASS(VCTDirectionalLightRenderPass)
 
 protected:
-	std::string _shadowShaderName;
+	Resource<ShaderView> _shadowShaderView;
 
 public:
-	VCTDirectionalLightRenderPass ();
-
 	void Init (const RenderSettings& settings);
 
 	void Clear ();

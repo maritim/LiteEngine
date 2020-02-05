@@ -3,9 +3,15 @@
 
 #include "Renderer/RenderPassI.h"
 
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
+
 class VRTRenderPass : public RenderPassI
 {
 	DECLARE_RENDER_PASS(VRTRenderPass)
+
+protected:
+	Resource<ShaderView> _shaderView;
 
 public:
 	virtual ~VRTRenderPass ();

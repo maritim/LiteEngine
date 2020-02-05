@@ -7,6 +7,9 @@
 
 #include "Texture/CubeMap.h"
 
+#include "Shader/DrawingShader.h"
+#include "Shader/ComputeShader.h"
+
 #include "Renderer/RenderViews/CubeMapView.h"
 #include "RenderViews/TextureLUTView.h"
 
@@ -553,10 +556,69 @@ Resource<TextureView> RenderSystem::LoadTextureLUT (const Resource<Texture>& tex
 	return Resource<TextureView> (lutTextureView, texture->GetName ());
 }
 
-// Resource<ShaderView> RenderSystem::LoadShader (const Resource<ShaderContent>& shaderContent)
-// {
-	
-// }
+Resource<ShaderView> RenderSystem::LoadShader (const Resource<Shader>& shader)
+{
+	if (Resource<ShaderView>::GetResource (shader->GetName ()) != nullptr) {
+		return Resource<ShaderView>::GetResource (shader->GetName ());
+	}
+
+	const DrawingShader* drawingShader = dynamic_cast<const DrawingShader*> (&*shader);
+
+	GLuint program = GL::CreateProgram ();
+
+	/*
+	 * Compile and attach vertex shader
+	*/
+
+	GLuint vertexShaderID = BuildShaderContent (drawingShader->GetVertexShaderContent (), GL_VERTEX_SHADER);
+
+	GL::AttachShader (program, vertexShaderID);
+
+	/*
+	 * Compile and attach fragment shader
+	*/
+
+	GLuint fragmentShaderID = BuildShaderContent (drawingShader->GetFragmentShaderContent (), GL_FRAGMENT_SHADER);
+
+	GL::AttachShader (program, fragmentShaderID);
+
+	/*
+	 * Compile and attach geometry shader if exists
+	*/
+
+	if (drawingShader->GetGeometryShaderContent () != nullptr) {
+		unsigned int geometryShaderID = BuildShaderContent (drawingShader->GetGeometryShaderContent (), GL_GEOMETRY_SHADER);
+
+		GL::AttachShader (program, geometryShaderID);
+	}
+
+	GL::LinkProgram (program);
+
+	ShaderView* shaderView = new ShaderView (program);
+
+	return Resource<ShaderView> (shaderView, shader->GetName ());
+}
+
+Resource<ShaderView> RenderSystem::LoadComputeShader (const Resource<Shader>& shader)
+{
+	const ComputeShader* computeShader = dynamic_cast<const ComputeShader*> (&*shader);
+
+	unsigned int program = GL::CreateProgram();
+
+	/*
+	 * Load, compile and attach vertex shader
+	*/
+
+	GLuint computeShaderID = BuildShaderContent (computeShader->GetComputeShaderContent (), GL_COMPUTE_SHADER);
+
+	GL::AttachShader (program, computeShaderID);
+
+	GL::LinkProgram(program);
+
+	ShaderView* shaderView = new ShaderView (program);
+
+	return Resource<ShaderView> (shaderView, shader->GetName ());
+}
 
 Resource<Texture> RenderSystem::SaveTexture (const Resource<TextureView>& textureView)
 {
@@ -926,7 +988,6 @@ void RenderSystem::ProcessMaterial (const Resource<Material>& material, Material
 	materialView->shininess = material->shininess;
 	materialView->transparency = material->transparency;
 	materialView->refractiveIndex = material->refractiveIndex;
-	materialView->shaderName = material->shaderName;
 
 	if (material->ambientTexture != nullptr) {
 		materialView->ambientTexture = LoadTexture (material->ambientTexture);
@@ -950,6 +1011,10 @@ void RenderSystem::ProcessMaterial (const Resource<Material>& material, Material
 
 	if (material->cubeTexture != nullptr) {
 		materialView->cubeTexture = LoadTexture (material->cubeTexture);
+	}
+
+	if (material->shader != nullptr) {
+		materialView->shaderView = LoadShader (material->shader);
 	}
 }
 
@@ -1120,4 +1185,48 @@ unsigned int RenderSystem::LoadTextureLUTGPU (const Resource<Texture>& texture)
 	*/
 
 	return gpuIndex;
+}
+
+/*
+ * Compile shader based on type (vertex, geometry, fragment, compute)
+*/
+
+unsigned int RenderSystem::BuildShaderContent (const Resource<ShaderContent>& shaderContent, int shaderType)
+{
+	unsigned int shaderID = GL::CreateShader ((GLenum)shaderType);
+
+	const char* csource = shaderContent->GetContent ().c_str ();
+
+	Console::Log ("Compiling \"" + shaderContent->GetFilename () + "\" !");
+
+	GL::ShaderSource (shaderID, 1, &csource, NULL);
+	GL::CompileShader (shaderID);
+
+	ShaderErrorCheck (shaderID);
+
+	return shaderID;
+}
+
+bool RenderSystem::ShaderErrorCheck (unsigned int shader)
+{
+	int isCompiled;
+	GL::GetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+
+	if(isCompiled == GL_FALSE) {
+		int maxLength = 0;
+		GL::GetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+
+		// The maxLength includes the NULL character
+		std::vector<GLchar> errorLog(maxLength);
+		GL::GetShaderInfoLog(shader, maxLength, &maxLength, &errorLog[0]);
+
+		std::string error(errorLog.begin(), errorLog.end());
+		Console::LogError (error);
+
+		GL::DeleteShader(shader); // Don't leak the shader.
+
+		return false;
+	}
+
+	return true;
 }

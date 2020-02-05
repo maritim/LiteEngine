@@ -19,7 +19,7 @@ Material::Material(void) :
 	alphaTexture (nullptr),
 	bumpTexture (nullptr),
 	cubeTexture (nullptr),
-	shaderName ("")
+	shader (nullptr)
 {
 	// Documentation: 
 	// http://stackoverflow.com/questions/10181201/opengl-light-changes-ambient-to-diffuse-or-specular-works-but-not-the-opposite
@@ -41,7 +41,7 @@ Material::Material(const Material& other) :
 	alphaTexture (other.alphaTexture),
 	bumpTexture (other.bumpTexture),
 	cubeTexture (other.cubeTexture),
-	shaderName (other.shaderName)
+	shader (other.shader)
 {
 
 }

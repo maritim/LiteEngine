@@ -3,16 +3,17 @@
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
+
 class ENGINE_API RSMRenderPass : public ContainerRenderSubPassI
 {
 	DECLARE_RENDER_PASS(RSMRenderPass)
 
 protected:
-	std::string _shaderName;
+	Resource<ShaderView> _shaderView;
 
 public:
-	RSMRenderPass ();
-
 	void Init (const RenderSettings&);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);

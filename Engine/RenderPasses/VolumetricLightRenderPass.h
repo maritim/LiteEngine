@@ -3,15 +3,15 @@
 
 #include "RenderPasses/VolumetricLightRenderPassI.h"
 
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
+
 class ENGINE_API VolumetricLightRenderPass : public VolumetricLightRenderPassI
 {
 protected:
-	std::string _stencilShaderName;
+	Resource<ShaderView> _stencilShaderView;
 
 public:
-	VolumetricLightRenderPass ();
-	~VolumetricLightRenderPass ();
-
 	void Init (const RenderSettings&);
 
 	RenderVolumeCollection* Execute (const RenderScene*, const Camera*, const RenderSettings&, RenderVolumeCollection* );

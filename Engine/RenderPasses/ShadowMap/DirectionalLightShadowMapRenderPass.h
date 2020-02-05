@@ -3,6 +3,9 @@
 
 #include "RenderPasses/VolumetricLightRenderPassI.h"
 
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
+
 #include "RenderPasses/ShadowMap/CascadedShadowMapDirectionalLightVolume.h"
 
 #include "Systems/Camera/Camera.h"
@@ -13,8 +16,8 @@ class ENGINE_API DirectionalLightShadowMapRenderPass : public VolumetricLightRen
 	DECLARE_RENDER_PASS(DirectionalLightShadowMapRenderPass)
 
 protected:
-	std::string _staticShaderName;
-	std::string _animationShaderName;
+	Resource<ShaderView> _staticShaderView;
+	Resource<ShaderView> _animationShaderView;
 	CascadedShadowMapDirectionalLightVolume* _volume;
 
 public:

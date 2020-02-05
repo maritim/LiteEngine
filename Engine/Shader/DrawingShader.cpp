@@ -1,52 +1,31 @@
 #include "DrawingShader.h"
 
-DrawingShader::DrawingShader (const std::string& name, GLuint program,
-	unsigned int vertex, unsigned int fragment, unsigned int geometry) :
-	Shader (name, program),
-	_vertexShader (vertex),
-	_geometryShader (geometry),
-	_fragmentShader (fragment)
+const Resource<ShaderContent>& DrawingShader::GetVertexShaderContent () const
 {
-
+	return _vertexShaderContent;
 }
 
-DrawingShader::~DrawingShader ()
+const Resource<ShaderContent>& DrawingShader::GetGeometryShaderContent () const
 {
-	GL::DetachShader (_program, _vertexShader);
-	GL::DetachShader (_program, _fragmentShader);
-
-	GL::DeleteShader (_vertexShader);
-	GL::DeleteShader (_fragmentShader);
-
-	GL::DeleteProgram (_program);
+	return _geometryShaderContent;
 }
 
-GLuint DrawingShader::GetVertexShader () const
+const Resource<ShaderContent>& DrawingShader::GetFragmentShaderContent () const
 {
-	return _vertexShader;
+	return _fragmentShaderContent;
 }
 
-GLuint DrawingShader::GetGeometryShader () const
+void DrawingShader::SetVertexShaderContent (const Resource<ShaderContent>& shaderContent)
 {
-	return _geometryShader;
+	_vertexShaderContent = shaderContent;
 }
 
-GLuint DrawingShader::GetFragmentShader () const
+void DrawingShader::SetGeometryShaderContent (const Resource<ShaderContent>& shaderContent)
 {
-	return _fragmentShader;
+	_geometryShaderContent = shaderContent;
 }
 
-void DrawingShader::SetVertexFilename (const std::string& name)
+void DrawingShader::SetFragmentShaderContent (const Resource<ShaderContent>& shaderContent)
 {
-	_vertexFilename = name;
-}
-
-void DrawingShader::SetGeometryFilename (const std::string& name)
-{
-	_geometryFilename = name;
-}
-
-void DrawingShader::SetFragmentFilename (const std::string& name)
-{
-	_fragmentFilename = name;
+	_fragmentShaderContent = shaderContent;
 }

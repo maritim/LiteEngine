@@ -1,14 +1,9 @@
 #include "VCTDirectionalLightRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
-
-VCTDirectionalLightRenderPass::VCTDirectionalLightRenderPass () :
-	_shadowShaderName ("VOXEL_CONE_TRACE_SHADOW_MAP_DIRECTIONAL_LIGHT")
-{
-
-}
 
 void VCTDirectionalLightRenderPass::Init (const RenderSettings& settings)
 {
@@ -16,9 +11,12 @@ void VCTDirectionalLightRenderPass::Init (const RenderSettings& settings)
 	 * Shader for general directional light with no shadow casting
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shadowShaderName,
+	Resource<Shader> shadowShader = Resources::LoadShader ({
 		"Assets/Shaders/VoxelConeTracing/voxelConeTracingVertex.glsl",
-		"Assets/Shaders/VoxelConeTracing/voxelConeTracingFragment.glsl");
+		"Assets/Shaders/VoxelConeTracing/voxelConeTracingFragment.glsl"
+	});
+
+	_shadowShaderView = RenderSystem::LoadShader (shadowShader);
 }
 
 void VCTDirectionalLightRenderPass::Clear ()
@@ -38,7 +36,7 @@ void VCTDirectionalLightRenderPass::LockShader (const RenderLightObject* renderL
 	 * Lock shader for shadow directional light
 	*/
 
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shadowShaderName));
+	Pipeline::LockShader (_shadowShaderView);
 }
 
 std::vector<PipelineAttribute> VCTDirectionalLightRenderPass::GetCustomAttributes (const RenderSettings& settings) const

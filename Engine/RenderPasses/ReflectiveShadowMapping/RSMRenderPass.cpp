@@ -1,13 +1,9 @@
 #include "RSMRenderPass.h"
 
 #include "Renderer/Pipeline.h"
-#include "Managers/ShaderManager.h"
 
-RSMRenderPass::RSMRenderPass () :
-	_shaderName ("REFLECTIVE_SHADOW_MAPPING")
-{
-
-}
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 void RSMRenderPass::Init (const RenderSettings& settings)
 {
@@ -15,9 +11,12 @@ void RSMRenderPass::Init (const RenderSettings& settings)
 	 * Shader for not animated objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shaderName,
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/PostProcess/postProcessVertex.glsl",
-		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapFragment.glsl");
+		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapFragment.glsl"
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 }
 
 void RSMRenderPass::Clear ()
@@ -49,7 +48,7 @@ RenderVolumeCollection* RSMRenderPass::Execute (const RenderScene* renderScene, 
 	 * Lock post-process shader
 	*/
 
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
+	Pipeline::LockShader (_shaderView);
 
 	/*
 	 * Set viewport
@@ -81,8 +80,8 @@ RenderVolumeCollection* RSMRenderPass::Execute (const RenderScene* renderScene, 
 	 * Send custom uniforms
 	*/
 
-	Pipeline::SendCustomAttributes ("", rvc->GetRenderVolume ("GBuffer")->GetCustomAttributes ());
-	Pipeline::SendCustomAttributes ("", rvc->GetRenderVolume ("IndirectMap")->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("GBuffer")->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("IndirectMap")->GetCustomAttributes ());
 
 	/*
 	 * Draw a screen covering triangle

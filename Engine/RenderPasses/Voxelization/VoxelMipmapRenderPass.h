@@ -3,11 +3,15 @@
 
 #include "Renderer/RenderPassI.h"
 
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
+
 class VoxelMipmapRenderPass : public RenderPassI
 {
 	DECLARE_RENDER_PASS(VoxelMipmapRenderPass)
 
 protected:
+	Resource<ShaderView> _shaderView;
 	bool _firstTime;
 
 public:

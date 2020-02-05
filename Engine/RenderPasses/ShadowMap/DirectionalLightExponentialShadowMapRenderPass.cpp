@@ -2,7 +2,8 @@
 
 #include "ExponentialCascadedShadowMapDirectionalLightVolume.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Core/Console/Console.h"
 
@@ -12,9 +13,6 @@ DirectionalLightExponentialShadowMapRenderPass::DirectionalLightExponentialShado
 	DirectionalLightShadowMapRenderPass (),
 	_exponential (0)
 {
-	_staticShaderName = "STATIC_EXPONENTIAL_SHADOW_MAP";
-	_animationShaderName = "ANIMATION_EXPONENTIAL_SHADOW_MAP";
-
 	delete _volume;
 	_volume = new ExponentialCascadedShadowMapDirectionalLightVolume ();
 }
@@ -25,17 +23,23 @@ void DirectionalLightExponentialShadowMapRenderPass::Init ()
 	 * Shader for animated objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_staticShaderName,
+	Resource<Shader> staticShader = Resources::LoadShader ({
 		"Assets/Shaders/ShadowMap/shadowMapVertex.glsl",
-		"Assets/Shaders/ShadowMap/exponentialShadowMapFragment.glsl");
+		"Assets/Shaders/ShadowMap/exponentialShadowMapFragment.glsl"
+	});
+
+	_staticShaderView = RenderSystem::LoadShader (staticShader);
 
 	/*
 	 * Shader for animated objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_animationShaderName,
+	Resource<Shader> animationShader = Resources::LoadShader ({
 		"Assets/Shaders/ShadowMap/shadowMapVertexAnimation.glsl",
-		"Assets/Shaders/ShadowMap/exponentialShadowMapFragment.glsl");
+		"Assets/Shaders/ShadowMap/exponentialShadowMapFragment.glsl"
+	});
+
+	_animationShaderView = RenderSystem::LoadShader (animationShader);
 }
 
 std::vector<PipelineAttribute> DirectionalLightExponentialShadowMapRenderPass::GetCustomAttributes () const

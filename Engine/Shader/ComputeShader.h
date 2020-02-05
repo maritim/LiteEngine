@@ -3,20 +3,20 @@
 
 #include "Shader.h"
 
+#include "Core/Resources/Resource.h"
+#include "ShaderContent.h"
+
 class ComputeShader : public Shader
 {
 protected:
-	std::string _computeFilename;
-	GLuint _computeShader;
+	Resource<ShaderContent> _computeShaderContent;
 
 public:
-	ComputeShader (const std::string& name, GLuint program, 
-		GLuint compute);
-	~ComputeShader ();
+	using Shader::Shader;
 
-	GLuint GetComputeShader () const;
+	const Resource<ShaderContent>& GetComputeShaderContent () const;
 
-	void SetComputeFilename (const std::string& name);
+	void SetComputeShaderContent (const Resource<ShaderContent>& shaderContent);
 };
 
 #endif

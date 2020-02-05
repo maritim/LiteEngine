@@ -4,19 +4,26 @@
 
 #include "Renderer/Pipeline.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 //TODO: Fix this
 #include "Wrappers/OpenGL/GL.h"
 
 RenderTextGUIObject::RenderTextGUIObject () :
-	_shaderName ("FONT"),
 	_font (nullptr),
 	_fontTextureView (nullptr)
 {
-	ShaderManager::Instance ()->AddShader (_shaderName,
+	/*
+	 * Shader for text GUI render pass
+	*/
+
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/fontVertex.glsl",
-		"Assets/Shaders/fontFragment.glsl");
+		"Assets/Shaders/fontFragment.glsl"
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 }
 
 void RenderTextGUIObject::SetFont (const Resource<Font>& font)
@@ -46,12 +53,12 @@ void RenderTextGUIObject::Draw ()
 	GL::Enable (GL_BLEND);
 	GL::BlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
+	Pipeline::LockShader (_shaderView);
 
 	Pipeline::SetObjectTransform (_transform);
-	Pipeline::UpdateMatrices (ShaderManager::Instance ()->GetShader (_shaderName));
+	Pipeline::UpdateMatrices (_shaderView);
 
-	Pipeline::SendCustomAttributes (_shaderName, GetUniformAttributes ());
+	Pipeline::SendCustomAttributes (_shaderView, GetUniformAttributes ());
 
 	_modelView->DrawGeometry ();
 

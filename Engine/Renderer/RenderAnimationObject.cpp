@@ -22,7 +22,7 @@ void RenderAnimationObject::Draw ()
 {
 	Pipeline::SetObjectTransform (_transform);
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes ());
 
 	_modelView->Draw ();
 }
@@ -31,7 +31,7 @@ void RenderAnimationObject::DrawGeometry ()
 {
 	Pipeline::SetObjectTransform (_transform);
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes ());
 
 	_modelView->DrawGeometry ();
 }

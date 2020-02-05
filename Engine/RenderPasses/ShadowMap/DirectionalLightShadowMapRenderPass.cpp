@@ -6,9 +6,10 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Managers/ShaderManager.h"
-
 #include "Core/Intersections/Intersection.h"
+
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
 
@@ -17,8 +18,6 @@
 #include "SceneNodes/SceneLayer.h"
 
 DirectionalLightShadowMapRenderPass::DirectionalLightShadowMapRenderPass () :
-	_staticShaderName ("STATIC_SHADOW_MAP"),
-	_animationShaderName ("ANIMATION_SHADOW_MAP"),
 	_volume (new CascadedShadowMapDirectionalLightVolume ())
 {
 
@@ -35,17 +34,23 @@ void DirectionalLightShadowMapRenderPass::Init (const RenderSettings& settings)
 	 * Shader for animated objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_staticShaderName,
+	Resource<Shader> staticShader = Resources::LoadShader ({
 		"Assets/Shaders/ShadowMap/shadowMapVertex.glsl",
-		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
+		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl"
+	});
+
+	_staticShaderView = RenderSystem::LoadShader (staticShader);
 
 	/*
 	 * Shader for animated objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_animationShaderName,
+	Resource<Shader> animationShader = Resources::LoadShader ({
 		"Assets/Shaders/ShadowMap/shadowMapVertexAnimation.glsl",
-		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
+		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl"
+	});
+
+	_animationShaderView = RenderSystem::LoadShader (animationShader);
 }
 
 RenderVolumeCollection* DirectionalLightShadowMapRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -307,7 +312,7 @@ void DirectionalLightShadowMapRenderPass::Render (const RenderScene* renderScene
 		 * Send custom attributes
 		*/
 
-		Pipeline::SendCustomAttributes ("", GetCustomAttributes ());
+		Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes ());
 
 		/*
 		 * Render object on shadow map
@@ -330,7 +335,7 @@ void DirectionalLightShadowMapRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if (sceneLayers & SceneLayer::ANIMATION) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+		Pipeline::LockShader (_animationShaderView);
 	}
 
 	/*
@@ -338,7 +343,7 @@ void DirectionalLightShadowMapRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+		Pipeline::LockShader (_staticShaderView);
 	}
 }
 

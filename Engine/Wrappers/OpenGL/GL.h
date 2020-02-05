@@ -170,6 +170,7 @@ public:
 	static void ShaderSource(GLuint shader, GLsizei count, const GLchar **string, const GLint *length);	
 	static void CompileShader(GLuint shader);
 	static void GetShaderInfoLog(GLuint  shader,  GLsizei  maxLength,  GLsizei * length,  GLchar * infoLog);
+	static void GetShaderiv(GLuint shader, GLenum pname, GLint *params);
 
 	static GLuint CreateProgram(void);
 	static void DeleteProgram(GLuint program);

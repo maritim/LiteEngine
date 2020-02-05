@@ -926,6 +926,13 @@ void GL::GetShaderInfoLog(GLuint  shader,  GLsizei  maxLength,  GLsizei * length
 	ErrorCheck ("glGetShaderInfoLog");
 }
 
+void GL::GetShaderiv(GLuint shader, GLenum pname, GLint *params)
+{
+	glGetShaderiv(shader, pname, params);
+
+	ErrorCheck ("glGetShaderiv");
+}
+
 GLuint GL::CreateProgram(void)
 {
 	GLuint program = glCreateProgram ();

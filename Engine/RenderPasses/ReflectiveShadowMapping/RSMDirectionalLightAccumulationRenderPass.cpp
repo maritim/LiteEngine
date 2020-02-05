@@ -6,18 +6,12 @@
 
 #include "Cameras/OrthographicCamera.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
 
 #include "SceneNodes/SceneLayer.h"
-
-RSMDirectionalLightAccumulationRenderPass::RSMDirectionalLightAccumulationRenderPass () :
-	_staticShaderName ("STATIC_REFLECTIVE_SHADOW_MAP"),
-	_animationShaderName ("ANIMATION_REFLECTIVE_SHADOW_MAP")
-{
-
-}
 
 void RSMDirectionalLightAccumulationRenderPass::Init (const RenderSettings& settings)
 {
@@ -25,17 +19,23 @@ void RSMDirectionalLightAccumulationRenderPass::Init (const RenderSettings& sett
 	 * Shader for static objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_staticShaderName,
+	Resource<Shader> staticShader = Resources::LoadShader ({
 		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapAccumulationVertex.glsl",
-		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapAccumulationFragment.glsl");
+		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapAccumulationFragment.glsl"
+	});
+
+	_staticShaderView = RenderSystem::LoadShader (staticShader);
 
 	/*
 	 * Shader for animated objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_animationShaderName,
+	Resource<Shader> animationShader = Resources::LoadShader ({
 		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapAccumulationVertexAnimation.glsl",
-		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapAccumulationFragment.glsl");
+		"Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapAccumulationFragment.glsl"
+	});
+
+	_animationShaderView = RenderSystem::LoadShader (animationShader);
 }
 
 Camera* RSMDirectionalLightAccumulationRenderPass::GetLightCamera (const RenderScene* renderScene, const RenderLightObject* renderLightObject)
@@ -98,7 +98,7 @@ void RSMDirectionalLightAccumulationRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if (sceneLayers & SceneLayer::ANIMATION) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+		Pipeline::LockShader (_animationShaderView);
 	}
 
 	/*
@@ -106,6 +106,6 @@ void RSMDirectionalLightAccumulationRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+		Pipeline::LockShader (_staticShaderView);
 	}
 }

@@ -2,18 +2,22 @@
 
 #include "Renderer/Pipeline.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 RenderSkyboxObject::RenderSkyboxObject () :
+    _shaderView (nullptr),
     _cubemapView (nullptr),
     _tintColor (Color::White),
     _brightness (0.0),
-    _angularVelocity (0.0),
-    _shaderName ("SKYBOX")
+    _angularVelocity (0.0)
 {
-	ShaderManager::Instance ()->AddShader (_shaderName,
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/Skybox/skyboxVertex.glsl",
-		"Assets/Shaders/Skybox/skyboxFragment.glsl");
+		"Assets/Shaders/Skybox/skyboxFragment.glsl"
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 }
 
 RenderSkyboxObject::~RenderSkyboxObject ()
@@ -23,11 +27,11 @@ RenderSkyboxObject::~RenderSkyboxObject ()
 
 void RenderSkyboxObject::Draw ()
 {
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
+	Pipeline::LockShader (_shaderView);
 
 	Pipeline::SetObjectTransform (Transform::Default ());
 
-	Pipeline::SendCustomAttributes (_shaderName, GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (_shaderView, GetCustomAttributes ());
 
 	_modelView->DrawGeometry ();
 

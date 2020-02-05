@@ -3,18 +3,17 @@
 
 #include "RenderPasses/DirectionalVolumetricLightRenderPass.h"
 
-#include <string>
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
 
 class LightMapDirectionalLightRenderPass : public DirectionalVolumetricLightRenderPass
 {
 	DECLARE_RENDER_PASS(LightMapDirectionalLightRenderPass)
 
 protected:
-	std::string _shaderName;
+	Resource<ShaderView> _shaderView;
 
 public:
-	LightMapDirectionalLightRenderPass ();
-
 	void Init (const RenderSettings& settings);
 
 	void Clear ();

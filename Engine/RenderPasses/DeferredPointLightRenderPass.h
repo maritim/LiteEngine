@@ -3,19 +3,18 @@
 
 #include "RenderPasses/VolumetricLightRenderPass.h"
 
-#include <string>
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
 
 class ENGINE_API DeferredPointLightRenderPass : public VolumetricLightRenderPass
 {
 	DECLARE_RENDER_PASS(DeferredPointLightRenderPass)
 
 protected:
-	std::string _shaderName;
-	std::string _shadowShaderName;
+	Resource<ShaderView> _shaderView;
+	Resource<ShaderView> _shadowShaderView;
 
 public:
-	DeferredPointLightRenderPass ();
-
 	void Init (const RenderSettings& settings);
 
 	void Clear ();

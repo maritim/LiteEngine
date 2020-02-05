@@ -17,7 +17,7 @@ MaterialView::MaterialView () :
 	alphaTexture (nullptr),
 	bumpTexture (nullptr),
 	cubeTexture (nullptr),
-	shaderName ("")
+	shaderView (nullptr)
 {
 
 }

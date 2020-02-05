@@ -4,7 +4,9 @@
 #include <glm/gtc/quaternion.hpp>
 #include <algorithm>
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
+
 #include "Cameras/OrthographicCamera.h"
 
 #include "Renderer/Pipeline.h"
@@ -16,8 +18,6 @@
 #include "SceneNodes/SceneLayer.h"
 
 VoxelDirectionalShadowMapRenderPass::VoxelDirectionalShadowMapRenderPass () :
-	_staticShaderName ("STATIC_SHADOW_MAP"),
-	_animationShaderName ("ANIMATION_SHADOW_MAP"),
 	_voxelShadowMapVolume (new VoxelShadowMapVolume ()),
 	_firstTime (true)
 {
@@ -35,17 +35,23 @@ void VoxelDirectionalShadowMapRenderPass::Init (const RenderSettings& settings)
 	 * Shader for static objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_staticShaderName,
+	Resource<Shader> staticShader = Resources::LoadShader ({
 		"Assets/Shaders/ShadowMap/shadowMapVertex.glsl",
-		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
+		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl"
+	});
+
+	_staticShaderView = RenderSystem::LoadShader (staticShader);
 
 	/*
 	 * Shader for animated objects
 	*/
 
-	ShaderManager::Instance ()->AddShader (_animationShaderName,
+	Resource<Shader> animationShader = Resources::LoadShader ({
 		"Assets/Shaders/ShadowMap/shadowMapVertexAnimation.glsl",
-		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl");
+		"Assets/Shaders/ShadowMap/shadowMapFragment.glsl"
+	});
+
+	_animationShaderView = RenderSystem::LoadShader (animationShader);
 
 	/*
 	 * Initialize shadow map volume
@@ -267,7 +273,7 @@ void VoxelDirectionalShadowMapRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if (sceneLayers & SceneLayer::ANIMATION) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_animationShaderName));
+		Pipeline::LockShader (_animationShaderView);
 	}
 
 	/*
@@ -275,6 +281,6 @@ void VoxelDirectionalShadowMapRenderPass::LockShader (int sceneLayers)
 	*/
 
 	if (sceneLayers & (SceneLayer::STATIC | SceneLayer::DYNAMIC)) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_staticShaderName));
+		Pipeline::LockShader (_staticShaderView);
 	}
 }

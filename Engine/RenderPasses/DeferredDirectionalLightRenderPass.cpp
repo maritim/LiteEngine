@@ -1,15 +1,9 @@
 #include "DeferredDirectionalLightRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
-
-DeferredDirectionalLightRenderPass::DeferredDirectionalLightRenderPass () :
-	_shaderName ("DIRECTIONAL_LIGHT"),
-	_shadowShaderName ("SHADOW_MAP_DIRECTIONAL_LIGHT")
-{
-
-}
 
 void DeferredDirectionalLightRenderPass::Init (const RenderSettings& settings)
 {
@@ -17,17 +11,23 @@ void DeferredDirectionalLightRenderPass::Init (const RenderSettings& settings)
 	 * Shader for general directional light with no shadow casting
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shaderName,
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/deferredDirVolLightVertex.glsl",
-		"Assets/Shaders/deferredDirVolLightFragment.glsl");
+		"Assets/Shaders/deferredDirVolLightFragment.glsl"
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 
 	/*
 	 * Shader for directional light with shadow casting
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shadowShaderName,
+	Resource<Shader> shadowShader = Resources::LoadShader ({
 		"Assets/Shaders/deferredDirVolLightVertex.glsl",
-		"Assets/Shaders/deferredDirVolShadowMapLightFragment.glsl");
+		"Assets/Shaders/deferredDirVolShadowMapLightFragment.glsl"
+	});
+
+	_shadowShaderView = RenderSystem::LoadShader (shadowShader);
 }
 
 void DeferredDirectionalLightRenderPass::Clear ()
@@ -50,7 +50,7 @@ void DeferredDirectionalLightRenderPass::LockShader (const RenderLightObject* re
 	*/
 
 	if (renderLightObject->IsCastingShadows () == true) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shadowShaderName));
+		Pipeline::LockShader (_shadowShaderView);
 	}
 
 	/*
@@ -58,7 +58,7 @@ void DeferredDirectionalLightRenderPass::LockShader (const RenderLightObject* re
 	*/
 
 	if (renderLightObject->IsCastingShadows () == false) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
+		Pipeline::LockShader (_shaderView);
 	}
 }
 

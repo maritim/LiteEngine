@@ -1,30 +1,11 @@
 #include "ComputeShader.h"
 
-ComputeShader::ComputeShader (const std::string& name, GLuint program,
-	GLuint compute) :
-	Shader (name, program),
-	_computeShader (compute)
+const Resource<ShaderContent>& ComputeShader::GetComputeShaderContent () const
 {
-
+	return _computeShaderContent;
 }
 
-ComputeShader::~ComputeShader ()
+void ComputeShader::SetComputeShaderContent (const Resource<ShaderContent>& shaderContent)
 {
-	GL::DetachShader (_program, _computeShader);
-
-	GL::DeleteShader (_computeShader);
-
-	GL::DeleteProgram (_program);
+	_computeShaderContent = shaderContent;
 }
-
-GLuint ComputeShader::GetComputeShader () const
-{
-	return _computeShader;
-}
-
-void ComputeShader::SetComputeFilename (const std::string& name)
-{
-	_computeFilename = name;
-}
-
-

@@ -3,7 +3,8 @@
 
 #include "Renderer/RenderPassI.h"
 
-#include <string>
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
 
 #include "VoxelVolume.h"
 
@@ -12,8 +13,8 @@ class VoxelizationRenderPass : public RenderPassI
 	DECLARE_RENDER_PASS(VoxelizationRenderPass)
 
 protected:
-	std::string _staticShaderName;
-	std::string _animationShaderName;
+	Resource<ShaderView> _staticShaderView;
+	Resource<ShaderView> _animationShaderView;
 	VoxelVolume* _voxelVolume;
 
 	bool _firstTime;

@@ -1,6 +1,7 @@
 #include "ExponentialShadowMapBlurRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "RenderPasses/ShadowMap/ExponentialCascadedShadowMapDirectionalLightVolume.h"
 
@@ -9,7 +10,6 @@
 #include "Systems/Settings/SettingsManager.h"
 
 ExponentialShadowMapBlurRenderPass::ExponentialShadowMapBlurRenderPass () :
-	_shaders { "SHADOW_MAP_CASCADED_HORIZONTAL_BLUR", "SHADOW_MAP_CASCADED_VERTICAL_BLUR" },
 	_framebuffers (new ExponentialShadowMapBlurVolume* [2])
 {
 	for (std::size_t index = 0; index < 2; index ++) {
@@ -36,13 +36,19 @@ void ExponentialShadowMapBlurRenderPass::Init ()
 	 * Initialize ping pong shaders
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shaders [0],
+	Resource<Shader> horizontalShader = Resources::LoadShader ({
 		"Assets/Shaders/PostProcess/postProcessVertex.glsl",
-		"Assets/Shaders/Blur/horizontalGaussianBlurFragment.glsl");
+		"Assets/Shaders/Blur/horizontalGaussianBlurFragment.glsl"
+	});
 
-	ShaderManager::Instance ()->AddShader (_shaders [1],
+	_horizontalShaderViewer = RenderSystem::LoadShader (horizontalShader);
+
+	Resource<Shader> verticalShader = Resources::LoadShader ({
 		"Assets/Shaders/PostProcess/postProcessVertex.glsl",
-		"Assets/Shaders/Blur/verticalGaussianBlurFragment.glsl");
+		"Assets/Shaders/Blur/verticalGaussianBlurFragment.glsl"
+	});
+
+	_verticalShaderViewer = RenderSystem::LoadShader (verticalShader);
 
 	/*
 	 * Initialize settings
@@ -98,13 +104,13 @@ RenderVolumeCollection* ExponentialShadowMapBlurRenderPass::Execute (const Rende
 
 		for (std::size_t index = 0; index < 1; index ++) {
 
-			Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaders [0]));
+			Pipeline::LockShader (_horizontalShaderViewer);
 
 			Blur (_framebuffers [index % 2], _framebuffers [1 - index % 2]);
 
 			Pipeline::UnlockShader ();
 
-			Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaders [1]));
+			Pipeline::LockShader (_verticalShaderViewer);
 
 			Blur (_framebuffers [1 - index % 2], _framebuffers [index % 2]);
 
@@ -184,7 +190,7 @@ void ExponentialShadowMapBlurRenderPass::Blur (ExponentialShadowMapBlurVolume* f
 	 * Send custom uniforms
 	*/
 
-	Pipeline::SendCustomAttributes ("", fb1->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, fb1->GetCustomAttributes ());
 
 	/*
 	 * Draw a screen covering triangle

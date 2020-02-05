@@ -1,6 +1,7 @@
 #include "VRTRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
 
@@ -14,13 +15,16 @@ VRTRenderPass::~VRTRenderPass ()
 void VRTRenderPass::Init (const RenderSettings& settings)
 {
 	/*
-	* Load voxel ray trace shader
+	 * Load voxel ray trace shader
 	*/
 
-	ShaderManager::Instance ()->AddShader ("VOXEL_RAY_TRACE_PASS_SHADER",
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/VoxelRayTracing/voxelRayTracingVertex.glsl",
 		"Assets/Shaders/VoxelRayTracing/voxelRayTracingFragment.glsl",
-		"Assets/Shaders/VoxelRayTracing/voxelRayTracingGeometry.glsl");
+		"Assets/Shaders/VoxelRayTracing/voxelRayTracingGeometry.glsl"
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 }
 
 RenderVolumeCollection* VRTRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -65,7 +69,7 @@ void VRTRenderPass::StartRayTrace (RenderVolumeCollection* rvc)
 	* Use voxel ray trace shader
 	*/
 
-	Pipeline::SetShader (ShaderManager::Instance ()->GetShader ("VOXEL_RAY_TRACE_PASS_SHADER"));
+	Pipeline::SetShader (_shaderView);
 }
 
 void VRTRenderPass::VoxelRenderingRayTracePass (const Camera* camera, const RenderSettings& settings, RenderVolumeCollection* rvc)
@@ -87,14 +91,14 @@ void VRTRenderPass::VoxelRenderingRayTracePass (const Camera* camera, const Rend
 	 * Send voxel volume attributes to pipeline
 	*/
 
-	Pipeline::SendCustomAttributes ("VOXEL_RAY_TRACE_PASS_SHADER",
+	Pipeline::SendCustomAttributes (_shaderView,
 		rvc->GetRenderVolume ("VoxelVolume")->GetCustomAttributes ());
 
 	/*
 	 * Send voxel ray tracing attributes to pipeline
 	*/
 
-	Pipeline::SendCustomAttributes ("VOXEL_RAY_TRACE_PASS_SHADER", GetCustomAttributes (settings));
+	Pipeline::SendCustomAttributes (_shaderView, GetCustomAttributes (settings));
 
 	/*
 	 * Send camera to pipeline
@@ -103,7 +107,7 @@ void VRTRenderPass::VoxelRenderingRayTracePass (const Camera* camera, const Rend
 	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
 	Pipeline::SendCamera (camera);
 	Pipeline::ClearObjectTransform ();
-	Pipeline::UpdateMatrices (ShaderManager::Instance ()->GetShader ("VOXEL_RAY_TRACE_PASS_SHADER"));
+	Pipeline::UpdateMatrices (_shaderView);
 
 	/*
 	 * Blend between point lights with same weight.

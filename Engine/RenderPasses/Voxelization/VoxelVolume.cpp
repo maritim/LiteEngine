@@ -2,6 +2,8 @@
 
 #include "Renderer/Pipeline.h"
 
+#include "Wrappers/OpenGL/GL.h"
+
 #include "Core/Console/Console.h"
 
 VoxelVolume::VoxelVolume() :

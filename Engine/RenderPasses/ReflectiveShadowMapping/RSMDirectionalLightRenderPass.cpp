@@ -1,14 +1,9 @@
 #include "RSMDirectionalLightRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
-
-RSMDirectionalLightRenderPass::RSMDirectionalLightRenderPass () :
-	_shadowShaderName ("REFLECTIVE_SHADOW_MAP_DIRECTIONAL_LIGHT")
-{
-
-}
 
 void RSMDirectionalLightRenderPass::Init (const RenderSettings& settings)
 {
@@ -16,9 +11,12 @@ void RSMDirectionalLightRenderPass::Init (const RenderSettings& settings)
 	 * Shader for directional light with shadow casting
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shadowShaderName,
+	Resource<Shader> shadowShader = Resources::LoadShader ({
 		"Assets/Shaders/ReflectiveShadowMapping/reflectiveDeferredDirVolShadowMapLightVertex.glsl",
-		"Assets/Shaders/ReflectiveShadowMapping/reflectiveDeferredDirVolShadowMapLightFragment.glsl");
+		"Assets/Shaders/ReflectiveShadowMapping/reflectiveDeferredDirVolShadowMapLightFragment.glsl"
+	});
+
+	_shadowShaderView = RenderSystem::LoadShader (shadowShader);
 }
 
 void RSMDirectionalLightRenderPass::Clear ()
@@ -38,7 +36,7 @@ void RSMDirectionalLightRenderPass::LockShader (const RenderLightObject* renderL
 	 * Lock shader for shadow directional light
 	*/
 
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shadowShaderName));
+	Pipeline::LockShader (_shadowShaderView);
 }
 
 std::vector<PipelineAttribute> RSMDirectionalLightRenderPass::GetCustomAttributes (const RenderSettings& settings) const

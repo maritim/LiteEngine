@@ -3,19 +3,18 @@
 
 #include "RSMAccumulationRenderPass.h"
 
-#include <string>
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
 
 class RSMDirectionalLightAccumulationRenderPass : public RSMAccumulationRenderPass
 {
 	DECLARE_RENDER_PASS(RSMDirectionalLightAccumulationRenderPass)
 
 protected:
-	std::string _staticShaderName;
-	std::string _animationShaderName;
+	Resource<ShaderView> _staticShaderView;
+	Resource<ShaderView> _animationShaderView;
 
 public:
-	RSMDirectionalLightAccumulationRenderPass ();
-
 	void Init (const RenderSettings& settings);
 protected:
 	void LockShader (int sceneLayers);

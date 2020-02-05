@@ -1,14 +1,9 @@
 #include "SSDODirectionalLightRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
-
-SSDODirectionalLightRenderPass::SSDODirectionalLightRenderPass () :
-	_shadowShaderName ("SCREEN_SPACE_DIRECTIONAL_OCCLUSION_SHADOW_MAP_DIRECTIONAL_LIGHT")
-{
-
-}
 
 void SSDODirectionalLightRenderPass::Init (const RenderSettings& settings)
 {
@@ -16,9 +11,12 @@ void SSDODirectionalLightRenderPass::Init (const RenderSettings& settings)
 	 * Shader for general directional light with no shadow casting
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shadowShaderName,
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/ScreenSpaceDirectionalOcclusion/screenSpaceDirectionalOcclusionLightVertex.glsl",
-		"Assets/Shaders/ScreenSpaceDirectionalOcclusion/screenSpaceDirectionalOcclusionLightFragment.glsl");
+		"Assets/Shaders/ScreenSpaceDirectionalOcclusion/screenSpaceDirectionalOcclusionLightFragment.glsl"
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 }
 
 void SSDODirectionalLightRenderPass::Clear ()
@@ -38,7 +36,7 @@ void SSDODirectionalLightRenderPass::LockShader (const RenderLightObject* render
 	 * Lock shader for shadow directional light
 	*/
 
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shadowShaderName));
+	Pipeline::LockShader (_shaderView);
 }
 
 std::vector<PipelineAttribute> SSDODirectionalLightRenderPass::GetCustomAttributes (const RenderSettings& settings) const

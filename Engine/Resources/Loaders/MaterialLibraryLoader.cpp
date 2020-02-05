@@ -12,8 +12,6 @@
 
 #include "Resources/Resources.h"
 
-#include "Managers/ShaderManager.h"
-
 #include "Utils/Extensions/StringExtend.h"
 
 #include "Core/Console/Console.h"
@@ -85,13 +83,9 @@ void MaterialLibraryLoader::ProcessShaders(std::ifstream &file, Material* curren
 	vertexFile = FileSystem::GetDirectory (filename) + vertexFile;
 	fragmentFile = FileSystem::GetDirectory (filename) + fragmentFile;
 
-	std::string shaderName = vertexFile;
+	Resource<Shader> shader = Resources::LoadShader ({ vertexFile, fragmentFile });
 
-	Console::Log ("Shader name: " + shaderName);
-
-	ShaderManager::Instance ()->AddShader (shaderName, vertexFile, fragmentFile);
-
-	currentMaterial->shaderName = shaderName;
+	currentMaterial->shader = shader;
 }
 
 void MaterialLibraryLoader::ProcessCustomAttributes(std::ifstream &file, Material* currentMaterial, std::string filename)

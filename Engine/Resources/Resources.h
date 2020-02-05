@@ -12,6 +12,7 @@
 #include "Mesh/AnimationModel.h"
 #include "Mesh/AnimationContainer.h"
 #include "Audio/AudioClip.h"
+#include "Shader/Shader.h"
 #include "Shader/ShaderContent.h"
 #include "Material/MaterialLibrary.h"
 #include "Texture/Texture.h"
@@ -41,7 +42,9 @@ public:
 
 	static Resource<AudioClip> LoadAudioClip (const std::string& filename);
 
-	static ShaderContent* LoadShaderContent (const std::string& filename);
+	static Resource<Shader> LoadShader (const std::vector<std::string>& filenames);
+	static Resource<Shader> LoadComputeShader (const std::string& filename);
+	static Resource<ShaderContent> LoadShaderContent (const std::string& filename);
 	
 	static Resource<Texture> LoadTexture (const std::string& filename);
 	static Resource<Texture> LoadTextureAtlas (const std::string& filename);

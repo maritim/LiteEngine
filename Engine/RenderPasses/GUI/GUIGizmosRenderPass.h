@@ -3,7 +3,8 @@
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
-#include <string>
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
 
 #include "Systems/GUI/Gizmo/Gizmo.h"
 
@@ -12,11 +13,9 @@ class ENGINE_API GUIGizmosRenderPass : public ContainerRenderSubPassI
 	DECLARE_RENDER_PASS(GUIGizmosRenderPass)
 
 protected:
-	std::string _shaderName;
+	Resource<ShaderView> _shaderView;
 
 public:
-	GUIGizmosRenderPass ();
-
 	virtual void Init (const RenderSettings& settings);
 	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);

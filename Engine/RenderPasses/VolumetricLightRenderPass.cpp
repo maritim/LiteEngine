@@ -4,18 +4,8 @@
 
 #include "Renderer/Pipeline.h"
 
-#include "Managers/ShaderManager.h"
-
-VolumetricLightRenderPass::VolumetricLightRenderPass () :
-	_stencilShaderName ("STENCIL_VOLUMETRIC_LIGHT")
-{
-
-}
-
-VolumetricLightRenderPass::~VolumetricLightRenderPass ()
-{
-
-}
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 void VolumetricLightRenderPass::Init (const RenderSettings& settings)
 {
@@ -23,9 +13,12 @@ void VolumetricLightRenderPass::Init (const RenderSettings& settings)
 	 * Shader for stencil volumetric light render pass
 	*/
 
-	ShaderManager::Instance ()->AddShader (_stencilShaderName,
+	Resource<Shader> stencilShader = Resources::LoadShader ({
 		"Assets/Shaders/deferredStencilVolLightVertex.glsl",
-		"Assets/Shaders/deferredStencilVolLightFragment.glsl");
+		"Assets/Shaders/deferredStencilVolLightFragment.glsl"
+	});
+
+	_stencilShaderView = RenderSystem::LoadShader (stencilShader);
 }
 
 RenderVolumeCollection* VolumetricLightRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -114,7 +107,7 @@ void VolumetricLightRenderPass::PointLightStencilPass (const RenderScene* render
 	 * Lock stencil volumetric light shader
 	*/
 
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_stencilShaderName));
+	Pipeline::LockShader (_stencilShaderView);
 
 	/*
 	 * Set viewport
@@ -267,13 +260,13 @@ void VolumetricLightRenderPass::PointLightDrawPass (const RenderScene* renderSce
 	 * Send custom attributes
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes (camera, renderLightObject, rvc));
+	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes (camera, renderLightObject, rvc));
 
 	/*
 	 * Send custom attributes
 	*/
 
-	Pipeline::SendCustomAttributes ("", GetCustomAttributes (renderLightObject));
+	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes (renderLightObject));
 
 	/*
 	 * Draw the volumetric light.

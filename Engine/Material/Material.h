@@ -13,6 +13,7 @@
 
 #include "Core/Resources/Resource.h"
 #include "Texture/Texture.h"
+#include "Shader/Shader.h"
 
 class Material : public Object
 {
@@ -33,7 +34,7 @@ public:
 	Resource<Texture> alphaTexture;
 	Resource<Texture> bumpTexture;
 	Resource<Texture> cubeTexture;
-	std::string shaderName;
+	Resource<Shader> shader;
 
 public:
 	Material(void);

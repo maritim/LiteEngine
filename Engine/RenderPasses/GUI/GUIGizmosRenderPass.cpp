@@ -2,7 +2,8 @@
 
 #include "Systems/GUI/Gizmo/Gizmo.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "RenderPasses/FrameBuffer2DVolume.h"
 
@@ -10,21 +11,18 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
-GUIGizmosRenderPass::GUIGizmosRenderPass () :
-	_shaderName ("EDITOR_GIZMOS")
-{
-
-}
-
 void GUIGizmosRenderPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Shader for editor gizmos
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shaderName,
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/GUI/guiGizmosVertex.glsl",
-		"Assets/Shaders/GUI/guiGizmosFragment.glsl");
+		"Assets/Shaders/GUI/guiGizmosFragment.glsl"
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 }
 
 RenderVolumeCollection* GUIGizmosRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -173,7 +171,7 @@ void GUIGizmosRenderPass::DrawData (const std::vector<float>& renderData, const 
 	GL::Viewport (settings.viewport.x, settings.viewport.y,
 		settings.viewport.width, settings.viewport.height);
 
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
+	Pipeline::LockShader (_shaderView);
 
 	Pipeline::CreateProjection (camera->GetProjectionMatrix ());
 	Pipeline::SendCamera (camera);

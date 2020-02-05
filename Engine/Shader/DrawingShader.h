@@ -3,28 +3,26 @@
 
 #include "Shader.h"
 
+#include "Core/Resources/Resource.h"
+#include "ShaderContent.h"
+
 class DrawingShader : public Shader
 {
 protected:
-	std::string _vertexFilename;
-	std::string _geometryFilename;
-	std::string _fragmentFilename;
-	GLuint _vertexShader;
-	GLuint _geometryShader;
-	GLuint _fragmentShader;
+	Resource<ShaderContent> _vertexShaderContent;
+	Resource<ShaderContent> _geometryShaderContent;
+	Resource<ShaderContent> _fragmentShaderContent;
 
 public:
-	DrawingShader (const std::string& name, GLuint program,
-		GLuint vertex, GLuint fragment, GLuint geometry = 0);
-	~DrawingShader ();
+	using Shader::Shader;
 
-	GLuint GetVertexShader () const;
-	GLuint GetGeometryShader () const;
-	GLuint GetFragmentShader () const;
+	const Resource<ShaderContent>& GetVertexShaderContent () const;
+	const Resource<ShaderContent>& GetGeometryShaderContent () const;
+	const Resource<ShaderContent>& GetFragmentShaderContent () const;
 
-	void SetVertexFilename (const std::string& name);
-	void SetGeometryFilename (const std::string& name);
-	void SetFragmentFilename (const std::string& name);
+	void SetVertexShaderContent (const Resource<ShaderContent>& shaderContent);
+	void SetGeometryShaderContent (const Resource<ShaderContent>& shaderContent);
+	void SetFragmentShaderContent (const Resource<ShaderContent>& shaderContent);
 };
 
 #endif

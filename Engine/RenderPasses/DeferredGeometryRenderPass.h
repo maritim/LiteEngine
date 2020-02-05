@@ -3,7 +3,8 @@
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
-#include <string>
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ShaderView.h"
 
 #include "GBuffer.h"
 
@@ -14,10 +15,10 @@ class ENGINE_API DeferredGeometryRenderPass : public ContainerRenderSubPassI
 	DECLARE_RENDER_PASS(DeferredGeometryRenderPass)
 
 protected:
-	std::string _shaderName;
-	std::string _normalMapShaderName;
-	std::string _lightMapShaderName;
-	std::string _animationShaderName;
+	Resource<ShaderView> _shaderView;
+	Resource<ShaderView> _normalMapShaderView;
+	Resource<ShaderView> _lightMapShaderView;
+	Resource<ShaderView> _animationShaderView;
 	GBuffer* _frameBuffer;
 	HaltonGenerator _haltonGenerator;
 

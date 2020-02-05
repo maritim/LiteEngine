@@ -1,14 +1,9 @@
 #include "LightMapDirectionalLightRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
-
-LightMapDirectionalLightRenderPass::LightMapDirectionalLightRenderPass () :
-	_shaderName ("LIGHT_MAP_DIRECTIONAL_LIGHT")
-{
-
-}
 
 void LightMapDirectionalLightRenderPass::Init (const RenderSettings& settings)
 {
@@ -16,9 +11,12 @@ void LightMapDirectionalLightRenderPass::Init (const RenderSettings& settings)
 	 * Shader for general directional light with no shadow casting
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shaderName,
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/deferredDirVolLightVertex.glsl",
-		"Assets/Shaders/LightMap/lightMapDirVolLightFragment.glsl");
+		"Assets/Shaders/LightMap/lightMapDirVolLightFragment.glsl"
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 }
 
 void LightMapDirectionalLightRenderPass::Clear ()
@@ -40,7 +38,7 @@ void LightMapDirectionalLightRenderPass::LockShader (const RenderLightObject* re
 	 * Lock general shader for directional light
 	*/
 
-	Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
+	Pipeline::LockShader (_shaderView);
 }
 
 std::vector<PipelineAttribute> LightMapDirectionalLightRenderPass::GetCustomAttributes (const RenderSettings& settings) const

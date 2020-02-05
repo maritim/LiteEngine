@@ -1,15 +1,9 @@
 #include "DeferredPointLightRenderPass.h"
 
-#include "Managers/ShaderManager.h"
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
 
 #include "Renderer/Pipeline.h"
-
-DeferredPointLightRenderPass::DeferredPointLightRenderPass () :
-	_shaderName ("POINT_LIGHT"),
-	_shadowShaderName ("SHADOW_MAP_POINT_LIGHT")
-{
-
-}
 
 void DeferredPointLightRenderPass::Init (const RenderSettings& settings)
 {
@@ -23,9 +17,12 @@ void DeferredPointLightRenderPass::Init (const RenderSettings& settings)
 	 * Shader for general directional light with no shadow casting
 	*/
 
-	ShaderManager::Instance ()->AddShader (_shaderName,
+	Resource<Shader> shader = Resources::LoadShader ({
 		"Assets/Shaders/deferredPointVolLightVertex.glsl",
-		"Assets/Shaders/deferredPointVolLightFragment.glsl");
+		"Assets/Shaders/deferredPointVolLightFragment.glsl"
+	});
+
+	_shaderView = RenderSystem::LoadShader (shader);
 
 	/*
 	 * Shader for directional light with shadow casting
@@ -64,7 +61,7 @@ void DeferredPointLightRenderPass::LockShader (const RenderLightObject* renderLi
 	*/
 
 	if (renderLightObject->IsCastingShadows () == false) {
-		Pipeline::LockShader (ShaderManager::Instance ()->GetShader (_shaderName));
+		Pipeline::LockShader (_shaderView);
 	}
 }
 
