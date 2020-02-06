@@ -5,7 +5,7 @@
 #include "RenderPasses/GBuffer.h"
 
 TAARenderPass::TAARenderPass () :
-	_taaMapVolume (new TAAMapVolume ())
+	_taaMapVolume (nullptr)
 {
 
 }

@@ -5,6 +5,7 @@
 
 RSMVolume::RSMVolume () :
 	_shadowMapBuffer (new RSMBuffer ()),
+	_size (0),
 	_camera (nullptr),
 	_shadowBias (0.0f)
 {
@@ -14,6 +15,7 @@ RSMVolume::RSMVolume () :
 RSMVolume::~RSMVolume ()
 {
 	delete _shadowMapBuffer;
+	delete _camera;
 }
 
 bool RSMVolume::Init (const glm::ivec2& size)

@@ -12,8 +12,8 @@
 class RSMVolume : public RenderVolumeI
 {
 protected:
-	glm::ivec2 _size;
 	RSMBuffer* _shadowMapBuffer;
+	glm::ivec2 _size;
 
 	Camera* _camera;
 	float _shadowBias;
