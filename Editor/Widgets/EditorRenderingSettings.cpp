@@ -84,7 +84,7 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 	renderModes ["VoxelConeTracingRenderModule"] = 1;
 	renderModes ["ReflectiveShadowMappingRenderModule"] = 2;
 	renderModes ["TemporalReflectiveShadowMappingRenderModule"] = 3;
-	renderModes ["LightPropagationVolumesModule"] = 4;
+	renderModes ["LightPropagationVolumesRenderModule"] = 4;
 	renderModes ["ScreenSpaceDirectionalOcclusionRenderModule"] = 5;
 
 	int lastRenderMode = renderModes [_settings->renderMode];
@@ -105,7 +105,7 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 		"VoxelConeTracingRenderModule",
 		"ReflectiveShadowMappingRenderModule",
 		"TemporalReflectiveShadowMappingRenderModule",
-		"LightPropagationVolumesModule",
+		"LightPropagationVolumesRenderModule",
 		"ScreenSpaceDirectionalOcclusionRenderModule"
 	};
 
@@ -324,6 +324,7 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 	if (ImGui::CollapsingHeader ("Light Propagation Volumes")) {
 
+		ImGui::InputScalar ("Volume Size", ImGuiDataType_U32, &_settings->lpv_volume_size);
 	}
 
     ImGui::Spacing();

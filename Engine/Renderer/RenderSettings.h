@@ -68,6 +68,8 @@ struct RenderSettings : public Object
 	bool trsm_temporal_filter_enabled;
 	bool trsm_blur_enabled;
 
+	std::size_t lpv_volume_size;
+
 	std::size_t vct_voxels_size;
 	bool vct_continuous_voxelization;
 	bool vct_bordering;

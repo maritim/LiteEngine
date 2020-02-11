@@ -55,6 +55,9 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 		else if (name == "TRSM") {
 			ProcessTRSM (content, settings);
 		}
+		else if (name == "LPV") {
+			ProcessLPV (content, settings);
+		}
 		else if (name == "VCT") {
 			ProcessVCT (content, settings);
 		}
@@ -184,6 +187,13 @@ void RenderSettingsLoader::ProcessTRSM (TiXmlElement* xmlElem, RenderSettings* s
 
 	settings->trsm_temporal_filter_enabled = Extensions::StringExtend::ToBool (temporalFilterEnabled);
 	settings->trsm_blur_enabled = Extensions::StringExtend::ToBool (blurEnabled);
+}
+
+void RenderSettingsLoader::ProcessLPV (TiXmlElement* xmlElem, RenderSettings* settings)
+{
+	std::string volumeSize = xmlElem->Attribute ("volumeSize");
+
+	settings->lpv_volume_size = std::stoi (volumeSize);
 }
 
 void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings)
