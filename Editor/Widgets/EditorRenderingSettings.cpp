@@ -325,6 +325,7 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 	if (ImGui::CollapsingHeader ("Light Propagation Volumes")) {
 
 		ImGui::InputScalar ("Volume Size", ImGuiDataType_U32, &_settings->lpv_volume_size);
+		ImGui::InputScalar ("Iterations", ImGuiDataType_U32, &_settings->lpv_iterations);
 	}
 
     ImGui::Spacing();

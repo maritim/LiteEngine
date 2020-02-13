@@ -18,7 +18,7 @@
 	<RSM scale="1" samples="16" radius="0.12" intensity="200" />
 	<TRSM temporalFilterEnabled="true" blurEnabled="false" />
 
-	<LPV volumeSize="32" />
+	<LPV volumeSize="32" iterations="5" />
 
 	<VCT voxelsSize="512" continuousVoxelization="false" bordering="false"
 		mipmapLevels="6" indirectIntensity="1" refractiveIndirectIntensity="1" diffuseConeDistance="0.3"

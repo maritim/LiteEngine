@@ -192,8 +192,10 @@ void RenderSettingsLoader::ProcessTRSM (TiXmlElement* xmlElem, RenderSettings* s
 void RenderSettingsLoader::ProcessLPV (TiXmlElement* xmlElem, RenderSettings* settings)
 {
 	std::string volumeSize = xmlElem->Attribute ("volumeSize");
+	std::string iterations = xmlElem->Attribute ("iterations");
 
 	settings->lpv_volume_size = std::stoi (volumeSize);
+	settings->lpv_iterations = std::stoi (iterations);
 }
 
 void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings)
