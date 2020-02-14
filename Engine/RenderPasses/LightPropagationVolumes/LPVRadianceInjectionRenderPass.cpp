@@ -57,6 +57,12 @@ RenderVolumeCollection* LPVRadianceInjectionRenderPass::Execute (const RenderSce
 	RenderLightObject* renderLightObject = GetRenderLightObject (rvc);
 
 	/*
+	 *
+	*/
+
+	UpdateLPVVolume (settings);
+
+	/*
 	 * Start screen space ambient occlusion generation pass
 	*/
 
@@ -146,7 +152,7 @@ void LPVRadianceInjectionRenderPass::PostProcessPass (const RenderScene* renderS
 
 	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("ReflectiveShadowMapVolume")->GetCustomAttributes ());
 	Pipeline::SendCustomAttributes (nullptr, _lpvVolume->GetCustomAttributes ());
-	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes (renderLightObject));
+	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes (settings, renderLightObject));
 
 	/*
 	 * Draw a screen covering triangle
@@ -164,18 +170,22 @@ void LPVRadianceInjectionRenderPass::EndPostProcessPass ()
 	Pipeline::UnlockShader ();
 }
 
-std::vector<PipelineAttribute> LPVRadianceInjectionRenderPass::GetCustomAttributes (const RenderLightObject* renderLightObject) const
+std::vector<PipelineAttribute> LPVRadianceInjectionRenderPass::GetCustomAttributes (const RenderSettings& settings,
+	const RenderLightObject* renderLightObject) const
 {
 	std::vector<PipelineAttribute> attributes;
 
 	PipelineAttribute rsmResolution;
 	PipelineAttribute lightDirection;
+	PipelineAttribute injectionBias;
 
 	rsmResolution.type = PipelineAttribute::AttrType::ATTR_2F;
 	lightDirection.type = PipelineAttribute::AttrType::ATTR_3F;
+	injectionBias.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	rsmResolution.name = "rsmResolution";
 	lightDirection.name = "lightDirection";
+	injectionBias.name = "injectionBias";
 
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
@@ -184,9 +194,11 @@ std::vector<PipelineAttribute> LPVRadianceInjectionRenderPass::GetCustomAttribut
 
 	rsmResolution.value = glm::vec3 (shadow.resolution, 0.0f);
 	lightDirection.value = lightDir;
+	injectionBias.value.x = settings.lpv_injection_bias;
 
 	attributes.push_back (rsmResolution);
 	attributes.push_back (lightDirection);
+	attributes.push_back (injectionBias);
 
 	return attributes;
 }

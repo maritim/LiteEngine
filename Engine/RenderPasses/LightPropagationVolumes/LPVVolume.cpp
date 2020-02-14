@@ -42,8 +42,8 @@ bool LPVVolume::Init(std::size_t volumeSize)
 
 	for (std::size_t index = 0; index < 3; index ++) {
 		GL::BindTexture (GL_TEXTURE_3D, _volumeTextures [index]);
-		GL::TexImage3D (GL_TEXTURE_3D, 0, GL_RGBA16F, _volumeSize, _volumeSize, _volumeSize,
-			0, GL_RGBA, GL_FLOAT, 0);
+		GL::TexImage3D (GL_TEXTURE_3D, 0, GL_R32I, _volumeSize * 4, _volumeSize, _volumeSize,
+			0, GL_RED_INTEGER,  GL_INT, 0);
 		GL::TexParameteri (GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		GL::TexParameteri (GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		GL::TexParameteri (GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -76,7 +76,7 @@ bool LPVVolume::Init(std::size_t volumeSize)
 void LPVVolume::BindForWriting ()
 {
 	for (std::size_t index = 0; index < 3; index ++) {
-		GL::BindImageTexture (index, _volumeTextures [index], 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA16F);
+		GL::BindImageTexture (index, _volumeTextures [index], 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32I);
 	}
 }
 
@@ -181,6 +181,16 @@ void LPVVolume::UpdateBoundingBox(const glm::vec3& minVertex, const glm::vec3& m
 std::size_t LPVVolume::GetVolumeSize () const
 {
 	return _volumeSize;
+}
+
+glm::vec3 LPVVolume::GetMinVertex () const
+{
+	return _minVertex;
+}
+
+glm::vec3 LPVVolume::GetMaxVertex () const
+{
+	return _maxVertex;
 }
 
 void LPVVolume::Clear()

@@ -193,9 +193,13 @@ void RenderSettingsLoader::ProcessLPV (TiXmlElement* xmlElem, RenderSettings* se
 {
 	std::string volumeSize = xmlElem->Attribute ("volumeSize");
 	std::string iterations = xmlElem->Attribute ("iterations");
+	std::string injectionBias = xmlElem->Attribute ("injectionBias");
+	std::string intensity = xmlElem->Attribute ("intensity");
 
 	settings->lpv_volume_size = std::stoi (volumeSize);
 	settings->lpv_iterations = std::stoi (iterations);
+	settings->lpv_injection_bias = std::stof (injectionBias);
+	settings->lpv_intensity = std::stof (intensity);
 }
 
 void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings)

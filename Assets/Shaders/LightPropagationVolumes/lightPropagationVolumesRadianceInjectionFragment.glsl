@@ -1,8 +1,16 @@
 #version 420 core
 
-uniform layout (binding = 0, rgba16f) coherent volatile image3D lpvVolumeR;
-uniform layout (binding = 1, rgba16f) coherent volatile image3D lpvVolumeG;
-uniform layout (binding = 2, rgba16f) coherent volatile image3D lpvVolumeB;
+uniform layout (binding = 0, r32i) coherent volatile iimage3D lpvVolumeR;
+uniform layout (binding = 1, r32i) coherent volatile iimage3D lpvVolumeG;
+uniform layout (binding = 2, r32i) coherent volatile iimage3D lpvVolumeB;
+
+#define SH_F2I 1000.0
+
+#define imgStoreAdd(img, pos, data) \
+  imageAtomicAdd(img, ivec3(pos.x * 4, pos.y, pos.z), int(data.x * SH_F2I)); \
+  imageAtomicAdd(img, ivec3(pos.x * 4 + 1, pos.y, pos.z), int(data.y * SH_F2I)); \
+  imageAtomicAdd(img, ivec3(pos.x * 4 + 2, pos.y, pos.z), int(data.z * SH_F2I)); \
+  imageAtomicAdd(img, ivec3(pos.x * 4 + 3, pos.y, pos.z), int(data.w * SH_F2I));
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -20,6 +28,7 @@ uniform ivec3 volumeSize;
 
 uniform vec2 rsmResolution;
 uniform vec3 lightDirection;
+uniform float injectionBias;
 
 #include "ReflectiveShadowMapping/reflectiveShadowMapping.glsl"
 
@@ -117,6 +126,8 @@ RSMSample GetRSMSample (vec2 texCoord)
 		result.flux /= 16;
 	}
 
+	result.worldSpaceNormal = normalize (result.worldSpaceNormal);
+
 	return result;
 }
 
@@ -136,6 +147,18 @@ vec4 evalCosineLobeToDir(vec3 dir) {
 	return vec4( SH_cosLobe_C0, -SH_cosLobe_C1 * dir.y, SH_cosLobe_C1 * dir.z, -SH_cosLobe_C1 * dir.x );
 }
 
+void CalcBias (inout RSMSample rsmSample)
+{
+	float volumeCellSize = (maxVertex.x - minVertex.x) / volumeSize.x;
+
+	float bias = volumeCellSize * injectionBias;
+
+	rsmSample.worldSpacePosition += rsmSample.worldSpaceNormal * bias;
+	rsmSample.worldSpacePosition += -lightDirection * bias;
+
+	rsmSample.volumePos = GetPositionInVolume (rsmSample.worldSpacePosition);
+}
+
 void main ()
 {
 	vec2 texCoord = CalcTexCoord();
@@ -146,9 +169,11 @@ void main ()
 		return;
 	}
 
+	CalcBias (rsmSample);
+
 	vec4 shCoefficients = evalCosineLobeToDir (rsmSample.worldSpaceNormal) / PI;
 
-	imageStore (lpvVolumeR, ivec3 (rsmSample.volumePos), shCoefficients * rsmSample.flux.r);
-	imageStore (lpvVolumeG, ivec3 (rsmSample.volumePos), shCoefficients * rsmSample.flux.g);
-	imageStore (lpvVolumeB, ivec3 (rsmSample.volumePos), shCoefficients * rsmSample.flux.b);
+	imgStoreAdd(lpvVolumeR, ivec3 (rsmSample.volumePos), (shCoefficients * rsmSample.flux.r));
+	imgStoreAdd(lpvVolumeG, ivec3 (rsmSample.volumePos), (shCoefficients * rsmSample.flux.g));
+	imgStoreAdd(lpvVolumeB, ivec3 (rsmSample.volumePos), (shCoefficients * rsmSample.flux.b));
 }

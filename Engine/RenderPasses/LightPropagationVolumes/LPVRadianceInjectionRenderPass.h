@@ -34,7 +34,8 @@ protected:
 		RenderVolumeCollection* rvc);
 	void EndPostProcessPass ();
 
-	std::vector<PipelineAttribute> GetCustomAttributes (const RenderLightObject* renderLightObject) const;
+	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings,
+		const RenderLightObject* renderLightObject) const;
 
 	void UpdateLPVVolumeBoundingBox (const RenderScene* renderScene);
 	void InitLPVVolume (const RenderSettings& settings);

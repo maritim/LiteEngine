@@ -1,5 +1,5 @@
-#ifndef LPVPROPAGATIONRENDERPASS_H
-#define LPVPROPAGATIONRENDERPASS_H
+#ifndef LPVBLITRENDERPASS_H
+#define LPVBLITRENDERPASS_H
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
@@ -8,17 +8,17 @@
 
 #include "LPVPropagationVolume.h"
 
-class ENGINE_API LPVPropagationRenderPass : public ContainerRenderSubPassI
+class ENGINE_API LPVBlitRenderPass : public ContainerRenderSubPassI
 {
-	DECLARE_RENDER_PASS(LPVPropagationRenderPass)
+	DECLARE_RENDER_PASS(LPVBlitRenderPass)
 
 protected:
 	Resource<ShaderView> _shaderView;
 	LPVPropagationVolume* _lpvPropagationVolume;
 
 public:
-	LPVPropagationRenderPass ();
-	~LPVPropagationRenderPass ();
+	LPVBlitRenderPass ();
+	~LPVBlitRenderPass ();
 
 	void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,

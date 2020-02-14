@@ -34,6 +34,8 @@ public:
 	virtual void UpdateBoundingBox (const glm::vec3& minVertex, const glm::vec3& maxVertex);
 
 	std::size_t GetVolumeSize () const;
+	glm::vec3 GetMinVertex () const;
+	glm::vec3 GetMaxVertex () const;
 
 	virtual void Clear ();
 };

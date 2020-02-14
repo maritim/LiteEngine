@@ -21,6 +21,7 @@
 
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/RSMStatisticsObject.h"
+#include "Debug/Statistics/LPVStatisticsObject.h"
 #include "Debug/Statistics/SSDOStatisticsObject.h"
 #include "Debug/Statistics/SSAOStatisticsObject.h"
 #include "Debug/Statistics/SSRStatisticsObject.h"
@@ -326,6 +327,42 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 		ImGui::InputScalar ("Volume Size", ImGuiDataType_U32, &_settings->lpv_volume_size);
 		ImGui::InputScalar ("Iterations", ImGuiDataType_U32, &_settings->lpv_iterations);
+
+		ImGui::InputFloat ("Light Injection Bias", &_settings->lpv_injection_bias, 0.1);
+		ImGui::InputFloat ("Indirect Light Intensity", &_settings->lpv_intensity, 0.1);
+
+		ImGui::Separator();
+
+		ImGui::PushID ("LPVDebug");
+
+		if (ImGui::TreeNode ("Debug")) {
+
+			StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("LPVStatisticsObject");
+			LPVStatisticsObject* lpvStat = nullptr;
+
+			if (stat != nullptr) {
+				lpvStat = dynamic_cast<LPVStatisticsObject*> (stat);
+			}
+
+			if (lpvStat != nullptr) {
+
+				int windowWidth = ImGui::GetWindowWidth() * 0.95f;
+
+				FrameBuffer2DVolume* lpvIndirectMapVolume = lpvStat->lpvIndirectMapVolume;
+
+				glm::ivec2 lpvMapSize = lpvIndirectMapVolume->GetSize ();
+
+				int lpvMapWidth = windowWidth;
+				int lpvMapHeight = ((float) lpvMapSize.y / lpvMapSize.x) * lpvMapWidth;
+
+				ImGui::Text ("Indirect Light Map");
+				ShowImage (lpvIndirectMapVolume->GetColorTextureID (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
+			}
+
+			ImGui::TreePop();
+		}
+
+		ImGui::PopID ();
 	}
 
     ImGui::Spacing();

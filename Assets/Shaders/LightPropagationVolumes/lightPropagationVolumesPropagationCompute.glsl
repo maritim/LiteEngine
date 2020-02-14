@@ -6,9 +6,9 @@ uniform sampler3D volumeTextureG;
 uniform sampler3D volumeTextureB;
 uniform ivec3 volumeSize;
 
-layout(binding = 0, rgba16f) uniform writeonly image3D lpvVolumeR;
-layout(binding = 1, rgba16f) uniform writeonly image3D lpvVolumeG;
-layout(binding = 2, rgba16f) uniform writeonly image3D lpvVolumeB;
+layout(binding = 0, rgba32f) uniform writeonly image3D lpvVolumeR;
+layout(binding = 1, rgba32f) uniform writeonly image3D lpvVolumeG;
+layout(binding = 2, rgba32f) uniform writeonly image3D lpvVolumeB;
 
 /*
  * Thanks to: https://github.com/mafian89/Light-Propagation-Volumes
@@ -97,23 +97,23 @@ Contribution CalcPropagation (ivec3 volumePos)
 		result.G += directFaceSubtendedSolidAngle * max(0.0, dot( GSHcoeffsNeighbour, mainDirectionSH )) * mainDirectionCosineLobeSH;
 		result.B += directFaceSubtendedSolidAngle * max(0.0, dot( BSHcoeffsNeighbour, mainDirectionSH )) * mainDirectionCosineLobeSH;
 
-		//Now we have contribution for the neighbour's cell in the main direction -> need to do reprojection 
-		//Reprojection will be made only onto 4 faces (acctually we need to take into account 5 faces but we already have the one in the main direction)
+		// Now we have contribution for the neighbour's cell in the main direction -> need to do reprojection 
+		// Reprojection will be made only onto 4 faces (acctually we need to take into account 5 faces but we already have the one in the main direction)
 
-		// for(int face = 0; face < 4; face++) {
-		// 	//Get the direction to the face
-		// 	vec3 evalDirection = getEvalSideDirection( face, mainDirection );
-		// 	//Reprojected direction
-		// 	vec3 reprojDirection = getReprojSideDirection( face, mainDirection );
+		for(int face = 0; face < 4; face++) {
+			//Get the direction to the face
+			vec3 evalDirection = getEvalSideDirection( face, mainDirection );
+			//Reprojected direction
+			vec3 reprojDirection = getReprojSideDirection( face, mainDirection );
 
-		// 	//Get sh coeff
-		// 	vec4 reprojDirectionCosineLobeSH = evalCosineLobeToDir_direct( reprojDirection );
-		// 	vec4 evalDirectionSH = evalSH_direct( evalDirection );
+			//Get sh coeff
+			vec4 reprojDirectionCosineLobeSH = evalCosineLobeToDir_direct( reprojDirection );
+			vec4 evalDirectionSH = evalSH_direct( evalDirection );
 
-		// 	result.R += sideFaceSubtendedSolidAngle * max(0.0, dot( RSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
-		// 	result.G += sideFaceSubtendedSolidAngle * max(0.0, dot( GSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
-		// 	result.B += sideFaceSubtendedSolidAngle * max(0.0, dot( BSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
-		// }
+			result.R += sideFaceSubtendedSolidAngle * max(0.0, dot( RSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
+			result.G += sideFaceSubtendedSolidAngle * max(0.0, dot( GSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
+			result.B += sideFaceSubtendedSolidAngle * max(0.0, dot( BSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
+		}
 	}
 
 	return result;
