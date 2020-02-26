@@ -3,6 +3,8 @@
 #include "Resources/Resources.h"
 #include "Renderer/RenderSystem.h"
 
+#include "LPVGeometryVolume.h"
+
 #include "Renderer/Pipeline.h"
 
 #include "Core/Console/Console.h"
@@ -105,10 +107,13 @@ void LPVPropagationRenderPass::PostProcessPass (const RenderScene* renderScene, 
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	LPVPropagationVolume* lpvVolume = (LPVPropagationVolume*) rvc->GetRenderVolume ("LightPropagationVolume");
+	LPVGeometryVolume* lpvGeometryVolume = (LPVGeometryVolume*) rvc->GetRenderVolume ("LPVGeometryVolume");
 
 	_lpvPropagationVolume->UpdateBoundingBox (lpvVolume->GetMinVertex (), lpvVolume->GetMaxVertex ());
 
 	for (std::size_t index = 0; index < settings.lpv_iterations; index ++) {
+
+		Pipeline::SendCustomAttributes (_shaderView, lpvGeometryVolume->GetCustomAttributes ());
 
 		if ((index & 1) == 0) {
 			_lpvPropagationVolume->BindForWriting ();
@@ -119,6 +124,8 @@ void LPVPropagationRenderPass::PostProcessPass (const RenderScene* renderScene, 
 
 			Pipeline::SendCustomAttributes (_shaderView, _lpvPropagationVolume->GetCustomAttributes ());
 		}
+
+		GL::Uniform1i (_shaderView->GetUniformLocation ("iteration"), index);
 
 		int numWorkGroups = (int) std::ceil (settings.lpv_volume_size / 4.0);
 		GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);

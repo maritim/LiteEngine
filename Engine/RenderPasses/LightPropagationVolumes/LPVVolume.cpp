@@ -205,7 +205,9 @@ void LPVVolume::Clear()
 	 * Detach texture from attachment in framebuffer
 	*/
 
-	GL::FramebufferTexture (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 0, 0);
+	for (std::size_t index = 0; index < 3; index ++) {
+		GL::FramebufferTexture (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, 0, 0);
+	}
 
 	/*
 	 * Delete texture

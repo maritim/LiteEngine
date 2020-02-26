@@ -21,6 +21,7 @@
 
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationRenderPass.h"
 #include "RenderPasses/LightPropagationVolumes/LPVRadianceInjectionRenderPass.h"
+#include "RenderPasses/LightPropagationVolumes/LPVGeometryInjectionRenderPass.h"
 #include "RenderPasses/LightPropagationVolumes/LPVBlitRenderPass.h"
 #include "RenderPasses/LightPropagationVolumes/LPVPropagationRenderPass.h"
 #include "RenderPasses/LightPropagationVolumes/LPVIndirectLightRenderPass.h"
@@ -67,6 +68,7 @@ void LightPropagationVolumesRenderModule::Init ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 		.Attach (new RSMDirectionalLightAccumulationRenderPass ())
 		.Attach (new LPVRadianceInjectionRenderPass ())
+		.Attach (new LPVGeometryInjectionRenderPass ())
 		.Attach (new LPVBlitRenderPass ())
 		.Attach (new LPVPropagationRenderPass ())
 		.Attach (new LPVIndirectLightRenderPass ())

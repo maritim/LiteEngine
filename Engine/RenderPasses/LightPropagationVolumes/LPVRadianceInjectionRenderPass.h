@@ -7,6 +7,7 @@
 #include "Renderer/RenderViews/ShaderView.h"
 
 #include "LPVVolume.h"
+#include "LPVGeometryVolume.h"
 
 class ENGINE_API LPVRadianceInjectionRenderPass : public VolumetricLightRenderPassI
 {
@@ -15,6 +16,7 @@ class ENGINE_API LPVRadianceInjectionRenderPass : public VolumetricLightRenderPa
 protected:
 	Resource<ShaderView> _shaderView;
 	LPVVolume* _lpvVolume;
+	LPVGeometryVolume* _lpvGeometryVolume;
 
 public:
 	LPVRadianceInjectionRenderPass ();

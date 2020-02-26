@@ -5,6 +5,10 @@ uniform sampler3D volumeTextureR;
 uniform sampler3D volumeTextureG;
 uniform sampler3D volumeTextureB;
 uniform ivec3 volumeSize;
+uniform int iteration;
+uniform float occlusionIntensity;
+
+uniform sampler3D geometryTexture;
 
 layout(binding = 0, rgba32f) uniform writeonly image3D lpvVolumeR;
 layout(binding = 1, rgba32f) uniform writeonly image3D lpvVolumeG;
@@ -72,6 +76,8 @@ Contribution CalcPropagation (ivec3 volumePos)
 	const float directFaceSubtendedSolidAngle = 0.12753712; // 0.4006696846f / Pi;
 	const float sideFaceSubtendedSolidAngle = 0.13478556; // 0.4234413544f / Pi;
 
+	const vec3 volumeCellSize = 1.0f / volumeSize;
+
 	for(int neighbour = 0; neighbour < 6; neighbour++) {
 
 		//Get main direction
@@ -91,11 +97,23 @@ Contribution CalcPropagation (ivec3 volumePos)
 		vec4 GSHcoeffsNeighbour = texelFetch(volumeTextureG, neighbourCellIndex, 0);
 		vec4 BSHcoeffsNeighbour = texelFetch(volumeTextureB, neighbourCellIndex, 0);
 
+		float occlusion = 1.0f;
+
+		if (iteration > 0) {
+			vec3 occCoord = (vec3( neighbourCellIndex ) + 0.5 * mainDirection) * volumeCellSize;
+
+			vec4 occCoefficients = texture (geometryTexture, occCoord);
+			occlusion = 1.0 - clamp (occlusionIntensity * dot (occCoefficients, evalSH_direct( -mainDirection )), 0.0, 1.0);
+		}
+
+		float occlusionDirectFace = occlusion * directFaceSubtendedSolidAngle;
+
 		vec4 mainDirectionCosineLobeSH = evalCosineLobeToDir_direct( mainDirection );
 		vec4 mainDirectionSH = evalSH_direct( mainDirection );
-		result.R += directFaceSubtendedSolidAngle * max(0.0, dot( RSHcoeffsNeighbour, mainDirectionSH )) * mainDirectionCosineLobeSH;
-		result.G += directFaceSubtendedSolidAngle * max(0.0, dot( GSHcoeffsNeighbour, mainDirectionSH )) * mainDirectionCosineLobeSH;
-		result.B += directFaceSubtendedSolidAngle * max(0.0, dot( BSHcoeffsNeighbour, mainDirectionSH )) * mainDirectionCosineLobeSH;
+
+		result.R += occlusionDirectFace * max(0.0, dot( RSHcoeffsNeighbour, mainDirectionSH )) * mainDirectionCosineLobeSH;
+		result.G += occlusionDirectFace * max(0.0, dot( GSHcoeffsNeighbour, mainDirectionSH )) * mainDirectionCosineLobeSH;
+		result.B += occlusionDirectFace * max(0.0, dot( BSHcoeffsNeighbour, mainDirectionSH )) * mainDirectionCosineLobeSH;
 
 		// Now we have contribution for the neighbour's cell in the main direction -> need to do reprojection 
 		// Reprojection will be made only onto 4 faces (acctually we need to take into account 5 faces but we already have the one in the main direction)
@@ -106,13 +124,24 @@ Contribution CalcPropagation (ivec3 volumePos)
 			//Reprojected direction
 			vec3 reprojDirection = getReprojSideDirection( face, mainDirection );
 
+			float occlusion = 1.0f;
+
+			if (iteration > 0) {
+				vec3 occCoord = (vec3( neighbourCellIndex ) + 0.5 * evalDirection) * volumeCellSize;
+
+				vec4 occCoefficients = texture (geometryTexture, occCoord);
+				occlusion = 1.0 - clamp (occlusionIntensity * dot (occCoefficients, evalSH_direct( -evalDirection )), 0.0, 1.0);
+			}
+
+			float occlusionSideFace = occlusion * sideFaceSubtendedSolidAngle;
+
 			//Get sh coeff
 			vec4 reprojDirectionCosineLobeSH = evalCosineLobeToDir_direct( reprojDirection );
 			vec4 evalDirectionSH = evalSH_direct( evalDirection );
 
-			result.R += sideFaceSubtendedSolidAngle * max(0.0, dot( RSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
-			result.G += sideFaceSubtendedSolidAngle * max(0.0, dot( GSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
-			result.B += sideFaceSubtendedSolidAngle * max(0.0, dot( BSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
+			result.R += occlusionSideFace * max(0.0, dot( RSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
+			result.G += occlusionSideFace * max(0.0, dot( GSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
+			result.B += occlusionSideFace * max(0.0, dot( BSHcoeffsNeighbour, evalDirectionSH )) * reprojDirectionCosineLobeSH;
 		}
 	}
 

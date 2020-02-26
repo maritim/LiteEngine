@@ -8,13 +8,15 @@
 #include "Core/Console/Console.h"
 
 LPVRadianceInjectionRenderPass::LPVRadianceInjectionRenderPass () :
-	_lpvVolume (new LPVVolume ())
+	_lpvVolume (new LPVVolume ()),
+	_lpvGeometryVolume (new LPVGeometryVolume ())
 {
 
 }
 
 LPVRadianceInjectionRenderPass::~LPVRadianceInjectionRenderPass ()
 {
+	delete _lpvGeometryVolume;
 	delete _lpvVolume;
 }
 
@@ -44,6 +46,7 @@ void LPVRadianceInjectionRenderPass::Clear ()
 	 * Clear post processing volume
 	*/
 
+	_lpvGeometryVolume->Clear ();
 	_lpvVolume->Clear ();
 }
 
@@ -80,7 +83,8 @@ RenderVolumeCollection* LPVRadianceInjectionRenderPass::Execute (const RenderSce
 
 	EndPostProcessPass ();
 
-	return rvc->Insert ("LightPropagationVolume", _lpvVolume);
+	return rvc->Insert ("LightPropagationVolume", _lpvVolume)
+		->Insert ("LPVGeometryVolume", _lpvGeometryVolume);
 }
 
 bool LPVRadianceInjectionRenderPass::IsAvailable (const RenderLightObject*) const
@@ -94,6 +98,7 @@ bool LPVRadianceInjectionRenderPass::IsAvailable (const RenderLightObject*) cons
 
 void LPVRadianceInjectionRenderPass::StartPostProcessPass ()
 {
+	_lpvGeometryVolume->ClearVolume ();
 	_lpvVolume->ClearVolume ();
 
 	/*
@@ -101,6 +106,7 @@ void LPVRadianceInjectionRenderPass::StartPostProcessPass ()
 	*/
 
 	_lpvVolume->BindForWriting ();
+	_lpvGeometryVolume->BindForWriting ();
 }
 
 void LPVRadianceInjectionRenderPass::PostProcessPass (const RenderScene* renderScene,
@@ -222,6 +228,13 @@ void LPVRadianceInjectionRenderPass::InitLPVVolume (const RenderSettings& settin
 			" It is not possible to continue the process. End now!");
 		exit (LIGHT_PROPAGATION_VOLUME_TEXTURE_NOT_INIT);
 	}
+
+	if (!_lpvGeometryVolume->Init (settings.lpv_volume_size)) {
+		Console::LogError (std::string () +
+			"Light propagation volume texture cannot be initialized!" +
+			" It is not possible to continue the process. End now!");
+		exit (LIGHT_PROPAGATION_VOLUME_TEXTURE_NOT_INIT);
+	}
 }
 
 void LPVRadianceInjectionRenderPass::UpdateLPVVolume (const RenderSettings& settings)
@@ -232,6 +245,7 @@ void LPVRadianceInjectionRenderPass::UpdateLPVVolume (const RenderSettings& sett
 		 * Clear voxel volume
 		*/
 
+		_lpvGeometryVolume->Clear ();
 		_lpvVolume->Clear ();
 
 		/*

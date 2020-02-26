@@ -4,6 +4,8 @@ uniform layout (binding = 0, r32i) coherent volatile iimage3D lpvVolumeR;
 uniform layout (binding = 1, r32i) coherent volatile iimage3D lpvVolumeG;
 uniform layout (binding = 2, r32i) coherent volatile iimage3D lpvVolumeB;
 
+uniform layout (binding = 3, r32ui) coherent volatile uimage3D lpvGeometryVolume;
+
 #define SH_F2I 1000.0
 
 #define imgStoreAdd(img, pos, data) \
@@ -147,6 +149,22 @@ vec4 evalCosineLobeToDir(vec3 dir) {
 	return vec4( SH_cosLobe_C0, -SH_cosLobe_C1 * dir.y, SH_cosLobe_C1 * dir.z, -SH_cosLobe_C1 * dir.x );
 }
 
+float calculateSurfelAreaLightOrtho(vec3 lightPos) {
+	float rsmSize = (rsmResolution / 4).x;
+
+	lightPos = lightPos * 2.0 - 1.0;
+
+	return (4.0 * lightPos.z * lightPos.z)/(rsmSize * rsmSize);
+}
+
+//(As * clamp(dot(ns,w),0.0,1.0))/(cellsize * cellsize)
+float calculateBlockingProbability(float surfelArea, vec3 normal)
+{
+	float volumeCellSize = (maxVertex.x - minVertex.x) / volumeSize.x;
+
+	return clamp((surfelArea * clamp(dot(normal, -lightDirection),0.0,1.0))/(volumeCellSize*volumeCellSize),0.0,1.0); //It is probability so 0.0 - 1.0
+}
+
 void CalcBias (inout RSMSample rsmSample)
 {
 	float volumeCellSize = (maxVertex.x - minVertex.x) / volumeSize.x;
@@ -157,6 +175,29 @@ void CalcBias (inout RSMSample rsmSample)
 	rsmSample.worldSpacePosition += -lightDirection * bias;
 
 	rsmSample.volumePos = GetPositionInVolume (rsmSample.worldSpacePosition);
+}
+
+void GeometryInjection (in RSMSample rsmSample)
+{
+	vec3 lightPos = vec3 (lightSpaceMatrix * vec4 (rsmSample.worldSpacePosition, 1.0));
+
+	float surfelArea = calculateSurfelAreaLightOrtho (lightPos);
+
+	float blockingProbability = calculateBlockingProbability(1, rsmSample.worldSpaceNormal);
+
+	vec4 shCoefficients = evalCosineLobeToDir(rsmSample.worldSpaceNormal) * blockingProbability;
+
+	imageAtomicMax(lpvGeometryVolume, ivec3(rsmSample.volumePos), packUnorm4x8 (shCoefficients));
+}
+
+void RadianceInjection (in RSMSample rsmSample)
+{
+	vec4 shCoefficients = evalCosineLobeToDir (rsmSample.worldSpaceNormal) / PI;
+
+	imgStoreAdd(lpvVolumeR, ivec3 (rsmSample.volumePos), (shCoefficients * rsmSample.flux.r));
+	imgStoreAdd(lpvVolumeG, ivec3 (rsmSample.volumePos), (shCoefficients * rsmSample.flux.g));
+	imgStoreAdd(lpvVolumeB, ivec3 (rsmSample.volumePos), (shCoefficients * rsmSample.flux.b));
+
 }
 
 void main ()
@@ -171,9 +212,6 @@ void main ()
 
 	CalcBias (rsmSample);
 
-	vec4 shCoefficients = evalCosineLobeToDir (rsmSample.worldSpaceNormal) / PI;
-
-	imgStoreAdd(lpvVolumeR, ivec3 (rsmSample.volumePos), (shCoefficients * rsmSample.flux.r));
-	imgStoreAdd(lpvVolumeG, ivec3 (rsmSample.volumePos), (shCoefficients * rsmSample.flux.g));
-	imgStoreAdd(lpvVolumeB, ivec3 (rsmSample.volumePos), (shCoefficients * rsmSample.flux.b));
+	GeometryInjection (rsmSample);
+	RadianceInjection (rsmSample);
 }
