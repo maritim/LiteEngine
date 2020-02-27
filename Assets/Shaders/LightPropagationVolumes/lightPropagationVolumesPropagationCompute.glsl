@@ -6,7 +6,8 @@ uniform sampler3D volumeTextureG;
 uniform sampler3D volumeTextureB;
 uniform ivec3 volumeSize;
 uniform int iteration;
-uniform float occlusionIntensity;
+uniform int geometryOcclusion;
+// uniform float occlusionIntensity;
 
 uniform sampler3D geometryTexture;
 
@@ -103,11 +104,11 @@ Contribution CalcPropagation (ivec3 volumePos)
 
 		float occlusion = 1.0f;
 
-		if (iteration > 0) {
+		if (iteration > 0 && geometryOcclusion != 0) {
 			vec3 occCoord = (vec3( neighbourCellIndex ) + 0.5 * mainDirection) * volumeCellSize;
 
 			vec4 occCoefficients = texture (geometryTexture, occCoord);
-			occlusion = 1.0 - clamp (occlusionIntensity * dot (occCoefficients, evalSH_direct( -mainDirection )), 0.0, 1.0);
+			occlusion = 1.0 - clamp (dot (occCoefficients, evalSH_direct( -mainDirection )), 0.0, 1.0);
 		}
 
 		float occlusionDirectFace = occlusion * directFaceSubtendedSolidAngle;
@@ -130,11 +131,11 @@ Contribution CalcPropagation (ivec3 volumePos)
 
 			float occlusion = 1.0f;
 
-			if (iteration > 0) {
+			if (iteration > 0 && geometryOcclusion != 0) {
 				vec3 occCoord = (vec3( neighbourCellIndex ) + 0.5 * evalDirection) * volumeCellSize;
 
 				vec4 occCoefficients = texture (geometryTexture, occCoord);
-				occlusion = 1.0 - clamp (occlusionIntensity * dot (occCoefficients, evalSH_direct( -evalDirection )), 0.0, 1.0);
+				occlusion = 1.0 - clamp (dot (occCoefficients, evalSH_direct( -evalDirection )), 0.0, 1.0);
 			}
 
 			float occlusionSideFace = occlusion * sideFaceSubtendedSolidAngle;

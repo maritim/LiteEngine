@@ -71,6 +71,7 @@ struct RenderSettings : public Object
 	std::size_t lpv_volume_size;
 	std::size_t lpv_iterations;
 	float lpv_injection_bias;
+	bool lpv_geometry_occlusion;
 	float lpv_intensity;
 
 	std::size_t vct_voxels_size;

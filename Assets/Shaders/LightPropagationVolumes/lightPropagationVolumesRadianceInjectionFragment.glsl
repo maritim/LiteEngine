@@ -185,7 +185,7 @@ void GeometryInjection (in RSMSample rsmSample)
 
 	float blockingProbability = calculateBlockingProbability(1, rsmSample.worldSpaceNormal);
 
-	vec4 shCoefficients = evalCosineLobeToDir(rsmSample.worldSpaceNormal) * blockingProbability;
+	vec4 shCoefficients = evalCosineLobeToDir(rsmSample.worldSpaceNormal);// * blockingProbability;
 
 	imageAtomicMax(lpvGeometryVolume, ivec3(rsmSample.volumePos), packUnorm4x8 (shCoefficients));
 }

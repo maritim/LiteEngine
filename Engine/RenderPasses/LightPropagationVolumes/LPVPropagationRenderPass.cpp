@@ -129,6 +129,7 @@ void LPVPropagationRenderPass::PostProcessPass (const RenderScene* renderScene, 
 		}
 
 		GL::Uniform1i (_shaderView->GetUniformLocation ("iteration"), index);
+		GL::Uniform1i (_shaderView->GetUniformLocation ("geometryOcclusion"), settings.lpv_geometry_occlusion);
 
 		int numWorkGroups = (int) std::ceil (settings.lpv_volume_size / 4.0);
 		GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);

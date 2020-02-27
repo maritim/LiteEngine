@@ -218,6 +218,7 @@ void LPVRadianceInjectionRenderPass::UpdateLPVVolumeBoundingBox (const RenderSce
 	glm::vec3 maxVertex = volume->maxVertex;
 
 	_lpvVolume->UpdateBoundingBox (minVertex, maxVertex);
+	_lpvGeometryVolume->UpdateBoundingBox (minVertex, maxVertex);
 }
 
 void LPVRadianceInjectionRenderPass::InitLPVVolume (const RenderSettings& settings)
