@@ -14,6 +14,10 @@ layout(binding = 0, rgba32f) uniform writeonly image3D lpvVolumeR;
 layout(binding = 1, rgba32f) uniform writeonly image3D lpvVolumeG;
 layout(binding = 2, rgba32f) uniform writeonly image3D lpvVolumeB;
 
+layout(binding = 3, rgba32f) uniform image3D lpvAccumulationVolumeR;
+layout(binding = 4, rgba32f) uniform image3D lpvAccumulationVolumeG;
+layout(binding = 5, rgba32f) uniform image3D lpvAccumulationVolumeB;
+
 /*
  * Thanks to: https://github.com/mafian89/Light-Propagation-Volumes
 */
@@ -63,9 +67,9 @@ vec3 getReprojSideDirection( int index, ivec3 orientation ) {
 Contribution CalcPropagation (ivec3 volumePos)
 {
 	Contribution result;
-	result.R = texelFetch(volumeTextureR, volumePos, 0);
-	result.G = texelFetch(volumeTextureG, volumePos, 0);
-	result.B = texelFetch(volumeTextureB, volumePos, 0);
+	result.R = vec4 (0); // texelFetch(volumeTextureR, volumePos, 0);
+	result.G = vec4 (0); // texelFetch(volumeTextureG, volumePos, 0);
+	result.B = vec4 (0); // texelFetch(volumeTextureB, volumePos, 0);
 
 	const ivec3 directions [6] = {
 		ivec3(0,0,1), ivec3(0,0,-1),
@@ -160,6 +164,20 @@ void main()
 
 		imageStore(lpvVolumeR, volumePos, result.R);
 		imageStore(lpvVolumeG, volumePos, result.G);
-		imageStore(lpvVolumeB, volumePos, result.B);		
+		imageStore(lpvVolumeB, volumePos, result.B);
+
+		if (iteration > 0) {
+			result.R += imageLoad(lpvAccumulationVolumeR, volumePos);
+			result.G += imageLoad(lpvAccumulationVolumeG, volumePos);
+			result.B += imageLoad(lpvAccumulationVolumeB, volumePos);
+		} else {
+			result.R += texelFetch(volumeTextureR, volumePos, 0);
+			result.G += texelFetch(volumeTextureG, volumePos, 0);
+			result.B += texelFetch(volumeTextureB, volumePos, 0);
+		}
+
+		imageStore(lpvAccumulationVolumeR, volumePos, result.R);
+		imageStore(lpvAccumulationVolumeG, volumePos, result.G);
+		imageStore(lpvAccumulationVolumeB, volumePos, result.B);
 	}
 }

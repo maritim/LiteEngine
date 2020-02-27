@@ -10,7 +10,7 @@ class LPVPropagationVolume : public LPVVolume
 public:
 	virtual bool Init (std::size_t size);
 
-	virtual void BindForWriting ();
+	virtual void BindForWriting (std::size_t index = 0);
 };
 
 #endif

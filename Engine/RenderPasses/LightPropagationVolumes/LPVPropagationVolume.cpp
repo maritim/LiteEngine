@@ -59,10 +59,10 @@ bool LPVPropagationVolume::Init(std::size_t volumeSize)
 	return true;
 }
 
-void LPVPropagationVolume::BindForWriting ()
+void LPVPropagationVolume::BindForWriting (std::size_t index)
 {
-	for (std::size_t index = 0; index < 3; index ++) {
-		GL::BindImageTexture (index, _volumeTextures [index], 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	for (std::size_t imageIndex = 0; imageIndex < 3; imageIndex ++) {
+		GL::BindImageTexture (index + imageIndex, _volumeTextures [imageIndex], 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 	}
 }
 

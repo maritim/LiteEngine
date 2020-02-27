@@ -10,13 +10,15 @@
 #include "Core/Console/Console.h"
 
 LPVPropagationRenderPass::LPVPropagationRenderPass () :
-	_lpvPropagationVolume (new LPVPropagationVolume ())
+	_lpvPropagationVolume (new LPVPropagationVolume ()),
+	_lpvAccumulationVolume (new LPVPropagationVolume ())
 {
 
 }
 
 LPVPropagationRenderPass::~LPVPropagationRenderPass ()
 {
+	delete _lpvAccumulationVolume;
 	delete _lpvPropagationVolume;
 }
 
@@ -45,6 +47,7 @@ void LPVPropagationRenderPass::Clear ()
 	 * Clear post processing volume
 	*/
 
+	_lpvAccumulationVolume->Clear ();
 	_lpvPropagationVolume->Clear ();
 }
 
@@ -75,11 +78,7 @@ RenderVolumeCollection* LPVPropagationRenderPass::Execute (const RenderScene* re
 
 	EndPostProcessPass ();
 
-	if ((settings.lpv_iterations & 1) == 0) {
-		rvc->Insert ("LightPropagationVolume", _lpvPropagationVolume);
-	}
-
-	return rvc;
+	return rvc->Insert ("LightPropagationVolume", _lpvAccumulationVolume);
 }
 
 bool LPVPropagationRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
@@ -95,6 +94,7 @@ bool LPVPropagationRenderPass::IsAvailable (const RenderScene* renderScene, cons
 void LPVPropagationRenderPass::StartPostProcessPass ()
 {
 	_lpvPropagationVolume->ClearVolume ();
+	_lpvAccumulationVolume->ClearVolume ();
 
 	/*
 	 * Bind screen space ambient occlusion volume for writing
@@ -110,10 +110,13 @@ void LPVPropagationRenderPass::PostProcessPass (const RenderScene* renderScene, 
 	LPVGeometryVolume* lpvGeometryVolume = (LPVGeometryVolume*) rvc->GetRenderVolume ("LPVGeometryVolume");
 
 	_lpvPropagationVolume->UpdateBoundingBox (lpvVolume->GetMinVertex (), lpvVolume->GetMaxVertex ());
+	_lpvAccumulationVolume->UpdateBoundingBox (lpvVolume->GetMinVertex (), lpvVolume->GetMaxVertex ());
 
 	for (std::size_t index = 0; index < settings.lpv_iterations; index ++) {
 
 		Pipeline::SendCustomAttributes (_shaderView, lpvGeometryVolume->GetCustomAttributes ());
+
+		_lpvAccumulationVolume->BindForWriting (3);
 
 		if ((index & 1) == 0) {
 			_lpvPropagationVolume->BindForWriting ();
@@ -151,6 +154,13 @@ void LPVPropagationRenderPass::InitLPVVolume (const RenderSettings& settings)
 			" It is not possible to continue the process. End now!");
 		exit (LIGHT_PROPAGATION_VOLUME_TEXTURE_NOT_INIT);
 	}
+
+	if (!_lpvAccumulationVolume->Init (settings.lpv_volume_size)) {
+		Console::LogError (std::string () +
+			"Light propagation volume texture cannot be initialized!" +
+			" It is not possible to continue the process. End now!");
+		exit (LIGHT_PROPAGATION_VOLUME_TEXTURE_NOT_INIT);
+	}
 }
 
 void LPVPropagationRenderPass::UpdateLPVVolume (const RenderSettings& settings)
@@ -161,6 +171,7 @@ void LPVPropagationRenderPass::UpdateLPVVolume (const RenderSettings& settings)
 		 * Clear voxel volume
 		*/
 
+		_lpvAccumulationVolume->Clear ();
 		_lpvPropagationVolume->Clear ();
 
 		/*

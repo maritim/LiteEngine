@@ -15,6 +15,7 @@ class ENGINE_API LPVPropagationRenderPass : public ContainerRenderSubPassI
 protected:
 	Resource<ShaderView> _shaderView;
 	LPVPropagationVolume* _lpvPropagationVolume;
+	LPVPropagationVolume* _lpvAccumulationVolume;
 
 public:
 	LPVPropagationRenderPass ();
