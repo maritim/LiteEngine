@@ -196,7 +196,10 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 		ImGui::SliderScalar ("Samples Size", ImGuiDataType_U32, &_settings->rsm_samples, &limit1, &limit2);
 
 		ImGui::SliderFloat ("Sample Radius", &_settings->rsm_radius, 0.001, 1.0);
+
+		ImGui::PushID ("RSMIndirect Light Intensity");
 		ImGui::InputFloat ("Indirect Light Intensity", &_settings->rsm_intensity, 0.1);
+		ImGui::PopID ();
 
 		ImGui::Separator();
 
@@ -329,7 +332,12 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 		ImGui::InputScalar ("Iterations", ImGuiDataType_U32, &_settings->lpv_iterations);
 
 		ImGui::InputFloat ("Light Injection Bias", &_settings->lpv_injection_bias, 0.1);
+
+		ImGui::Checkbox ("Geometry Occlusion", &_settings->lpv_geometry_occlusion);
+
+		ImGui::PushID ("LPVIndirect Light Intensity");
 		ImGui::InputFloat ("Indirect Light Intensity", &_settings->lpv_intensity, 0.1);
+		ImGui::PopID ();
 
 		ImGui::Separator();
 
@@ -348,15 +356,19 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 				int windowWidth = ImGui::GetWindowWidth() * 0.95f;
 
-				FrameBuffer2DVolume* lpvIndirectMapVolume = lpvStat->lpvIndirectMapVolume;
+				FrameBuffer2DVolume* lpvIndirectDiffuseMapVolume = lpvStat->lpvIndirectDiffuseMapVolume;
+				FrameBuffer2DVolume* lpvIndirectSpecularMapVolume = lpvStat->lpvIndirectSpecularMapVolume;
 
-				glm::ivec2 lpvMapSize = lpvIndirectMapVolume->GetSize ();
+				glm::ivec2 lpvMapSize = lpvIndirectDiffuseMapVolume->GetSize ();
 
 				int lpvMapWidth = windowWidth;
 				int lpvMapHeight = ((float) lpvMapSize.y / lpvMapSize.x) * lpvMapWidth;
 
-				ImGui::Text ("Indirect Light Map");
-				ShowImage (lpvIndirectMapVolume->GetColorTextureID (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
+				ImGui::Text ("Indirect Diffuse Light Map");
+				ShowImage (lpvIndirectDiffuseMapVolume->GetColorTextureID (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
+
+				ImGui::Text ("Indirect Specular Light Map");
+				ShowImage (lpvIndirectSpecularMapVolume->GetColorTextureID (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
 			}
 
 			ImGui::TreePop();

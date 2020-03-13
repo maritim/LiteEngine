@@ -1,11 +1,11 @@
-#include "LPVIndirectLightRenderPass.h"
+#include "LPVIndirectSpecularLightRenderPass.h"
 
-#include "RenderPasses/IndirectLightMapVolume.h"
+#include "RenderPasses/IndirectSpecularLightMapVolume.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/LPVStatisticsObject.h"
 
-bool LPVIndirectLightRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+bool LPVIndirectSpecularLightRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
@@ -15,17 +15,17 @@ bool LPVIndirectLightRenderPass::IsAvailable (const RenderScene* renderScene, co
 	return true;
 }
 
-std::string LPVIndirectLightRenderPass::GetPostProcessFragmentShaderPath () const
+std::string LPVIndirectSpecularLightRenderPass::GetPostProcessFragmentShaderPath () const
 {
-	return "Assets/Shaders/LightPropagationVolumes/lightPropagationVolumesIndirectFragment.glsl";
+	return "Assets/Shaders/LightPropagationVolumes/lightPropagationVolumesIndirectSpecularFragment.glsl";
 }
 
-std::string LPVIndirectLightRenderPass::GetPostProcessVolumeName () const
+std::string LPVIndirectSpecularLightRenderPass::GetPostProcessVolumeName () const
 {
-	return "IndirectMap";
+	return "IndirectSpecularMap";
 }
 
-glm::ivec2 LPVIndirectLightRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
+glm::ivec2 LPVIndirectSpecularLightRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
 	if (_postProcessMapVolume != nullptr) {
 		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("LPVStatisticsObject");
@@ -38,20 +38,20 @@ glm::ivec2 LPVIndirectLightRenderPass::GetPostProcessVolumeResolution (const Ren
 
 		lpvStatisticsObject = dynamic_cast<LPVStatisticsObject*> (stat);
 
-		lpvStatisticsObject->lpvIndirectMapVolume = _postProcessMapVolume;
+		lpvStatisticsObject->lpvIndirectSpecularMapVolume = _postProcessMapVolume;
 	}
 
-	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
+	return glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height);
 }
 
-PostProcessMapVolume* LPVIndirectLightRenderPass::CreatePostProcessVolume () const
+PostProcessMapVolume* LPVIndirectSpecularLightRenderPass::CreatePostProcessVolume () const
 {
-	IndirectLightMapVolume* indirectLightMapVolume = new IndirectLightMapVolume ();
+	IndirectSpecularLightMapVolume* indirectSpecularLightMapVolume = new IndirectSpecularLightMapVolume ();
 
-	return indirectLightMapVolume;
+	return indirectSpecularLightMapVolume;
 }
 
-std::vector<PipelineAttribute> LPVIndirectLightRenderPass::GetCustomAttributes (const Camera* camera,
+std::vector<PipelineAttribute> LPVIndirectSpecularLightRenderPass::GetCustomAttributes (const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*

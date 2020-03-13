@@ -1,11 +1,11 @@
-#ifndef LPVINDIRECTLIGHTRENDERPASS_H
-#define LPVINDIRECTLIGHTRENDERPASS_H
+#ifndef LPVINDIRECTSPECULARLIGHTRENDERPASS_H
+#define LPVINDIRECTSPECULARLIGHTRENDERPASS_H
 
 #include "RenderPasses/PostProcess/PostProcessRenderPass.h"
 
-class ENGINE_API LPVIndirectLightRenderPass : public PostProcessRenderPass
+class ENGINE_API LPVIndirectSpecularLightRenderPass : public PostProcessRenderPass
 {
-	DECLARE_RENDER_PASS(LPVIndirectLightRenderPass)
+	DECLARE_RENDER_PASS(LPVIndirectSpecularLightRenderPass)
 
 public:
 	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
