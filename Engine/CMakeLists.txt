@@ -35,6 +35,7 @@ find_library (assimp NAMES assimp HINTS ${LIBS_DIR})
 
 include_directories (${PROJECT_SOURCE_DIR}/Engine)
 include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include/glm)
+include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include/spdlog)
 
 if(NOT MSVC)
 	find_package (OpenAL REQUIRED)

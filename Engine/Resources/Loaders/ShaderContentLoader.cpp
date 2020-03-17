@@ -1,5 +1,7 @@
 #include "ShaderContentLoader.h"
 
+#include <fstream>
+
 #include "Shader/ShaderContent.h"
 
 #include "Resources/Resources.h"

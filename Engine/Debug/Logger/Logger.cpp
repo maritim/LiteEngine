@@ -1,29 +1,18 @@
 #include "Logger.h"
 
-Logger::Logger () :
-	_outStream ("GameEngine.log")
-{
+#include <spdlog/spdlog.h>
 
+void Logger::Log (const char* filename, int line, const std::string& message)
+{
+	spdlog::debug (std::string () + filename + ":" + std::to_string (line) + ": " + message);
 }
 
-Logger::~Logger ()
+void Logger::LogError (const char* filename, int line, const std::string& message)
 {
-	_outStream.close ();
+	spdlog::debug (std::string () + filename + ":" + std::to_string (line) + ": [Error]" + message);
 }
 
-SPECIALIZE_SINGLETON(Logger)
-
-void Logger::Log (const char* filename, int line, std::string message)
+void Logger::LogWarning (const char* filename, int line, const std::string& message)
 {
-	_outStream << filename << ":" << line << ": " << message << std::endl;
-}
-
-void Logger::LogError (const char* filename, int line, std::string message)
-{
-	_outStream << filename << ":" << line << ": [Error]: " << message << std::endl;
-}
-
-void Logger::LogWarning (const char* filename, int line, std::string message)
-{
-	_outStream << filename << ":" << line << ": [Warning]: " << message << std::endl;
+	spdlog::debug (std::string () + filename + ":" + std::to_string (line) + ": [Warning]" + message);
 }

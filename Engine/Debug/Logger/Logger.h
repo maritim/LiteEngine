@@ -1,34 +1,18 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "Core/Singleton/Singleton.h"
-
-#include <fstream>
 #include <string>
 
-#define DEBUG_LOG(message) Logger::Instance ()->Log (__FILE__, __LINE__, message)
-#define DEBUG_LOGERROR(message) Logger::Instance ()->LogError (__FILE__, __LINE__, message)
-#define DEBUG_LOGWARNING(message) Logger::Instance ()->LogWarning (__FILE__, __LINE__, message)
+#define DEBUG_LOG(message) Logger::Log (__FILE__, __LINE__, message)
+#define DEBUG_LOGERROR(message) Logger::LogError (__FILE__, __LINE__, message)
+#define DEBUG_LOGWARNING(message) Logger::LogWarning (__FILE__, __LINE__, message)
 
-class ENGINE_API Logger : public Singleton<Logger>
+class ENGINE_API Logger
 {
-	friend Singleton<Logger>;
-
-	DECLARE_SINGLETON(Logger)
-
-private:
-	std::ofstream _outStream;
-
 public:
-	void Log (const char* file, int line, std::string message);
-	void LogError (const char* file, int line, std::string message);
-	void LogWarning (const char* file, int line, std::string message);
-
-private:
-	Logger ();
-	~Logger ();
-	Logger (const Logger&);
-	Logger& operator=(const Logger&);
+	static void Log (const char* file, int line, const std::string& message);
+	static void LogError (const char* file, int line, const std::string& message);
+	static void LogWarning (const char* file, int line, const std::string& message);
 };
 
 #endif

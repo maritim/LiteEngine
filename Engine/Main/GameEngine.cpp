@@ -36,6 +36,8 @@ void GameEngine::Init ()
 {
 	InitSettings ();
 
+	Console::Init ();
+
 	SDLModule::Init ();
 	OpenALModule::Init ();
 
@@ -78,6 +80,8 @@ void GameEngine::Clear ()
 
 	OpenALModule::Quit ();
 	SDLModule::Quit ();
+
+	Console::Quit ();
 }
 
 void GameEngine::InitSettings ()

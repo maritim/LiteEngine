@@ -2,19 +2,20 @@
 #define CONSOLE_H
 
 #include <string>
-#include <fstream>
 
-// TODO: Make this to redirect to file
+#include "ConsoleSink.h"
 
-class Console
+class ENGINE_API Console
 {
-private:
-	static std::ofstream _outStream;
-
 public:
-	static void Log (std::string message);
-	static void LogError (std::string message);
-	static void LogWarning (std::string message);
+	static void Init ();
+	static void Quit ();
+
+	static void Log (const std::string& message);
+	static void LogError (const std::string& message);
+	static void LogWarning (const std::string& message);
+
+	static void AttachSink (ConsoleSink* consoleSink);
 };
 
 #endif

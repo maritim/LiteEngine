@@ -68,17 +68,21 @@ void EditorMainMenu::ShowMainMenu ()
 			bool showProject = lastShowProject;
 			ImGui::MenuItem ("Project Window", "CTRL+3", &showProject);
 
+			bool lastShowConsole = SettingsManager::Instance ()->GetValue<bool> ("menu_show_console", false);
+			bool showConsole = lastShowConsole;
+			ImGui::MenuItem ("Console Window", "CTRL+4", &showConsole);
+
 			ImGui::Separator ();
 
 			bool lastShowAnimationSettings = SettingsManager::Instance ()->GetValue<bool> ("menu_show_animation_settings", false);
 			bool showAnimationSettings = lastShowAnimationSettings;
-			ImGui::MenuItem("Animation Settings", "CTRL+4", &showAnimationSettings);
+			ImGui::MenuItem("Animation Settings", "CTRL+5", &showAnimationSettings);
 
 			ImGui::Separator ();
 
 			bool lastShowRenderingSettings = SettingsManager::Instance ()->GetValue<bool> ("menu_show_rendering_settings", false);
 			bool showRenderingSettings = lastShowRenderingSettings;
-			ImGui::MenuItem("Rendering Settings", "CTRL+5", &showRenderingSettings);
+			ImGui::MenuItem("Rendering Settings", "CTRL+6", &showRenderingSettings);
 
 			ImGui::Separator ();
 
@@ -96,6 +100,10 @@ void EditorMainMenu::ShowMainMenu ()
 
 			if (showProject != lastShowProject) {
 				SettingsManager::Instance ()->SetValue ("menu_show_project", std::to_string (showProject));
+			}
+
+			if (showConsole != lastShowConsole) {
+				SettingsManager::Instance ()->SetValue ("menu_show_console", std::to_string (showConsole));
 			}
 
 			if (showAnimationSettings != lastShowAnimationSettings) {
