@@ -139,6 +139,14 @@ unsigned int FrameBuffer2DVolume::GetColorTextureID () const
 void FrameBuffer2DVolume::Clear ()
 {
 	/*
+	 * Check if it's not initialized
+	*/
+
+	if (_fbo == 0) {
+		return;
+	}
+
+	/*
 	 * Bind current framebuffer for cleaning
 	*/
 
@@ -167,4 +175,10 @@ void FrameBuffer2DVolume::Clear ()
 	*/
 
 	GL::BindFramebuffer (GL_FRAMEBUFFER, 0);
+
+	/*
+	 * Reset FBO
+	*/
+
+	_fbo = 0;
 }

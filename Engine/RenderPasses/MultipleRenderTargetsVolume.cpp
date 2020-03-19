@@ -92,6 +92,14 @@ bool MultipleRenderTargetsVolume::Init(const glm::ivec2& size)
 void MultipleRenderTargetsVolume::Clear ()
 {
 	/*
+	 * Check if it's not initialized
+	*/
+
+	if (m_fbo == 0) {
+		return;
+	}
+
+	/*
 	 * Bind current FBO for cleaning
 	*/
 
@@ -140,6 +148,12 @@ void MultipleRenderTargetsVolume::Clear ()
 	*/
 
 	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
+
+	/*
+	 * Reset FBO
+	*/
+
+	m_fbo = 0;
 }
 
 void MultipleRenderTargetsVolume::BindForReading ()

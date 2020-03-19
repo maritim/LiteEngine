@@ -25,6 +25,14 @@ RenderVolumeI* DirectionalLightContainerRenderVolumeCollection::GetNextVolume (c
 
 	auto renderLightObject = renderScene->GetRenderDirectionalLightObject ();
 
+	if (renderLightObject == nullptr) {
+		return nullptr;
+	}
+
+	if (renderLightObject->IsActive () == false) {
+		return nullptr;
+	}
+
 	_volumetricLightVolume->SetRenderLightObject (renderLightObject);
 
 	_iterations ++;
