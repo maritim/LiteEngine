@@ -76,6 +76,8 @@ float CalcScreenSpaceAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 te
 		++ samplesCount;
 	}
 
+	samplesCount = max (samplesCount, 1);
+
 	occlusion = 1.0 - (occlusion / samplesCount);
 
 	return occlusion;
