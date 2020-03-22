@@ -62,11 +62,12 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// Calculate ambient light
 	vec3 ambientColor = in_diffuse * CalcAmbientLight ();
 	vec3 indirectDiffuseColor = in_diffuse * CalcIndirectDiffuseLight ();
-	vec3 indirectSpecularColor = in_specular * CalcIndirectSpecularLight ();
+	// vec3 indirectSpecularColor = in_specular * CalcIndirectSpecularLight ();
 
 	return (directDiffuseColor * in_diffuse
 			+ directSpecularColor * in_specular) * lightIntensity
-			+ indirectSpecularColor + indirectDiffuseColor + ambientColor;
+			// + indirectSpecularColor + indirectDiffuseColor + ambientColor;
+			+ indirectDiffuseColor + ambientColor;
 }
 
 void main()

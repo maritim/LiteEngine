@@ -4,15 +4,15 @@ std::vector<PipelineAttribute> IndirectSpecularLightMapVolume::GetCustomAttribut
 {
 	std::vector<PipelineAttribute> attributes;
 
-	PipelineAttribute indirectMap;
+	PipelineAttribute indirectSpecularMap;
 
-	indirectMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
+	indirectSpecularMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 
-	indirectMap.name = "indirectSpecularMap";
+	indirectSpecularMap.name = "indirectSpecularMap";
 
-	indirectMap.value.x = _colorBuffer;
+	indirectSpecularMap.value.x = _colorBuffer;
 
-	attributes.push_back (indirectMap);
+	attributes.push_back (indirectSpecularMap);
 
 	return attributes;
 }

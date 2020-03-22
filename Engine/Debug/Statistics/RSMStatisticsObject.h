@@ -12,7 +12,7 @@ struct ENGINE_API RSMStatisticsObject : public StatisticsObject
 	unsigned int rsmFluxMapID;
 	unsigned int rsmDepthMapID;
 
-	FrameBuffer2DVolume* rsmIndirectMapVolume;
+	FrameBuffer2DVolume* rsmIndirectDiffuseMapVolume;
 };
 
 #endif

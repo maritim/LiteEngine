@@ -1,11 +1,11 @@
-#ifndef RSMINDIRECTLIGHTRENDERPASS_H
-#define RSMINDIRECTLIGHTRENDERPASS_H
+#ifndef RSMINDIRECTDIFFUSELIGHTRENDERPASS_H
+#define RSMINDIRECTDIFFUSELIGHTRENDERPASS_H
 
 #include "RenderPasses/PostProcess/PostProcessRenderPass.h"
 
-class ENGINE_API RSMIndirectLightRenderPass : public PostProcessRenderPass
+class ENGINE_API RSMIndirectDiffuseLightRenderPass : public PostProcessRenderPass
 {
-	DECLARE_RENDER_PASS(RSMIndirectLightRenderPass)
+	DECLARE_RENDER_PASS(RSMIndirectDiffuseLightRenderPass)
 
 public:
 	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,

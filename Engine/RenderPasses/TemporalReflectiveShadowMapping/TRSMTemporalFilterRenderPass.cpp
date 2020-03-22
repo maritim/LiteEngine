@@ -1,6 +1,6 @@
 #include "TRSMTemporalFilterRenderPass.h"
 
-#include "TRSMIndirectLightMapVolume.h"
+#include "TRSMIndirectDiffuseLightMapVolume.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/RSMStatisticsObject.h"
@@ -17,12 +17,12 @@ bool TRSMTemporalFilterRenderPass::IsAvailable (const RenderScene* renderScene, 
 
 std::string TRSMTemporalFilterRenderPass::GetPostProcessFragmentShaderPath () const
 {
-	return "Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapTemporalFilterFragment.glsl";
+	return "Assets/Shaders/TemporalReflectiveShadowMapping/reflectiveShadowMapTemporalFilterFragment.glsl";
 }
 
 std::string TRSMTemporalFilterRenderPass::GetPostProcessVolumeName () const
 {
-	return "IndirectMap";
+	return "IndirectDiffuseMap";
 }
 
 glm::ivec2 TRSMTemporalFilterRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
@@ -38,7 +38,7 @@ glm::ivec2 TRSMTemporalFilterRenderPass::GetPostProcessVolumeResolution (const R
 
 		rsmStatisticsObject = dynamic_cast<RSMStatisticsObject*> (stat);
 
-		rsmStatisticsObject->rsmIndirectMapVolume = _postProcessMapVolume;
+		rsmStatisticsObject->rsmIndirectDiffuseMapVolume = _postProcessMapVolume;
 	}
 
 	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
@@ -46,9 +46,9 @@ glm::ivec2 TRSMTemporalFilterRenderPass::GetPostProcessVolumeResolution (const R
 
 PostProcessMapVolume* TRSMTemporalFilterRenderPass::CreatePostProcessVolume () const
 {
-	TRSMIndirectLightMapVolume* trsmIndirectLightMapVolume = new TRSMIndirectLightMapVolume ();
+	TRSMIndirectDiffuseLightMapVolume* trsmIndirectDiffuseLightMapVolume = new TRSMIndirectDiffuseLightMapVolume ();
 
-	return trsmIndirectLightMapVolume;
+	return trsmIndirectDiffuseLightMapVolume;
 }
 
 std::vector<PipelineAttribute> TRSMTemporalFilterRenderPass::GetCustomAttributes (const Camera* camera,
@@ -64,7 +64,7 @@ std::vector<PipelineAttribute> TRSMTemporalFilterRenderPass::GetCustomAttributes
 	 * Attach screen space ambient occlusion attributes to pipeline
 	*/
 
-	auto rsmLastIndirectMapVolume = (TRSMIndirectLightMapVolume*) rvc->GetRenderVolume ("LastIndirectMap");
+	auto rsmLastIndirectDiffuseMapVolume = (TRSMIndirectDiffuseLightMapVolume*) rvc->GetRenderVolume ("LastIndirectDiffuseMap");
 
 	PipelineAttribute rsmResolution;
 	PipelineAttribute reprojectionMatrix;
@@ -80,7 +80,7 @@ std::vector<PipelineAttribute> TRSMTemporalFilterRenderPass::GetCustomAttributes
 	rsmResolution.value = glm::vec3 (resolution, 0.0f);
 
 	glm::mat4 viewMatrix = glm::translate (glm::mat4_cast (camera->GetRotation ()), camera->GetPosition () * -1.0f);
-	glm::mat4 lastViewProjectionMatrix = rsmLastIndirectMapVolume->GetViewProjectionMatrix ();
+	glm::mat4 lastViewProjectionMatrix = rsmLastIndirectDiffuseMapVolume->GetViewProjectionMatrix ();
 	glm::mat4 screenMatrix = glm::scale (glm::translate (glm::mat4 (1), glm::vec3 (0.5f)), glm::vec3 (0.5f));
 
 	glm::mat4 reprojectionMat = screenMatrix * lastViewProjectionMatrix * glm::inverse (viewMatrix);

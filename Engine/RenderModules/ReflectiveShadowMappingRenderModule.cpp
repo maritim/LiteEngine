@@ -21,7 +21,7 @@
 
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMSamplesGenerationRenderPass.h"
-#include "RenderPasses/ReflectiveShadowMapping/RSMIndirectLightRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMIndirectDiffuseLightRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
@@ -65,14 +65,14 @@ void ReflectiveShadowMappingRenderModule::Init ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 		.Attach (new RSMDirectionalLightAccumulationRenderPass ())
 		.Attach (new RSMSamplesGenerationRenderPass ())
-		.Attach (new RSMIndirectLightRenderPass ())
+		.Attach (new RSMIndirectDiffuseLightRenderPass ())
 		.Attach (new RSMDirectionalLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new SpotLightContainerRenderVolumeCollection ())
 		.Attach (new RSMSpotLightAccumulationRenderPass ())
 		.Attach (new RSMSamplesGenerationRenderPass ())
-		.Attach (new RSMIndirectLightRenderPass ())
+		.Attach (new RSMIndirectDiffuseLightRenderPass ())
 		.Attach (new DeferredSpotLightRenderPass ())
 		.Attach (new RSMRenderPass ())
 		.Build ());

@@ -1,6 +1,6 @@
 #include "TRSMMedianFilterRenderPass.h"
 
-#include "TRSMIndirectLightMapVolume.h"
+#include "TRSMIndirectDiffuseLightMapVolume.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/RSMStatisticsObject.h"
@@ -22,7 +22,7 @@ std::string TRSMMedianFilterRenderPass::GetPostProcessFragmentShaderPath () cons
 
 std::string TRSMMedianFilterRenderPass::GetPostProcessVolumeName () const
 {
-	return "IndirectMap";
+	return "IndirectDiffuseMap";
 }
 
 glm::ivec2 TRSMMedianFilterRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
@@ -38,7 +38,7 @@ glm::ivec2 TRSMMedianFilterRenderPass::GetPostProcessVolumeResolution (const Ren
 
 		rsmStatisticsObject = dynamic_cast<RSMStatisticsObject*> (stat);
 
-		rsmStatisticsObject->rsmIndirectMapVolume = _postProcessMapVolume;
+		rsmStatisticsObject->rsmIndirectDiffuseMapVolume = _postProcessMapVolume;
 	}
 
 	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
@@ -46,9 +46,9 @@ glm::ivec2 TRSMMedianFilterRenderPass::GetPostProcessVolumeResolution (const Ren
 
 PostProcessMapVolume* TRSMMedianFilterRenderPass::CreatePostProcessVolume () const
 {
-	TRSMIndirectLightMapVolume* trsmIndirectLightMapVolume = new TRSMIndirectLightMapVolume ();
+	TRSMIndirectDiffuseLightMapVolume* trsmIndirectDiffuseLightMapVolume = new TRSMIndirectDiffuseLightMapVolume ();
 
-	return trsmIndirectLightMapVolume;
+	return trsmIndirectDiffuseLightMapVolume;
 }
 
 std::vector<PipelineAttribute> TRSMMedianFilterRenderPass::GetCustomAttributes (const Camera* camera,

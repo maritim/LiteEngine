@@ -1,18 +1,18 @@
-#ifndef TRSMINDIRECTLIGHTRENDERPASS_H
-#define TRSMINDIRECTLIGHTRENDERPASS_H
+#ifndef TRSMINDIRECTDIFFUSELIGHTRENDERPASS_H
+#define TRSMINDIRECTDIFFUSELIGHTRENDERPASS_H
 
-#include "RenderPasses/ReflectiveShadowMapping/RSMIndirectLightRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMIndirectDiffuseLightRenderPass.h"
 
-class ENGINE_API TRSMIndirectLightRenderPass : public RSMIndirectLightRenderPass
+class ENGINE_API TRSMIndirectDiffuseLightRenderPass : public RSMIndirectDiffuseLightRenderPass
 {
-	DECLARE_RENDER_PASS(TRSMIndirectLightRenderPass)
+	DECLARE_RENDER_PASS(TRSMIndirectDiffuseLightRenderPass)
 
 protected:
 	PostProcessMapVolume* _lastPostProcessMapVolume;
 
 public:
-	TRSMIndirectLightRenderPass ();
-	~TRSMIndirectLightRenderPass ();
+	TRSMIndirectDiffuseLightRenderPass();
+	~TRSMIndirectDiffuseLightRenderPass();
 
 	void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
@@ -26,8 +26,8 @@ protected:
 	std::string GetPostProcessFragmentShaderPath () const;
 	PostProcessMapVolume* CreatePostProcessVolume () const;
 
-	void UpdateTRSMIndirectMapVolume (const RenderSettings& settings);
-	void InitTRSMIndirectMapVolume (const RenderSettings& settings);
+	void UpdateTRSMIndirectDiffuseMapVolume (const RenderSettings& settings);
+	void InitTRSMIndirectDiffuseMapVolume (const RenderSettings& settings);
 };
 
 #endif

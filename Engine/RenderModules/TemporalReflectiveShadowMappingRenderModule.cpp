@@ -20,12 +20,12 @@
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationRenderPass.h"
-#include "RenderPasses/ReflectiveShadowMapping/RSMIndirectLightRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMIndirectDiffuseLightRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMRenderPass.h"
 
 #include "RenderPasses/TemporalReflectiveShadowMapping/TRSMSamplesGenerationRenderPass.h"
-#include "RenderPasses/TemporalReflectiveShadowMapping/TRSMIndirectLightRenderPass.h"
+#include "RenderPasses/TemporalReflectiveShadowMapping/TRSMIndirectDiffuseLightRenderPass.h"
 #include "RenderPasses/TemporalReflectiveShadowMapping/TRSMTemporalFilterRenderPass.h"
 #include "RenderPasses/TemporalReflectiveShadowMapping/TRSMMedianFilterRenderPass.h"
 #include "RenderPasses/TemporalReflectiveShadowMapping/TRSMBlurRenderPass.h"
@@ -71,7 +71,7 @@ void TemporalReflectiveShadowMappingRenderModule::Init ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 		.Attach (new RSMDirectionalLightAccumulationRenderPass ())
 		.Attach (new TRSMSamplesGenerationRenderPass ())
-		.Attach (new TRSMIndirectLightRenderPass ())
+		.Attach (new TRSMIndirectDiffuseLightRenderPass ())
 		.Attach (new TRSMTemporalFilterRenderPass ())
 		.Attach (new TRSMMedianFilterRenderPass ())
 		.Attach (new TRSMBlurRenderPass ())
@@ -82,7 +82,7 @@ void TemporalReflectiveShadowMappingRenderModule::Init ()
 		.Volume (new SpotLightContainerRenderVolumeCollection ())
 		.Attach (new RSMSpotLightAccumulationRenderPass ())
 		.Attach (new TRSMSamplesGenerationRenderPass ())
-		.Attach (new TRSMIndirectLightRenderPass ())
+		.Attach (new TRSMIndirectDiffuseLightRenderPass ())
 		.Attach (new TRSMTemporalFilterRenderPass ())
 		.Attach (new TRSMMedianFilterRenderPass ())
 		.Attach (new TRSMBlurRenderPass ())

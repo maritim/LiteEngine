@@ -1,11 +1,11 @@
-#include "RSMIndirectLightRenderPass.h"
+#include "RSMIndirectDiffuseLightRenderPass.h"
 
-#include "RSMIndirectLightMapVolume.h"
+#include "RenderPasses/IndirectDiffuseLightMapVolume.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/RSMStatisticsObject.h"
 
-bool RSMIndirectLightRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+bool RSMIndirectDiffuseLightRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
@@ -15,17 +15,17 @@ bool RSMIndirectLightRenderPass::IsAvailable (const RenderScene* renderScene, co
 	return true;
 }
 
-std::string RSMIndirectLightRenderPass::GetPostProcessFragmentShaderPath () const
+std::string RSMIndirectDiffuseLightRenderPass::GetPostProcessFragmentShaderPath () const
 {
 	return "Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapIndirectFragment.glsl";
 }
 
-std::string RSMIndirectLightRenderPass::GetPostProcessVolumeName () const
+std::string RSMIndirectDiffuseLightRenderPass::GetPostProcessVolumeName () const
 {
-	return "IndirectMap";
+	return "IndirectDiffuseMap";
 }
 
-glm::ivec2 RSMIndirectLightRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
+glm::ivec2 RSMIndirectDiffuseLightRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
 	if (_postProcessMapVolume != nullptr) {
 		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
@@ -38,20 +38,20 @@ glm::ivec2 RSMIndirectLightRenderPass::GetPostProcessVolumeResolution (const Ren
 
 		rsmStatisticsObject = dynamic_cast<RSMStatisticsObject*> (stat);
 
-		rsmStatisticsObject->rsmIndirectMapVolume = _postProcessMapVolume;
+		rsmStatisticsObject->rsmIndirectDiffuseMapVolume = _postProcessMapVolume;
 	}
 
 	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
 }
 
-PostProcessMapVolume* RSMIndirectLightRenderPass::CreatePostProcessVolume () const
+PostProcessMapVolume* RSMIndirectDiffuseLightRenderPass::CreatePostProcessVolume () const
 {
-	RSMIndirectLightMapVolume* rsmIndirectLightMapVolume = new RSMIndirectLightMapVolume ();
+	IndirectDiffuseLightMapVolume* indirectDiffuseLightMapVolume = new IndirectDiffuseLightMapVolume();
 
-	return rsmIndirectLightMapVolume;
+	return indirectDiffuseLightMapVolume;
 }
 
-std::vector<PipelineAttribute> RSMIndirectLightRenderPass::GetCustomAttributes (const Camera* camera,
+std::vector<PipelineAttribute> RSMIndirectDiffuseLightRenderPass::GetCustomAttributes (const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*

@@ -240,15 +240,15 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
 
-					FrameBuffer2DVolume* rsmIndirectMapVolume = rsmStat->rsmIndirectMapVolume;
+					FrameBuffer2DVolume* rsmIndirectDiffuseMapVolume = rsmStat->rsmIndirectDiffuseMapVolume;
 
-					glm::ivec2 rsmMapSize = rsmIndirectMapVolume->GetSize ();
+					glm::ivec2 rsmMapSize = rsmIndirectDiffuseMapVolume->GetSize ();
 
 					int rsmMapWidth = windowWidth;
 					int rsmMapHeight = ((float) rsmMapSize.y / rsmMapSize.x) * rsmMapWidth;
 
-					ImGui::Text ("Indirect Light Map");
-					ShowImage (rsmIndirectMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+					ImGui::Text ("Indirect Diffuse Light Map");
+					ShowImage (rsmIndirectDiffuseMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
 				}
 
 				ImGui::TreePop();
@@ -305,15 +305,15 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
 
-					FrameBuffer2DVolume* rsmIndirectMapVolume = rsmStat->rsmIndirectMapVolume;
+					FrameBuffer2DVolume* rsmIndirectDiffuseMapVolume = rsmStat->rsmIndirectDiffuseMapVolume;
 
-					glm::ivec2 rsmMapSize = rsmIndirectMapVolume->GetSize ();
+					glm::ivec2 rsmMapSize = rsmIndirectDiffuseMapVolume->GetSize ();
 
 					int rsmMapWidth = windowWidth;
 					int rsmMapHeight = ((float) rsmMapSize.y / rsmMapSize.x) * rsmMapWidth;
 
-					ImGui::Text ("Indirect Light Map");
-					ShowImage (rsmIndirectMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+					ImGui::Text ("Indirect Diffuse Light Map");
+					ShowImage (rsmIndirectDiffuseMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
 				}
 
 				ImGui::TreePop();

@@ -4,15 +4,15 @@ std::vector<PipelineAttribute> IndirectDiffuseLightMapVolume::GetCustomAttribute
 {
 	std::vector<PipelineAttribute> attributes;
 
-	PipelineAttribute indirectMap;
+	PipelineAttribute indirectDiffuseMap;
 
-	indirectMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
+	indirectDiffuseMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 
-	indirectMap.name = "indirectDiffuseMap";
+	indirectDiffuseMap.name = "indirectDiffuseMap";
 
-	indirectMap.value.x = _colorBuffer;
+	indirectDiffuseMap.value.x = _colorBuffer;
 
-	attributes.push_back (indirectMap);
+	attributes.push_back (indirectDiffuseMap);
 
 	return attributes;
 }

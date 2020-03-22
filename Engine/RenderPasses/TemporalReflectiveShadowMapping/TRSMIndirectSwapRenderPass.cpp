@@ -1,6 +1,6 @@
 #include "TRSMIndirectSwapRenderPass.h"
 
-#include "TRSMIndirectLightMapVolume.h"
+#include "TRSMIndirectDiffuseLightMapVolume.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
@@ -12,8 +12,8 @@ void TRSMIndirectSwapRenderPass::Init (const RenderSettings& settings)
 RenderVolumeCollection* TRSMIndirectSwapRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
-	auto rsmLastIndirectMapVolume = (TRSMIndirectLightMapVolume*) rvc->GetRenderVolume ("LastIndirectMap");
-	auto rsmIndirectMapVolume = (TRSMIndirectLightMapVolume*) rvc->GetRenderVolume ("IndirectMap");
+	auto rsmLastIndirectDiffuseMapVolume = (TRSMIndirectDiffuseLightMapVolume*) rvc->GetRenderVolume ("LastIndirectDiffuseMap");
+	auto rsmIndirectDiffuseMapVolume = (TRSMIndirectDiffuseLightMapVolume*) rvc->GetRenderVolume ("IndirectDiffuseMap");
 
 	/*
 	 * Swap ping-pong buffers
@@ -24,14 +24,14 @@ RenderVolumeCollection* TRSMIndirectSwapRenderPass::Execute (const RenderScene* 
 
 	glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
 
-	rsmLastIndirectMapVolume->SetViewProjectionMatrix (viewProjectionMatrix);
+	rsmLastIndirectDiffuseMapVolume->SetViewProjectionMatrix (viewProjectionMatrix);
 
 	/*
 	 * Blit current framebuffer into last history framebuffer
 	*/
 
-	rsmIndirectMapVolume->BindForBliting ();
-	rsmLastIndirectMapVolume->BindToBlit ();
+	rsmIndirectDiffuseMapVolume->BindForBliting ();
+	rsmLastIndirectDiffuseMapVolume->BindToBlit ();
 
 	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
 

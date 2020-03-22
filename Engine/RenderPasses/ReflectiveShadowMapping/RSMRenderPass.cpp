@@ -81,7 +81,7 @@ RenderVolumeCollection* RSMRenderPass::Execute (const RenderScene* renderScene, 
 	*/
 
 	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("GBuffer")->GetCustomAttributes ());
-	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("IndirectMap")->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("IndirectDiffuseMap")->GetCustomAttributes ());
 
 	/*
 	 * Draw a screen covering triangle

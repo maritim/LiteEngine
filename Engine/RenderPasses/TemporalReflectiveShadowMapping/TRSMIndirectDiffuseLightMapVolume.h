@@ -1,16 +1,16 @@
-#ifndef TRSMINDIRECTLIGHTMAPVOLUME_H
-#define TRSMINDIRECTLIGHTMAPVOLUME_H
+#ifndef TRSMINDIRECTDIFFUSELIGHTMAPVOLUME_H
+#define TRSMINDIRECTDIFFUSELIGHTMAPVOLUME_H
 
-#include "RenderPasses/ReflectiveShadowMapping/RSMIndirectLightMapVolume.h"
+#include "RenderPasses/IndirectDiffuseLightMapVolume.h"
 
-class TRSMIndirectLightMapVolume : public RSMIndirectLightMapVolume
+class TRSMIndirectDiffuseLightMapVolume : public IndirectDiffuseLightMapVolume
 {
 protected:
 	glm::mat4 _viewProjectionMatrix;
 	bool _current;
 
 public:
-	TRSMIndirectLightMapVolume ();
+	TRSMIndirectDiffuseLightMapVolume ();
 
 	void SetViewProjectionMatrix (const glm::mat4& viewProjectionMatrix);
 	void SetCurrent (bool current);
