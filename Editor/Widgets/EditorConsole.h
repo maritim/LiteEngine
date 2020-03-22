@@ -12,8 +12,10 @@ class EditorConsole : public EditorWidget
 {
 protected:
 	EditorConsoleSink* _editorConsoleSink;
-	std::size_t _selectedIndex;
 	ImGuiTextFilter _filter;
+
+	int _showLogsMask;
+	std::size_t _selectedIndex;
 
 public:
 	EditorConsole ();

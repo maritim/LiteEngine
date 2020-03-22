@@ -23,6 +23,8 @@ void EditorConsole::Show ()
 		return;
 	}
 
+	_showLogsMask = SettingsManager::Instance ()->GetValue<int> ("menu_show_console_logs_mask", 30);
+
 	if (_editorConsoleSink == nullptr) {
 		_editorConsoleSink = new EditorConsoleSink ();
 
@@ -63,8 +65,53 @@ void EditorConsole::ShowConsoleWindow ()
 	ImGui::End();
 }
 
+#include "Debug/Logger/Logger.h"
+
 void EditorConsole::ShowConsoleSettings ()
 {
+	if (ImGui::BeginPopup("Options")) {
+
+		bool lastShowDebug = (_showLogsMask & (1 << LogPriority::LOG_DEBUG));
+		bool showDebug = lastShowDebug;
+		ImGui::Checkbox ("Debug", &showDebug);
+
+		bool lastShowInfo = (_showLogsMask & (1 << LogPriority::LOG_INFO));
+		bool showInfo = lastShowInfo;
+		ImGui::Checkbox ("Info", &showInfo);
+
+		bool lastShowWarning = (_showLogsMask & (1 << LogPriority::LOG_WARNING));
+		bool showWarning = lastShowWarning;
+		ImGui::Checkbox ("Warning", &showWarning);
+
+		bool lastShowError = (_showLogsMask & (1 << LogPriority::LOG_ERROR));
+		bool showError = lastShowError;
+		ImGui::Checkbox ("Error", &showError);
+
+		if (showDebug != lastShowDebug) {
+			_showLogsMask ^= (1 << LogPriority::LOG_DEBUG);
+		}
+
+		if (showInfo != lastShowInfo) {
+			_showLogsMask ^= (1 << LogPriority::LOG_INFO);
+		}
+
+		if (showWarning != lastShowWarning) {
+			_showLogsMask ^= (1 << LogPriority::LOG_WARNING);
+		}
+
+		if (showError != lastShowError) {
+			_showLogsMask ^= (1 << LogPriority::LOG_ERROR);
+		}
+
+		SettingsManager::Instance ()->SetValue ("menu_show_console_logs_mask", std::to_string (_showLogsMask));
+
+		ImGui::EndPopup();
+	}
+
+	if (ImGui::Button("Options")) {
+		ImGui::OpenPopup("Options");
+	}
+	ImGui::SameLine();
 	bool clear = ImGui::Button("Clear");
 	ImGui::SameLine();
 	_filter.Draw("Filter", -100.0f);
@@ -80,6 +127,10 @@ void EditorConsole::ShowConsoleLogs ()
 	auto& consoleLogs = _editorConsoleSink->GetLog ();
 
 	for (std::size_t index = 0; index < consoleLogs.size (); index ++) {
+
+		if ((_showLogsMask & (1 << consoleLogs [index].Priority)) == 0) {
+			continue;
+		}
 
 		if (!_filter.PassFilter (consoleLogs [index].Message.c_str ())) {
 			continue;
@@ -112,6 +163,10 @@ void EditorConsole::ShowConsoleLogs ()
 			consoleLogs [index].Priority == LogPriority::LOG_DEBUG) {
 			ImGui::PopStyleColor ();
 		}
+
+		if (ImGui::GetScrollY () >= ImGui::GetScrollMaxY ()) {
+			ImGui::SetScrollHereY (1.0f);
+		}
 	}
 }
 
@@ -134,6 +189,6 @@ void EditorConsole::ShowConsoleLog ()
 	std::size_t width = ImGui::GetWindowWidth ();
 
 	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4 (0, 0, 0, 0));
-	ImGui::InputTextMultiline ("", text, message.size (), ImVec2(width, 50), ImGuiInputTextFlags_ReadOnly);
+	ImGui::InputTextMultiline ("", text, message.size (), ImVec2(width, 100), ImGuiInputTextFlags_ReadOnly);
 	ImGui::PopStyleColor ();
 }
