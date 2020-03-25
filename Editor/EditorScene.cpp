@@ -14,6 +14,7 @@
 #include "Managers/RenderSettingsManager.h"
 
 #include "Systems/Input/Input.h"
+#include "Systems/Time/Time.h"
 
 #include "Resources/Resources.h"
 
@@ -33,7 +34,8 @@ EditorScene::EditorScene () :
 	_size (0),
 	_textureID (0),
 	_mousePosition (0),
-	_isHovered (false)
+	_isHovered (false),
+	_targetFrameRate (-1)
 {
 
 }
@@ -86,20 +88,32 @@ void EditorScene::Update ()
 
 void EditorScene::Render ()
 {
-	if (_isActive == true) {
-		// _renderSettings->renderMode = "SceneRenderModule";
-		_renderSettings->framebuffer.width = _size.x;
-		_renderSettings->framebuffer.height = _size.y;
-		_renderSettings->viewport.x = 0;
-		_renderSettings->viewport.y = 0;
-		_renderSettings->viewport.width = _size.x;
-		_renderSettings->viewport.height = _size.y;
-
-		RenderProduct result = RenderManager::Instance ()->Render (_sceneCamera, *_renderSettings);
-
-		FrameBuffer2DVolume* framebuffer = dynamic_cast<FrameBuffer2DVolume*> (result.resultVolume);
-		_textureID = framebuffer->GetColorTextureID ();		
+	if (_isActive == false) {
+		return;
 	}
+
+	if (_targetFrameRate != -1) {
+		_elapsedFrameTime -= Time::GetDeltaTime ();
+
+		if (_elapsedFrameTime > 0) {
+			return;
+		}
+	}
+
+	_elapsedFrameTime = _targetFrameRate == 0.0f ? 100 : 1.0f / _targetFrameRate;
+
+	// _renderSettings->renderMode = "SceneRenderModule";
+	_renderSettings->framebuffer.width = _size.x;
+	_renderSettings->framebuffer.height = _size.y;
+	_renderSettings->viewport.x = 0;
+	_renderSettings->viewport.y = 0;
+	_renderSettings->viewport.width = _size.x;
+	_renderSettings->viewport.height = _size.y;
+
+	RenderProduct result = RenderManager::Instance ()->Render (_sceneCamera, *_renderSettings);
+
+	FrameBuffer2DVolume* framebuffer = dynamic_cast<FrameBuffer2DVolume*> (result.resultVolume);
+	_textureID = framebuffer->GetColorTextureID ();
 }
 
 Camera* EditorScene::GetCamera ()
@@ -140,6 +154,7 @@ bool EditorScene::IsWindowHovered () const
 void EditorScene::ShowSceneMenu ()
 {
 	bool saveVolume = false;
+	bool setFrameRate = false;
 
     // Menu Bar
     if (ImGui::BeginMenuBar())
@@ -148,7 +163,8 @@ void EditorScene::ShowSceneMenu ()
         {
             saveVolume = ImGui::MenuItem("Take ScreenShot", "Ctrl+Shift+P");
             ImGui::Separator ();
-            if (ImGui::MenuItem("Set Resolution", "Ctrl+Shift+Y")) { }
+			setFrameRate = ImGui::MenuItem("Set Frame Rate", "Ctrl+Shift+Y");
+            if (ImGui::MenuItem("Set Resolution", "Ctrl+Shift+U")) { }
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
@@ -176,5 +192,16 @@ void EditorScene::ShowSceneMenu ()
 		textureView->SetGPUIndex (0);
 
 		Resources::SaveTexture (texture, volumePath);
+	}
+
+	if (setFrameRate) {
+		ImGui::OpenPopup("FrameRate");
+	}
+
+	if (ImGui::BeginPopup("FrameRate")) {
+
+		ImGui::InputFloat ("Frame Rate", &_targetFrameRate, 0, 0, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue);
+
+		ImGui::EndPopup();
 	}
 }

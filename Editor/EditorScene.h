@@ -28,6 +28,9 @@ private:
 	glm::ivec2 _mousePosition;
 	bool _isHovered;
 
+	float _targetFrameRate;
+	float _elapsedFrameTime;
+
 	// Change this
 	Scene* _lastScene;
 
