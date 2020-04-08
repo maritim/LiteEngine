@@ -31,3 +31,23 @@ void Component::LateUpdate ()
 {
 
 }
+
+void Component::SetActive (bool isActive)
+{
+
+}
+
+void Component::OnAttachedToScene ()
+{
+
+}
+
+void Component::OnDetachedFromScene ()
+{
+
+}
+
+void Component::SetParent (SceneObject* parent)
+{
+	_parent = parent;
+}

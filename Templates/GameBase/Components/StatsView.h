@@ -2,12 +2,13 @@
 #define STATSVIEW_H
 
 #include "Systems/Components/Component.h"
-#include "Systems/Components/ComponentsFactory.h"
 
 #include <vector>
 
 class StatsView : public Component
 {
+	DECLARE_COMPONENT(StatsView)
+
 protected:
 	float _lastFrameRate;
 	float _timeElapsed;

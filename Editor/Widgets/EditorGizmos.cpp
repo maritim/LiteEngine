@@ -56,7 +56,7 @@ void EditorGizmos::Show ()
 		ShowCollider ();
 	}
 
-	ShowGrid ();
+	// ShowGrid ();
 }
 
 void EditorGizmos::UpdateMode ()
@@ -127,31 +127,31 @@ void EditorGizmos::ShowGizmo (const Camera* camera, Transform* transform)
 
 void EditorGizmos::ShowBoundingBox ()
 {
-	GameObject* gameObject = dynamic_cast<GameObject*> (_focusedObject);
+	// GameObject* gameObject = dynamic_cast<GameObject*> (_focusedObject);
 
-	if (gameObject == nullptr) {
-		return;
-	}
+	// if (gameObject == nullptr) {
+	// 	return;
+	// }
 
-	Collider* collider = gameObject->GetCollider ();
+	// Collider* collider = gameObject->GetCollider ();
 
-	auto aabb = (AABBVolume*) collider->GetGeometricPrimitive ();
-	auto aabbData = aabb->GetVolumeInformation ();
+	// auto aabb = (AABBVolume*) collider->GetGeometricPrimitive ();
+	// auto aabbData = aabb->GetVolumeInformation ();
 
-	glm::vec3 sub = aabbData->maxVertex - aabbData->minVertex;
+	// glm::vec3 sub = aabbData->maxVertex - aabbData->minVertex;
 
-	Gizmo::DrawLine (aabbData->minVertex, aabbData->minVertex + glm::vec3 (sub.x, 0, 0) , Color::White);
-	Gizmo::DrawLine (aabbData->minVertex, aabbData->minVertex + glm::vec3 (0, sub.y, 0) , Color::White);
-	Gizmo::DrawLine (aabbData->minVertex, aabbData->minVertex + glm::vec3 (0, 0, sub.z) , Color::White);
-	Gizmo::DrawLine (aabbData->maxVertex, aabbData->maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
-	Gizmo::DrawLine (aabbData->maxVertex, aabbData->maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
-	Gizmo::DrawLine (aabbData->maxVertex, aabbData->maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
-	Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (sub.x, 0, 0), aabbData->maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
-	Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (sub.x, 0, 0), aabbData->maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
-	Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, sub.y, 0), aabbData->maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
-	Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, sub.y, 0), aabbData->maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
-	Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, 0, sub.z), aabbData->maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
-	Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, 0, sub.z), aabbData->maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
+	// Gizmo::DrawLine (aabbData->minVertex, aabbData->minVertex + glm::vec3 (sub.x, 0, 0) , Color::White);
+	// Gizmo::DrawLine (aabbData->minVertex, aabbData->minVertex + glm::vec3 (0, sub.y, 0) , Color::White);
+	// Gizmo::DrawLine (aabbData->minVertex, aabbData->minVertex + glm::vec3 (0, 0, sub.z) , Color::White);
+	// Gizmo::DrawLine (aabbData->maxVertex, aabbData->maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
+	// Gizmo::DrawLine (aabbData->maxVertex, aabbData->maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
+	// Gizmo::DrawLine (aabbData->maxVertex, aabbData->maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
+	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (sub.x, 0, 0), aabbData->maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
+	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (sub.x, 0, 0), aabbData->maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
+	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, sub.y, 0), aabbData->maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
+	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, sub.y, 0), aabbData->maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
+	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, 0, sub.z), aabbData->maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
+	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, 0, sub.z), aabbData->maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
 }
 
 void EditorGizmos::HideLastCollider ()

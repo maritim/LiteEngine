@@ -9,6 +9,9 @@
 #include "Emiter.h"
 #include "Particle.h"
 
+#include "Core/Resources/Resource.h"
+#include "Renderer/RenderViews/ModelView.h"
+
 class ENGINE_API ParticleSystem : public GameObject
 {
 protected:

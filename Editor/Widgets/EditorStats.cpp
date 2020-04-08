@@ -80,7 +80,17 @@ void EditorStats::ShowStatistics ()
 			drawnObjectsCount = renderStatisticsObject->DrawnObjectsCount;
 		}
 
-		ImGui::Text ("Vertices: %lu Triangles: %lu", drawnVerticesCount, drawnPolygonsCount);
+		std::string verticesCount = std::to_string (drawnVerticesCount % 1000);
+		while (drawnVerticesCount /= 1000) {
+			verticesCount = std::to_string (drawnVerticesCount % 1000) + "," + verticesCount;
+		}
+
+		std::string polygonsCount = std::to_string (drawnPolygonsCount % 1000);
+		while (drawnPolygonsCount /= 1000) {
+			polygonsCount = std::to_string (drawnPolygonsCount % 1000) + "," + polygonsCount;
+		}
+
+		ImGui::Text ("Vertices: %s Triangles: %s", verticesCount.c_str (), polygonsCount.c_str ());
 		ImGui::Text ("Objects: %lu", drawnObjectsCount);
 
 		ImGui::Spacing ();

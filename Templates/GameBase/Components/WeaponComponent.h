@@ -2,7 +2,6 @@
 #define WEAPONCOMPONENT_H
 
 #include "Systems/Components/Component.h"
-#include "Systems/Components/ComponentsFactory.h"
 
 #include <glm/vec3.hpp>
 
@@ -10,6 +9,8 @@
 
 class WeaponComponent : public Component
 {
+	DECLARE_COMPONENT(WeaponComponent)
+
 private:
 	SceneObject* _gun;
 	glm::vec3 _offset;

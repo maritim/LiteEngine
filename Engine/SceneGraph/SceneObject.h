@@ -2,6 +2,7 @@
 #define SCENEOBJECT_H
 
 #include "Core/Interfaces/Object.h"
+#include "Systems/Components/ComponentObject.h"
 
 #include <string>
 
@@ -9,7 +10,7 @@
 
 class Transform;
 
-class ENGINE_API SceneObject : public Object
+class ENGINE_API SceneObject : public ComponentObject
 {
 protected:
 	std::string _name;

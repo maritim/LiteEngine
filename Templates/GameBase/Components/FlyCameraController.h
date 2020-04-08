@@ -2,12 +2,13 @@
 #define FLYCAMERACONTROLLER_H
 
 #include "Systems/Components/Component.h"
-#include "Systems/Components/ComponentsFactory.h"
 
 #include "SceneNodes/TextGUI.h"
 
 class FlyCameraController : public Component
 {
+	DECLARE_COMPONENT(FlyCameraController)
+
 private:
 	float _pitch;
 	float _yaw;

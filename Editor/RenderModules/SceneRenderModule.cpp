@@ -98,8 +98,8 @@ void SceneRenderModule::Init ()
 		.Attach (new HDRRenderPass ())
 		.Attach (new TextureLUTRenderPass ())
 		.Attach (new GammaCorrectionRenderPass ())
+		.Attach (new DeferredBlitRenderPass ())
 		.Build ());
-	_renderPasses.push_back (new DeferredBlitRenderPass ());
 	_renderPasses.push_back (new ForwardRenderPass ());
 	_renderPasses.push_back (new GUIGizmosRenderPass ());
 }

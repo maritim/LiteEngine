@@ -5,17 +5,14 @@
 #include "Core/Resources/Resource.h"
 
 #include "SceneNodes/GameObject.h"
-#include "SceneNodes/AnimationGameObject.h"
-#include "SceneNodes/NormalMapGameObject.h"
-#include "SceneNodes/LightMapGameObject.h"
 #include "VisualEffects/ParticleSystem/ParticleSystem.h"
 #include "Mesh/Model.h"
 #include "Skybox/Skybox.h"
 
-#include "Systems/Components/ComponentsFactory.h"
 #include "Systems/Components/Component.h"
 
 #include "Resources/Resources.h"
+#include "Resources/ComponentLoader.h"
 
 #include "Utils/Extensions/StringExtend.h"
 #include "Utils/Extensions/MathExtend.h"
@@ -61,17 +58,8 @@ Scene* SceneLoader::Load (const std::string& filename)
 		else if (name == "Skybox") {
 			ProcessSkybox (content, scene);
 		}
-		else if (name == "GameObject") {
-			ProcessGameObject (content, scene);
-		}
-		else if (name == "AnimatedGameObject") {
-			ProcessAnimationGameObject (content, scene);
-		}
-		else if (name == "NormalMapGameObject") {
-			ProcessNormalMapGameObject (content, scene);
-		}
-		else if (name == "LightMapGameObject") {
-			ProcessLightMapGameObject (content, scene);
+		else if (name == "SceneObject") {
+			ProcessSceneObject (content, scene);
 		}
 		else if (name == "ParticleSystem") {
 			ProcessParticleSystem (content, scene);
@@ -94,11 +82,10 @@ void SceneLoader::ProcessSkybox (TiXmlElement* xmlElem, Scene* scene)
 	scene->SetSkybox (skybox);
 }
 
-void SceneLoader::ProcessGameObject (TiXmlElement* xmlElem, Scene* scene)
+void SceneLoader::ProcessSceneObject (TiXmlElement* xmlElem, Scene* scene)
 {
 	std::string name = xmlElem->Attribute ("name");
 	std::string instanceID = xmlElem->Attribute ("InstanceID");
-	std::string meshPath = xmlElem->Attribute ("meshpath");
 	std::string isActive = xmlElem->Attribute ("isActive");
 
 	GameObject* gameObject = new GameObject ();
@@ -106,8 +93,6 @@ void SceneLoader::ProcessGameObject (TiXmlElement* xmlElem, Scene* scene)
 	// Need unsigned int here
 	gameObject->SetInstanceID (std::stoi (instanceID));
 	gameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
-
-	Resource<Model> mesh = Resources::LoadModel (meshPath);
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -131,153 +116,7 @@ void SceneLoader::ProcessGameObject (TiXmlElement* xmlElem, Scene* scene)
 		content = content->NextSiblingElement ();
 	}
 
-	/*
-	 * TODO: Change this from here.
-	*/
-
-	gameObject->AttachMesh (mesh);
-
 	scene->AttachObject (gameObject);
-}
-
-void SceneLoader::ProcessAnimationGameObject (TiXmlElement* xmlElem, Scene* scene)
-{
-	std::string name = xmlElem->Attribute ("name");
-	std::string instanceID = xmlElem->Attribute ("InstanceID");
-	std::string meshPath = xmlElem->Attribute ("meshpath");
-	std::string isActive = xmlElem->Attribute ("isActive");
-
-	AnimationGameObject* animGameObject = new AnimationGameObject ();
-	animGameObject->SetName (name);
-	// Need unsigned int here
-	animGameObject->SetInstanceID (std::stoi (instanceID));
-	animGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
-
-	Resource<Model> mesh = Resources::LoadAnimatedModel (meshPath);
-
-	TiXmlElement* content = xmlElem->FirstChildElement ();
-
-	while (content) 
-	{
-		std::string name = content->Value ();
-
-		if (name == "Transform") {
-			ProcessTransform (content, scene, animGameObject);
-		}
-		else if (name == "Rigidbody") {
-			ProcessRigidbody (content, animGameObject);
-		}
-		else if (name == "AudioSource") {
-			ProcessAudioSource (content, animGameObject);
-		}
-		else if (name == "Components") {
-			ProcessComponents (content, animGameObject);
-		}
-
-		content = content->NextSiblingElement ();
-	}
-
-	/*
-	 * TODO: Change this from here.
-	*/
-
-	animGameObject->AttachMesh (mesh);
-
-	scene->AttachObject (animGameObject);
-}
-
-
-
-void SceneLoader::ProcessNormalMapGameObject (TiXmlElement* xmlElem, Scene* scene)
-{
-	std::string name = xmlElem->Attribute ("name");
-	std::string instanceID = xmlElem->Attribute ("InstanceID");
-	std::string meshPath = xmlElem->Attribute ("meshpath");
-	std::string isActive = xmlElem->Attribute ("isActive");
-
-	NormalMapGameObject* normalMapGameObject = new NormalMapGameObject ();
-	normalMapGameObject->SetName (name);
-	// Need unsigned int here
-	normalMapGameObject->SetInstanceID (std::stoi (instanceID));
-	normalMapGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
-
-	Resource<Model> mesh = Resources::LoadModel (meshPath);
-
-	TiXmlElement* content = xmlElem->FirstChildElement ();
-
-	while (content)
-	{
-		std::string name = content->Value ();
-
-		if (name == "Transform") {
-			ProcessTransform (content, scene, normalMapGameObject);
-		}
-		else if (name == "Rigidbody") {
-			ProcessRigidbody (content, normalMapGameObject);
-		}
-		else if (name == "AudioSource") {
-			ProcessAudioSource (content, normalMapGameObject);
-		}
-		else if (name == "Components") {
-			ProcessComponents (content, normalMapGameObject);
-		}
-
-		content = content->NextSiblingElement ();
-	}
-
-	/*
-	* TODO: Change this from here.
-	*/
-
-	normalMapGameObject->AttachMesh (mesh);
-
-	scene->AttachObject (normalMapGameObject);
-}
-
-void SceneLoader::ProcessLightMapGameObject (TiXmlElement* xmlElem, Scene* scene)
-{
-	std::string name = xmlElem->Attribute ("name");
-	std::string instanceID = xmlElem->Attribute ("InstanceID");
-	std::string meshPath = xmlElem->Attribute ("meshpath");
-	std::string isActive = xmlElem->Attribute ("isActive");
-
-	LightMapGameObject* lightMapGameObject = new LightMapGameObject ();
-	lightMapGameObject->SetName (name);
-	// Need unsigned int here
-	lightMapGameObject->SetInstanceID (std::stoi (instanceID));
-	lightMapGameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
-
-	Resource<Model> mesh = Resources::LoadModel (meshPath);
-
-	TiXmlElement* content = xmlElem->FirstChildElement ();
-
-	while (content)
-	{
-		std::string name = content->Value ();
-
-		if (name == "Transform") {
-			ProcessTransform (content, scene, lightMapGameObject);
-		}
-		else if (name == "Rigidbody") {
-			ProcessRigidbody (content, lightMapGameObject);
-		}
-		else if (name == "AudioSource") {
-			ProcessAudioSource (content, lightMapGameObject);
-		}
-		else if (name == "Components") {
-			ProcessComponents (content, lightMapGameObject);
-		}
-
-		content = content->NextSiblingElement ();
-	}
-
-	/*
-	* TODO: Change this from here.
-	*/
-
-	lightMapGameObject->AttachMesh (mesh);
-
-	scene->AttachObject (lightMapGameObject);
 }
 
 void SceneLoader::ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene)
@@ -451,13 +290,21 @@ void SceneLoader::ProcessComponents (TiXmlElement* xmlElem, GameObject* gameObje
 
 void SceneLoader::ProcessComponent (TiXmlElement* xmlElem, GameObject* gameObject)
 {
-	const char* name = xmlElem->Attribute ("name");
+	std::string name = xmlElem->Attribute ("name");
 
-	if (name == NULL) {
+	if (name == std::string ()) {
 		return;
 	}
 
-	Component* component = ComponentsFactory::Instance ()->Create ((std::string) name);
+	ComponentLoader* componentLoader = ObjectsFactory<ComponentLoader>::Instance ()->Create (name + "Loader");
+
+	if (componentLoader == nullptr) {
+		return;
+	}
+
+	Component* component = componentLoader->Load (xmlElem);
+
+	delete componentLoader;
 
 	if (component == nullptr) {
 		return;

@@ -7,7 +7,7 @@
 
 #include "Mesh/AnimationModel.h"
 
-#include "SceneNodes/AnimationGameObject.h"
+// #include "SceneNodes/AnimationGameObject.h"
 
 #include "Systems/Window/Window.h"
 
@@ -49,52 +49,52 @@ void EditorAnimationModel::ShowAnimationsWindow ()
 
 	for (SceneObject* object : *SceneManager::Instance ()->Current ()) {
 
-		AnimationGameObject* animGameObject = dynamic_cast<AnimationGameObject*> (object);
+		// AnimationGameObject* animGameObject = dynamic_cast<AnimationGameObject*> (object);
 
-		if (animGameObject == nullptr) {
-			continue;
-		}
+		// if (animGameObject == nullptr) {
+		// 	continue;
+		// }
 
-		std::string objectName = animGameObject->GetName ();
+		// std::string objectName = animGameObject->GetName ();
 
-		if (ImGui::CollapsingHeader (std::string ("Model: " + objectName).c_str ())) {
+		// if (ImGui::CollapsingHeader (std::string ("Model: " + objectName).c_str ())) {
 
-			Resource<Model> model = animGameObject->GetMesh ();
-			AnimationModel* animModel = (AnimationModel*) &*model;
-			AnimationsController* animController = animModel->GetAnimationsController ();
+			// Resource<Model> model = animGameObject->GetMesh ();
+			// AnimationModel* animModel = (AnimationModel*) &*model;
+			// AnimationsController* animController = animModel->GetAnimationsController ();
 
-			std::vector<std::string> animations = { "None" };
-			std::string items = std::string ("None") + '\0';
+			// std::vector<std::string> animations = { "None" };
+			// std::string items = std::string ("None") + '\0';
 
-			for (AnimationContainer* animContainer : *animController) {
-				animations.push_back (animContainer->GetName ());
-				items += animContainer->GetName () + '\0';
-			}
+			// for (AnimationContainer* animContainer : *animController) {
+			// 	animations.push_back (animContainer->GetName ());
+			// 	items += animContainer->GetName () + '\0';
+			// }
 
-			int lastAnimIndex = _currentAnimIndex;
+			// int lastAnimIndex = _currentAnimIndex;
 
-			ImGui::Combo("Animation", &_currentAnimIndex, items.c_str ());
+			// ImGui::Combo("Animation", &_currentAnimIndex, items.c_str ());
 
-			AnimationContainer* animContainer = animController->GetAnimationContainer (animations [_currentAnimIndex]);
+			// AnimationContainer* animContainer = animController->GetAnimationContainer (animations [_currentAnimIndex]);
 
-			ImGui::LabelText ("Duration", "%.3f", animContainer != nullptr ? animContainer->GetDuration () : 0.0f);
+			// ImGui::LabelText ("Duration", "%.3f", animContainer != nullptr ? animContainer->GetDuration () : 0.0f);
 
-			ImGui::Spacing ();
+			// ImGui::Spacing ();
 
-			ImGui::Checkbox ("Blending", &_isBlending);
+			// ImGui::Checkbox ("Blending", &_isBlending);
 
-			ImGui::InputFloat ("Blend Duration", &_blendDuration);
+			// ImGui::InputFloat ("Blend Duration", &_blendDuration);
 
-			if (lastAnimIndex != _currentAnimIndex) {
-				if (_isBlending) {
-					animGameObject->Blend (animations [_currentAnimIndex], _blendDuration);
-				}
+			// if (lastAnimIndex != _currentAnimIndex) {
+			// 	if (_isBlending) {
+			// 		animGameObject->Blend (animations [_currentAnimIndex], _blendDuration);
+			// 	}
 
-				if (!_isBlending) {
-					animGameObject->SetAnimationClip (animations [_currentAnimIndex]);
-				}
-			}
-		}
+			// 	if (!_isBlending) {
+			// 		animGameObject->SetAnimationClip (animations [_currentAnimIndex]);
+			// 	}
+			// }
+		// }
 	}
 
 	ImGui::End();

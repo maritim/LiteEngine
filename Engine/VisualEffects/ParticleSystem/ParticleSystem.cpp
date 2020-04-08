@@ -48,15 +48,15 @@ void ParticleSystem::SetEmiter (Emiter* emiter)
 	emiter->GetTransform ()->SetParent (_transform);
 	_emiter = emiter;
 
-	AttachMesh (emiter->GetParticlePrototype ()->GetMesh ());
+	// AttachMesh (emiter->GetParticlePrototype ()->GetMesh ());
 
 	_modelView = RenderSystem::LoadModel (emiter->GetParticlePrototype ()->GetMesh ());
 
-	_renderObject->SetTransform (_transform);
-	_renderObject->SetModelView (_modelView);
-	_renderObject->SetRenderStage (RenderStage::RENDER_STAGE_FORWARD);
-	_renderObject->SetPriority (2);
-	_renderObject->SetAttributes (emiter->GetParticlePrototype ()->GetAttributes ());
+	// _renderObject->SetTransform (_transform);
+	// _renderObject->SetModelView (_modelView);
+	// _renderObject->SetRenderStage (RenderStage::RENDER_STAGE_FORWARD);
+	// _renderObject->SetPriority (2);
+	// _renderObject->SetAttributes (emiter->GetParticlePrototype ()->GetAttributes ());
 	// renderer->SetDepthMaskCheck (_useDepthMask);
 }
 

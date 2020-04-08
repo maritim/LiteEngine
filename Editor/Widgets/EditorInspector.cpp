@@ -12,6 +12,8 @@
 #include "Lighting/SpotLight.h"
 #include "Lighting/AmbientLight.h"
 
+#include "Widgets/ComponentWidgets/ComponentWidgetManager.h"
+
 #include "Mesh/Model.h"
 
 #include "Resources/Resources.h"
@@ -52,7 +54,8 @@ void EditorInspector::ShowInspector (SceneObject* object)
 			ImGui::Separator ();
 
 			ShowTransform (object->GetTransform ());
-			ShowObject (object);
+			ShowComponents (object);
+			// ShowObject (object);
 
 		}
 	}
@@ -116,6 +119,24 @@ void EditorInspector::ShowTransform (Transform* transform)
 	}
 }
 
+void EditorInspector::ShowComponents (SceneObject* object)
+{
+	for_each_type (Component*, component, *object) {
+		ShowComponent (component);
+	}
+}
+
+void EditorInspector::ShowComponent (Component* component)
+{
+	auto componentWidget = ComponentWidgetManager::Instance ()->GetComponentWidget (component->GetName () + "Widget");
+
+	if (componentWidget == nullptr) {
+		return;
+	}
+
+	componentWidget->Show (component);
+}
+
 void EditorInspector::ShowObject (SceneObject* object)
 {
 	if (dynamic_cast<GameObject*> (object) != nullptr) {
@@ -131,8 +152,6 @@ void EditorInspector::ShowGameObject (SceneObject* object)
 	GameObject* gameObject = dynamic_cast<GameObject*> (object);
 
 	ImGui::Spacing ();
-
-	ShowRenderer (object);
 
 	if (gameObject != nullptr) {
 		ImGui::Spacing ();
@@ -221,41 +240,12 @@ void EditorInspector::ShowLight (SceneObject* object)
 				ImGui::InputInt2 ("Resolution", resolution);
 				shadow.resolution = glm::ivec2 (resolution [0], resolution [1]);
 
-				ImGui::SliderFloat ("Bias", &shadow.bias, 0.0f, 1.0f);
+				ImGui::InputFloat ("Bias", &shadow.bias, 0.0f, 1.0f);
 
 				light->SetShadow (shadow);
 
 				ImGui::TreePop();
 			}
-		}
-	}
-}
-
-void EditorInspector::ShowRenderer (SceneObject* object)
-{
-	if (ImGui::CollapsingHeader ("Renderer", ImGuiTreeNodeFlags_DefaultOpen)) {
-		GameObject* gameObject = dynamic_cast<GameObject*> (object);
-
-		Resource<Model> model = gameObject->GetMesh ();
-
-		std::string modelPath = model->GetName ();
-
-		ImGui::Text ("Model: %s", modelPath.c_str ());
-
-		ImGui::SameLine ();
-
-		bool lastLoadTexture = ImGui::Button ("Load", ImVec2 (48, 18));
-
-		static ImGuiFs::Dialog dialog = ImGuiFs::Dialog ();
-		std::string meshPath = dialog.chooseFileDialog(lastLoadTexture, "Assets/", ".obj;.dae;");
-
-		meshPath = FileSystem::Relative (meshPath, fs::current_path ().string ());
-
-		if (meshPath != std::string ()) {
-
-			Resource<Model> mesh = Resources::LoadModel (meshPath);
-
-			gameObject->AttachMesh (mesh);
 		}
 	}
 }

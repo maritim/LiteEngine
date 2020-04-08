@@ -15,12 +15,15 @@ protected:
 	void ShowInspector (SceneObject* object);
 
 	void ShowTransform (Transform* transform);
+	void ShowComponents (SceneObject* object);
+
+	void ShowComponent (Component* component);
+
 	void ShowObject (SceneObject* object);
 
 	void ShowGameObject (SceneObject* object);
 	void ShowLight (SceneObject* object);
 
-	void ShowRenderer (SceneObject* object);
 	void ShowRigidbody (Rigidbody* rigidbody);
 	void ShowAudioSource (AudioSource* audioSource);
 };

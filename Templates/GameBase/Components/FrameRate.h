@@ -2,7 +2,6 @@
 #define FRAMERATE_H
 
 #include "Systems/Components/Component.h"
-#include "Systems/Components/ComponentsFactory.h"
 
 #include "SceneGraph/Scene.h"
 
@@ -10,6 +9,8 @@
 
 class FrameRate : public Component
 {
+	DECLARE_COMPONENT(FrameRate)
+
 private:
 	float _timeElapsed;
 	float _computeRange;

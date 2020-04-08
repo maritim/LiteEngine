@@ -2,14 +2,17 @@
 #define CHARACTERCONTROLLER_H
 
 #include "Systems/Components/Component.h"
-#include "Systems/Components/ComponentsFactory.h"
 
-#include "SceneNodes/AnimationGameObject.h"
+#include <glm/vec3.hpp>
+
+// #include "SceneNodes/AnimationGameObject.h"
 
 class CharacterController : public Component
 {
+	DECLARE_COMPONENT(CharacterController)
+
 protected:
-	AnimationGameObject* _object;
+	// AnimationGameObject* _object;
 
 	glm::vec3 _velocity;
 	float _currentSpeed;

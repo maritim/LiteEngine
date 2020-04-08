@@ -55,14 +55,22 @@ void SceneObject::SetInstanceID (std::size_t instanceID)
 void SceneObject::SetActive (bool isActive)
 {
 	_isActive = isActive;
+
+	for (auto component : _components) {
+		component->SetActive (_isActive);
+	}
 }
 
 void SceneObject::OnAttachedToScene ()
 {
-
+	for (auto component : _components) {
+		component->OnAttachedToScene ();
+	}
 }
 
 void SceneObject::OnDetachedFromScene ()
 {
-
+	for (auto component : _components) {
+		component->OnDetachedFromScene ();
+	}
 }

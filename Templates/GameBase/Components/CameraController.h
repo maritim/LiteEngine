@@ -2,12 +2,13 @@
 #define CAMERACONTROLLER_H
 
 #include "Systems/Components/Component.h"
-#include "Systems/Components/ComponentsFactory.h"
 
 #include "SceneGraph/SceneObject.h"
 
 class CameraController : public Component
 {
+	DECLARE_COMPONENT(CameraController)
+
 protected:
 	SceneObject* _object;
 

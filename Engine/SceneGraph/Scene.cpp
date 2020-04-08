@@ -124,18 +124,18 @@ void Scene::UpdateBoundingBox (SceneObject* sceneObject)
 		return;
 	}
 
-	AABBVolume::AABBVolumeInformation* volume = _boundingBox->GetVolumeInformation ();
+	// AABBVolume::AABBVolumeInformation* volume = _boundingBox->GetVolumeInformation ();
 
-	GeometricPrimitive* sceneObjectVolumePrimitive = gameObject->GetCollider ()->GetGeometricPrimitive ();
-	AABBVolume* sceneObjectBoundingBox = dynamic_cast<AABBVolume*> (sceneObjectVolumePrimitive);
-	AABBVolume::AABBVolumeInformation* sceneObjectVolume = sceneObjectBoundingBox->GetVolumeInformation ();
+	// GeometricPrimitive* sceneObjectVolumePrimitive = gameObject->GetCollider ()->GetGeometricPrimitive ();
+	// AABBVolume* sceneObjectBoundingBox = dynamic_cast<AABBVolume*> (sceneObjectVolumePrimitive);
+	// AABBVolume::AABBVolumeInformation* sceneObjectVolume = sceneObjectBoundingBox->GetVolumeInformation ();
 
-	volume->minVertex = glm::vec3 (std::min (volume->minVertex.x, sceneObjectVolume->minVertex.x),
-		std::min (volume->minVertex.y, sceneObjectVolume->minVertex.y),
-		std::min (volume->minVertex.z, sceneObjectVolume->minVertex.z));
-	volume->maxVertex = glm::vec3 (std::max (volume->maxVertex.x, sceneObjectVolume->maxVertex.x),
-		std::max (volume->maxVertex.y, sceneObjectVolume->maxVertex.y),
-		std::max (volume->maxVertex.z, sceneObjectVolume->maxVertex.z));
+	// volume->minVertex = glm::vec3 (std::min (volume->minVertex.x, sceneObjectVolume->minVertex.x),
+	// 	std::min (volume->minVertex.y, sceneObjectVolume->minVertex.y),
+	// 	std::min (volume->minVertex.z, sceneObjectVolume->minVertex.z));
+	// volume->maxVertex = glm::vec3 (std::max (volume->maxVertex.x, sceneObjectVolume->maxVertex.x),
+	// 	std::max (volume->maxVertex.y, sceneObjectVolume->maxVertex.y),
+	// 	std::max (volume->maxVertex.z, sceneObjectVolume->maxVertex.z));
 }
 
 void Scene::Clear (SceneObject* object)

@@ -85,7 +85,7 @@ glm::vec3 CameraController::GetPlayerPosition ()
 
 	// glm::vec3 left = transform->GetRotation () * glm::vec3 (-1.0f, 0.0f, 0.0f);
 
-	glm::vec3 playerPos = transform->GetPosition () + glm::vec3 (0.0f, 2.4f, 0.0f);
+	glm::vec3 playerPos = transform->GetPosition () + glm::vec3 (0.0f, 1.2f, 0.0f);
 
 	return playerPos;
 }
