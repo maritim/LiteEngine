@@ -7,16 +7,13 @@
 
 class ENGINE_API BoxCollider : public BulletCollider
 {
-protected:
-	bool _isGenerated;
-
 public:
-	BoxCollider ();
+	BoxCollider (const Resource<Model>& model);
 	BoxCollider (const glm::vec3& extents);
 protected:
-	void Rebuild ();
+	void Rebuild (const Resource<Model>& model);
 
-	glm::vec3 GetExtents ();
+	glm::vec3 GetExtents (const Resource<Model>& model);
 };
 
 #endif

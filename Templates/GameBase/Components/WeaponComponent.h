@@ -22,6 +22,4 @@ public:
 	void Update ();
 };
 
-REGISTER_COMPONENT (WeaponComponent)
-
 #endif

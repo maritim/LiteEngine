@@ -4,7 +4,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Lighting/Light.h"
 #include "Texture/Texture.h"
 #include "SceneGraph/Transform.h"
 #include "Material/Material.h"

@@ -27,8 +27,6 @@
 #include "Loaders/ParticleSystemLoader.h"
 #include "Loaders/SkyboxLoader.h"
 #include "Loaders/BitmapFontLoader.h"
-#include "Loaders/ColliderLoader.h"
-#include "Loaders/LightLoader.h"
 
 /*
  * Save
@@ -329,28 +327,6 @@ Skybox* Resources::LoadSkybox (const std::string& filename)
 	delete skyboxLoader;
 
 	return skybox;
-}
-
-BulletCollider* Resources::LoadCollider (const std::string& filename)
-{
-	ColliderLoader* colliderLoader = new ColliderLoader ();
-
-	BulletCollider* collider = (BulletCollider*) colliderLoader->Load (filename);
-
-	delete colliderLoader;
-
-	return collider;
-}
-
-Light* Resources::LoadLight (const std::string& filename)
-{
-	LightLoader* lightLoader = new LightLoader ();
-
-	Light* light = (Light*) lightLoader->Load (filename);
-
-	delete lightLoader;
-
-	return light;
 }
 
 /*

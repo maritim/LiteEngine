@@ -3,8 +3,6 @@
 
 #include "Core/Interfaces/Object.h"
 
-// #include "ComponentObject.h"
-
 #include "Core/ObjectsFactory/ObjectsFactory.h"
 
 #define DECLARE_COMPONENT(COMPONENT) \
@@ -13,6 +11,8 @@ public: \
 	{ \
 		return #COMPONENT; \
 	}
+
+#define ATTRIBUTE(a,b)
 
 class ComponentObject;
 class SceneObject;
@@ -44,6 +44,6 @@ protected:
 	void SetParent (SceneObject* parent);
 };
 
-#define REGISTER_COMPONENT(COMPONENT) static RegisterObject<Component, COMPONENT> dummy (#COMPONENT);
+#define REGISTER_COMPONENT(COMPONENT) static RegisterObject<Component, COMPONENT> dummy##COMPONENT (#COMPONENT);
 
 #endif

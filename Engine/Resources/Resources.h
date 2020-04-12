@@ -20,9 +20,7 @@
 #include "Texture/CubeMap.h"
 #include "VisualEffects/ParticleSystem/ParticleSystem.h"
 #include "Skybox/Skybox.h"
-#include "Systems/Collision/BulletCollider.h"
 #include "Fonts/BitmapFont.h"
-#include "Lighting/Light.h"
 
 class ENGINE_API Resources
 {
@@ -55,8 +53,6 @@ public:
 	static Resource<MaterialLibrary> LoadMaterialLibrary (const std::string& filename);
 	static ParticleSystem* LoadParticleSystem (const std::string& filename);
 	static Skybox* LoadSkybox (const std::string& filename);
-	static BulletCollider* LoadCollider (const std::string& filename);
-	static Light* LoadLight (const std::string& filename);
 
 	/*
 	 * Save

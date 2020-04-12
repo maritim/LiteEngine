@@ -1,13 +1,11 @@
 #include "CapsuleCollider.h"
 
-CapsuleCollider::CapsuleCollider () :
-	_isGenerated (true)
+CapsuleCollider::CapsuleCollider (const Resource<Model>& model)
 {
-
+	Rebuild (model);
 }
 
-CapsuleCollider::CapsuleCollider (float radius, float height) :
-	_isGenerated (false)
+CapsuleCollider::CapsuleCollider (float radius, float height)
 {
 	/*
 	 * Bullet capsule shape is created based on radius and height
@@ -16,12 +14,8 @@ CapsuleCollider::CapsuleCollider (float radius, float height) :
 	_collisionShape = new btCapsuleShape (radius, height);
 }
 
-void CapsuleCollider::Rebuild ()
+void CapsuleCollider::Rebuild (const Resource<Model>& model)
 {
-	if (!_isGenerated || _mesh == nullptr) {
-		return;
-	}
-
 	/*
 	 * Destroy current collision shape if exists
 	*/
@@ -32,7 +26,7 @@ void CapsuleCollider::Rebuild ()
 	 * Compute the bounding capsule extents of the mesh
 	*/
 
-	std::pair<float, float> size = GetSize ();
+	std::pair<float, float> size = GetSize (model);
 
 	/*
 	 * Bullet capsule shape is created based on radius and height
@@ -41,13 +35,13 @@ void CapsuleCollider::Rebuild ()
 	_collisionShape = new btCapsuleShape (size.first, size.second);
 }
 
-std::pair<float, float> CapsuleCollider::GetSize ()
+std::pair<float, float> CapsuleCollider::GetSize (const Resource<Model>& model)
 {
 	/*
 	 * Get mesh bounding box
 	*/
 
-	BoundingBox* boundingBox = _mesh->GetBoundingBox ();
+	BoundingBox* boundingBox = model->GetBoundingBox ();
 
 	/*
 	 * Compute mesh extents according to its world position

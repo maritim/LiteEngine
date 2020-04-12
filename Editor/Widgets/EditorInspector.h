@@ -5,7 +5,6 @@
 #include "EditorManager.h"
 
 #include "SceneGraph/SceneObject.h"
-#include "SceneNodes/GameObject.h"
 
 class EditorInspector : public EditorWidget
 {
@@ -18,14 +17,6 @@ protected:
 	void ShowComponents (SceneObject* object);
 
 	void ShowComponent (Component* component);
-
-	void ShowObject (SceneObject* object);
-
-	void ShowGameObject (SceneObject* object);
-	void ShowLight (SceneObject* object);
-
-	void ShowRigidbody (Rigidbody* rigidbody);
-	void ShowAudioSource (AudioSource* audioSource);
 };
 
 REGISTER_EDITOR_WIDGET(EditorInspector)

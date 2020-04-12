@@ -56,7 +56,7 @@ void EditorGizmos::Show ()
 		ShowCollider ();
 	}
 
-	// ShowGrid ();
+	ShowGrid ();
 }
 
 void EditorGizmos::UpdateMode ()
@@ -164,7 +164,7 @@ void EditorGizmos::HideLastCollider ()
 		GameObject* gameObject = dynamic_cast<GameObject*> (_lastFocusedObject);
 
 		if (gameObject != nullptr) {
-			gameObject->GetRigidbody ()->Debug (false);			
+			// gameObject->GetRigidbody ()->Debug (false);
 		}
 	}
 }
@@ -181,7 +181,7 @@ void EditorGizmos::ShowCollider ()
 		return;
 	}
 
-	gameObject->GetRigidbody ()->Debug (true);
+	// gameObject->GetRigidbody ()->Debug (true);
 }
 
 void EditorGizmos::ShowGrid ()

@@ -3,17 +3,19 @@
 #include <bullet/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+MeshCollider::MeshCollider (const Resource<Model>& model) :
+	_triangleMesh (nullptr)
+{
+	Rebuild (model);
+}
+
 MeshCollider::~MeshCollider ()
 {
 	DestroyTriangleMesh ();
 }
 
-void MeshCollider::Rebuild ()
+void MeshCollider::Rebuild (const Resource<Model>& model)
 {
-	if (_mesh == nullptr) {
-		return;
-	}
-
 	/*
 	 * Destroy current collision shape if exists
 	*/
@@ -30,12 +32,12 @@ void MeshCollider::Rebuild ()
 	 * Compute collision triangle mesh based on object's mesh
 	*/
 
-	_triangleMesh = GetTriangleMesh ();
+	_triangleMesh = GetTriangleMesh (model);
 
 	_collisionShape = new btBvhTriangleMeshShape (_triangleMesh, true, true);
 }
 
-btTriangleMesh* MeshCollider::GetTriangleMesh ()
+btTriangleMesh* MeshCollider::GetTriangleMesh (const Resource<Model>& model)
 {
 	btTriangleMesh* triangleMesh = new btTriangleMesh ();
 
@@ -43,13 +45,13 @@ btTriangleMesh* MeshCollider::GetTriangleMesh ()
 	 * Iterate over all vertices and create triangle mesh collider
 	*/
 
-	for_each_type (ObjectModel*, objModel, *_mesh) {
+	for_each_type (ObjectModel*, objModel, *model) {
 		for (PolygonGroup* polyGroup : *objModel) {
 			for (Polygon* polygon : *polyGroup) {
 				btVector3 vertices [3];
 
 				for(std::size_t vertexIndex=0;vertexIndex<polygon->VertexCount();vertexIndex++) {
-					glm::vec3 vertex = _mesh->GetVertex (polygon->GetVertex (vertexIndex));
+					glm::vec3 vertex = model->GetVertex (polygon->GetVertex (vertexIndex));
 
 					vertices [vertexIndex].setX (vertex.x);
 					vertices [vertexIndex].setY (vertex.y);

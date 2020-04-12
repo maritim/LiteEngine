@@ -1,13 +1,11 @@
 #include "BoxCollider.h"
 
-BoxCollider::BoxCollider () :
-	_isGenerated (true)
+BoxCollider::BoxCollider (const Resource<Model>& model)
 {
-
+	Rebuild (model);
 }
 
-BoxCollider::BoxCollider (const glm::vec3& extents) :
-	_isGenerated (false)
+BoxCollider::BoxCollider (const glm::vec3& extents)
 {
 	/*
 	 * Bullet box shape is created based on half of the extents
@@ -22,12 +20,8 @@ BoxCollider::BoxCollider (const glm::vec3& extents) :
 	_collisionShape = new btBoxShape (halfExtents);
 }
 
-void BoxCollider::Rebuild ()
+void BoxCollider::Rebuild (const Resource<Model>& model)
 {
-	if (!_isGenerated || _mesh == nullptr) {
-		return;
-	}
-
 	/*
 	 * Destroy current collision shape if exists
 	*/
@@ -38,7 +32,7 @@ void BoxCollider::Rebuild ()
 	 * Compute mesh extents
 	*/
 
-	glm::vec3 extents = GetExtents ();
+	glm::vec3 extents = GetExtents (model);
 
 	/*
 	 * Bullet box shape is created based on half of the extents
@@ -53,13 +47,13 @@ void BoxCollider::Rebuild ()
 	_collisionShape = new btBoxShape (halfExtents);
 }
 
-glm::vec3 BoxCollider::GetExtents ()
+glm::vec3 BoxCollider::GetExtents (const Resource<Model>& model)
 {
 	/*
 	 * Get mesh bounding box
 	*/
 
-	BoundingBox* boundingBox = _mesh->GetBoundingBox ();
+	BoundingBox* boundingBox = model->GetBoundingBox ();
 
 	/*
 	 * Compute mesh extents according to its world position

@@ -21,7 +21,19 @@ endif(NOT MSVC)
 
 file (GLOB_RECURSE GameSourceFiles *)
 
-add_library (GameBase SHARED ${GameSourceFiles})
+file (GLOB_RECURSE GameComponentHeaderFiles Components/*.h)
+
+add_custom_command(
+    COMMAND LiteHeaderTool Components ${CMAKE_CURRENT_BINARY_DIR}/GeneratedComponents.cpp
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/GeneratedComponents.cpp
+    DEPENDS ${GameComponentHeaderFiles} LiteHeaderTool
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Templates/GameBase
+    COMMENT "Generate persistent component data..."
+    )
+
+set (GeneratedSourceFiles ${CMAKE_CURRENT_BINARY_DIR}/GeneratedComponents.cpp)
+
+add_library (GameBase SHARED ${GameSourceFiles} ${GeneratedSourceFiles})
 set_property (TARGET GameBase PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/Templates/GameBase)

@@ -1,13 +1,11 @@
 #include "SphereCollider.h"
 
-SphereCollider::SphereCollider () :
-	_isGenerated (true)
+SphereCollider::SphereCollider (const Resource<Model>& model)
 {
-
+	Rebuild (model);
 }
 
-SphereCollider::SphereCollider (float radius) :
-	_isGenerated (false)
+SphereCollider::SphereCollider (float radius)
 {
 	/*
 	 * Bullet sphere shape is created based on radius
@@ -16,12 +14,8 @@ SphereCollider::SphereCollider (float radius) :
 	_collisionShape = new btSphereShape (radius);
 }
 
-void SphereCollider::Rebuild ()
+void SphereCollider::Rebuild (const Resource<Model>& model)
 {
-	if (!_isGenerated || _mesh == nullptr) {
-		return;
-	}
-
 	/*
 	 * Destroy current collision shape if exists
 	*/
@@ -32,7 +26,7 @@ void SphereCollider::Rebuild ()
 	 * Compute the bounding sphere radius of the mesh
 	*/
 
-	float radius = GetRadius ();
+	float radius = GetRadius (model);
 
 	/*
 	 * Bullet sphere shape is created based on radius
@@ -41,13 +35,13 @@ void SphereCollider::Rebuild ()
 	_collisionShape = new btSphereShape (radius);
 }
 
-float SphereCollider::GetRadius ()
+float SphereCollider::GetRadius (const Resource<Model>& model)
 {
 	/*
 	 * Get mesh bounding box
 	*/
 
-	BoundingBox* boundingBox = _mesh->GetBoundingBox ();
+	BoundingBox* boundingBox = model->GetBoundingBox ();
 
 	/*
 	 * Compute mesh extents according to its world position

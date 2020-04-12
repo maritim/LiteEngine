@@ -7,16 +7,13 @@
 
 class ENGINE_API SphereCollider : public BulletCollider
 {
-protected:
-	bool _isGenerated;
-
 public:
-	SphereCollider ();
+	SphereCollider (const Resource<Model>& model);
 	SphereCollider (float radius);
 protected:
-	void Rebuild ();
+	void Rebuild (const Resource<Model>& model);
 
-	float GetRadius ();
+	float GetRadius (const Resource<Model>& model);
 };
 
 #endif

@@ -3,7 +3,7 @@
 <Scene name="VXGI Test" >
 	<Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
 
-	<NormalMapGameObject InstanceID="0" name="Sponza Atrium" meshpath="Assets/Models/Sponza/SponzaNoFlag.obj" isActive="true" >
+	<SceneObject InstanceID="0" name="Sponza Atrium" isActive="true" >
 		<Transform>
 			<Position y="-0.1" />
 			<Rotation />
@@ -11,25 +11,68 @@
 		</Transform>
 		<Components>
 			<Component name="FlyCameraController" />
+			<Component name="RenderObjectComponent" renderStage="1" layer="8">
+				<model path="Assets/Models/Sponza/SponzaNoFlag.obj" />
+			</Component>
+			<Component name="RigidBodyComponent" mass="0" >
+				<collider shape="Mesh" modelPath="Assets/Models/Sponza/SponzaNoFlag.obj" />
+			</Component>
+			<Component name="AudioSourceComponent" volume="1" loop="false">
+				<audioClip path="Assets/Audio/example.wav" />
+			</Component>
 		</Components>
-	</NormalMapGameObject>
+	</SceneObject>
 
-	<Light InstanceID="41" name="Directional" path="Assets/Lights/Directional.light" isActive="true">
+	<SceneObject InstanceID="41" name="Directional" isActive="true" >
 		<Transform>
 			<Rotation x="-80" y="0" z="0" />
 		</Transform>
-	</Light>
-	<Light InstanceID="40" name="Point" path="Assets/Lights/Point.light" isActive="true">
+		<Components>
+			<Component name="DirectionalLightComponent" intensity="1" castShadows="true" >
+				<color r="255" g="255" b="255" />
+
+				<shadowInformation cascadesCount="4" bias="0.003" >
+					<Resolution width="512" height="512" />
+				</shadowInformation>
+			</Component>
+		</Components>
+	</SceneObject>
+
+	<SceneObject InstanceID="40" name="Point" isActive="false">
 		<Transform>
 			<Position x="0" y="3" z="0.6" />
 		</Transform>
-	</Light>
-	<Light InstanceID="40" name="Spot" path="Assets/Lights/Spot.light" isActive="true">
+		<Components>
+			<Component name="PointLightComponent" intensity="1" range="7" castShadows="false" >
+				<color r="255" g="255" b="255" />
+
+				<shadowInformation bias="0.5">
+					<Resolution width="512" height="512" />
+				</shadowInformation>
+			</Component>
+		</Components>
+	</SceneObject>
+
+	<SceneObject InstanceID="40" name="Spot" isActive="false">
 		<Transform>
 			<Position x="0" y="3" z="0.6" />
 			<Rotation y="-90" />
 		</Transform>
-	</Light>
+		<Components>
+			<Component name="SpotLightComponent" intensity="1" range="120" cutoff="0" outerCutoff="30"  castShadows="true" >
+				<color r="255" g="255" b="255" />
+				<shadowInformation casting="true" bias="0.0001">
+					<Resolution width="512" height="512" />
+				</shadowInformation>
+			</Component>
+		</Components>
+	</SceneObject>
 
-	<Light InstanceID="43" name="AmbientLight" path="Assets/Lights/Ambient.light" isActive="true" />
+	<SceneObject InstanceID="41" name="Ambient" isActive="true">
+		<Components>
+			<Component name="AmbientLightComponent" intensity="0.25" >
+				<color r="255" g="255" b="255" />
+			</Component>
+		</Components>
+	</SceneObject>
 </Scene>

@@ -4,15 +4,13 @@
 
 #include "Core/Resources/Resource.h"
 
-#include "SceneNodes/GameObject.h"
 #include "VisualEffects/ParticleSystem/ParticleSystem.h"
-#include "Mesh/Model.h"
 #include "Skybox/Skybox.h"
 
 #include "Systems/Components/Component.h"
+#include "Systems/Components/PersistentComponent.h"
 
 #include "Resources/Resources.h"
-#include "Resources/ComponentLoader.h"
 
 #include "Utils/Extensions/StringExtend.h"
 #include "Utils/Extensions/MathExtend.h"
@@ -52,10 +50,7 @@ Scene* SceneLoader::Load (const std::string& filename)
 	while (content) {
 		std::string name = content->Value ();
 
-		if (name == "Light") {
-			ProcessLight (content, scene);
-		}
-		else if (name == "Skybox") {
+		if (name == "Skybox") {
 			ProcessSkybox (content, scene);
 		}
 		else if (name == "SceneObject") {
@@ -88,11 +83,11 @@ void SceneLoader::ProcessSceneObject (TiXmlElement* xmlElem, Scene* scene)
 	std::string instanceID = xmlElem->Attribute ("InstanceID");
 	std::string isActive = xmlElem->Attribute ("isActive");
 
-	GameObject* gameObject = new GameObject ();
-	gameObject->SetName (name);
+	SceneObject* sceneObject = new SceneObject ();
+	sceneObject->SetName (name);
 	// Need unsigned int here
-	gameObject->SetInstanceID (std::stoi (instanceID));
-	gameObject->SetActive (Extensions::StringExtend::ToBool (isActive));
+	sceneObject->SetInstanceID (std::stoi (instanceID));
+	sceneObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -101,22 +96,16 @@ void SceneLoader::ProcessSceneObject (TiXmlElement* xmlElem, Scene* scene)
 		std::string name = content->Value ();
 
 		if (name == "Transform") {
-			ProcessTransform (content, scene, gameObject);
-		}
-		else if (name == "Rigidbody") {
-			ProcessRigidbody (content, gameObject);
-		}
-		else if (name == "AudioSource") {
-			ProcessAudioSource (content, gameObject);
+			ProcessTransform (content, scene, sceneObject);
 		}
 		else if (name == "Components") {
-			ProcessComponents (content, gameObject);
+			ProcessComponents (content, sceneObject);
 		}
 
 		content = content->NextSiblingElement ();
 	}
 
-	scene->AttachObject (gameObject);
+	scene->AttachObject (sceneObject);
 }
 
 void SceneLoader::ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene)
@@ -146,34 +135,6 @@ void SceneLoader::ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene)
 	}
 
 	scene->AttachObject (partSystem);
-}
-
-void SceneLoader::ProcessLight (TiXmlElement* xmlElem, Scene* scene)
-{
-	std::string name = xmlElem->Attribute ("name");
-	std::string instanceID = xmlElem->Attribute ("InstanceID");
-	std::string path = xmlElem->Attribute ("path");
-	std::string isActive = xmlElem->Attribute ("isActive");
-
-	Light* light = Resources::LoadLight (path);
-	light->SetName (name);
-	light->SetInstanceID (std::stoi (instanceID));
-	light->SetActive (Extensions::StringExtend::ToBool (isActive));
-
-	TiXmlElement* content = xmlElem->FirstChildElement ();
-
-	while (content)
-	{
-		std::string name = content->Value ();
-
-		if (name == "Transform") {
-			ProcessTransform (content, scene, light);
-		}
-
-		content = content->NextSiblingElement ();
-	}
-
-	scene->AttachObject (light);
 }
 
 void SceneLoader::ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneObject* sceneObject)
@@ -272,7 +233,7 @@ glm::vec3 SceneLoader::GetScale (TiXmlElement* xmlElem)
 	return vector3;
 }
 
-void SceneLoader::ProcessComponents (TiXmlElement* xmlElem, GameObject* gameObject)
+void SceneLoader::ProcessComponents (TiXmlElement* xmlElem, SceneObject* sceneObject)
 {
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
@@ -281,14 +242,14 @@ void SceneLoader::ProcessComponents (TiXmlElement* xmlElem, GameObject* gameObje
 		std::string name = content->Value ();
 
 		if (name == "Component") {
-			ProcessComponent (content, gameObject);
+			ProcessComponent (content, sceneObject);
 		}
 
 		content = content->NextSiblingElement ();
 	}
 }
 
-void SceneLoader::ProcessComponent (TiXmlElement* xmlElem, GameObject* gameObject)
+void SceneLoader::ProcessComponent (TiXmlElement* xmlElem, SceneObject* sceneObject)
 {
 	std::string name = xmlElem->Attribute ("name");
 
@@ -296,79 +257,14 @@ void SceneLoader::ProcessComponent (TiXmlElement* xmlElem, GameObject* gameObjec
 		return;
 	}
 
-	ComponentLoader* componentLoader = ObjectsFactory<ComponentLoader>::Instance ()->Create (name + "Loader");
-
-	if (componentLoader == nullptr) {
-		return;
-	}
-
-	Component* component = componentLoader->Load (xmlElem);
-
-	delete componentLoader;
+	Component* component = ObjectsFactory<Component>::Instance ()->Create ("HT" + name);
 
 	if (component == nullptr) {
 		return;
 	}
 
-	gameObject->AttachComponent (component);	
-}
+	PersistentComponent* persistentComponent = dynamic_cast<PersistentComponent*> (component);
+	persistentComponent->Load (xmlElem);
 
-void SceneLoader::ProcessRigidbody (TiXmlElement* xmlElem, GameObject* object)
-{
-	std::string mass = xmlElem->Attribute ("mass");
-
-	object->GetRigidbody ()->SetMass (std::stof (mass));
-
-	TiXmlElement* content = xmlElem->FirstChildElement ();
-
-	while (content) 
-	{
-		std::string name = content->Value ();
-
-		if (name == "Collider") {
-			ProcessCollider (content, object->GetRigidbody ());
-		}
-
-		content = content->NextSiblingElement ();
-	}
-}
-
-void SceneLoader::ProcessAudioSource (TiXmlElement* xmlElem, GameObject* object)
-{
-	std::string volume = xmlElem->Attribute ("volume");
-	std::string loop = xmlElem->Attribute ("loop");
-
-	object->GetAudioSource ()->SetVolume (std::stof (volume));
-	object->GetAudioSource ()->SetLoop (Extensions::StringExtend::ToBool (loop));
-
-	TiXmlElement* content = xmlElem->FirstChildElement ();
-
-	while (content) 
-	{
-		std::string name = content->Value ();
-
-		if (name == "AudioClip") {
-			ProcessAudioClip (content, object->GetAudioSource ());
-		}
-
-		content = content->NextSiblingElement ();
-	}
-}
-
-void SceneLoader::ProcessCollider (TiXmlElement* xmlElem, Rigidbody* rigidbody)
-{
-	std::string path = xmlElem->Attribute ("path");
-
-	BulletCollider* collider = Resources::LoadCollider (path);
-
-	rigidbody->SetCollider (collider);
-}
-
-void SceneLoader::ProcessAudioClip (TiXmlElement* xmlElem, AudioSource* audioSource)
-{
-	std::string path = xmlElem->Attribute ("path");
-
-	Resource<AudioClip> audioClip = Resources::LoadAudioClip (path);
-
-	audioSource->SetAudioClip (audioClip);
+	sceneObject->AttachComponent (component);
 }

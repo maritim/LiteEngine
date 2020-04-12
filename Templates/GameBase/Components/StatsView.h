@@ -24,6 +24,4 @@ protected:
 	void ShowStatisticsWindow ();
 };
 
-REGISTER_COMPONENT(StatsView)
-
 #endif

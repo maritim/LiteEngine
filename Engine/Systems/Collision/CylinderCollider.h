@@ -7,16 +7,13 @@
 
 class ENGINE_API CylinderCollider : public BulletCollider
 {
-protected:
-	bool _isGenerated;
-
 public:
-	CylinderCollider ();
+	CylinderCollider (const Resource<Model>& model);
 	CylinderCollider (float radius, float height);
 protected:
-	void Rebuild ();
+	void Rebuild (const Resource<Model>& model);
 
-	glm::vec3 GetExtents ();
+	glm::vec3 GetExtents (const Resource<Model>& model);
 };
 
 #endif

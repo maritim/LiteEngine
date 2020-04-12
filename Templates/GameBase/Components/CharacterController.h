@@ -45,6 +45,4 @@ protected:
 	void AnimatePlayer ();
 };
 
-REGISTER_COMPONENT(CharacterController)
-
 #endif

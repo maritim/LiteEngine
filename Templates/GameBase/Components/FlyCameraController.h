@@ -19,6 +19,4 @@ public:
 	void Update ();
 };
 
-REGISTER_COMPONENT(FlyCameraController)
-
 #endif

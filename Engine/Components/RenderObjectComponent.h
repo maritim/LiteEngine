@@ -10,7 +10,13 @@ class ENGINE_API RenderObjectComponent : public Component
 	DECLARE_COMPONENT(RenderObjectComponent)
 
 protected:
+	ATTRIBUTE(EditAnywhere, Meta)
+	int _renderStage;
+	ATTRIBUTE(EditAnywhere, Meta)
+	int _layer;
+	ATTRIBUTE(EditAnywhere, Meta=(Model))
 	Resource<Model> _model;
+
 	RenderObject* _renderObject;
 
 public:
@@ -30,7 +36,5 @@ public:
 	const Resource<Model>& GetModel () const;
 	RenderObject* GetRenderObject ();
 };
-
-REGISTER_COMPONENT(RenderObjectComponent)
 
 #endif

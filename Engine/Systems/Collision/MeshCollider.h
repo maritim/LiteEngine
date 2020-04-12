@@ -11,11 +11,12 @@ protected:
 	btTriangleMesh* _triangleMesh;
 
 public:
+	MeshCollider (const Resource<Model>& model);
 	~MeshCollider ();
 protected:
-	void Rebuild ();
+	void Rebuild (const Resource<Model>& model);
 
-	btTriangleMesh* GetTriangleMesh ();
+	btTriangleMesh* GetTriangleMesh (const Resource<Model>& model);
 
 	void DestroyTriangleMesh ();
 };

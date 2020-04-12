@@ -15,28 +15,30 @@ protected:
 	btMotionState* _motionState;
 	btRigidBody* _rigidBody;
 	Transform* _transform;
-	bool _isAttached;
 
 	float _mass;
 	BulletCollider* _collider;
 
-	bool _isEnabled;
+	bool _isActive;
 
 public:
-	Rigidbody (Transform* _transform);
+	Rigidbody ();
 	~Rigidbody ();
 
+	void Init ();
+
+	void SetTransform (Transform* transform);
 	void SetMass (float mass);
 	void SetCollider (BulletCollider* collider);
 	void SetVelocity (const glm::vec3& velocity);
 	void SetAngularVelocity (const glm::vec3& velocity);
-	void Enable (bool isEnabled);
+	void SetActive (bool isEnabled);
 
 	float GetMass () const;
 	BulletCollider* GetCollider () const;
 	glm::vec3 GetVelocity () const;
 	glm::vec3 GetAngularVelocity () const;
-	bool IsEnabled () const;
+	bool IsActive () const;
 
 	void Update ();
 

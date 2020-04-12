@@ -8,7 +8,7 @@
 			<Rotation />
 		</Transform>
 	</Camera> -->
-	<GameObject InstanceID="0" name="Environment" meshpath="Assets/Models/Street Environment/Street environment_V01.obj" isActive="true">
+	<SceneObject InstanceID="0" name="Environment" isActive="true">
 		<Transform>
 			<Position y="-0.1"/>
 			<Rotation />
@@ -16,49 +16,98 @@
 		</Transform>
 		<Components>
 			<Component name="FlyCameraController" />
+			<Component name="RenderObjectComponent" renderStage="1" layer="1">
+				<model path="Assets/Models/Street Environment/Street environment_V01.obj" />
+			</Component>
 		</Components>
-	</GameObject>
+	</SceneObject>
 
-	<GameObject InstanceID="1" name="CowGirl" meshpath="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" isActive="true" >
+	<SceneObject InstanceID="1" name="CowGirl" isActive="true" >
 		<Transform>
 			<Position />
 			<Rotation />
 			<Scale />
 		</Transform>
-	</GameObject>
-	<GameObject InstanceID="2" name="FantasyGirl" meshpath="Assets/Models/Lightning/lightning_obj.obj" isActive="true" >
+		<Components>
+			<Component name="RenderObjectComponent" renderStage="1" layer="1">
+				<model path="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" />
+			</Component>
+		</Components>
+	</SceneObject>
+	<SceneObject InstanceID="2" name="FantasyGirl" isActive="true" >
 		<Transform>
 			<Position x="-5" y="2" />
 			<Rotation />
 			<Scale x="0.03" y="0.03" z="0.03" />
 		</Transform>
-	</GameObject>	
-	<GameObject InstanceID="3" name="Cat" meshpath="Assets/Models/Cat/cat.obj" isActive="true" >
+		<Components>
+			<Component name="RenderObjectComponent" renderStage="1" layer="1">
+				<model path="Assets/Models/Lightning/lightning_obj.obj" />
+			</Component>
+		</Components>
+	</SceneObject>	
+	<SceneObject InstanceID="3" name="Cat" isActive="true" >
 		<Transform>
 			<Position x="-10" />
 			<Rotation />
 			<Scale />
 		</Transform>
-	</GameObject>
-	<GameObject InstanceID="4" name="SpiderMan" meshpath="Assets/Models/Spider-Man/Spider-Man.obj" isActive="true" >
+		<Components>
+			<Component name="RenderObjectComponent" renderStage="1" layer="1">
+				<model path="Assets/Models/Cat/cat.obj" />
+			</Component>
+		</Components>
+	</SceneObject>
+	<SceneObject InstanceID="4" name="SpiderMan" isActive="true" >
 		<Transform>
 			<Position x="-15" />
 			<Rotation />
 			<Scale />
 		</Transform>
-	</GameObject>
+		<Components>
+			<Component name="RenderObjectComponent" renderStage="1" layer="1">
+				<model path="Assets/Models/Spider-Man/Spider-Man.obj" />
+			</Component>
+		</Components>
+	</SceneObject>
 
-	<Light InstanceID="41" name="Sun" path="Assets/Lights/Directional.light" isActive="true">
+	<SceneObject InstanceID="41" name="Directional" isActive="true">
 		<Transform>
 			<Rotation x="-80" y="0" z="0" />
 		</Transform>
-	</Light>
-	<Light InstanceID="43" name="LightBulb" path="Assets/Lights/Point.light" isActive="true">
+		<Components>
+			<Component name="DirectionalLightComponent" intensity="1" castShadows="true" >
+				<color r="255" g="255" b="255" />
+
+				<shadowInformation cascadesCount="4" bias="0.003" >
+					<Resolution width="512" height="512" />
+				</shadowInformation>
+			</Component>
+		</Components>
+	</SceneObject>
+
+	<SceneObject InstanceID="40" name="Point" isActive="true">
 		<Transform>
 			<Position x="1" y="1" z="1" />
 		</Transform>
-	</Light>
-	<Light InstanceID="43" name="AmbientLight" path="Assets/Lights/Ambient.light" isActive="true" />
+		<Components>
+			<Component name="PointLightComponent" intensity="1" range="7" castShadows="false" >
+				<color r="255" g="255" b="255" />
+
+				<shadowInformation bias="0.5">
+					<Resolution width="512" height="512" />
+				</shadowInformation>
+			</Component>
+		</Components>
+	</SceneObject>
+
+	<SceneObject InstanceID="41" name="Ambient" isActive="true">
+		<Components>
+			<Component name="AmbientLightComponent" intensity="0.25" >
+				<color r="255" g="255" b="255" />
+			</Component>
+		</Components>
+	</SceneObject>
 
 <!-- 	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" isActive="false" >
 		<Transform>

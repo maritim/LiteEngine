@@ -1,13 +1,11 @@
 #include "CylinderCollider.h"
 
-CylinderCollider::CylinderCollider () :
-	_isGenerated (true)
+CylinderCollider::CylinderCollider (const Resource<Model>& model)
 {
-
+	Rebuild (model);
 }
 
-CylinderCollider::CylinderCollider (float radius, float height) :
-	_isGenerated (false)
+CylinderCollider::CylinderCollider (float radius, float height)
 {
 	/*
 	 * Bullet cylinder shape is created based on half of the extents
@@ -22,12 +20,8 @@ CylinderCollider::CylinderCollider (float radius, float height) :
 	_collisionShape = new btCylinderShape (halfExtents);
 }
 
-void CylinderCollider::Rebuild ()
+void CylinderCollider::Rebuild (const Resource<Model>& model)
 {
-	if (!_isGenerated || _mesh == nullptr) {
-		return;
-	}
-
 	/*
 	 * Destroy current collision shape if exists
 	*/
@@ -38,7 +32,7 @@ void CylinderCollider::Rebuild ()
 	 * Compute the bounding cylinder extents of the mesh
 	*/
 
-	glm::vec3 extents = GetExtents ();
+	glm::vec3 extents = GetExtents (model);
 
 	/*
 	 * Bullet cylinder shape is created based on half of the extents
@@ -53,13 +47,13 @@ void CylinderCollider::Rebuild ()
 	_collisionShape = new btCylinderShape (halfExtents);
 }
 
-glm::vec3 CylinderCollider::GetExtents ()
+glm::vec3 CylinderCollider::GetExtents (const Resource<Model>& model)
 {
 	/*
 	 * Get mesh bounding box
 	*/
 
-	BoundingBox* boundingBox = _mesh->GetBoundingBox ();
+	BoundingBox* boundingBox = model->GetBoundingBox ();
 
 	/*
 	 * Compute mesh extents according to its world position

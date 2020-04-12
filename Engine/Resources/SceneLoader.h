@@ -21,7 +21,6 @@ public:
 private:
 	SceneLoader ();
 
-	void ProcessLight (TiXmlElement* xmlElem, Scene* scene);
 	void ProcessSkybox (TiXmlElement* xmlElem, Scene* scene);
 	void ProcessSceneObject (TiXmlElement* xmlElem, Scene* scene);
 	void ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene);
@@ -31,16 +30,8 @@ private:
 	glm::quat GetRotation (TiXmlElement* xmlElem);
 	glm::vec3 GetScale (TiXmlElement* xmlElem);
 
-	void ProcessComponents (TiXmlElement* xmlElem, GameObject* gameObject);
-	void ProcessComponent (TiXmlElement* xmlElem, GameObject* gameObject);
-
-	void ProcessRigidbody (TiXmlElement* xmlElem, GameObject* object);
-
-	void ProcessAudioSource (TiXmlElement* xmlElem, GameObject* object);
-
-	void ProcessCollider (TiXmlElement* xmlElem, Rigidbody* rigidbody);
-
-	void ProcessAudioClip (TiXmlElement* xmlElem, AudioSource* audioSource);
+	void ProcessComponents (TiXmlElement* xmlElem, SceneObject* sceneObject);
+	void ProcessComponent (TiXmlElement* xmlElem, SceneObject* sceneObject);
 };
 
 #endif

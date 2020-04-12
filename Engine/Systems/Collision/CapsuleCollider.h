@@ -7,16 +7,13 @@
 
 class ENGINE_API CapsuleCollider : public BulletCollider
 {
-protected:
-	bool _isGenerated;
-
 public:
-	CapsuleCollider ();
+	CapsuleCollider (const Resource<Model>& model);
 	CapsuleCollider (float radius, float height);
 protected:
-	void Rebuild ();
+	void Rebuild (const Resource<Model>& model);
 
-	std::pair<float, float> GetSize ();
+	std::pair<float, float> GetSize (const Resource<Model>& model);
 };
 
 #endif

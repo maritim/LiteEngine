@@ -32,6 +32,4 @@ protected:
 	glm::vec3 GetPlayerPosition ();
 };
 
-REGISTER_COMPONENT(CameraController)
-
 #endif

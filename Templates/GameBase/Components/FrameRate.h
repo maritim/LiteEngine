@@ -26,6 +26,4 @@ public:
 	void Update();
 };
 
-REGISTER_COMPONENT(FrameRate)
-
 #endif

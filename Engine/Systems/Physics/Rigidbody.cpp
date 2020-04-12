@@ -3,14 +3,34 @@
 #include "Systems/Physics/PhysicsManager.h"
 #include "Systems/Physics/MotionState.h"
 
-Rigidbody::Rigidbody (Transform* transform) :
+Rigidbody::Rigidbody () :
 	_motionState (nullptr),
 	_rigidBody (nullptr),
-	_transform (transform),
+	_transform (nullptr),
 	_mass (0.0f),
 	_collider (nullptr),
-	_isEnabled (true)
+	_isActive (true)
 {
+
+}
+
+Rigidbody::~Rigidbody ()
+{
+	delete _rigidBody;
+	delete _motionState;
+	delete _collider;
+}
+
+void Rigidbody::Init ()
+{
+	/*
+	 * Check transform exists
+	*/
+
+	if (_transform == nullptr) {
+		return;
+	}
+
 	_motionState = new MotionState (_transform, glm::vec3 (0.0f)); //_collider->GetOffset ());
 
 	/*
@@ -36,13 +56,9 @@ Rigidbody::Rigidbody (Transform* transform) :
 		| btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT);
 }
 
-Rigidbody::~Rigidbody ()
+void Rigidbody::SetTransform (Transform* transform)
 {
-	DestroyRigidbody ();
-
-	if (_collider != nullptr) {
-		delete _collider;
-	}
+	_transform = transform;
 }
 
 void Rigidbody::SetMass (float mass)
@@ -81,12 +97,12 @@ void Rigidbody::SetAngularVelocity (const glm::vec3& velocity)
 	_rigidBody->setAngularVelocity (btVector3 (velocity.x, velocity.y, velocity.z));
 }
 
-void Rigidbody::Enable (bool isEnabled)
+void Rigidbody::SetActive (bool isActive)
 {
-	_isEnabled = isEnabled;
+	_isActive = isActive;
 
 	int flags = _rigidBody->getFlags ();
-	flags = _isEnabled ? flags &~ ISLAND_SLEEPING : flags | ISLAND_SLEEPING;
+	flags = _isActive ? flags &~ ISLAND_SLEEPING : flags | ISLAND_SLEEPING;
 
 	_rigidBody->setFlags (flags);
 }
@@ -115,9 +131,9 @@ glm::vec3 Rigidbody::GetAngularVelocity () const
 	return glm::vec3 (velocity.getX (), velocity.getY (), velocity.getZ ());
 }
 
-bool Rigidbody::IsEnabled () const
+bool Rigidbody::IsActive () const
 {
-	return _isEnabled;
+	return _isActive;
 }
 
 void Rigidbody::Update ()
@@ -190,6 +206,10 @@ void Rigidbody::UpdateCollider ()
 		return;
 	}
 
+	if (_collider->GetCollisionShape () == nullptr) {
+		return;
+	}
+
 	/*
 	 * Set collision shape scaling
 	*/
@@ -219,16 +239,5 @@ void Rigidbody::UpdateCollider ()
 	 * Update rigidbody collision shape
 	*/
 
-	_rigidBody->setCollisionShape (_collider->GetCollisionShape ());
-}
-
-void Rigidbody::DestroyRigidbody ()
-{
-	if (_rigidBody != nullptr) {
-		delete _rigidBody;
-	}
-
-	if (_motionState != nullptr) {
-		delete _motionState;
-	}
+	// _rigidBody->setCollisionShape (_collider->GetCollisionShape ());
 }

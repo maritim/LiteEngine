@@ -2,7 +2,8 @@
 
 #include "ComponentManager.h"
 
-Component::Component ()
+Component::Component () :
+	_parent (nullptr)
 {
 
 }

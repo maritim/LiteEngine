@@ -61,6 +61,11 @@ void SceneObject::SetActive (bool isActive)
 	}
 }
 
+void SceneObject::Update ()
+{
+
+}
+
 void SceneObject::OnAttachedToScene ()
 {
 	for (auto component : _components) {

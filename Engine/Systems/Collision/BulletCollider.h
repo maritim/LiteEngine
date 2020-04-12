@@ -15,7 +15,6 @@ class ENGINE_API BulletCollider : public Object
 protected:
 	btCollisionShape* _collisionShape;
 	glm::vec3 _offset;
-	Resource<Model> _mesh;
 
 	bool _isDirty;
 
@@ -29,10 +28,9 @@ public:
 
 	btCollisionShape* GetCollisionShape () const;
 	glm::vec3 GetOffset () const;
-	Resource<Model> GetMesh () const;
 	bool IsDirty () const;
 protected:
-	virtual void Rebuild () = 0;
+	virtual void Rebuild (const Resource<Model>& model) = 0;
 
 	void DestroyCollisionShape ();
 };

@@ -58,9 +58,10 @@ inline std::containerType<type>::const_iterator class::end<type> () const \
 // TODO: Fix scope
 
 #define for_each_type(type, name, container) \
-	for (type name = *(container).begin<type> (); name != nullptr; name = nullptr) \
-		for (auto name##_it = (container).begin<type> (); \
-			name##_it != (container).end<type> () && (name = *name##_it); \
-			name##_it ++)
+		for (type name = ((container).begin<type> () != (container).end<type> () ? \
+			*(container).begin<type> () : nullptr); name != nullptr; name = nullptr) \
+			for (auto name##_it = (container).begin<type> (); \
+				name##_it != (container).end<type> () && (name = *name##_it); \
+				name##_it ++)
 
 #endif

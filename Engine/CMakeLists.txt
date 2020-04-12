@@ -8,7 +8,7 @@ if (NOT CMAKE_BUILD_TYPE)
 	set (CMAKE_BUILD_TYPE, DEBUG)
 endif (NOT CMAKE_BUILD_TYPE)
 
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
 
 if(NOT MSVC)
 	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g2 -O0 -Wall -Werror")
@@ -21,7 +21,19 @@ endif(NOT MSVC)
 
 file (GLOB_RECURSE LiteEngineSourceFiles *)
 
-add_executable (LiteEngine ${LiteEngineSourceFiles})
+file (GLOB_RECURSE LiteEngineComponentHeaderFiles Components/*.h)
+
+add_custom_command(
+    COMMAND LiteHeaderTool Components ${CMAKE_CURRENT_BINARY_DIR}/GeneratedComponents.cpp
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/GeneratedComponents.cpp
+    DEPENDS ${LiteEngineComponentHeaderFiles} LiteHeaderTool
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Engine
+    COMMENT "Generate persistent component data..."
+    )
+
+set (GeneratedSourceFiles ${CMAKE_CURRENT_BINARY_DIR}/GeneratedComponents.cpp)
+
+add_executable (LiteEngine ${LiteEngineSourceFiles} ${GeneratedSourceFiles})
 
 set (OpenGL_GL_PREFERENCE GLVND)
 
@@ -97,6 +109,8 @@ if(NOT MSVC)
 endif(NOT MSVC)
 
 if(NOT MSVC)
+	target_link_libraries (LiteEngine stdc++fs)
+
 	target_compile_definitions (LiteEngine PRIVATE ENGINE_API=)
 else(NOT MSVC)
 	SET_TARGET_PROPERTIES(LiteEngine PROPERTIES ENABLE_EXPORTS TRUE)
