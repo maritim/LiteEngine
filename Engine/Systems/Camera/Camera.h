@@ -21,8 +21,6 @@ protected:
 
 	bool _constraintAspect;
 
-	FrustumVolume* _frustumVolume;
-
 public:
 	Camera(void);
 	virtual ~Camera ();
@@ -54,7 +52,7 @@ public:
 
 	virtual void Update ();
 
-	virtual FrustumVolume* GetFrustumVolume () const = 0;
+	virtual FrustumVolume GetFrustumVolume () const = 0;
 
 	virtual glm::mat4 GetProjectionMatrix () const = 0;
 };

@@ -20,9 +20,41 @@ public:
 
 	template<class T>
 	T* GetComponent ();
+	template<class T>
+	std::vector<T*> GetComponents ();
 
 	MULTIPLE_CONTAINER_TEMPLATE (vector)
 };
+
+template<class T>
+T* ComponentObject::GetComponent ()
+{
+	T dummy;
+
+	for (auto component : _components) {
+		if (dummy.GetName () == component->GetName ()) {
+			return (T*) component;
+		}
+	}
+
+	return nullptr;
+}
+
+template<class T>
+std::vector<T*> ComponentObject::GetComponents ()
+{
+	std::vector<T*> result;
+
+	T dummy;
+
+	for (auto component : _components) {
+		if (dummy.GetName () == component->GetName ()) {
+			result.push_back ((T*) component);
+		}
+	}
+
+	return result;
+}
 
 MULTIPLE_CONTAINER_SPECIALIZATION (vector, Component*, ComponentObject, _components);
 

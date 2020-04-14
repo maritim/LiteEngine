@@ -15,6 +15,8 @@ Object* BitmapFontLoader::Load (const std::string& filename)
 
 	BitmapFont* font = new BitmapFont ();
 
+	font->SetName (filename);
+
 	std::string data;
 	while (f >> data)
 	{

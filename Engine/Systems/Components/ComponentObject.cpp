@@ -27,18 +27,3 @@ void ComponentObject::DetachComponent (Component* component)
 
 	ComponentManager::Instance ()->Unregister (component);	
 }
-
-template<class T>
-T* ComponentObject::GetComponent ()
-{
-	T dummy;
-
-	for (auto component : _components) {
-		if (dummy.GetName () == component->GetName ()) {
-			return (T*) component;
-		}
-	}
-
-	return nullptr;
-}
-

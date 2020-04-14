@@ -198,7 +198,7 @@ void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, c
 
 	// std::vector<Renderer*> renderers;
 
-	FrustumVolume* frustum = camera->GetFrustumVolume ();
+	auto frustum = camera->GetFrustumVolume ();
 
 	std::size_t drawnVerticesCount = 0;
 	std::size_t drawnPolygonsCount = 0;
@@ -222,11 +222,9 @@ void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, c
 		* Culling Check
 		*/
 
-		if (renderObject->GetCollider () != nullptr) {
-			GeometricPrimitive* primitive = renderObject->GetCollider ()->GetGeometricPrimitive ();
-			if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
-				continue;
-			}
+		auto& boundingBox = renderObject->GetBoundingBox ();
+		if (!Intersection::Instance ()->CheckFrustumVsAABB (frustum, boundingBox)) {
+			continue;
 		}
 
 		drawnVerticesCount += renderObject->GetModelView ()->GetVerticesCount ();

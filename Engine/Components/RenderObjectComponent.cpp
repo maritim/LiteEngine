@@ -41,31 +41,18 @@ void RenderObjectComponent::Awake ()
 	 * Set render object model view
 	*/
 
-	Resource<ModelView> modelView = nullptr;
-
-	if (_layer & SceneLayer::ANIMATION) {
-		modelView = RenderSystem::LoadAnimationModel (_model);
-	}
-
-	if (_layer & SceneLayer::STATIC) {
-		modelView = RenderSystem::LoadModel (_model);
-	}
-
-	if (_layer & SceneLayer::NORMAL_MAP) {
-		modelView = RenderSystem::LoadNormalMapModel (_model);
-	}
-
-	if (_layer & SceneLayer::LIGHT_MAP) {
-		modelView = RenderSystem::LoadLightMapModel (_model);
-	}
-
-	_renderObject->SetModelView (modelView);
+	SetModel (_model);
 
 	_renderObject->SetTransform (_parent->GetTransform ());
 	_renderObject->SetRenderStage (RenderStage::RENDER_STAGE_DEFERRED);
 	_renderObject->SetActive (_parent->IsActive ());
 
 	RenderManager::Instance ()->AttachRenderObject (_renderObject);
+}
+
+void RenderObjectComponent::Update ()
+{
+	_renderObject->Update ();
 }
 
 void RenderObjectComponent::SetActive (bool isActive)
@@ -94,11 +81,48 @@ void RenderObjectComponent::OnDetachedFromScene ()
 void RenderObjectComponent::SetModel (const Resource<Model>& model)
 {
 	_model = model;
+
+	Resource<ModelView> modelView = nullptr;
+
+	if (_layer & SceneLayer::ANIMATION) {
+		modelView = RenderSystem::LoadAnimationModel (_model);
+	}
+
+	if (_layer & SceneLayer::STATIC) {
+		modelView = RenderSystem::LoadModel (_model);
+	}
+
+	if (_layer & SceneLayer::NORMAL_MAP) {
+		modelView = RenderSystem::LoadNormalMapModel (_model);
+	}
+
+	if (_layer & SceneLayer::LIGHT_MAP) {
+		modelView = RenderSystem::LoadLightMapModel (_model);
+	}
+
+	_renderObject->SetModelView (modelView);
+
+	auto& boundingBox = _model->GetBoundingBox ();
+	AABBVolume volume (
+		glm::vec3 (boundingBox.xmin, boundingBox.ymin, boundingBox.zmin),
+		glm::vec3 (boundingBox.xmax, boundingBox.ymax, boundingBox.zmax)
+	);
+
+	_renderObject->SetBoundingBox (volume);
 }
 
-void RenderObjectComponent::SetRenderObject (RenderObject* renderObject)
+void RenderObjectComponent::SetRenderStage (int renderStage)
 {
-	_renderObject = renderObject;
+	_renderStage = renderStage;
+
+	_renderObject->SetRenderStage ((RenderStage) _renderStage);
+}
+
+void RenderObjectComponent::SetLayer (int sceneLayers)
+{
+	_layer = sceneLayers;
+
+	_renderObject->SetSceneLayers (_layer);
 }
 
 const Resource<Model>& RenderObjectComponent::GetModel () const
@@ -106,7 +130,33 @@ const Resource<Model>& RenderObjectComponent::GetModel () const
 	return _model;
 }
 
-RenderObject* RenderObjectComponent::GetRenderObject ()
+const AABBVolume& RenderObjectComponent::GetBoundingBox () const
 {
-	return _renderObject;
+	return _renderObject->GetBoundingBox ();
+}
+
+#include "Systems/GUI/Gizmo/Gizmo.h"
+
+void RenderObjectComponent::OnGizmo ()
+{
+	if (_renderObject == nullptr) {
+		return;
+	}
+
+	auto& aabbData = _renderObject->GetBoundingBox ();
+
+	glm::vec3 sub = aabbData.maxVertex - aabbData.minVertex;
+
+	Gizmo::DrawLine (aabbData.minVertex, aabbData.minVertex + glm::vec3 (sub.x, 0, 0) , Color::White);
+	Gizmo::DrawLine (aabbData.minVertex, aabbData.minVertex + glm::vec3 (0, sub.y, 0) , Color::White);
+	Gizmo::DrawLine (aabbData.minVertex, aabbData.minVertex + glm::vec3 (0, 0, sub.z) , Color::White);
+	Gizmo::DrawLine (aabbData.maxVertex, aabbData.maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
+	Gizmo::DrawLine (aabbData.maxVertex, aabbData.maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
+	Gizmo::DrawLine (aabbData.maxVertex, aabbData.maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
+	Gizmo::DrawLine (aabbData.minVertex + glm::vec3 (sub.x, 0, 0), aabbData.maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
+	Gizmo::DrawLine (aabbData.minVertex + glm::vec3 (sub.x, 0, 0), aabbData.maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
+	Gizmo::DrawLine (aabbData.minVertex + glm::vec3 (0, sub.y, 0), aabbData.maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
+	Gizmo::DrawLine (aabbData.minVertex + glm::vec3 (0, sub.y, 0), aabbData.maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
+	Gizmo::DrawLine (aabbData.minVertex + glm::vec3 (0, 0, sub.z), aabbData.maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
+	Gizmo::DrawLine (aabbData.minVertex + glm::vec3 (0, 0, sub.z), aabbData.maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
 }

@@ -47,8 +47,7 @@ Camera* RSMDirectionalLightAccumulationRenderPass::GetLightCamera (const RenderS
 	glm::vec3 cuboidExtendsMin = glm::vec3(std::numeric_limits<float>::max());
 	glm::vec3 cuboidExtendsMax = glm::vec3(-std::numeric_limits<float>::min());
 
-	AABBVolume* aabbVolume = renderScene->GetBoundingBox();
-	AABBVolume::AABBVolumeInformation* bBox = aabbVolume->GetVolumeInformation();
+	auto& bBox = renderScene->GetBoundingBox ();
 
 	OrthographicCamera* lightCamera = new OrthographicCamera();
 
@@ -56,9 +55,9 @@ Camera* RSMDirectionalLightAccumulationRenderPass::GetLightCamera (const RenderS
 		for (int y = 0; y <= 1; y++) {
 			for (int z = 0; z <= 1; z++) {
 				glm::vec3 cuboidCorner = glm::vec3(
-					x == 0 ? bBox->minVertex.x : bBox->maxVertex.x,
-					y == 0 ? bBox->minVertex.y : bBox->maxVertex.y,
-					z == 0 ? bBox->minVertex.z : bBox->maxVertex.z
+					x == 0 ? bBox.minVertex.x : bBox.maxVertex.x,
+					y == 0 ? bBox.minVertex.y : bBox.maxVertex.y,
+					z == 0 ? bBox.minVertex.z : bBox.maxVertex.z
 				);
 
 				cuboidCorner = lightRotation * cuboidCorner;

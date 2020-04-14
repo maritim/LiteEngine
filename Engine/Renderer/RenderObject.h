@@ -7,46 +7,52 @@
 
 #include "Core/Resources/Resource.h"
 #include "RenderViews/ModelView.h"
+#include "Core/Intersections/AABBVolume.h"
 #include "Renderer/RenderStage.h"
-#include "Systems/Collision/Collider.h"
 
 #include "Renderer/PipelineAttribute.h"
 
 class RenderObject : public Object
 {
 protected:
-	Transform* _transform;
+	const Transform* _transform;
 	Resource<ModelView> _modelView;
 	RenderStage _renderStage;
 	int _sceneLayers;
 	int _priority;
-	Collider* _collider;
 	bool _isActive;
+
+	AABBVolume _modelSpaceBoundingBox;
+	AABBVolume _worldSpaceBoundingBox;
 
 	std::vector<PipelineAttribute> _attributes;
 
 public:
 	RenderObject ();
 
-	void SetTransform (Transform* transform);
+	void Update ();
+
+	void SetTransform (const Transform* transform);
 	void SetModelView (const Resource<ModelView>& modelView);
+	void SetBoundingBox (const AABBVolume& boundingBox);
 	void SetRenderStage (RenderStage renderStage);
 	void SetSceneLayers (int sceneLayers);
 	void SetPriority (int pritority);
-	void SetCollider (Collider* collider);
 	void SetActive (bool isEnabled);
 	void SetAttributes (const std::vector<PipelineAttribute>& attributes);
-	
-	Transform* GetTransform () const;
+
+	const Transform* GetTransform () const;
 	Resource<ModelView> GetModelView () const;
+	const AABBVolume& GetBoundingBox () const;
 	RenderStage GetRenderStage () const;
 	int GetSceneLayers () const;
 	int GetPriority () const;
-	Collider* GetCollider () const;
 	bool IsActive () const;
 
 	virtual void Draw ();
 	virtual void DrawGeometry ();
+protected:
+	void UpdateBoundingBox ();
 };
 
 #endif

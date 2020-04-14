@@ -4,14 +4,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Systems/GUI/ImGuizmo/ImGuizmo.h"
 
-#include "SceneNodes/GameObject.h"
-
 #include "EditorScene.h"
 #include "EditorSelection.h"
 
 #include "Systems/Input/Input.h"
 
 #include "Managers/SceneManager.h"
+
+#include "Components/RenderObjectComponent.h"
 
 #include "Core/Intersections/Intersection.h"
 
@@ -90,88 +90,77 @@ SceneObject* EditorSelector::GetSelectedObject (const glm::ivec2& pos)
 	SceneObject* selectedObject = nullptr;
 	float selectedObjectDistance = std::numeric_limits<float>::infinity ();
 
-	// for (SceneObject* sceneObject : *SceneManager::Instance ()->Current ()) {
+	for (SceneObject* sceneObject : *SceneManager::Instance ()->Current ()) {
 
-	// 	/*
-	// 	 *
-	// 	*/
+		/*
+		 * Check if it's active
+		*/
 
-	// 	// if (sceneObject->GetRenderer ()->GetStageType () != Renderer::StageType::DEFERRED_STAGE) {
-	// 	// 	continue;
-	// 	// }
+		if (sceneObject->IsActive () == false) {
+			continue;
+		}
 
-	// 	/*
-	// 	 * Check if it's active
-	// 	*/
+		/*
+		 * Check render object components
+		*/
 
-	// 	if (sceneObject->IsActive () == false) {
-	// 		continue;
-	// 	}
+		for (auto& component : sceneObject->GetComponents<RenderObjectComponent> ()) {
 
-	// 	/*
-	// 	 * Ignore objects without collider
-	// 	*/
+			float distance;
 
-	// 	GameObject* gameObject = dynamic_cast<GameObject*> (sceneObject);
+			/*
+			 * Check AABB intersection
+			*/
 
-	// 	if (gameObject == nullptr) {
-	// 		continue;
-	// 	}
+			auto& boundingBox = component->GetBoundingBox ();
+			if (!Intersection::Instance ()->CheckRayVsAABB (ray, boundingBox, distance)) {
+				continue;
+			}
 
-	// 	float distance;
+			/*
+			 * Compute model space ray primitive
+			*/
 
-	// 	/*
-	// 	 * Check AABB intersection
-	// 	*/
+			auto& model = component->GetModel ();
+			const Transform* transform = sceneObject->GetTransform ();
 
-	// 	GeometricPrimitive* primitive = gameObject->GetCollider ()->GetGeometricPrimitive ();
-	// 	if (!Intersection::Instance ()->CheckRayVsPrimitive (&ray, primitive, distance)) {
-	// 		continue;
-	// 	}
+			glm::mat4 modelMatrix = transform->GetModelMatrix ();
+			glm::mat4 invModelMatrix = glm::inverse (modelMatrix);
 
-	// 	/*
-	// 	 * Compute model space ray primitive
-	// 	*/
+			glm::vec3 modelOrigin = glm::vec3 (invModelMatrix * glm::vec4 (origin, 1.0f));
+			glm::vec3 modelObjcoord = glm::vec3 (invModelMatrix * glm::vec4 (objcoord, 1.0f));
 
-	// 	Resource<Model> model = gameObject->GetMesh ();
-	// 	Transform* transform = sceneObject->GetTransform ();
+			RayPrimitive modelRay (modelOrigin, modelObjcoord - modelOrigin);
 
-	// 	glm::mat4 modelMatrix = transform->GetModelMatrix ();
-	// 	glm::mat4 invModelMatrix = glm::inverse (modelMatrix);
+			/*
+			 * Check model intersection
+			*/
 
-	// 	glm::vec3 modelOrigin = glm::vec3 (invModelMatrix * glm::vec4 (origin, 1.0f));
-	// 	glm::vec3 modelObjcoord = glm::vec3 (invModelMatrix * glm::vec4 (objcoord, 1.0f));
+			if (!Intersection::Instance ()->CheckRayVsModel (modelRay, model, distance)) {
+				continue;
+			}
 
-	// 	RayPrimitive modelRay (modelOrigin, modelObjcoord - modelOrigin);
+			/*
+			 * Compute world space distance
+			*/
 
-	// 	/*
-	// 	 * Check model intersection
-	// 	*/
+			glm::vec3 rayDirection = glm::normalize (modelObjcoord - modelOrigin);
+			glm::vec3 modelHitPos = modelOrigin + rayDirection * distance;
 
-	// 	if (!Intersection::Instance ()->CheckRayVsModel (&modelRay, model, distance)) {
-	// 		continue;
-	// 	}
+			glm::vec3 worldHitPos = glm::vec3 (modelMatrix * glm::vec4 (modelHitPos, 1.0f));
 
-	// 	/*
-	// 	 * Compute world space distance
-	// 	*/
+			distance = glm::distance (worldHitPos, origin);
 
-	// 	glm::vec3 rayDirection = glm::normalize (modelObjcoord - modelOrigin);
-	// 	glm::vec3 modelHitPos = modelOrigin + rayDirection * distance;
+			/*
+			 * Keep the closest object
+			*/
 
-	// 	glm::vec3 worldHitPos = glm::vec3 (modelMatrix * glm::vec4 (modelHitPos, 1.0f));
-
-	// 	distance = glm::distance (worldHitPos, origin);
-
-	// 	/*
-	// 	 * Keep the closest object
-	// 	*/
-
-	// 	if (distance < selectedObjectDistance) {
-	// 		selectedObjectDistance = distance;
-	// 		selectedObject = sceneObject;
-	// 	}
-	// }
+			if (distance < selectedObjectDistance) {
+				selectedObjectDistance = distance;
+				selectedObject = sceneObject;
+			}
+		}
+	}
 
 	return selectedObject;
 }

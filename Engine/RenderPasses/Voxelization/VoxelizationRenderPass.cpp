@@ -225,11 +225,10 @@ void VoxelizationRenderPass::LockShader (int sceneLayers)
 
 void VoxelizationRenderPass::UpdateVoxelVolumeBoundingBox (const RenderScene* renderScene)
 {
-	AABBVolume* boundingBox = renderScene->GetBoundingBox ();
-	AABBVolume::AABBVolumeInformation* volume = boundingBox->GetVolumeInformation ();
+	auto& volume = renderScene->GetBoundingBox ();
 
-	glm::vec3 minVertex = volume->minVertex;
-	glm::vec3 maxVertex = volume->maxVertex;
+	glm::vec3 minVertex = volume.minVertex;
+	glm::vec3 maxVertex = volume.maxVertex;
 
 	_voxelVolume->UpdateBoundingBox (minVertex, maxVertex);
 }

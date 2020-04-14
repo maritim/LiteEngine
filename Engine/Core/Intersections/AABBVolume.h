@@ -1,27 +1,27 @@
 #ifndef AABBVOLUME_H
 #define AABBVOLUME_H
 
-#include "GeometricPrimitive.h"
+#include <limits>
+#include <glm/vec3.hpp>
 
-#include <glm/glm.hpp>
-
-class ENGINE_API AABBVolume : public GeometricPrimitive
+struct ENGINE_API AABBVolume
 {
-public:
-	struct AABBVolumeInformation
+	glm::vec3 minVertex;
+	glm::vec3 maxVertex;
+
+	AABBVolume () :
+		minVertex (std::numeric_limits<float>::infinity()),
+		maxVertex (-std::numeric_limits<float>::infinity())
 	{
-		glm::vec3 minVertex;
-		glm::vec3 maxVertex;
-	};
 
-private:
-	AABBVolumeInformation* _data;
+	}
 
-public:
-	AABBVolume (AABBVolumeInformation* data);
-	~AABBVolume ();
+	AABBVolume (const glm::vec3& minVertex1, const glm::vec3& maxVertex1) :
+		minVertex (minVertex1),
+		maxVertex (maxVertex1)
+	{
 
-	AABBVolumeInformation* GetVolumeInformation () const;
+	}
 };
 
 #endif

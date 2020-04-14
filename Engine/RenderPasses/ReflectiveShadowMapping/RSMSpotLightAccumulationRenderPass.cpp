@@ -44,7 +44,7 @@ Camera* RSMSpotLightAccumulationRenderPass::GetLightCamera (const RenderScene* r
 {
 	auto renderSpotLightObject = dynamic_cast<const RenderSpotLightObject*> (renderLightObject);
 
-	Transform* lightTransform = renderSpotLightObject->GetTransform ();
+	const Transform* lightTransform = renderSpotLightObject->GetTransform ();
 
 	PerspectiveCamera* lightCamera = (PerspectiveCamera*) _reflectiveShadowMapVolume->GetLightCamera ();
 

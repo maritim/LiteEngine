@@ -1,7 +1,7 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include "SceneNodes/GameObject.h"
+#include "SceneGraph/SceneObject.h"
 
 #include "Renderer/RenderSkyboxObject.h"
 
@@ -9,7 +9,7 @@
 
 // TODO: Extend this
 // TODO: Refactor shader management for this (maybe GameSettings.xml?)
-class Skybox : public GameObject
+class Skybox : public SceneObject
 {
 private:
 	RenderSkyboxObject* _renderSkyboxObject;

@@ -257,4 +257,14 @@ LightComponent::ShadowInformation ENGINE_API ComponentAttributeLoader::Load<Ligh
 	return shadowInformation;
 }
 
+template <>
+Resource<Font> ENGINE_API ComponentAttributeLoader::Load<Resource<Font>> (TiXmlElement* xmlElem)
+{
+	std::string path = xmlElem->Attribute ("path");
+
+	Resource<Font> font = Resources::LoadBitmapFont (path);
+
+	return font;
+}
+
 #endif

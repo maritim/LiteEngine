@@ -3,6 +3,8 @@
 
 #include "Systems/Components/Component.h"
 
+#include "Mesh/Model.h"
+
 #include "Renderer/RenderObject.h"
 
 class ENGINE_API RenderObjectComponent : public Component
@@ -25,16 +27,21 @@ public:
 
 	void Awake ();
 
+	void Update ();
+
 	void SetActive (bool isActive);
 
 	void OnAttachedToScene ();
 	void OnDetachedFromScene ();
 
+	void OnGizmo ();
+
 	void SetModel (const Resource<Model>& model);
-	void SetRenderObject (RenderObject* renderObject);
+	void SetRenderStage (int renderStage);
+	void SetLayer (int sceneLayers);
 
 	const Resource<Model>& GetModel () const;
-	RenderObject* GetRenderObject ();
+	const AABBVolume& GetBoundingBox () const;
 };
 
 #endif

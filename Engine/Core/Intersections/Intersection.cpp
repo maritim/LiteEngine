@@ -15,26 +15,16 @@ Intersection::~Intersection ()
 
 SPECIALIZE_SINGLETON(Intersection)
 
-bool Intersection::CheckFrustumVsPrimitive (FrustumVolume* frustum, GeometricPrimitive* primitive)
+bool Intersection::CheckFrustumVsAABB (const FrustumVolume& frustum, const AABBVolume& boundingBox)
 {
-	AABBVolume* aabb = dynamic_cast<AABBVolume*> (primitive);
-
-	return CheckFrustumVsAABB (frustum, aabb);
-}
-
-bool Intersection::CheckFrustumVsAABB (FrustumVolume* frustum, AABBVolume* aabb)
-{
-	FrustumVolume::FrustumVolumeInformation* frustumData = frustum->GetVolumeInformation ();
-	AABBVolume::AABBVolumeInformation* aabbData = aabb->GetVolumeInformation ();
-
-	for (std::size_t i=0;i<FrustumVolume::FrustumVolumeInformation::PLANESCOUNT;i++) {
+	for (std::size_t i=0;i<FrustumVolume::PLANESCOUNT;i++) {
 		// this is the current plane
-		const glm::vec4& plane = frustumData->plane [i];
+		const glm::vec4& plane = frustum.plane [i];
 
 		// p-vertex selection
-		const float px = std::signbit (plane.x) ? aabbData->minVertex.x : aabbData->maxVertex.x;
-		const float py = std::signbit (plane.y) ? aabbData->minVertex.y : aabbData->maxVertex.y;
-		const float pz = std::signbit (plane.z) ? aabbData->minVertex.z : aabbData->maxVertex.z;
+		const float px = std::signbit (plane.x) ? boundingBox.minVertex.x : boundingBox.maxVertex.x;
+		const float py = std::signbit (plane.y) ? boundingBox.minVertex.y : boundingBox.maxVertex.y;
+		const float pz = std::signbit (plane.z) ? boundingBox.minVertex.z : boundingBox.maxVertex.z;
 
 		// dot product
 		// project p-vertex on plane normal
@@ -58,23 +48,13 @@ bool Intersection::CheckFrustumVsAABB (FrustumVolume* frustum, AABBVolume* aabb)
 	return true;
 }
 
-bool Intersection::CheckRayVsPrimitive (RayPrimitive* ray, GeometricPrimitive* primitive, float& distance)
+bool Intersection::CheckRayVsAABB (const RayPrimitive& rayData, const AABBVolume& aabbData, float& distance)
 {
-	AABBVolume* aabb = dynamic_cast<AABBVolume*> (primitive);
-
-	return CheckRayVsAABB (ray, aabb, distance);
-}
-
-bool Intersection::CheckRayVsAABB (RayPrimitive* ray, AABBVolume* aabb, float& distance)
-{
-	const RayPrimitive::RayPrimitiveInformation& rayData = ray->GetVolumeInformation ();
-	AABBVolume::AABBVolumeInformation* aabbData = aabb->GetVolumeInformation ();
-
 	float tMin, tMax;
 
 	glm::vec3 invRayDir = glm::vec3 (1.0f) / rayData.direction;
-	glm::vec3 t1 = (aabbData->minVertex - rayData.origin) * invRayDir;
-	glm::vec3 t2 = (aabbData->maxVertex - rayData.origin) * invRayDir;
+	glm::vec3 t1 = (aabbData.minVertex - rayData.origin) * invRayDir;
+	glm::vec3 t2 = (aabbData.maxVertex - rayData.origin) * invRayDir;
 
 	glm::vec3 tmin = glm::min(t1, t2);
 	glm::vec3 tmax = glm::max(t1, t2);
@@ -89,7 +69,7 @@ bool Intersection::CheckRayVsAABB (RayPrimitive* ray, AABBVolume* aabb, float& d
 	return tMax > tMin;
 }
 
-bool Intersection::CheckRayVsModel (RayPrimitive* ray, const Resource<Model>& model, float& distance)
+bool Intersection::CheckRayVsModel (const RayPrimitive& ray, const Resource<Model>& model, float& distance)
 {
 	bool isIntersection = false;
 	distance = std::numeric_limits<float>::infinity ();
@@ -118,10 +98,8 @@ bool Intersection::CheckRayVsModel (RayPrimitive* ray, const Resource<Model>& mo
  * Thanks to: https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
 */
 
-bool Intersection::CheckRayVsPolygon (RayPrimitive* ray, const Resource<Model>& model, Polygon* poly, float& distance)
+bool Intersection::CheckRayVsPolygon (const RayPrimitive& rayData, const Resource<Model>& model, Polygon* poly, float& distance)
 {
-	const RayPrimitive::RayPrimitiveInformation& rayData = ray->GetVolumeInformation ();
-
 	const float EPSILON = 0.0000001;
 
 	glm::vec3 v0 = model->GetVertex (poly->GetVertex (0));

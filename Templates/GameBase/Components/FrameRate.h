@@ -3,9 +3,7 @@
 
 #include "Systems/Components/Component.h"
 
-#include "SceneGraph/Scene.h"
-
-#include "SceneNodes/TextGUI.h"
+#include "Components/TextGUIComponent.h"
 
 class FrameRate : public Component
 {
@@ -15,7 +13,7 @@ private:
 	float _timeElapsed;
 	float _computeRange;
 protected:
-	TextGUI* _textGUI;
+	TextGUIComponent* _textGUIComponent;
 
 public:
 	FrameRate ();

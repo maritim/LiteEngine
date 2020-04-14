@@ -127,7 +127,7 @@ void RSMAccumulationRenderPass::ShadowMapGeometryPass (const RenderScene* render
 	* Light camera
 	*/
 
-	FrustumVolume* frustum = lightCamera->GetFrustumVolume ();
+	auto frustum = lightCamera->GetFrustumVolume ();
 
 	/*
 	* Render scene entities to framebuffer at Deferred Rendering Stage
@@ -151,11 +151,9 @@ void RSMAccumulationRenderPass::ShadowMapGeometryPass (const RenderScene* render
 		* Culling Check
 		*/
 
-		if (renderObject->GetCollider () != nullptr) {
-			GeometricPrimitive* primitive = renderObject->GetCollider ()->GetGeometricPrimitive ();
-			if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
-				continue;
-			}
+		auto& boundingBox = renderObject->GetBoundingBox ();
+		if (!Intersection::Instance ()->CheckFrustumVsAABB (frustum, boundingBox)) {
+			continue;
 		}
 
 		/*

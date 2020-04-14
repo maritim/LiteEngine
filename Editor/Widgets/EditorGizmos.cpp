@@ -10,8 +10,6 @@
 #include "Systems/Input/Input.h"
 #include "Systems/GUI/Gizmo/Gizmo.h"
 
-#include "SceneNodes/GameObject.h"
-
 #include "EditorScene.h"
 #include "EditorSelection.h"
 
@@ -43,8 +41,6 @@ void EditorGizmos::Show ()
 
 	UpdateMode ();
 
-	HideLastCollider ();
-
 	if (_focusedObject != nullptr) {
 
 		Camera* camera = EditorScene::Instance ()->GetCamera ();
@@ -52,8 +48,7 @@ void EditorGizmos::Show ()
 			ShowGizmo (camera, _focusedObject->GetTransform ());
 		// }
 
-		ShowBoundingBox ();
-		ShowCollider ();
+		ShowComponents (_focusedObject);
 	}
 
 	ShowGrid ();
@@ -125,63 +120,11 @@ void EditorGizmos::ShowGizmo (const Camera* camera, Transform* transform)
 	transform->SetScale (scale);
 }
 
-void EditorGizmos::ShowBoundingBox ()
+void EditorGizmos::ShowComponents (const SceneObject* object)
 {
-	// GameObject* gameObject = dynamic_cast<GameObject*> (_focusedObject);
-
-	// if (gameObject == nullptr) {
-	// 	return;
-	// }
-
-	// Collider* collider = gameObject->GetCollider ();
-
-	// auto aabb = (AABBVolume*) collider->GetGeometricPrimitive ();
-	// auto aabbData = aabb->GetVolumeInformation ();
-
-	// glm::vec3 sub = aabbData->maxVertex - aabbData->minVertex;
-
-	// Gizmo::DrawLine (aabbData->minVertex, aabbData->minVertex + glm::vec3 (sub.x, 0, 0) , Color::White);
-	// Gizmo::DrawLine (aabbData->minVertex, aabbData->minVertex + glm::vec3 (0, sub.y, 0) , Color::White);
-	// Gizmo::DrawLine (aabbData->minVertex, aabbData->minVertex + glm::vec3 (0, 0, sub.z) , Color::White);
-	// Gizmo::DrawLine (aabbData->maxVertex, aabbData->maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
-	// Gizmo::DrawLine (aabbData->maxVertex, aabbData->maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
-	// Gizmo::DrawLine (aabbData->maxVertex, aabbData->maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
-	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (sub.x, 0, 0), aabbData->maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
-	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (sub.x, 0, 0), aabbData->maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
-	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, sub.y, 0), aabbData->maxVertex - glm::vec3 (0, 0, sub.z) , Color::White);
-	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, sub.y, 0), aabbData->maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
-	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, 0, sub.z), aabbData->maxVertex - glm::vec3 (sub.x, 0, 0) , Color::White);
-	// Gizmo::DrawLine (aabbData->minVertex + glm::vec3 (0, 0, sub.z), aabbData->maxVertex - glm::vec3 (0, sub.y, 0) , Color::White);
-}
-
-void EditorGizmos::HideLastCollider ()
-{
-	if (_lastFocusedObject == _focusedObject) {
-		return;
+	for_each_type (Component*, component, *object) {
+		component->OnGizmo ();
 	}
-
-	if (_lastFocusedObject != nullptr) {
-		GameObject* gameObject = dynamic_cast<GameObject*> (_lastFocusedObject);
-
-		if (gameObject != nullptr) {
-			// gameObject->GetRigidbody ()->Debug (false);
-		}
-	}
-}
-
-void EditorGizmos::ShowCollider ()
-{
-	if (_lastFocusedObject == _focusedObject) {
-		return;
-	}
-
-	GameObject* gameObject = dynamic_cast<GameObject*> (_focusedObject);
-
-	if (gameObject == nullptr) {
-		return;
-	}
-
-	// gameObject->GetRigidbody ()->Debug (true);
 }
 
 void EditorGizmos::ShowGrid ()

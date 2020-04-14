@@ -18,7 +18,7 @@ Model::Model() :
 	_objectModels (),
 	_normals (),
 	_texcoords (),
-	_boundingBox (new BoundingBox ())
+	_boundingBox ()
 {
 }
 
@@ -42,8 +42,6 @@ Model::~Model()
 	for (std::size_t i=0;i<_objectModels.size();i++) {
 		delete _objectModels[i];
 	}
-
-	delete _boundingBox;
 }
 
 void Model::AddVertex (const glm::vec3& vertex)
@@ -178,7 +176,7 @@ std::string Model::GetMaterialLibrary (void) const
 	return _mtllib;
 }
 
-BoundingBox* Model::GetBoundingBox () const
+const BoundingBox& Model::GetBoundingBox () const
 {
 	return _boundingBox;
 }
@@ -379,12 +377,12 @@ glm::vec3 Model::CalculateNormal (Polygon* polygon)
 
 void Model::CalculateBoundingBox (const glm::vec3& vertex)
 {
-	_boundingBox->xmin = std::min (_boundingBox->xmin, vertex.x);
-	_boundingBox->xmax = std::max (_boundingBox->xmax, vertex.x);
+	_boundingBox.xmin = std::min (_boundingBox.xmin, vertex.x);
+	_boundingBox.xmax = std::max (_boundingBox.xmax, vertex.x);
 
-	_boundingBox->ymin = std::min (_boundingBox->ymin, vertex.y);
-	_boundingBox->ymax = std::max (_boundingBox->ymax, vertex.y);
+	_boundingBox.ymin = std::min (_boundingBox.ymin, vertex.y);
+	_boundingBox.ymax = std::max (_boundingBox.ymax, vertex.y);
 
-	_boundingBox->zmin = std::min (_boundingBox->zmin, vertex.z);
-	_boundingBox->zmax = std::max (_boundingBox->zmax, vertex.z);
+	_boundingBox.zmin = std::min (_boundingBox.zmin, vertex.z);
+	_boundingBox.zmax = std::max (_boundingBox.zmax, vertex.z);
 }

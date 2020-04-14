@@ -1,7 +1,7 @@
 #ifndef PARTICLESYSTEM_H
 #define PARTICLESYSTEM_H
 
-#include "SceneNodes/GameObject.h"
+#include "SceneGraph/SceneObject.h"
 
 #include <vector>
 #include <string>
@@ -12,7 +12,7 @@
 #include "Core/Resources/Resource.h"
 #include "Renderer/RenderViews/ModelView.h"
 
-class ENGINE_API ParticleSystem : public GameObject
+class ENGINE_API ParticleSystem : public SceneObject
 {
 protected:
 	Emiter* _emiter;

@@ -23,7 +23,7 @@ protected:
 	std::set<RenderSpotLightObject*> _renderSpotLightObjects;
 	RenderAmbientLightObject* _renderAmbientLightObject;
 
-	AABBVolume* _boundingBox;
+	AABBVolume _boundingBox;
 
 public:
 	RenderScene ();
@@ -47,7 +47,7 @@ public:
 	RenderSkyboxObject* GetRenderSkyboxObject () const;
 	RenderDirectionalLightObject* GetRenderDirectionalLightObject () const;
 	RenderAmbientLightObject* GetRenderAmbientLightObject () const;
-	AABBVolume* GetBoundingBox () const;
+	const AABBVolume& GetBoundingBox () const;
 
 	MULTIPLE_CONTAINER_TEMPLATE (set)
 protected:

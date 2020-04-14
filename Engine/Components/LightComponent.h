@@ -48,7 +48,7 @@ public:
 
 	virtual void SetColor (const Color& color);
 	virtual void SetIntensity (float intensity);
-	virtual void SetShadowCasting (bool castShadows);
+	virtual void SetCastShadows (bool castShadows);
 	virtual void SetShadowInformation (const LightComponent::ShadowInformation& shadow);
 };
 

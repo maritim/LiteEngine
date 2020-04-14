@@ -17,7 +17,7 @@ public:
 	virtual void SetOrthographicSize (float);
 	virtual void SetOrthographicInfo (float left, float right, float bottom, float top, float zNear, float zFar);
 
-	virtual FrustumVolume* GetFrustumVolume () const;
+	virtual FrustumVolume GetFrustumVolume () const;
 
 	virtual glm::mat4 GetProjectionMatrix () const;
 };

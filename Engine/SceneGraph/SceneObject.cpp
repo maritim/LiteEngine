@@ -63,7 +63,7 @@ void SceneObject::SetActive (bool isActive)
 
 void SceneObject::Update ()
 {
-
+	_transform->SetIsDirty (false);
 }
 
 void SceneObject::OnAttachedToScene ()

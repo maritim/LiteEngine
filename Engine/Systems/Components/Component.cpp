@@ -52,3 +52,8 @@ void Component::SetParent (SceneObject* parent)
 {
 	_parent = parent;
 }
+
+void Component::OnGizmo ()
+{
+
+}

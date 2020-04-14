@@ -36,7 +36,7 @@ protected:
 	std::vector<glm::vec3> _smoothNormals;
 	std::vector<int> _smoothNormalsCount;
 
-	BoundingBox* _boundingBox;
+	BoundingBox _boundingBox;
 
 public: 
 	Model();			
@@ -65,7 +65,7 @@ public:
 	glm::vec2 GetTexcoord (std::size_t position) const;
 	ObjectModel* GetObject (std::string objectName) const;
 
-	BoundingBox* GetBoundingBox () const;
+	const BoundingBox& GetBoundingBox () const;
 
 	void SetVertex (const glm::vec3& vertex, std::size_t position);
 	void ClearObjects ();

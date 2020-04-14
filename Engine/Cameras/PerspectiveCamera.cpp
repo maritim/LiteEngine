@@ -21,7 +21,7 @@ void PerspectiveCamera::SetFieldOfView (float FOV)
 	_fieldOfViewAngle = FOV * 3.14 / 180;
 }
 
-FrustumVolume* PerspectiveCamera::GetFrustumVolume () const
+FrustumVolume PerspectiveCamera::GetFrustumVolume () const
 {
 	glm::mat4 projection = glm::perspective (_fieldOfViewAngle, _aspect, _zNear, _zFar);
 
@@ -30,9 +30,7 @@ FrustumVolume* PerspectiveCamera::GetFrustumVolume () const
 
 	glm::mat4 mvp = projection * view;
 
-	_frustumVolume->SetVolume (mvp);
-
-	return _frustumVolume;
+	return FrustumVolume (mvp);
 }
 
 glm::mat4 PerspectiveCamera::GetProjectionMatrix () const

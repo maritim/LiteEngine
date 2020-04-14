@@ -25,7 +25,7 @@ protected:
 
 	std::string _name;
 	Skybox* _skybox;
-	AABBVolume* _boundingBox;
+	AABBVolume _boundingBox;
 
 public:
 	Scene ();
@@ -44,7 +44,7 @@ public:
 
 	SceneObject* GetObject (const std::string& name) const;
 
-	AABBVolume* GetBoundingBox () const;
+	const AABBVolume& GetBoundingBox () const;
 
 	SceneIterator begin () const;
 	SceneIterator end () const;

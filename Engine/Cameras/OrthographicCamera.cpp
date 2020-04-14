@@ -45,7 +45,7 @@ void OrthographicCamera::SetOrthographicInfo(float left, float right, float bott
  *
 */
 
-FrustumVolume* OrthographicCamera::GetFrustumVolume () const
+FrustumVolume OrthographicCamera::GetFrustumVolume () const
 {
 	glm::mat4 projection = GetProjectionMatrix ();
 
@@ -54,9 +54,7 @@ FrustumVolume* OrthographicCamera::GetFrustumVolume () const
 
 	glm::mat4 mvp = projection * view;
 
-	_frustumVolume->SetVolume (mvp);
-
-	return _frustumVolume;
+	return FrustumVolume (mvp);
 }
 
 glm::mat4 OrthographicCamera::GetProjectionMatrix () const

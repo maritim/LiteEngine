@@ -48,6 +48,11 @@ static inline std::string toupper(std::string s) {
     return s;
 }
 
+static inline std::string capitalise (std::string s) {
+	s [0] = toupper (s [0]);
+	return s;
+}
+
 std::string ComponentGenerator::Generate (const ClassType* classType)
 {
 	std::string text;
@@ -140,7 +145,9 @@ std::string ComponentGenerator::GenerateAttributesWidget (const ClassType* class
 
 	for (auto attribute : classType->Attributes) {
 		text += "\t\t\tImGui::PushID (&" + attribute.Name + ");\n"
-				"\t\t\tComponentAttributeWidget::Show<" + attribute.TypeName + "> (" + attribute.Name + ", \"" + trim (attribute.Name) + "\");\n"
+				"\t\t\tif (ComponentAttributeWidget::Show<" + attribute.TypeName + "> (" + attribute.Name + ", \"" + trim (attribute.Name) + "\")) {\n"
+				"\t\t\t\tSet" + capitalise (trim (attribute.Name)) + " (" + attribute.Name + ");\n"
+				"\t\t\t}\n"
 				"\t\t\tImGui::PopID ();\n";
 	}
 

@@ -39,6 +39,8 @@ public:
 	virtual void OnAttachedToScene ();
 	virtual void OnDetachedFromScene ();
 
+	virtual void OnGizmo ();
+
 	virtual std::string GetName () const = 0;
 protected:
 	void SetParent (SceneObject* parent);

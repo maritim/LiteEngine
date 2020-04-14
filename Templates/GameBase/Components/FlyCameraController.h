@@ -3,8 +3,6 @@
 
 #include "Systems/Components/Component.h"
 
-#include "SceneNodes/TextGUI.h"
-
 class FlyCameraController : public Component
 {
 	DECLARE_COMPONENT(FlyCameraController)

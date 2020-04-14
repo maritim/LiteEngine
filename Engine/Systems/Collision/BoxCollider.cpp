@@ -53,14 +53,14 @@ glm::vec3 BoxCollider::GetExtents (const Resource<Model>& model)
 	 * Get mesh bounding box
 	*/
 
-	BoundingBox* boundingBox = model->GetBoundingBox ();
+	auto& boundingBox = model->GetBoundingBox ();
 
 	/*
 	 * Compute mesh extents according to its world position
 	*/
 
-	glm::vec3 minVertex = glm::vec3 (boundingBox->xmin, boundingBox->ymin, boundingBox->zmin);
-	glm::vec3 maxVertex = glm::vec3 (boundingBox->xmax, boundingBox->ymax, boundingBox->zmax);
+	glm::vec3 minVertex = glm::vec3 (boundingBox.xmin, boundingBox.ymin, boundingBox.zmin);
+	glm::vec3 maxVertex = glm::vec3 (boundingBox.xmax, boundingBox.ymax, boundingBox.zmax);
 
 	glm::vec3 extents = maxVertex - minVertex;
 

@@ -61,7 +61,7 @@ void LightComponent::SetIntensity (float intensity)
 	_renderLightObject->SetLightIntensity (intensity);
 }
 
-void LightComponent::SetShadowCasting (bool castShadows)
+void LightComponent::SetCastShadows (bool castShadows)
 {
 	_castShadows = castShadows;
 

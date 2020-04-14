@@ -26,6 +26,10 @@ public:
 	void Awake ();
 
 	void Update ();
+
+	void SetAudioClip (const Resource<AudioClip>& audioClip);
+	void SetVolume (float volume);
+	void SetLoop (bool loop);
 };
 
 #endif

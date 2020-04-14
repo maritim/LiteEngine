@@ -6,11 +6,8 @@
 
 #include "Core/Parsers/XML/TinyXml/tinyxml.h"
 
-#include "Utils/Color/Color.h"
-
 #include "SceneGraph/Scene.h"
-#include "SceneGraph/Transform.h"
-#include "SceneNodes/GameObject.h"
+#include "SceneGraph/SceneObject.h"
 
 class SceneLoader
 {

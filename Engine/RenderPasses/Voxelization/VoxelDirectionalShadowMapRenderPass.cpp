@@ -152,7 +152,7 @@ void VoxelDirectionalShadowMapRenderPass::ShadowMapGeometryPass (const RenderSce
 	* Light camera
 	*/
 
-	FrustumVolume* frustum = lightCamera->GetFrustumVolume ();
+	auto frustum = lightCamera->GetFrustumVolume ();
 
 	/*
 	* Render scene entities to framebuffer at Deferred Rendering Stage
@@ -176,11 +176,9 @@ void VoxelDirectionalShadowMapRenderPass::ShadowMapGeometryPass (const RenderSce
 		* Culling Check
 		*/
 
-		if (renderObject->GetCollider () != nullptr) {
-			GeometricPrimitive* primitive = renderObject->GetCollider ()->GetGeometricPrimitive ();
-			if (!Intersection::Instance ()->CheckFrustumVsPrimitive (frustum, primitive)) {
-				continue;
-			}
+		auto& boundingBox = renderObject->GetBoundingBox ();
+		if (!Intersection::Instance ()->CheckFrustumVsAABB (frustum, boundingBox)) {
+			continue;
 		}
 
 		/*
@@ -222,8 +220,7 @@ Camera* VoxelDirectionalShadowMapRenderPass::GetLightCamera (const RenderScene* 
 	glm::vec3 cuboidExtendsMin = glm::vec3 (std::numeric_limits<float>::max ());
 	glm::vec3 cuboidExtendsMax = glm::vec3 (-std::numeric_limits<float>::min ());
 
-	AABBVolume* aabbVolume = renderScene->GetBoundingBox ();
-	AABBVolume::AABBVolumeInformation* bBox = aabbVolume->GetVolumeInformation ();
+	auto& bBox = renderScene->GetBoundingBox ();
 
 	OrthographicCamera* lightCamera = new OrthographicCamera ();
 
@@ -231,9 +228,9 @@ Camera* VoxelDirectionalShadowMapRenderPass::GetLightCamera (const RenderScene* 
 		for (int y = 0; y <= 1; y ++) {
 			for (int z = 0; z <= 1; z ++) {
 				glm::vec3 cuboidCorner = glm::vec3 (
-					x == 0 ? bBox->minVertex.x : bBox->maxVertex.x,
-					y == 0 ? bBox->minVertex.y : bBox->maxVertex.y,
-					z == 0 ? bBox->minVertex.z : bBox->maxVertex.z
+					x == 0 ? bBox.minVertex.x : bBox.maxVertex.x,
+					y == 0 ? bBox.minVertex.y : bBox.maxVertex.y,
+					z == 0 ? bBox.minVertex.z : bBox.maxVertex.z
 				);
 
 				cuboidCorner = lightRotation * cuboidCorner;

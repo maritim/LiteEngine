@@ -9,14 +9,14 @@ RenderScene::RenderScene () :
 	_renderPointLightObjects (),
 	_renderSpotLightObjects (),
 	_renderAmbientLightObject (nullptr),
-	_boundingBox (new AABBVolume (new AABBVolume::AABBVolumeInformation ()))
+	_boundingBox ()
 {
 
 }
 
 RenderScene::~RenderScene ()
 {
-	delete _boundingBox;
+
 }
 
 void RenderScene::SetRenderSkyboxObject (RenderSkyboxObject* renderSkyboxObject)
@@ -83,37 +83,29 @@ RenderAmbientLightObject* RenderScene::GetRenderAmbientLightObject () const
 	return _renderAmbientLightObject;
 }
 
-AABBVolume* RenderScene::GetBoundingBox () const
+const AABBVolume& RenderScene::GetBoundingBox () const
 {
 	return _boundingBox;
 }
 
 void RenderScene::UpdateBoundingBox ()
 {
-	AABBVolume::AABBVolumeInformation* volume = _boundingBox->GetVolumeInformation ();
-
-	volume->minVertex = glm::vec3 (std::numeric_limits<float>::infinity ());
-	volume->maxVertex = glm::vec3 (-std::numeric_limits<float>::infinity ());
+	_boundingBox.minVertex = glm::vec3 (std::numeric_limits<float>::infinity ());
+	_boundingBox.maxVertex = glm::vec3 (-std::numeric_limits<float>::infinity ());
 
 	for (auto renderObject : _renderObjects) {
 
-		/*
-		 * Check only objects that have collider
-		*/
+		auto& renderObjectBoundingBox = renderObject->GetBoundingBox ();
 
-		if (renderObject->GetCollider () == nullptr) {
-			return;
-		}
-
-		GeometricPrimitive* renderObjectVolumePrimitive = renderObject->GetCollider ()->GetGeometricPrimitive ();
-		AABBVolume* renderObjectBoundingBox = dynamic_cast<AABBVolume*> (renderObjectVolumePrimitive);
-		AABBVolume::AABBVolumeInformation* renderObjectVolume = renderObjectBoundingBox->GetVolumeInformation ();
-
-		volume->minVertex = glm::vec3 (std::min (volume->minVertex.x, renderObjectVolume->minVertex.x),
-			std::min (volume->minVertex.y, renderObjectVolume->minVertex.y),
-			std::min (volume->minVertex.z, renderObjectVolume->minVertex.z));
-		volume->maxVertex = glm::vec3 (std::max (volume->maxVertex.x, renderObjectVolume->maxVertex.x),
-			std::max (volume->maxVertex.y, renderObjectVolume->maxVertex.y),
-			std::max (volume->maxVertex.z, renderObjectVolume->maxVertex.z));
+		_boundingBox.minVertex = glm::vec3 (
+			std::min (_boundingBox.minVertex.x, renderObjectBoundingBox.minVertex.x),
+			std::min (_boundingBox.minVertex.y, renderObjectBoundingBox.minVertex.y),
+			std::min (_boundingBox.minVertex.z, renderObjectBoundingBox.minVertex.z)
+		);
+		_boundingBox.maxVertex = glm::vec3 (
+			std::max (_boundingBox.maxVertex.x, renderObjectBoundingBox.maxVertex.x),
+			std::max (_boundingBox.maxVertex.y, renderObjectBoundingBox.maxVertex.y),
+			std::max (_boundingBox.maxVertex.z, renderObjectBoundingBox.maxVertex.z)
+		);
 	}
 }

@@ -2,8 +2,6 @@
 
 #include "Utils/Primitives/Primitive.h"
 
-#include "Wrappers/OpenGL/GL.h"
-
 #include "Renderer/RenderSystem.h"
 #include "Renderer/RenderManager.h"
 

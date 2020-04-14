@@ -33,10 +33,7 @@ protected:
 	void ShowHierarchy ();
 
 	void ShowGizmo (const Camera* camera, Transform* transform);
-	void ShowBoundingBox ();
-	void ShowCollider ();
-
-	void HideLastCollider ();
+	void ShowComponents (const SceneObject* sceneObject);
 
 	void ShowGrid ();
 

@@ -15,7 +15,7 @@ public:
 
 	void SetFieldOfView (float FOV);
 
-	FrustumVolume* GetFrustumVolume () const;
+	FrustumVolume GetFrustumVolume () const;
 
 	glm::mat4 GetProjectionMatrix () const;
 };

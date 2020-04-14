@@ -3,7 +3,9 @@
 
 #include "Systems/Components/Component.h"
 
-#include "Systems/Physics/Rigidbody.h"
+#include <bullet/BulletDynamics/Dynamics/btRigidBody.h>
+
+#include "Systems/Collision/BulletCollider.h"
 
 class ENGINE_API RigidBodyComponent : public Component
 {
@@ -15,7 +17,11 @@ protected:
 	ATTRIBUTE(EditAnywhere, Meta=(Collider))
 	BulletCollider* _collider;
 
-	Rigidbody* _rigidbody;
+	btMotionState* _motionState;
+	btRigidBody* _rigidBody;
+
+	bool _isSelected;
+	bool _isSelectedLastFrame;
 
 public:
 	RigidBodyComponent ();
@@ -29,6 +35,20 @@ public:
 
 	void OnAttachedToScene ();
 	void OnDetachedFromScene ();
+
+	void OnGizmo ();
+
+	float GetMass () const;
+	BulletCollider* GetCollider () const;
+	glm::vec3 GetVelocity () const;
+	glm::vec3 GetAngularVelocity () const;
+
+	void SetMass (float mass);
+	void SetCollider (BulletCollider* collider);
+	void SetVelocity (const glm::vec3& velocity);
+	void SetAngularVelocity (const glm::vec3& velocity);
+protected:
+	void UpdateCollider ();
 };
 
 #endif

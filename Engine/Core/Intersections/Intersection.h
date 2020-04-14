@@ -3,8 +3,6 @@
 
 #include "Core/Singleton/Singleton.h"
 
-#include "GeometricPrimitive.h"
-
 #include "FrustumVolume.h"
 #include "AABBVolume.h"
 #include "RayPrimitive.h"
@@ -19,12 +17,10 @@ class ENGINE_API Intersection : public Singleton<Intersection>
 	DECLARE_SINGLETON(Intersection)
 
 public:
-	bool CheckFrustumVsPrimitive (FrustumVolume* frustum, GeometricPrimitive* primitive);
-	bool CheckFrustumVsAABB(FrustumVolume* frustum, AABBVolume* aabb);
-	bool CheckRayVsPrimitive (RayPrimitive* ray, GeometricPrimitive* aabb, float& distance);
-	bool CheckRayVsAABB (RayPrimitive* ray, AABBVolume* aabb, float& distance);
-	bool CheckRayVsModel (RayPrimitive* ray, const Resource<Model>& model, float& distance);
-	bool CheckRayVsPolygon (RayPrimitive* ray, const Resource<Model>& model, Polygon* poly, float& distance);
+	bool CheckFrustumVsAABB (const FrustumVolume&, const AABBVolume&);
+	bool CheckRayVsAABB (const RayPrimitive& ray, const AABBVolume& aabb, float& distance);
+	bool CheckRayVsModel (const RayPrimitive& ray, const Resource<Model>& model, float& distance);
+	bool CheckRayVsPolygon (const RayPrimitive& ray, const Resource<Model>& model, Polygon* poly, float& distance);
 private:
 	Intersection ();
 	Intersection (const Intersection&);

@@ -4,8 +4,6 @@
 #include <iostream>
 
 #include "Resources/Resources.h"
-#include "SceneNodes/TextGUI.h"
-#include "Managers/SceneManager.h"
 
 FrameRate::FrameRate () :
 	_timeElapsed (0),
@@ -16,13 +14,14 @@ FrameRate::FrameRate () :
 
 void FrameRate::Start ()
 {
+	_textGUIComponent = _parent->GetComponent<TextGUIComponent> ();
+
 	Resource<Font> font = Resources::LoadBitmapFont ("Assets/Fonts/Fonts/sans.fnt");
 
-	_textGUI = new TextGUI ();
-	_textGUI->SetFont (font);
-	_textGUI->GetTransform ()->SetPosition (glm::vec3 (0.0f, 0.9f, 0.0f));
-	_textGUI->GetTransform ()->SetScale (glm::vec3 (0.7f, 0.7f, 0.0f));
-	SceneManager::Instance ()->Current ()->AttachObject (_textGUI);
+	_textGUIComponent->SetFont (font);
+
+	_parent->GetTransform ()->SetPosition (glm::vec3 (0.0f, 0.9f, 0.0f));
+	_parent->GetTransform ()->SetScale (glm::vec3 (0.7f, 0.7f, 0.0f));
 }
 
 void FrameRate::Update() 
@@ -44,7 +43,7 @@ void FrameRate::Update()
 		return ;
 	}
 
-	_textGUI->SetText (std::to_string (lastFrameRate));
+	_textGUIComponent->SetText (std::to_string (lastFrameRate));
 	_timeElapsed = 0;
 }
 
