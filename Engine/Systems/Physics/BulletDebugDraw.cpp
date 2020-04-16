@@ -7,7 +7,8 @@ void BulletDebugDraw::drawLine (const btVector3& first,const btVector3& last, co
 	Gizmo::DrawLine (
 		glm::vec3 (first.x (), first.y (), first.z ()),
 		glm::vec3 (last.x (), last.y (), last.z ()),
-		Color (color.x () * 255, color.y () * 255, color.z () * 255)
+		Color::Green
+		// Color (color.x () * 255, color.y () * 255, color.z () * 255)
 	);
 }
 

@@ -25,7 +25,10 @@ public:
 	void Init ();
 
 	void AttachRigidbody (btRigidBody* rigidbody);
+	void AttachCollisionObject (btCollisionObject* collisionObject);
+
 	void DetachRigidbody (btRigidBody* rigidbody);
+	void DetachCollisionObject (btCollisionObject* collisionObject);
 
 	RaycastProduct Raycast (const glm::vec3& origin, const glm::vec3& direction,
 		float distance = 2000);

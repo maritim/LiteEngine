@@ -77,6 +77,19 @@ SceneObject* Scene::GetObject (const std::string& name) const
 	return nullptr;
 }
 
+SceneObject* Scene::GetObject (std::size_t instanceID) const
+{
+	for (SceneObject* sceneObject : *this) {
+		if (sceneObject->GetInstanceID () == instanceID) {
+			return sceneObject;
+		}
+	}
+
+	Console::LogError ("There is no object with instance ID " + std::to_string (instanceID) + " in scene.");
+
+	return nullptr;
+}
+
 const AABBVolume& Scene::GetBoundingBox () const
 {
 	return _boundingBox;
@@ -89,12 +102,22 @@ void Scene::Update()
 	}
 }
 
+void Scene::SetPath (const std::string& path)
+{
+	_path = path;
+}
+
+const std::string& Scene::GetPath () const
+{
+	return _path;
+}
+
 void Scene::SetName (const std::string& name)
 {
 	_name = name;
 }
 
-std::string Scene::GetName () const
+const std::string& Scene::GetName () const
 {
 	return _name;
 }

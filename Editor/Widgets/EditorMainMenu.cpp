@@ -10,9 +10,14 @@
 #include "EditorScene.h"
 #include "EditorSelection.h"
 
+#include "Systems/Input/Input.h"
+
+#include "Resources/SceneSaver.h"
+
 void EditorMainMenu::Show ()
 {
 	ShowMainMenu ();
+	CheckInput ();
 }
 
 void EditorMainMenu::ShowMainMenu ()
@@ -20,6 +25,7 @@ void EditorMainMenu::ShowMainMenu ()
 	if (ImGui::BeginMainMenuBar())
 	{
 		bool openScene = false;
+		bool saveScene = false;
 
 		if (ImGui::BeginMenu("File"))
 		{
@@ -27,7 +33,7 @@ void EditorMainMenu::ShowMainMenu ()
 			
 			openScene = ImGui::MenuItem("Open", "Ctrl+O");
 
-			if (ImGui::MenuItem("Save", "Ctrl+S")) {}
+			saveScene = ImGui::MenuItem("Save", "Ctrl+S");
 			if (ImGui::MenuItem("Save As..")) {}
 
 			ImGui::Separator();
@@ -41,6 +47,12 @@ void EditorMainMenu::ShowMainMenu ()
 		if (strlen (path) > 0) {
 			EditorSelection::Instance ()->SetActive (nullptr);
 			SceneManager::Instance ()->Load (std::string (path));
+		}
+
+		path = dialog.saveFileDialog (saveScene, nullptr, ".scene");
+
+		if (strlen (path) > 0) {
+			SceneSaver::Instance ().Save (SceneManager::Instance ()->Current (), path);
 		}
 
 		if (ImGui::BeginMenu("Edit"))
@@ -133,5 +145,14 @@ void EditorMainMenu::ShowMainMenu ()
 		}
 
 		ImGui::EndMainMenuBar();
+	}
+}
+
+void EditorMainMenu::CheckInput ()
+{
+	auto& path = SceneManager::Instance ()->Current ()->GetPath ();
+
+	if (Input::GetKey (InputKey::LCTRL) && Input::GetKeyDown (InputKey::S)) {
+		SceneSaver::Instance ().Save (SceneManager::Instance ()->Current (), path);
 	}
 }

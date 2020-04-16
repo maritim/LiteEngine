@@ -5,6 +5,8 @@
 
 class ENGINE_API SpotLightComponent : public PointLightComponent
 {
+	DECLARE_COMPONENT(SpotLightComponent)
+
 protected:
 	ATTRIBUTE(EditAnywhere, Meta)	
 	float _cutoff;

@@ -23,6 +23,7 @@ class ENGINE_API Scene : public Object
 protected:
 	SceneRoot* _sceneRoot;
 
+	std::string _path;
 	std::string _name;
 	Skybox* _skybox;
 	AABBVolume _boundingBox;
@@ -33,8 +34,11 @@ public:
 
 	SceneRoot* GetRoot () const;
 
+	void SetPath (const std::string& path);
+	const std::string& GetPath () const;
+
 	void SetName (const std::string& name);
-	std::string GetName () const;
+	const std::string& GetName () const;
 
 	void SetSkybox (Skybox* skybox);
 	Skybox* GetSkybox () const;
@@ -43,6 +47,7 @@ public:
 	void DetachObject (SceneObject*);
 
 	SceneObject* GetObject (const std::string& name) const;
+	SceneObject* GetObject (std::size_t instanceID) const;
 
 	const AABBVolume& GetBoundingBox () const;
 

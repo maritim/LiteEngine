@@ -24,6 +24,8 @@ Object* SkyboxLoader::Load (const std::string& filename)
 
 	Skybox* skybox = new Skybox ();
 
+	skybox->SetName (filename);
+
 	TiXmlElement* content = root->FirstChildElement ();
 
 	while (content) {

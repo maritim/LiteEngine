@@ -10,6 +10,7 @@ public:
 	void Show ();
 protected:
 	void ShowMainMenu ();
+	void CheckInput ();
 };
 
 REGISTER_EDITOR_WIDGET(EditorMainMenu)

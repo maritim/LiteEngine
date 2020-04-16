@@ -80,32 +80,32 @@ SceneObject* Transform::GetSceneObject () const
 	return _sceneObject;
 }
 
-glm::vec3 Transform::GetPosition () const
+const glm::vec3& Transform::GetPosition () const
 {
 	return _position;
 }
 
-glm::vec3 Transform::GetLocalPosition () const
+const glm::vec3& Transform::GetLocalPosition () const
 {
 	return _localPosition;
 }
 
-glm::quat Transform::GetRotation () const
+const glm::quat& Transform::GetRotation () const
 {
 	return _rotation;
 }
 
-glm::quat Transform::GetLocalRotation () const
+const glm::quat& Transform::GetLocalRotation () const
 {
 	return _localRotation;
 }
 
-glm::vec3 Transform::GetScale () const
+const glm::vec3& Transform::GetScale () const
 {
 	return _scale;
 }
 
-glm::vec3 Transform::GetLocalScale () const
+const glm::vec3& Transform::GetLocalScale () const
 {
 	return _localScale;
 }

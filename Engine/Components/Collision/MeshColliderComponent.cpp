@@ -1,32 +1,39 @@
-#include "MeshCollider.h"
+#include "MeshColliderComponent.h"
 
 #include <bullet/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-MeshCollider::MeshCollider (const Resource<Model>& model) :
+MeshColliderComponent::MeshColliderComponent () :
 	_triangleMesh (nullptr)
 {
-	Rebuild (model);
+
 }
 
-MeshCollider::~MeshCollider ()
+MeshColliderComponent::~MeshColliderComponent ()
 {
-	DestroyTriangleMesh ();
+	delete _triangleMesh;
 }
 
-void MeshCollider::Rebuild (const Resource<Model>& model)
+void MeshColliderComponent::Awake ()
 {
+	SetModel (_model);
+}
+
+void MeshColliderComponent::SetModel (const Resource<Model>& model)
+{
+	_model = model;
+
 	/*
 	 * Destroy current collision shape if exists
 	*/
 
-	DestroyCollisionShape ();
+	delete _collisionShape;
 
 	/*
 	 * Destroy current triangle mesh if exists
 	*/
 
-	DestroyTriangleMesh ();
+	delete _triangleMesh;
 
 	/*
 	 * Compute collision triangle mesh based on object's mesh
@@ -37,7 +44,7 @@ void MeshCollider::Rebuild (const Resource<Model>& model)
 	_collisionShape = new btBvhTriangleMeshShape (_triangleMesh, true, true);
 }
 
-btTriangleMesh* MeshCollider::GetTriangleMesh (const Resource<Model>& model)
+btTriangleMesh* MeshColliderComponent::GetTriangleMesh (const Resource<Model>& model)
 {
 	btTriangleMesh* triangleMesh = new btTriangleMesh ();
 
@@ -64,13 +71,4 @@ btTriangleMesh* MeshCollider::GetTriangleMesh (const Resource<Model>& model)
 	}
 
 	return triangleMesh;
-}
-
-void MeshCollider::DestroyTriangleMesh ()
-{
-	if (_triangleMesh == nullptr) {
-		return;
-	}
-
-	delete _triangleMesh;
 }

@@ -9,7 +9,7 @@ class PersistentComponent : public Object
 {
 public:
 	virtual void Load (TiXmlElement* xmlElem) = 0;
-	virtual void Save () { }
+	virtual void Save (TiXmlElement* xmlElem) const = 0;
 };
 
 #endif

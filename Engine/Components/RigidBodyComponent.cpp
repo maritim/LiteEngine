@@ -4,18 +4,15 @@
 #include "Systems/Physics/MotionState.h"
 
 RigidBodyComponent::RigidBodyComponent () :
-	_collider (nullptr),
+	_colliderComponent (nullptr),
 	_motionState (nullptr),
-	_rigidBody (nullptr),
-	_isSelected (false),
-	_isSelectedLastFrame (false)
+	_rigidBody (nullptr)
 {
 
 }
 
 RigidBodyComponent::~RigidBodyComponent ()
 {
-	delete _collider;
 	delete _motionState;
 	delete _rigidBody;
 }
@@ -57,8 +54,8 @@ void RigidBodyComponent::Update ()
 {
 	btTransform transform;
 
-	glm::vec3 offset = _collider == nullptr ? glm::vec3 (0.0f) :
-		_parent->GetTransform ()->GetRotation () * _collider->GetOffset ();
+	glm::vec3 offset = _colliderComponent == nullptr ? glm::vec3 (0.0f) :
+		_parent->GetTransform ()->GetRotation () * _colliderComponent->GetOffset ();
 
 	glm::vec3 position = _parent->GetTransform ()->GetPosition () + offset;
 	glm::quat rotation = _parent->GetTransform ()->GetRotation ();
@@ -72,27 +69,19 @@ void RigidBodyComponent::Update ()
 	 * Set collision shape scaling
 	*/
 
-	if (_collider != nullptr) {
+	if (_colliderComponent != nullptr) {
 		glm::vec3 scale = _parent->GetTransform ()->GetScale ();
 
-		_collider->GetCollisionShape ()->setLocalScaling (btVector3 (scale.x, scale.y, scale.z));
+		_colliderComponent->GetCollisionShape ()->setLocalScaling (btVector3 (scale.x, scale.y, scale.z));
 	}
 
 	/*
 	 * Update collider
 	*/
 
-	if (_collider != nullptr && _collider->IsDirty ()) {
+	if (_colliderComponent != nullptr) { // && _colliderComponent->IsDirty ()) {
 		UpdateCollider ();
 	}
-
-	if (_isSelected == false) {
-		_rigidBody->setCollisionFlags (_rigidBody->getCollisionFlags () | btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT);
-
-		_isSelectedLastFrame = false;
-	}
-
-	_isSelected = false;
 }
 
 void RigidBodyComponent::SetActive (bool isActive)
@@ -132,11 +121,6 @@ float RigidBodyComponent::GetMass () const
 	return _mass;
 }
 
-BulletCollider* RigidBodyComponent::GetCollider () const
-{
-	return _collider;
-}
-
 glm::vec3 RigidBodyComponent::GetVelocity () const
 {
 	btVector3 velocity = _rigidBody->getLinearVelocity ();
@@ -157,24 +141,11 @@ void RigidBodyComponent::SetMass (float mass)
 
 	btVector3 localInertia = btVector3 (0.0f, 0.0f, 0.0f);
 
-	if (_collider != nullptr) {
-		_collider->GetCollisionShape ()->calculateLocalInertia (_mass, localInertia);
+	if (_colliderComponent != nullptr) {
+		_colliderComponent->GetCollisionShape ()->calculateLocalInertia (_mass, localInertia);
 	}
 
 	_rigidBody->setMassProps (mass, localInertia);
-}
-
-void RigidBodyComponent::SetCollider (BulletCollider* collider)
-{
-	/*
-	 * Destroy current collider if exists
-	*/
-
-	if (_collider != collider) {
-		delete _collider;
-	}
-
-	_collider = collider;
 }
 
 void RigidBodyComponent::SetVelocity (const glm::vec3& velocity)
@@ -187,23 +158,13 @@ void RigidBodyComponent::SetAngularVelocity (const glm::vec3& velocity)
 	_rigidBody->setAngularVelocity (btVector3 (velocity.x, velocity.y, velocity.z));
 }
 
-void RigidBodyComponent::OnGizmo ()
-{
-	_isSelected = true;
-
-	if (_isSelectedLastFrame == false) {
-		_rigidBody->setCollisionFlags (_rigidBody->getCollisionFlags () &~ btCollisionObject::CF_DISABLE_VISUALIZE_OBJECT);
-		_isSelectedLastFrame = true;
-	}
-}
-
 void RigidBodyComponent::UpdateCollider ()
 {
-	if (_collider == nullptr) {
+	if (_colliderComponent == nullptr) {
 		return;
 	}
 
-	if (_collider->GetCollisionShape () == nullptr) {
+	if (_colliderComponent->GetCollisionShape () == nullptr) {
 		return;
 	}
 
@@ -213,7 +174,7 @@ void RigidBodyComponent::UpdateCollider ()
 
 	glm::vec3 scale = _parent->GetTransform ()->GetScale ();
 
-	_collider->GetCollisionShape ()->setLocalScaling (btVector3 (scale.x, scale.y, scale.z));
+	_colliderComponent->GetCollisionShape ()->setLocalScaling (btVector3 (scale.x, scale.y, scale.z));
 
 	/*
 	 * Compute local inertia based on collision shape
@@ -224,7 +185,7 @@ void RigidBodyComponent::UpdateCollider ()
 
 	btVector3 localInertia = btVector3 (0.0f, 0.0f, 0.0f);
 
-	_collider->GetCollisionShape ()->calculateLocalInertia (_mass, localInertia);
+	_colliderComponent->GetCollisionShape ()->calculateLocalInertia (_mass, localInertia);
 
 	/*
 	 * Update rigidbody local inertia
@@ -236,5 +197,5 @@ void RigidBodyComponent::UpdateCollider ()
 	 * Update rigidbody collision shape
 	*/
 
-	_rigidBody->setCollisionShape (_collider->GetCollisionShape ());
+	_rigidBody->setCollisionShape (_colliderComponent->GetCollisionShape ());
 }

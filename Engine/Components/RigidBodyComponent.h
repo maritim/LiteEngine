@@ -5,7 +5,7 @@
 
 #include <bullet/BulletDynamics/Dynamics/btRigidBody.h>
 
-#include "Systems/Collision/BulletCollider.h"
+#include "Components/Collision/ColliderComponent.h"
 
 class ENGINE_API RigidBodyComponent : public Component
 {
@@ -14,14 +14,11 @@ class ENGINE_API RigidBodyComponent : public Component
 protected:
 	ATTRIBUTE(EditAnywhere, Meta)
 	float _mass;
-	ATTRIBUTE(EditAnywhere, Meta=(Collider))
-	BulletCollider* _collider;
+
+	ColliderComponent* _colliderComponent;
 
 	btMotionState* _motionState;
 	btRigidBody* _rigidBody;
-
-	bool _isSelected;
-	bool _isSelectedLastFrame;
 
 public:
 	RigidBodyComponent ();
@@ -36,15 +33,11 @@ public:
 	void OnAttachedToScene ();
 	void OnDetachedFromScene ();
 
-	void OnGizmo ();
-
 	float GetMass () const;
-	BulletCollider* GetCollider () const;
 	glm::vec3 GetVelocity () const;
 	glm::vec3 GetAngularVelocity () const;
 
 	void SetMass (float mass);
-	void SetCollider (BulletCollider* collider);
 	void SetVelocity (const glm::vec3& velocity);
 	void SetAngularVelocity (const glm::vec3& velocity);
 protected:

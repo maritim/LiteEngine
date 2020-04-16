@@ -92,9 +92,19 @@ void PhysicsManager::AttachRigidbody (btRigidBody* rigidbody)
 	_dynamicsWorld->addRigidBody (rigidbody);
 }
 
+void PhysicsManager::AttachCollisionObject (btCollisionObject* collisionObject)
+{
+	_dynamicsWorld->addCollisionObject (collisionObject);
+}
+
 void PhysicsManager::DetachRigidbody (btRigidBody* rigidbody)
 {
 	_dynamicsWorld->removeRigidBody (rigidbody);
+}
+
+void PhysicsManager::DetachCollisionObject (btCollisionObject* collisionObject)
+{
+	_dynamicsWorld->removeCollisionObject (collisionObject);
 }
 
 RaycastProduct PhysicsManager::Raycast (const glm::vec3& origin, const glm::vec3& direction, float distance)

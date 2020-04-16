@@ -49,6 +49,30 @@ bool ENGINE_API ComponentAttributeLoader::GetValue<bool> (const std::string& val
 }
 
 template <>
+glm::vec3 ENGINE_API ComponentAttributeLoader::Load<glm::vec3> (TiXmlElement* xmlElem)
+{
+	glm::vec3 result (0.0f);
+
+	const char* x = xmlElem->Attribute ("x");
+	const char* y = xmlElem->Attribute ("y");
+	const char* z = xmlElem->Attribute ("z");
+
+	if (x) {
+		result.x = std::stof (x);
+	}
+
+	if (y) {
+		result.y = std::stof (y);
+	}
+
+	if (z) {
+		result.z = std::stof (z);
+	}
+
+	return result;
+}
+
+template <>
 Resource<Model> ENGINE_API ComponentAttributeLoader::Load<Resource<Model>> (TiXmlElement* xmlElem)
 {
 	Resource<Model> model;
@@ -64,116 +88,6 @@ Resource<Model> ENGINE_API ComponentAttributeLoader::Load<Resource<Model>> (TiXm
 	}
 
 	return model;
-}
-
-#include "Systems/Collision/BoxCollider.h"
-#include "Systems/Collision/SphereCollider.h"
-#include "Systems/Collision/CylinderCollider.h"
-#include "Systems/Collision/CapsuleCollider.h"
-#include "Systems/Collision/MeshCollider.h"
-
-template <>
-BulletCollider* ENGINE_API ComponentAttributeLoader::Load<BulletCollider*> (TiXmlElement* xmlElem)
-{
-	BulletCollider* collider = nullptr;
-
-	std::string shape = xmlElem->Attribute ("shape");
-
-	if (shape == "Box") {
-		const char* modelPath = xmlElem->Attribute ("modelPath");
-
-		if (modelPath != nullptr) {
-			collider = new BoxCollider (Resources::LoadModel (modelPath));
-		}
-
-		if (modelPath == nullptr) {
-			std::string x = xmlElem->Attribute ("x");
-			std::string y = xmlElem->Attribute ("y");
-			std::string z = xmlElem->Attribute ("z");
-
-			collider = new BoxCollider (glm::vec3 (std::stof (x), std::stof (y), std::stof (z)));
-		}
-	}
-	else if (shape == "Sphere") {
-		const char* modelPath = xmlElem->Attribute ("modelPath");
-
-		if (modelPath != nullptr) {
-			collider = new SphereCollider (Resources::LoadModel (modelPath));
-		}
-
-		if (modelPath == nullptr) {
-			std::string radius = xmlElem->Attribute ("radius");
-
-			collider = new SphereCollider (std::stof (radius));
-		}
-	}
-	else if (shape == "Cylinder") {
-		const char* modelPath = xmlElem->Attribute ("modelPath");
-
-		if (modelPath != nullptr) {
-			collider = new CylinderCollider (Resources::LoadModel (modelPath));
-		}
-
-		if (modelPath == nullptr) {
-			std::string radius = xmlElem->Attribute ("radius");
-			std::string height = xmlElem->Attribute ("height");
-
-			collider = new CylinderCollider (std::stof (radius), std::stof (height));
-		}
-	}
-	else if (shape == "Capsule") {
-		const char* modelPath = xmlElem->Attribute ("modelPath");
-
-		if (modelPath != nullptr) {
-			collider = new CapsuleCollider (Resources::LoadModel (modelPath));
-		}
-
-		if (modelPath == nullptr) {
-			std::string radius = xmlElem->Attribute ("radius");
-			std::string height = xmlElem->Attribute ("height");
-
-			collider = new CapsuleCollider (std::stof (radius), std::stof (height));
-		}
-	}
-	else if (shape == "Mesh") {
-		const char* modelPath = xmlElem->Attribute ("modelPath");
-
-		if (modelPath != nullptr) {
-			collider = new MeshCollider (Resources::LoadModel (modelPath));
-		}
-	}
-
-	TiXmlElement* content = xmlElem->FirstChildElement ();
-
-	while (content) {
-		std::string name = content->Value ();
-
-		if (name == "Offset") {
-			glm::vec3 vec (0.0f);
-
-			const char* x = content->Attribute ("x");
-			const char* y = content->Attribute ("y");
-			const char* z = content->Attribute ("z");
-
-			if (x) {
-				vec.x = std::stof (x);
-			}
-
-			if (y) {
-				vec.y = std::stof (y);
-			}
-
-			if (z) {
-				vec.z = std::stof (z);
-			}
-
-			collider->SetOffset (vec);
-		}
-
-		content = content->NextSiblingElement ();
-	}
-
-	return collider;
 }
 
 template <>

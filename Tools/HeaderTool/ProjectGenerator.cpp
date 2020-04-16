@@ -15,6 +15,7 @@ void ProjectGenerator::Generate (const std::string& path, const std::string& gen
 
 	source = "#include \"Systems/Components/EditorComponent.h\"\n"
 			 "#include \"Resources/Loaders/ComponentLoaders/ComponentAttributeLoader.h\"\n"
+			 "#include \"Resources/Savers/ComponentSavers/ComponentAttributeSaver.h\"\n"
 			 "#include \"Systems/Components/ComponentAttributeWidget.h\"\n\n";
 
 	for (auto classType : project.Data) {

@@ -52,17 +52,17 @@ void EditorInspector::ShowTransform (Transform* transform)
 
 		glm::vec3 objectPos = transform->GetPosition ();
 		float matrixTranslation [3] { objectPos.x, objectPos.y, objectPos.z };
-		ImGui::InputFloat3("Position", matrixTranslation, 3);
+		ImGui::InputFloat3("Position", matrixTranslation, "%.5f");
 
 		glm::quat objectRot = transform->GetRotation ();
 		glm::vec3 eulerRot = glm::eulerAngles (objectRot) * RAD2DEG;
 
 		float matrixRotation [3] { eulerRot.x, eulerRot.y, eulerRot.z };
-		ImGui::InputFloat3("Rotation", matrixRotation, 3);
+		ImGui::InputFloat3("Rotation", matrixRotation, "%.5f");
 
 		glm::vec3 objectScale = transform->GetScale ();
 		float matrixScale [3] { objectScale.x, objectScale.y, objectScale.z };
-		ImGui::InputFloat3("Scale", matrixScale, 3);
+		ImGui::InputFloat3("Scale", matrixScale, "%.5f");
 
 		if (objectPos.x != matrixTranslation [0]
 			|| objectPos.y != matrixTranslation [1]

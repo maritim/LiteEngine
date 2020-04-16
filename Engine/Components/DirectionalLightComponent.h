@@ -5,6 +5,8 @@
 
 class ENGINE_API DirectionalLightComponent : public LightComponent
 {
+	DECLARE_COMPONENT(DirectionalLightComponent)
+
 public:
 	void Awake ();
 

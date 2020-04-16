@@ -31,6 +31,7 @@ public:
 	bool operator== (std::nullptr_t) const;
 	bool operator!= (std::nullptr_t) const;
 
+	const std::string& GetPath () const;
 	static Resource<T> GetResource (const std::string& path);
 };
 
@@ -201,6 +202,18 @@ Resource<T> Resource<T>::GetResource (const std::string& path)
 	}
 
 	return Resource (itPaths->second);
+}
+
+template <class T>
+const std::string& Resource<T>::GetPath () const
+{
+	auto itResource = _sources.find (_source);
+
+	// if (itResource == _sources.end ()) {
+	// 	return std::string ();
+	// }
+
+	return itResource->second.first;
 }
 
 #endif

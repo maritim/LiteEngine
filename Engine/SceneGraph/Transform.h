@@ -49,13 +49,13 @@ public:
 
 	SceneObject* GetSceneObject () const;
 
-	glm::vec3 GetPosition () const;
-	glm::quat GetRotation () const;
-	glm::vec3 GetScale () const;
+	const glm::vec3& GetPosition () const;
+	const glm::quat& GetRotation () const;
+	const glm::vec3& GetScale () const;
 
-	glm::vec3 GetLocalPosition () const;
-	glm::quat GetLocalRotation () const;
-	glm::vec3 GetLocalScale () const;
+	const glm::vec3& GetLocalPosition () const;
+	const glm::quat& GetLocalRotation () const;
+	const glm::vec3& GetLocalScale () const;
 
 	void SetPosition (const glm::vec3& position);
 	void SetRotation (const glm::quat& rotation);

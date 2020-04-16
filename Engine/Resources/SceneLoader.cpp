@@ -45,6 +45,11 @@ Scene* SceneLoader::Load (const std::string& filename)
 
 	Scene* scene = new Scene ();
 
+	scene->SetPath (filename);
+
+	std::string name = root->Attribute ("name");
+	scene->SetName (name);
+
 	TiXmlElement* content = root->FirstChildElement ();
 
 	while (content) {
@@ -80,7 +85,7 @@ void SceneLoader::ProcessSkybox (TiXmlElement* xmlElem, Scene* scene)
 void SceneLoader::ProcessSceneObject (TiXmlElement* xmlElem, Scene* scene)
 {
 	std::string name = xmlElem->Attribute ("name");
-	std::string instanceID = xmlElem->Attribute ("InstanceID");
+	std::string instanceID = xmlElem->Attribute ("instanceID");
 	std::string isActive = xmlElem->Attribute ("isActive");
 
 	SceneObject* sceneObject = new SceneObject ();
@@ -143,6 +148,13 @@ void SceneLoader::ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneOb
 
 	TiXmlElement* content = xmlElem->FirstChildElement ();
 
+	const char* parentID = xmlElem->Attribute ("parentID");
+	if (parentID != NULL) {
+		SceneObject* parent =  scene->GetObject (std::stoi (parentID));
+
+		transform->SetParent (parent->GetTransform ());
+	}
+
 	while (content) 
 	{
 		std::string name = content->Value ();
@@ -158,13 +170,6 @@ void SceneLoader::ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneOb
 		}
 
 		content = content->NextSiblingElement ();
-	}
-
-	const char* parentName = xmlElem->Attribute ("parent");
-	if (parentName != NULL) {
-		SceneObject* parent =  scene->GetObject (parentName);
-
-		transform->SetParent (parent->GetTransform ());
 	}
 }
 

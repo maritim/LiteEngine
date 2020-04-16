@@ -62,6 +62,7 @@ std::string ComponentGenerator::Generate (const ClassType* classType)
 			"{\n";
 
 	text += GenerateLoader (classType);
+	text += GenerateSaver (classType);
 	text += GenerateWidget (classType);
 
 	text += "};\n"
@@ -77,6 +78,19 @@ std::string ComponentGenerator::GenerateLoader (const ClassType* classType)
 	text = "public:\n\tvoid Load (TiXmlElement* xmlElem)\n\t{\n";
 
 	text += GenerateAttributesLoader (classType);
+
+	text += "\t}\n\n";
+
+	return text;
+}
+
+std::string ComponentGenerator::GenerateSaver (const ClassType* classType)
+{
+	std::string text;
+
+	text = "public:\n\tvoid Save (TiXmlElement* xmlElem) const\n\t{\n";
+
+	text += GenerateAttributesSaver (classType);
 
 	text += "\t}\n\n";
 
@@ -127,6 +141,25 @@ std::string ComponentGenerator::GenerateAttributesLoader (const ClassType* class
 				"\t\t\t}\n";
 	}
 	text += "\t\t}\n";
+
+	return text;
+}
+
+std::string ComponentGenerator::GenerateAttributesSaver (const ClassType* classType)
+{
+	std::string text;
+
+	if (classType->IsActive == false) {
+		return text;
+	}
+
+	for (auto parentType : classType->Parents) {
+		text += GenerateAttributesSaver (parentType);
+	}
+
+	for (auto attribute : classType->Attributes) {
+		text += "\t\tComponentAttributeSaver::Save<" + attribute.TypeName + "> (xmlElem, " + attribute.Name + ", \"" + trim (attribute.Name) + "\");\n";
+	}
 
 	return text;
 }

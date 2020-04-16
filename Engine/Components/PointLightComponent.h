@@ -5,6 +5,8 @@
 
 class ENGINE_API PointLightComponent : public LightComponent
 {
+	DECLARE_COMPONENT(PointLightComponent)
+
 protected:
 	ATTRIBUTE(EditAnywhere, Meta)	
 	float _range;
