@@ -107,6 +107,12 @@ std::string ComponentGenerator::GenerateWidget (const ClassType* classType)
 
 	text += GenerateAttributesWidget (classType);
 
+	text += "\t\t\tImGui::PushID (this);\n"
+			"\t\t\tif (ImGui::Button (\"Detach Component\", ImVec2 (ImGui::GetWindowWidth (), 18))) {\n"
+			"\t\t\t\t_parent->DetachComponent (this);\n"
+			"\t\t\t}\n"
+			"\t\t\tImGui::PopID ();\n";
+
 	text += "\t\t}\n"
 			"\t}\n\n";
 

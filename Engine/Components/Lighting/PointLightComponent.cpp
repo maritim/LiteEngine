@@ -7,6 +7,12 @@
 #include "Renderer/RenderSystem.h"
 #include "Renderer/RenderManager.h"
 
+PointLightComponent::PointLightComponent () :
+	_range (1.0f)
+{
+
+}
+
 void PointLightComponent::Awake ()
 {
 	_renderLightObject = new RenderPointLightObject ();

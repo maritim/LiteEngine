@@ -13,6 +13,8 @@
 #include "Renderer/RenderViews/CubeMapView.h"
 #include "RenderViews/TextureLUTView.h"
 
+#include "Core/Console/Console.h"
+
 #include "Wrappers/OpenGL/GL.h"
 
 #include "Utils/Extensions/MathExtend.h"

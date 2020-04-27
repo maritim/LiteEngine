@@ -10,7 +10,7 @@
 
 namespace fs = std::experimental::filesystem;
 
-class ComponentAttributeWidget : public Object
+class ENGINE_API ComponentAttributeWidget : public Object
 {
 public:
 	template <class T>
@@ -117,7 +117,7 @@ bool ComponentAttributeWidget::Show<Color> (Color& color, const std::string& nam
 	return isModified;
 }
 
-#include "Components/LightComponent.h"
+#include "Components/Lighting/LightComponent.h"
 
 template <>
 bool ComponentAttributeWidget::Show<LightComponent::ShadowInformation> (LightComponent::ShadowInformation& shadow, const std::string& name)

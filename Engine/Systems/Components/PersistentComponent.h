@@ -5,7 +5,7 @@
 
 #include "Core/Parsers/XML/TinyXml/tinyxml.h"
 
-class PersistentComponent : public Object
+class ENGINE_API PersistentComponent : public Object
 {
 public:
 	virtual void Load (TiXmlElement* xmlElem) = 0;

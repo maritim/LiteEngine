@@ -12,7 +12,7 @@ Camera::Camera(void) :
 	_aspect (0.0f),
 	_zNear (0.0f),
 	_zFar (1.0f),
-	_constraintAspect (true)
+	_constrainAspect (true)
 {
 
 }
@@ -47,9 +47,9 @@ float Camera::GetZFar () const
 	return _zFar;
 }
 
-bool Camera::GetConstraintAspect () const
+bool Camera::GetConstrainAspect () const
 {
-	return _constraintAspect;
+	return _constrainAspect;
 }
 
 void Camera::SetPosition (const glm::vec3& pos)
@@ -72,9 +72,9 @@ void Camera::SetZFar (float zFar)
 	_zFar = zFar;
 }
 
-void Camera::SetConstraintAspect (bool constraintAspect)
+void Camera::SetConstrainAspect (bool constrainAspect)
 {
-	_constraintAspect = constraintAspect;
+	_constrainAspect = constrainAspect;
 }
 
 void Camera::SetRotation (const glm::quat& rotation)
@@ -123,7 +123,7 @@ void Camera::Rotate (const glm::quat& rotation)
 
 void Camera::Update ()
 {
-	if (_constraintAspect == true) {
+	if (_constrainAspect == true) {
 		_aspect = ((float) Window::GetWidth ()) / Window::GetHeight ();
 	}
 }

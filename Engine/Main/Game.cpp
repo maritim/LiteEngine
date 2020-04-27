@@ -18,6 +18,8 @@
 #include "Managers/CameraManager.h"
 #include "Managers/RenderSettingsManager.h"
 
+#include "Core/Console/Console.h"
+
 #include "GameModule.h"
 
 #include "GameModuleLoader.h"
@@ -73,11 +75,11 @@ void Game::Start ()
 		UpdateScene ();
 		DisplayScene ();
 
-		Window::SwapBuffers ();			
+		// if(TICKS_PER_FRAME > Time::GetElapsedTimeMS () - Time::GetTimeMS ()) {
+		// 	SDL_Delay(TICKS_PER_FRAME - (Time::GetElapsedTimeMS () - Time::GetTimeMS ()));
+		// }
 
-		if(TICKS_PER_FRAME > Time::GetElapsedTimeMS () - Time::GetTimeMS ()) {
-			SDL_Delay(TICKS_PER_FRAME - (Time::GetElapsedTimeMS () - Time::GetTimeMS ()));
-		}
+		Window::SwapBuffers ();
 	}
 }
 
@@ -100,7 +102,6 @@ void Game::UpdateScene()
 	PROFILER_LOGGER("Update")
 
 	SceneManager::Instance ()->Update ();
-	CameraManager::Instance ()->Update ();
 
 	SceneManager::Instance ()->Current ()->Update ();
 

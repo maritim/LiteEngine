@@ -56,7 +56,7 @@ Camera* RSMSpotLightAccumulationRenderPass::GetLightCamera (const RenderScene* r
 	lightCamera->SetRotation (glm::conjugate (lightTransform->GetRotation ()));
 
 	lightCamera->SetZFar (renderSpotLightObject->GetLightRange ());
-	lightCamera->SetFieldOfView (renderSpotLightObject->GetLightSpotOuterCutoff () * 2);
+	lightCamera->SetFieldOfViewAngle (renderSpotLightObject->GetLightSpotOuterCutoff () * 2);
 	lightCamera->SetAspect (1.0f);
 
 	return lightCamera;

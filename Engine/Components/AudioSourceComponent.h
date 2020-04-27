@@ -5,7 +5,7 @@
 
 #include "Audio/AudioSource.h"
 
-class AudioSourceComponent : public Component
+class ENGINE_API AudioSourceComponent : public Component
 {
 	DECLARE_COMPONENT(AudioSourceComponent)
 

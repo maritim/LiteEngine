@@ -12,6 +12,8 @@ protected:
 	float _range;
 
 public:
+	PointLightComponent ();
+
 	void Awake ();
 
 	void Update ();

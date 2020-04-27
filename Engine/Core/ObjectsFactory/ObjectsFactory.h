@@ -1,12 +1,10 @@
 #ifndef OBJECTSFACTORY_H
 #define OBJECTSFACTORY_H
 
-#include "Core/Singleton/Singleton.h"
-
 #include <map>
 #include <string>
 
-template<class T>
+template <class T>
 class ENGINE_API ObjectsFactory : public Object
 {
 private:
@@ -14,7 +12,7 @@ private:
 
 	typedef T* (*CreateCompFn) ();
 
-	std::map<std::string, CreateCompFn> _workers; 
+	std::map<std::string, CreateCompFn> _workers;
 
 public:
 	static ObjectsFactory* Instance ();
@@ -22,6 +20,9 @@ public:
 	T* Create (const std::string& name);
 
 	void RegCreateFn (const std::string& name, CreateCompFn fptr);
+
+	typename std::map<std::string, T* (*) ()>::const_iterator begin () const;
+	typename std::map<std::string, T* (*) ()>::const_iterator end () const;
 private:
 	ObjectsFactory ();
 	~ObjectsFactory ();
@@ -29,19 +30,19 @@ private:
 	ObjectsFactory& operator=(const ObjectsFactory&);
 };
 
-template<class T>
+template <class T>
 ObjectsFactory<T>::ObjectsFactory ()
 {
 
 }
 
-template<class T>
+template <class T>
 ObjectsFactory<T>::~ObjectsFactory ()
 {
 
 }
 
-template<class T>
+template <class T>
 ObjectsFactory<T>* ObjectsFactory<T>::_instance;
 
 template<class T>
@@ -53,7 +54,7 @@ ObjectsFactory<T>* ObjectsFactory<T>::Instance ()
 	return _instance;
 }
 
-template<class T>
+template <class T>
 T* ObjectsFactory<T>::Create (const std::string& name)
 {
 	typename std::map<std::string, CreateCompFn>::iterator it = _workers.find (name);
@@ -63,13 +64,29 @@ T* ObjectsFactory<T>::Create (const std::string& name)
 	}
 
 	return (it->second) ();
-} 
+}
 
-template<class T>
+template <class T>
 void ObjectsFactory<T>::RegCreateFn (const std::string& name, CreateCompFn fptr)
 {
 	_workers.insert (std::pair<std::string, CreateCompFn> (name, fptr));
 }
+
+template <class T>
+typename std::map<std::string, T* (*) ()>::const_iterator ObjectsFactory<T>::begin () const
+{
+	return _workers.begin ();
+}
+
+template <class T>
+typename std::map<std::string, T* (*) ()>::const_iterator ObjectsFactory<T>::end () const
+{
+	return _workers.end ();
+}
+
+/*
+ *
+*/
 
 template <class ObjectType, class ManufacturedType>
 class RegisterObject

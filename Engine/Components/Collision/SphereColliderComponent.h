@@ -12,6 +12,8 @@ protected:
 	float _radius;
 
 public:
+	SphereColliderComponent ();
+
 	void Awake ();
 
 	void SetModel (const Resource<Model>& model);

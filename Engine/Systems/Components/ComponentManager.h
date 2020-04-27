@@ -14,14 +14,13 @@ class ComponentManager : public Singleton<ComponentManager>
 private:
 	std::vector<Component*> _components;
 	std::vector<Component*> _newComponents;
+	std::vector<Component*> _needRemoveComponents;
 
 public:
 	void Update ();
 
 	void Register (Component*);
 	void Unregister (Component*);
-
-	void Clear ();
 private:
 	ComponentManager ();
 	~ComponentManager ();

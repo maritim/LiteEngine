@@ -2,6 +2,8 @@
 
 #include "TRSMIndirectDiffuseLightMapVolume.h"
 
+#include "Core/Console/Console.h"
+
 TRSMIndirectDiffuseLightRenderPass::TRSMIndirectDiffuseLightRenderPass () :
 	_lastPostProcessMapVolume ()
 {

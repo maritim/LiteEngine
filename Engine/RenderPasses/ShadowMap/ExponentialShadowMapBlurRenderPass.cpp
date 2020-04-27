@@ -9,6 +9,8 @@
 
 #include "Systems/Settings/SettingsManager.h"
 
+#include "Core/Console/Console.h"
+
 ExponentialShadowMapBlurRenderPass::ExponentialShadowMapBlurRenderPass () :
 	_framebuffers (new ExponentialShadowMapBlurVolume* [2])
 {

@@ -45,9 +45,14 @@ void RenderManager::DetachRenderObject (RenderObject* renderObject)
 	_renderScene->DetachRenderObject (renderObject);
 }
 
-void RenderManager::SetRenderDirectionalLightObject (RenderDirectionalLightObject* renderDirectionalLightObject)
+void RenderManager::AttachRenderDirectionalLightObject (RenderDirectionalLightObject* renderDirectionalLightObject)
 {
-	_renderScene->SetRenderDirectionalLightObject (renderDirectionalLightObject);
+	_renderScene->AttachRenderDirectionalLightObject (renderDirectionalLightObject);
+}
+
+void RenderManager::DetachRenderDirectionalLightObject (RenderDirectionalLightObject* renderDirectionalLightObject)
+{
+	_renderScene->DetachRenderDirectionalLightObject (renderDirectionalLightObject);
 }
 
 void RenderManager::AttachRenderPointLightObject (RenderPointLightObject* renderPointLightObject)

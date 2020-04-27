@@ -4,8 +4,13 @@
 #include "EditorWidget.h"
 #include "EditorManager.h"
 
+#include "Systems/GUI/imguifilesystem/imguifilesystem.h"
+
 class EditorMainMenu : public EditorWidget
 {
+protected:
+	ImGuiFs::Dialog _dialog;
+
 public:
 	void Show ();
 protected:

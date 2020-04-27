@@ -14,7 +14,8 @@ LightComponent::LightComponent () :
 	_castShadows (false),
 	_renderLightObject (nullptr)
 {
-
+	_shadowInformation.resolution.x = 512;
+	_shadowInformation.resolution.y = 512;
 }
 
 LightComponent::~LightComponent ()

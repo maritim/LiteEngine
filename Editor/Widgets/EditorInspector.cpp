@@ -1,6 +1,7 @@
 #include "EditorInspector.h"
 
 #include "Systems/GUI/ImGui/imgui.h"
+#include "Systems/GUI/ImGui/imgui_stdlib.h"
 
 #include "EditorSelection.h"
 
@@ -27,16 +28,7 @@ void EditorInspector::ShowInspector (SceneObject* object)
 
 		if (object != nullptr) {
 
-			bool lastIsActive = object->IsActive ();
-			bool isActive = lastIsActive;
-			ImGui::Checkbox (object->GetName ().c_str (), &isActive);
-
-			if (isActive != lastIsActive) {
-				object->SetActive (isActive);
-			}
-
-			ImGui::Separator ();
-
+			ShowSceneObject (object);
 			ShowTransform (object->GetTransform ());
 			ShowComponents (object);
 
@@ -46,8 +38,38 @@ void EditorInspector::ShowInspector (SceneObject* object)
 	ImGui::End();	
 }
 
+void EditorInspector::ShowSceneObject (SceneObject* sceneObject)
+{
+	std::string lastSceneObjectName = sceneObject->GetName ();
+	std::string sceneObjectName = lastSceneObjectName;
+	ImGui::InputText ("Name", &sceneObjectName);
+
+	if (lastSceneObjectName != sceneObjectName) {
+		sceneObject->SetName (sceneObjectName);
+	}
+
+	ImGui::SameLine ();
+
+	bool lastIsActive = sceneObject->IsActive ();
+	bool isActive = lastIsActive;
+	ImGui::Checkbox ("Active", &isActive);
+
+	if (isActive != lastIsActive) {
+		sceneObject->SetActive (isActive);
+	}
+
+	ShowAttachComponent (sceneObject);
+	bool attachComponent = ImGui::Button ("Attach Component", ImVec2 (ImGui::GetWindowWidth () - 10, 18));
+
+	if (attachComponent) {
+		ImGui::OpenPopup("Options");
+	}
+}
+
 void EditorInspector::ShowTransform (Transform* transform)
 {
+	ImGui::Separator ();
+
 	if (ImGui::CollapsingHeader ("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
 
 		glm::vec3 objectPos = transform->GetPosition ();
@@ -118,4 +140,28 @@ void EditorInspector::ShowComponent (Component* component)
 	}
 
 	editorComponent->Show ();
+}
+
+void EditorInspector::ShowAttachComponent (SceneObject* sceneObject)
+{
+	if (ImGui::BeginPopup("Options")) {
+
+		for (auto& component : *ObjectsFactory<Component>::Instance ()) {
+			std::string componentName = component.first;
+
+			componentName.erase (0, 2);
+
+			if (ImGui::MenuItem(componentName.c_str ())) {
+
+				componentName = "HT" + componentName;
+				Component* component = ObjectsFactory<Component>::Instance ()->Create (componentName);
+
+				sceneObject->AttachComponent (component);
+
+				break;
+			}
+		}
+
+		ImGui::EndPopup();
+	}
 }

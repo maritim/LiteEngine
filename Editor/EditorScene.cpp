@@ -47,9 +47,13 @@ EditorScene::~EditorScene ()
 
 void EditorScene::Init ()
 {
+	_sceneCamera->SetZNear (0.3f);
+	_sceneCamera->SetZFar (100.0f);
+	_sceneCamera->SetConstrainAspect (true);
+
 	PerspectiveCamera* camera = (PerspectiveCamera*) _sceneCamera;
 
-	camera->SetFieldOfView (45);
+	camera->SetFieldOfViewAngle (45);
 
 	std::string renderSettingsPath = "Assets/RenderSettings/Default.rsettings";
 

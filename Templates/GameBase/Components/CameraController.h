@@ -5,7 +5,7 @@
 
 #include "SceneGraph/SceneObject.h"
 
-class CameraController : public Component
+class ENGINE_API CameraController : public Component
 {
 	DECLARE_COMPONENT(CameraController)
 

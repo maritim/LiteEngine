@@ -2,6 +2,8 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
+#include "Core/Console/Console.h"
+
 ResultFrameBufferGenerationRenderPass::ResultFrameBufferGenerationRenderPass () :
 	_frameBuffer (new ResultFrameBuffer2DVolume ())
 {

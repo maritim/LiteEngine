@@ -28,7 +28,11 @@ public:
 	ColliderComponent ();
 	~ColliderComponent ();
 
+	void Awake ();
+
 	void Update ();
+
+	void SetActive (bool isActive);
 
 	void OnGizmo ();
 

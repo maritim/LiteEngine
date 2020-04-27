@@ -33,7 +33,7 @@ public:
 	Transform* GetTransform () const;
 	int GetLayers () const;
 
-	virtual void Update ();
+	void Update ();
 
 	virtual void OnAttachedToScene ();
 	virtual void OnDetachedFromScene ();

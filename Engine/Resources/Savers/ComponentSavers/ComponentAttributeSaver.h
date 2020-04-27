@@ -99,7 +99,7 @@ void ENGINE_API ComponentAttributeSaver::Save<Color> (
     xmlElem->LinkEndChild(componentElem);
 }
 
-#include "Components/LightComponent.h"
+#include "Components/Lighting/LightComponent.h"
 
 template <>
 void ENGINE_API ComponentAttributeSaver::Save<LightComponent::ShadowInformation> (

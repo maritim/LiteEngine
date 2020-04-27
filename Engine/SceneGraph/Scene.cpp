@@ -57,9 +57,7 @@ void Scene::AttachObject (SceneObject* object)
 
 void Scene::DetachObject (SceneObject* object)
 {
-	object->GetTransform ()->DetachParent ();
-
-	object->OnDetachedFromScene ();
+	_needRemoveObjects.push_back (object);
 
 	// TODO: Recalculate Bounding Box when detach object
 }
@@ -97,6 +95,12 @@ const AABBVolume& Scene::GetBoundingBox () const
 
 void Scene::Update()
 {
+	for (auto sceneObject : _needRemoveObjects) {
+		Clear (sceneObject);
+	}
+
+	_needRemoveObjects.clear ();
+
 	for (SceneObject* sceneObject : *this) {
 		sceneObject->Update ();
 	}
@@ -115,6 +119,8 @@ const std::string& Scene::GetPath () const
 void Scene::SetName (const std::string& name)
 {
 	_name = name;
+
+	_sceneRoot->SetName (_name);
 }
 
 const std::string& Scene::GetName () const

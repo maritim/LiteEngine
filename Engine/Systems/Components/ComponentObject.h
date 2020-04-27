@@ -13,8 +13,13 @@ class ENGINE_API ComponentObject : public Object
 {
 protected:	
 	std::vector<Component*> _components;
+	std::vector<Component*> _needRemoveComponents;
 
 public:
+	~ComponentObject ();
+
+	virtual void Update ();
+
 	void AttachComponent (Component*);
 	void DetachComponent (Component*);
 

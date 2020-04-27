@@ -7,7 +7,7 @@
 
 // #include "SceneNodes/AnimationGameObject.h"
 
-class CharacterController : public Component
+class ENGINE_API CharacterController : public Component
 {
 	DECLARE_COMPONENT(CharacterController)
 

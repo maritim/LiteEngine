@@ -1,7 +1,7 @@
 #include "DirectionalLightContainerRenderVolumeCollection.h"
 
 DirectionalLightContainerRenderVolumeCollection::DirectionalLightContainerRenderVolumeCollection () :
-	_iterations (0),
+	_directionalLightsIterator (),
 	_volumetricLightVolume (new VolumetricLightVolume ())
 {
 
@@ -14,28 +14,28 @@ DirectionalLightContainerRenderVolumeCollection::~DirectionalLightContainerRende
 
 void DirectionalLightContainerRenderVolumeCollection::Reset (const RenderScene* renderScene)
 {
-	_iterations = 0;
+	_directionalLightsIterator = renderScene->begin<RenderDirectionalLightObject*> ();
 }
 
 RenderVolumeI* DirectionalLightContainerRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene, const RenderSettings& settings)
 {
-	if (_iterations > 0) {
+	while (_directionalLightsIterator != renderScene->end<RenderDirectionalLightObject*> ()) {
+		auto directionalLightObject = *_directionalLightsIterator;
+
+		if (directionalLightObject->IsActive () == true) {
+			break;
+		}
+
+		_directionalLightsIterator ++;
+	}
+
+	if (_directionalLightsIterator == renderScene->end<RenderDirectionalLightObject*> ()) {
 		return nullptr;
 	}
 
-	auto renderLightObject = renderScene->GetRenderDirectionalLightObject ();
+	_volumetricLightVolume->SetRenderLightObject (*_directionalLightsIterator);
 
-	if (renderLightObject == nullptr) {
-		return nullptr;
-	}
-
-	if (renderLightObject->IsActive () == false) {
-		return nullptr;
-	}
-
-	_volumetricLightVolume->SetRenderLightObject (renderLightObject);
-
-	_iterations ++;
+	_directionalLightsIterator ++;
 
 	return _volumetricLightVolume;
 }

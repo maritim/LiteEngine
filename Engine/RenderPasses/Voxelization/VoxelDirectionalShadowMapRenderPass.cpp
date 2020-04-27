@@ -208,12 +208,14 @@ Camera* VoxelDirectionalShadowMapRenderPass::GetLightCamera (const RenderScene* 
 {
 	const float LIGHT_CAMERA_OFFSET = 50.0f;
 
-	auto renderLightObject = renderScene->GetRenderDirectionalLightObject ();
+	auto renderLightObjectIt = renderScene->begin<RenderDirectionalLightObject*> ();
 
-	if (renderLightObject == nullptr) {
+	if (renderLightObjectIt == renderScene->end<RenderDirectionalLightObject*> ()) {
 		Console::LogError ("There is no active directional light to render. End now!");
 		exit (230);
 	}
+
+	auto renderLightObject = *renderLightObjectIt;
 
 	glm::quat lightRotation = glm::conjugate (renderLightObject->GetTransform ()->GetRotation ());
 

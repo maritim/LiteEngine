@@ -14,12 +14,8 @@
 
 #include "SceneIterator.h"
 
-class SceneIterator;
-
 class ENGINE_API Scene : public Object
 {
-	friend class SceneIterator;
-
 protected:
 	SceneRoot* _sceneRoot;
 
@@ -27,6 +23,8 @@ protected:
 	std::string _name;
 	Skybox* _skybox;
 	AABBVolume _boundingBox;
+
+	std::vector<SceneObject*> _needRemoveObjects;
 
 public:
 	Scene ();

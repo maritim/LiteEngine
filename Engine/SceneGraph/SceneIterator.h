@@ -18,8 +18,6 @@ private:
 	std::stack<std::set<Transform*>::iterator> _childIt;
 
 public:
-	~SceneIterator ();
-
 	SceneIterator& operator++ ();
 	bool operator != (const SceneIterator& other);
 	SceneObject* operator* ();

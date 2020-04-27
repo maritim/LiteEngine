@@ -14,6 +14,8 @@ protected:
 	float _outerCutoff;
 
 public:
+	SpotLightComponent ();
+
 	void Awake ();
 
 	void Update ();

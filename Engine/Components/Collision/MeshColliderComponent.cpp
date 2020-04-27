@@ -16,12 +16,18 @@ MeshColliderComponent::~MeshColliderComponent ()
 
 void MeshColliderComponent::Awake ()
 {
+	if (_model == nullptr) {
+		return;
+	}
+
 	SetModel (_model);
 }
 
 void MeshColliderComponent::SetModel (const Resource<Model>& model)
 {
 	_model = model;
+
+	OnDetachedFromScene ();
 
 	/*
 	 * Destroy current collision shape if exists
@@ -42,6 +48,8 @@ void MeshColliderComponent::SetModel (const Resource<Model>& model)
 	_triangleMesh = GetTriangleMesh (model);
 
 	_collisionShape = new btBvhTriangleMeshShape (_triangleMesh, true, true);
+
+	OnAttachedToScene ();
 }
 
 btTriangleMesh* MeshColliderComponent::GetTriangleMesh (const Resource<Model>& model)

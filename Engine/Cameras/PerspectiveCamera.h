@@ -11,9 +11,9 @@ protected:
 public:
 	PerspectiveCamera ();
 
-	float GetFieldOfView () const;
+	float GetFieldOfViewAngle () const;
 
-	void SetFieldOfView (float FOV);
+	void SetFieldOfViewAngle (float FOV);
 
 	FrustumVolume GetFrustumVolume () const;
 

@@ -1,155 +1,106 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<Scene>
-	<Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
-<!-- 	<Camera path="Assets/Cameras/Main.cam" >
-		<Transform>
-			<Position y="-0.1" />
-			<Rotation />
-		</Transform>
-	</Camera> -->
-	<SceneObject InstanceID="0" name="Environment" isActive="true">
-		<Transform>
-			<Position y="-0.1"/>
-			<Rotation />
-			<Scale />
-		</Transform>
-		<Components>
-			<Component name="FlyCameraController" />
-			<Component name="RenderObjectComponent" renderStage="1" layer="1">
-				<model path="Assets/Models/Street Environment/Street environment_V01.obj" />
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="1" name="CowGirl" isActive="true" >
-		<Transform>
-			<Position />
-			<Rotation />
-			<Scale />
-		</Transform>
-		<Components>
-			<Component name="RenderObjectComponent" renderStage="1" layer="1">
-				<model path="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" />
-			</Component>
-		</Components>
-	</SceneObject>
-	<SceneObject InstanceID="2" name="FantasyGirl" isActive="true" >
-		<Transform>
-			<Position x="-5" y="2" />
-			<Rotation />
-			<Scale x="0.03" y="0.03" z="0.03" />
-		</Transform>
-		<Components>
-			<Component name="RenderObjectComponent" renderStage="1" layer="1">
-				<model path="Assets/Models/Lightning/lightning_obj.obj" />
-			</Component>
-		</Components>
-	</SceneObject>	
-	<SceneObject InstanceID="3" name="Cat" isActive="true" >
-		<Transform>
-			<Position x="-10" />
-			<Rotation />
-			<Scale />
-		</Transform>
-		<Components>
-			<Component name="RenderObjectComponent" renderStage="1" layer="1">
-				<model path="Assets/Models/Cat/cat.obj" />
-			</Component>
-		</Components>
-	</SceneObject>
-	<SceneObject InstanceID="4" name="SpiderMan" isActive="true" >
-		<Transform>
-			<Position x="-15" />
-			<Rotation />
-			<Scale />
-		</Transform>
-		<Components>
-			<Component name="RenderObjectComponent" renderStage="1" layer="1">
-				<model path="Assets/Models/Spider-Man/Spider-Man.obj" />
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="41" name="Directional" isActive="true">
-		<Transform>
-			<Rotation x="-80" y="0" z="0" />
-		</Transform>
-		<Components>
-			<Component name="DirectionalLightComponent" intensity="1" castShadows="true" >
-				<color r="255" g="255" b="255" />
-
-				<shadowInformation cascadesCount="4" bias="0.003" >
-					<Resolution width="512" height="512" />
-				</shadowInformation>
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="40" name="Point" isActive="true">
-		<Transform>
-			<Position x="1" y="1" z="1" />
-		</Transform>
-		<Components>
-			<Component name="PointLightComponent" intensity="1" range="7" castShadows="false" >
-				<color r="255" g="255" b="255" />
-
-				<shadowInformation bias="0.5">
-					<Resolution width="512" height="512" />
-				</shadowInformation>
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="41" name="Ambient" isActive="true">
-		<Components>
-			<Component name="AmbientLightComponent" intensity="0.25" >
-				<color r="255" g="255" b="255" />
-			</Component>
-		</Components>
-	</SceneObject>
-
-<!-- 	<ParticleSystem InstanceID="5" name="CartoonFire" path="Assets/ParticleSystem/CartoonFire/Fire.psys" isActive="false" >
-		<Transform>
-			<Position x=-10 z=-0.5 />
-			<Rotation />
-			<Scale />
-		</Transform>
-	</ParticleSystem>
-	<ParticleSystem InstanceID="6" name="Smoke" path="Assets/ParticleSystem/Smoke/Smoke.psys" isActive="false" >
-		<Transform>
-			<Position x="10" />
-			<Rotation />
-			<Scale />
-		</Transform>
-	</ParticleSystem> 
-
- 	<ParticleSystem InstanceID="7" name="Fireworks" path="Assets/ParticleSystem/Fireworks/Fireworks.psys" isActive="false" >
-		<Transform>
-			<Position x="0" y="5" z="-5" />
-			<Rotation x="0" y="0" z="0" /> 
-			<Scale />
-		</Transform>
-	</ParticleSystem>
-  	<ParticleSystem InstanceID="8" name="Snow" path="Assets/ParticleSystem/Snow/Snow.psys" isActive="false" >
-		<Transform>
-			<Position y="20" z="-5" />
-			<Rotation />
-			<Scale />
-		</Transform>
-	</ParticleSystem> 
-	<ParticleSystem InstanceID="8" name="Rain" path="Assets/ParticleSystem/Rain/Rain.psys" isActive="false" >
-		<Transform>
-			<Position y="20" z="-5" />
-			<Rotation />
-			<Scale />
-		</Transform>
-	</ParticleSystem>
-	<ParticleSystem InstanceID="10" name="Tail" path="Assets/ParticleSystem/Tail/Tail.psys" isActive="false" >
-		<Transform parent="CowGirl" >
-			<Position />
-			<Rotation />
-			<Scale />
-		</Transform>
-	</ParticleSystem> -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<Scene name="">
+    <Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
+    <SceneObject instanceID="0" name="Environment" isActive="true">
+        <Transform>
+            <Position x="0.000000" y="-0.100000" z="0.000000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="1.000000" y="1.000000" z="1.000000" />
+        </Transform>
+        <Components>
+            <Component name="RenderObjectComponent" renderStage="1" layer="1">
+                <model path="Assets/Models/Street Environment/Street environment_V01.obj" />
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="40" name="Point" isActive="true">
+        <Transform>
+            <Position x="1.000000" y="1.000000" z="1.000000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="7.000000" y="7.000000" z="7.000000" />
+        </Transform>
+        <Components>
+            <Component name="PointLightComponent" intensity="1.000000" castShadows="false" range="7.000000">
+                <color r="255" g="255" b="255" a="255" />
+                <shadowInformation cascadesCount="1" bias="0.500000">
+                    <Resolution width="512" height="512" />
+                </shadowInformation>
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="4" name="SpiderMan" isActive="true">
+        <Transform>
+            <Position x="-15.000000" y="0.000000" z="0.000000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="1.000000" y="1.000000" z="1.000000" />
+        </Transform>
+        <Components>
+            <Component name="RenderObjectComponent" renderStage="1" layer="1">
+                <model path="Assets/Models/Spider-Man/Spider-Man.obj" />
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="41" name="Ambient" isActive="true">
+        <Transform>
+            <Position x="0.000000" y="0.000000" z="0.000000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="1.000000" y="1.000000" z="1.000000" />
+        </Transform>
+        <Components>
+            <Component name="AmbientLightComponent" intensity="0.250000">
+                <color r="255" g="255" b="255" a="255" />
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="1" name="CowGirl" isActive="true">
+        <Transform>
+            <Position x="0.000000" y="0.000000" z="0.000000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="1.000000" y="1.000000" z="1.000000" />
+        </Transform>
+        <Components>
+            <Component name="RenderObjectComponent" renderStage="1" layer="1">
+                <model path="Assets/Models/Hot_Girl_01/Hot_Girl_01.obj" />
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="2" name="FantasyGirl" isActive="true">
+        <Transform>
+            <Position x="-5.000000" y="2.000000" z="0.000000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="0.030000" y="0.030000" z="0.030000" />
+        </Transform>
+        <Components>
+            <Component name="RenderObjectComponent" renderStage="1" layer="1">
+                <model path="Assets/Models/Lightning/lightning_obj.obj" />
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="3" name="Cat" isActive="true">
+        <Transform>
+            <Position x="-10.000000" y="0.000000" z="0.000000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="1.000000" y="1.000000" z="1.000000" />
+        </Transform>
+        <Components>
+            <Component name="RenderObjectComponent" renderStage="1" layer="1">
+                <model path="Assets/Models/Cat/cat.obj" />
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="41" name="Directional" isActive="true">
+        <Transform>
+            <Position x="0.000000" y="0.000000" z="0.000000" />
+            <Rotation x="-80.000000" y="0.000000" z="0.000000" />
+            <Scale x="1.000000" y="1.000000" z="1.000000" />
+        </Transform>
+        <Components>
+            <Component name="DirectionalLightComponent" intensity="1.000000" castShadows="true">
+                <color r="255" g="255" b="255" a="255" />
+                <shadowInformation cascadesCount="4" bias="0.003000">
+                    <Resolution width="512" height="512" />
+                </shadowInformation>
+            </Component>
+        </Components>
+    </SceneObject>
 </Scene>

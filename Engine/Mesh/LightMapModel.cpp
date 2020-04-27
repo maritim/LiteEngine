@@ -1,5 +1,7 @@
 #include "LightMapModel.h"
 
+#include "Core/Console/Console.h"
+
 LightMapModel::LightMapModel () :
 	Model (),
 	_haveLightMapUV (false),

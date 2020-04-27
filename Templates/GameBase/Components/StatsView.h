@@ -5,7 +5,7 @@
 
 #include <vector>
 
-class StatsView : public Component
+class ENGINE_API StatsView : public Component
 {
 	DECLARE_COMPONENT(StatsView)
 

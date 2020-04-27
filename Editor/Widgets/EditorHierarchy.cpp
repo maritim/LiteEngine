@@ -23,21 +23,17 @@ void EditorHierarchy::ShowHierarchy ()
 
 		Scene* scene = SceneManager::Instance ()->Current ();
 
-		SceneRoot* sceneRoot = scene->GetRoot ();
-
-		for_each_type (Transform*, child, *sceneRoot->GetTransform ()) {
-			ShowHierarchy (child->GetSceneObject ());
-		}
+		ShowHierarchy (scene->GetRoot (), scene);
 	}
 
 	ImGui::End();
 }
 
-void EditorHierarchy::ShowHierarchy (SceneObject* sceneObject)
+void EditorHierarchy::ShowHierarchy (SceneObject* sceneObject, Scene* scene)
 {
 	SceneObject* focusedObject = EditorSelection::Instance ()->GetActive ();
 
-	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow;
+	ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
 
 	if (focusedObject == sceneObject) {
 		node_flags |= ImGuiTreeNodeFlags_Selected;
@@ -49,7 +45,8 @@ void EditorHierarchy::ShowHierarchy (SceneObject* sceneObject)
 
 	auto col = ImGui::GetStyleColorVec4 (ImGuiCol_Text);
 
-	if (sceneObject->GetTransform ()->GetParent ()->GetSceneObject ()->IsActive () == false) {
+	if (sceneObject->GetTransform ()->GetParent () != nullptr &&
+		sceneObject->GetTransform ()->GetParent ()->GetSceneObject ()->IsActive () == false) {
 		col = ImVec4 (col.x * 2, col.y * 2, col.z * 2, col.w);
 	}
 
@@ -59,7 +56,69 @@ void EditorHierarchy::ShowHierarchy (SceneObject* sceneObject)
 
 	ImGui::PushStyleColor (ImGuiCol_Text, col);
 
+	ImGui::PushID (sceneObject);
 	bool open = ImGui::TreeNodeEx (sceneObject->GetName ().c_str (), node_flags);
+
+    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+    {
+        ImGui::SetDragDropPayload("DragDrop_SceneObject", &sceneObject, sizeof (intptr_t));    // Set payload to carry the index of our item (could be anything)
+        ImGui::Text("%s", sceneObject->GetName ().c_str ());    // Display preview (could be anything, e.g. when dragging an image we could decide to display the filename and a small preview of the image, etc.)
+        ImGui::EndDragDropSource();
+    }
+    if (ImGui::BeginDragDropTarget())
+    {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DragDrop_SceneObject")) {
+            SceneObject* source = (SceneObject*) * (intptr_t*) payload->Data;
+
+            /*
+             * Check source is not parent to current scene object
+            */
+
+            SceneObject* parent = sceneObject;
+            while (parent->GetTransform ()->GetParent () != nullptr &&
+            		parent->GetTransform ()->GetParent ()->GetSceneObject () != source) {
+            	parent = parent->GetTransform ()->GetParent ()->GetSceneObject ();
+            }
+
+            if (parent->GetTransform ()->GetParent () == nullptr) {
+	            source->GetTransform ()->SetParent (sceneObject->GetTransform ());
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
+    if (ImGui::BeginPopupContextItem()) // <-- This is using IsItemHovered()
+    {
+		if (sceneObject->IsActive () == false) {
+			ImGui::PushStyleColor (ImGuiCol_Text, ImVec4 (col.x * 2, col.y * 2, col.z * 2, col.w));
+		}
+        if (ImGui::MenuItem("Attach Scene Object")) {
+
+        	SceneObject* newSceneObject = new SceneObject ();
+
+        	std::size_t instanceID = 0;
+
+        	for (auto sceneObject : *scene) {
+        		instanceID = std::max (instanceID, sceneObject->GetInstanceID ());
+        	}
+
+        	newSceneObject->SetName ("SceneObject");
+        	newSceneObject->SetInstanceID (instanceID + 1);
+        	scene->AttachObject (newSceneObject);
+        	newSceneObject->GetTransform ()->SetParent (sceneObject->GetTransform ());
+        }
+        if (ImGui::MenuItem("Detach Scene Object")) {
+        	scene->DetachObject (sceneObject);
+
+        	focusedObject = nullptr;
+        	EditorSelection::Instance ()->SetActive (nullptr);
+        }
+		if (sceneObject->IsActive () == false) {
+	        ImGui::PopStyleColor ();
+		}
+        ImGui::EndPopup();
+    }
+
+	ImGui::PopID ();
 
 	if (ImGui::IsItemClicked()) {
 		if (focusedObject != sceneObject) {
@@ -69,7 +128,7 @@ void EditorHierarchy::ShowHierarchy (SceneObject* sceneObject)
 
 	if (open) {
 		for_each_type (Transform*, child, *sceneObject->GetTransform ()) {
-			ShowHierarchy (child->GetSceneObject ());
+			ShowHierarchy (child->GetSceneObject (), scene);
 		}
 
 		ImGui::TreePop ();

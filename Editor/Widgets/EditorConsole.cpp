@@ -65,8 +65,6 @@ void EditorConsole::ShowConsoleWindow ()
 	ImGui::End();
 }
 
-#include "Debug/Logger/Logger.h"
-
 void EditorConsole::ShowConsoleSettings ()
 {
 	if (ImGui::BeginPopup("Options")) {

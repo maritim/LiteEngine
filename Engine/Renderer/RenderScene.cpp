@@ -5,7 +5,7 @@
 RenderScene::RenderScene () :
 	_renderObjects (),
 	_renderSkyboxObject (nullptr),
-	_renderDirectionalLightObject (nullptr),
+	_renderDirectionalLightObjects (),
 	_renderPointLightObjects (),
 	_renderSpotLightObjects (),
 	_renderAmbientLightObject (nullptr),
@@ -38,9 +38,14 @@ void RenderScene::DetachRenderObject (RenderObject* renderObject)
 	UpdateBoundingBox ();
 }
 
-void RenderScene::SetRenderDirectionalLightObject (RenderDirectionalLightObject* renderDirectionalLightObject)
+void RenderScene::AttachRenderDirectionalLightObject (RenderDirectionalLightObject* renderDirectionalLightObject)
 {
-	_renderDirectionalLightObject = renderDirectionalLightObject;
+	_renderDirectionalLightObjects.insert (renderDirectionalLightObject);
+}
+
+void RenderScene::DetachRenderDirectionalLightObject (RenderDirectionalLightObject* renderDirectionalLightObject)
+{
+	_renderDirectionalLightObjects.erase (renderDirectionalLightObject);
 }
 
 void RenderScene::AttachRenderPointLightObject (RenderPointLightObject* renderPointLightObject)
@@ -71,11 +76,6 @@ void RenderScene::SetRenderAmbientLightObject (RenderAmbientLightObject* renderA
 RenderSkyboxObject* RenderScene::GetRenderSkyboxObject () const
 {
 	return _renderSkyboxObject;
-}
-
-RenderDirectionalLightObject* RenderScene::GetRenderDirectionalLightObject () const
-{
-	return _renderDirectionalLightObject;
 }
 
 RenderAmbientLightObject* RenderScene::GetRenderAmbientLightObject () const

@@ -59,11 +59,17 @@ void SceneObject::SetActive (bool isActive)
 	for (auto component : _components) {
 		component->SetActive (_isActive);
 	}
+
+	for_each_type (Transform*, child, *_transform) {
+		child->GetSceneObject ()->SetActive (isActive);
+	}
 }
 
 void SceneObject::Update ()
 {
 	_transform->SetIsDirty (false);
+
+	ComponentObject::Update ();
 }
 
 void SceneObject::OnAttachedToScene ()

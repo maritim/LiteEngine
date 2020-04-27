@@ -7,6 +7,8 @@
 #include "SceneNodes/SceneLayer.h"
 
 RenderObjectComponent::RenderObjectComponent () :
+	_renderStage (1),
+	_layer (1),
 	_model (nullptr),
 	_renderObject (nullptr)
 {
@@ -20,43 +22,28 @@ RenderObjectComponent::~RenderObjectComponent ()
 
 void RenderObjectComponent::Awake ()
 {
-	if (_model == nullptr) {
-		return;
-	}
-
-	if (_layer & SceneLayer::ANIMATION) {
-		_renderObject = new RenderAnimationObject ();
-
-		_renderObject->SetSceneLayers (_layer);
-
-		auto renderObject = (RenderAnimationObject*) _renderObject;
-		renderObject->SetAnimationModel (_model);
-	} else {
-		_renderObject = new RenderObject ();
-
-		_renderObject->SetSceneLayers (_layer | SceneLayer::STATIC);
-	}
-
-	/*
-	 * Set render object model view
-	*/
-
-	SetModel (_model);
+	SetLayer (_layer);
 
 	_renderObject->SetTransform (_parent->GetTransform ());
 	_renderObject->SetRenderStage (RenderStage::RENDER_STAGE_DEFERRED);
 	_renderObject->SetActive (_parent->IsActive ());
-
-	RenderManager::Instance ()->AttachRenderObject (_renderObject);
 }
 
 void RenderObjectComponent::Update ()
 {
+	if (_renderObject == nullptr) {
+		return;
+	}
+
 	_renderObject->Update ();
 }
 
 void RenderObjectComponent::SetActive (bool isActive)
 {
+	if (_renderObject == nullptr) {
+		return;
+	}
+
 	_renderObject->SetActive (isActive);
 }
 
@@ -81,6 +68,10 @@ void RenderObjectComponent::OnDetachedFromScene ()
 void RenderObjectComponent::SetModel (const Resource<Model>& model)
 {
 	_model = model;
+
+	if (_model == nullptr) {
+		return;
+	}
 
 	Resource<ModelView> modelView = nullptr;
 
@@ -115,6 +106,10 @@ void RenderObjectComponent::SetRenderStage (int renderStage)
 {
 	_renderStage = renderStage;
 
+	if (_renderObject == nullptr) {
+		return;
+	}
+
 	_renderObject->SetRenderStage ((RenderStage) _renderStage);
 }
 
@@ -122,7 +117,30 @@ void RenderObjectComponent::SetLayer (int sceneLayers)
 {
 	_layer = sceneLayers;
 
-	_renderObject->SetSceneLayers (_layer);
+	OnDetachedFromScene ();
+
+	delete _renderObject;
+
+	if (_layer & SceneLayer::ANIMATION) {
+		_renderObject = new RenderAnimationObject ();
+
+		_renderObject->SetSceneLayers (_layer);
+
+		auto renderObject = (RenderAnimationObject*) _renderObject;
+		renderObject->SetAnimationModel (_model);
+	} else {
+		_renderObject = new RenderObject ();
+
+		_renderObject->SetSceneLayers (_layer | SceneLayer::STATIC);
+	}
+
+	/*
+	 * Set render object model view
+	*/
+
+	SetModel (_model);
+
+	OnAttachedToScene ();
 }
 
 const Resource<Model>& RenderObjectComponent::GetModel () const

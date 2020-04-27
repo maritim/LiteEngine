@@ -17,8 +17,6 @@ private:
 	Camera* _active;
 
 public:
-	void Update ();
-
 	void SetActive (Camera* camera);
 	Camera* GetActive ();
 

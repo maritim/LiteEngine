@@ -19,6 +19,7 @@ void TextGUIComponent::Awake ()
 {
 	_renderObject->SetTransform (_parent->GetTransform ());
 	_renderObject->SetRenderStage (RenderStage::RENDER_STAGE_FORWARD);
+	_renderObject->SetActive (_parent->IsActive ());
 
 	SetFont (_font);
 	SetText (_text);

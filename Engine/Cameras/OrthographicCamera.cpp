@@ -8,9 +8,7 @@ OrthographicCamera::OrthographicCamera () :
 	_leftLimit (0.0f),
 	_bottomLimit (0.0f)
 {
-	_aspect = 0.75;
-	_zNear = 0.3f;
-	_zFar = 10000.0f;
+
 }
 
 float OrthographicCamera::GetOrthographicSize () const
@@ -21,6 +19,9 @@ float OrthographicCamera::GetOrthographicSize () const
 void OrthographicCamera::SetOrthographicSize (float orthographicSize)
 {
 	_orthographicSize = orthographicSize;
+
+	_bottomLimit = - _orthographicSize / 2.0f;
+	_leftLimit = - (_orthographicSize * _aspect) / 2.0f;
 }
 
 

@@ -5,7 +5,7 @@
 
 #include "Renderer/RenderAmbientLightObject.h"
 
-class AmbientLightComponent : public Component
+class ENGINE_API AmbientLightComponent : public Component
 {
 	DECLARE_COMPONENT(AmbientLightComponent)
 

@@ -1,10 +1,6 @@
 #ifndef MULTIPLECONTAINER_H
 #define MULTIPLECONTAINER_H
 
-#include <vector>
-
-#include "Core/Console/Console.h"
-
 /*
  * This need to be specialized
  * Did not expect to use this directly... 

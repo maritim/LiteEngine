@@ -1,78 +1,77 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<Scene name="VXGI Test" >
-	<Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
-
-	<SceneObject InstanceID="0" name="Sponza Atrium" isActive="true" >
-		<Transform>
-			<Position y="-0.1" />
-			<Rotation />
-			<Scale x ="0.03" y="0.03" z="0.03"/>
-		</Transform>
-		<Components>
-			<Component name="FlyCameraController" />
-			<Component name="RenderObjectComponent" renderStage="1" layer="8">
-				<model path="Assets/Models/Sponza/SponzaNoFlag.obj" />
-			</Component>
-			<Component name="RigidBodyComponent" mass="0" >
-				<collider shape="Mesh" modelPath="Assets/Models/Sponza/SponzaNoFlag.obj" />
-			</Component>
-			<Component name="AudioSourceComponent" volume="1" loop="false">
-				<audioClip path="Assets/Audio/example.wav" />
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="41" name="Directional" isActive="true" >
-		<Transform>
-			<Rotation x="-80" y="0" z="0" />
-		</Transform>
-		<Components>
-			<Component name="DirectionalLightComponent" intensity="1" castShadows="true" >
-				<color r="255" g="255" b="255" />
-
-				<shadowInformation cascadesCount="4" bias="0.003" >
-					<Resolution width="512" height="512" />
-				</shadowInformation>
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="40" name="Point" isActive="false">
-		<Transform>
-			<Position x="0" y="3" z="0.6" />
-		</Transform>
-		<Components>
-			<Component name="PointLightComponent" intensity="1" range="7" castShadows="false" >
-				<color r="255" g="255" b="255" />
-
-				<shadowInformation bias="0.5">
-					<Resolution width="512" height="512" />
-				</shadowInformation>
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="40" name="Spot" isActive="false">
-		<Transform>
-			<Position x="0" y="3" z="0.6" />
-			<Rotation y="-90" />
-		</Transform>
-		<Components>
-			<Component name="SpotLightComponent" intensity="1" range="120" cutoff="0" outerCutoff="30"  castShadows="true" >
-				<color r="255" g="255" b="255" />
-				<shadowInformation casting="true" bias="0.0001">
-					<Resolution width="512" height="512" />
-				</shadowInformation>
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="41" name="Ambient" isActive="true">
-		<Components>
-			<Component name="AmbientLightComponent" intensity="0.25" >
-				<color r="255" g="255" b="255" />
-			</Component>
-		</Components>
-	</SceneObject>
+<?xml version="1.0" encoding="UTF-8" ?>
+<Scene name="VXGI Test">
+    <Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" />
+    <SceneObject instanceID="41" name="Directional" isActive="true">
+        <Transform>
+            <Position x="0.000000" y="0.000000" z="0.000000" />
+            <Rotation x="-80.000000" y="0.000000" z="0.000000" />
+            <Scale x="1.000000" y="1.000000" z="1.000000" />
+        </Transform>
+        <Components>
+            <Component name="DirectionalLightComponent" intensity="1.000000" castShadows="true">
+                <color r="255" g="255" b="255" a="255" />
+                <shadowInformation cascadesCount="4" bias="0.003000">
+                    <Resolution width="512" height="512" />
+                </shadowInformation>
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="0" name="Sponza Atrium" isActive="true">
+        <Transform>
+            <Position x="0.000000" y="-0.100000" z="0.000000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="0.030000" y="0.030000" z="0.030000" />
+        </Transform>
+        <Components>
+            <Component name="RenderObjectComponent" renderStage="1" layer="8">
+                <model path="Assets/Models/Sponza/SponzaNoFlag.obj" />
+            </Component>
+            <Component name="RigidBodyComponent" mass="0.000000" />
+            <Component name="AudioSourceComponent" volume="1.000000" loop="false">
+                <audioClip path="Assets/Audio/example.wav" />
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="40" name="Spot" isActive="false">
+        <Transform>
+            <Position x="0.000000" y="3.000000" z="0.600000" />
+            <Rotation x="0.000000" y="-89.980286" z="0.000000" />
+            <Scale x="119.999992" y="120.000000" z="119.999992" />
+        </Transform>
+        <Components>
+            <Component name="SpotLightComponent" intensity="1.000000" castShadows="true" range="120.000000" cutoff="0.000000" outerCutoff="30.000000">
+                <color r="255" g="255" b="255" a="255" />
+                <shadowInformation cascadesCount="1" bias="0.000100">
+                    <Resolution width="512" height="512" />
+                </shadowInformation>
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="40" name="Point" isActive="false">
+        <Transform>
+            <Position x="0.000000" y="3.000000" z="0.600000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="7.000000" y="7.000000" z="7.000000" />
+        </Transform>
+        <Components>
+            <Component name="PointLightComponent" intensity="1.000000" castShadows="false" range="7.000000">
+                <color r="255" g="255" b="255" a="255" />
+                <shadowInformation cascadesCount="1" bias="0.500000">
+                    <Resolution width="512" height="512" />
+                </shadowInformation>
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="41" name="Ambient" isActive="true">
+        <Transform>
+            <Position x="0.000000" y="0.000000" z="0.000000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="1.000000" y="1.000000" z="1.000000" />
+        </Transform>
+        <Components>
+            <Component name="AmbientLightComponent" intensity="0.250000">
+                <color r="255" g="255" b="255" a="255" />
+            </Component>
+        </Components>
+    </SceneObject>
 </Scene>

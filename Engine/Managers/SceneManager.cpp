@@ -4,8 +4,6 @@
 
 #include "Core/Console/Console.h"
 
-#include "Systems/Components/ComponentManager.h"
-
 #define SCENE_LOADING_ERROR_CODE 10
 
 SceneManager::SceneManager () :
@@ -61,8 +59,6 @@ void SceneManager::LoadNextScene (const std::string& sceneName)
 {
 	if (_current != nullptr) {
 		delete _current;
-
-		ComponentManager::Instance ()->Clear ();
 	}
 
 	_current = SceneLoader::Instance ().Load (sceneName);

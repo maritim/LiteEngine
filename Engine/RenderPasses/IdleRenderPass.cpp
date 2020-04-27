@@ -4,6 +4,8 @@
 
 #include "ResultFrameBuffer2DVolume.h"
 
+#include "Core/Console/Console.h"
+
 IdleRenderPass::IdleRenderPass () :
 	_postProcessMapVolume (new PostProcessMapVolume ())
 {

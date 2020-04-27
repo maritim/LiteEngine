@@ -46,7 +46,8 @@ public:
 	void AttachRenderObject (RenderObject*);
 	void DetachRenderObject (RenderObject*);
 
-	void SetRenderDirectionalLightObject (RenderDirectionalLightObject*);
+	void AttachRenderDirectionalLightObject (RenderDirectionalLightObject*);
+	void DetachRenderDirectionalLightObject (RenderDirectionalLightObject*);
 
 	void AttachRenderPointLightObject (RenderPointLightObject*);
 	void DetachRenderPointLightObject (RenderPointLightObject*);

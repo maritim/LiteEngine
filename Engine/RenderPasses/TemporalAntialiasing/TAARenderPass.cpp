@@ -4,6 +4,8 @@
 
 #include "RenderPasses/GBuffer.h"
 
+#include "Core/Console/Console.h"
+
 TAARenderPass::TAARenderPass () :
 	_taaMapVolume (nullptr)
 {

@@ -18,7 +18,7 @@ protected:
 	std::set<RenderObject*> _renderObjects;
 	RenderSkyboxObject* _renderSkyboxObject;
 
-	RenderDirectionalLightObject* _renderDirectionalLightObject;
+	std::set<RenderDirectionalLightObject*> _renderDirectionalLightObjects;
 	std::set<RenderPointLightObject*> _renderPointLightObjects;
 	std::set<RenderSpotLightObject*> _renderSpotLightObjects;
 	RenderAmbientLightObject* _renderAmbientLightObject;
@@ -34,7 +34,8 @@ public:
 	void AttachRenderObject (RenderObject*);
 	void DetachRenderObject (RenderObject*);
 
-	void SetRenderDirectionalLightObject (RenderDirectionalLightObject*);
+	void AttachRenderDirectionalLightObject (RenderDirectionalLightObject*);
+	void DetachRenderDirectionalLightObject (RenderDirectionalLightObject*);
 
 	void AttachRenderPointLightObject (RenderPointLightObject*);
 	void DetachRenderPointLightObject (RenderPointLightObject*);
@@ -45,7 +46,6 @@ public:
 	void SetRenderAmbientLightObject (RenderAmbientLightObject*);
 
 	RenderSkyboxObject* GetRenderSkyboxObject () const;
-	RenderDirectionalLightObject* GetRenderDirectionalLightObject () const;
 	RenderAmbientLightObject* GetRenderAmbientLightObject () const;
 	const AABBVolume& GetBoundingBox () const;
 
@@ -55,6 +55,7 @@ protected:
 };
 
 MULTIPLE_CONTAINER_SPECIALIZATION (set, RenderObject*, RenderScene, _renderObjects);
+MULTIPLE_CONTAINER_SPECIALIZATION (set, RenderDirectionalLightObject*, RenderScene, _renderDirectionalLightObjects);
 MULTIPLE_CONTAINER_SPECIALIZATION (set, RenderPointLightObject*, RenderScene, _renderPointLightObjects);
 MULTIPLE_CONTAINER_SPECIALIZATION (set, RenderSpotLightObject*, RenderScene, _renderSpotLightObjects);
 

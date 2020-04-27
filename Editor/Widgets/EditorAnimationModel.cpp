@@ -47,7 +47,7 @@ void EditorAnimationModel::ShowAnimationsWindow ()
 		return;
 	}
 
-	for (SceneObject* object : *SceneManager::Instance ()->Current ()) {
+	// for (SceneObject* object : *SceneManager::Instance ()->Current ()) {
 
 		// AnimationGameObject* animGameObject = dynamic_cast<AnimationGameObject*> (object);
 
@@ -95,7 +95,7 @@ void EditorAnimationModel::ShowAnimationsWindow ()
 			// 	}
 			// }
 		// }
-	}
+	// }
 
 	ImGui::End();
 }

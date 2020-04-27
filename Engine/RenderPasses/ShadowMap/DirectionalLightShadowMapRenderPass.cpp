@@ -80,7 +80,7 @@ RenderVolumeCollection* DirectionalLightShadowMapRenderPass::Execute (const Rend
 
 	EndShadowMapPass ();
 
-	return rvc->Insert ("ShadowMapDirectionalLightVolume", _volume);
+	return rvc->Insert ("ShadowMapDirectionalLightVolume", _volume, false);
 }
 
 void DirectionalLightShadowMapRenderPass::Clear ()

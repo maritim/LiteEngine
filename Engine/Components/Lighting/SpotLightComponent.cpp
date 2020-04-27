@@ -9,6 +9,13 @@
 
 #include "Utils/Extensions/MathExtend.h"
 
+SpotLightComponent::SpotLightComponent () :
+	_cutoff (0.0f),
+	_outerCutoff (30.0f)
+{
+
+}
+
 void SpotLightComponent::Awake ()
 {
 	_renderLightObject = new RenderSpotLightObject ();

@@ -5,7 +5,7 @@
 
 #include "Renderer/RenderTextGUIObject.h"
 
-class TextGUIComponent : public Component
+class ENGINE_API TextGUIComponent : public Component
 {
 	DECLARE_COMPONENT(TextGUIComponent)
 

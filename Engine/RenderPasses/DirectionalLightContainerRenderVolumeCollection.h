@@ -6,11 +6,12 @@
 #include <vector>
 
 #include "RenderPasses/VolumetricLightVolume.h"
+#include "Renderer/RenderDirectionalLightObject.h"
 
 class ENGINE_API DirectionalLightContainerRenderVolumeCollection : public ContainerRenderVolumeCollectionI
 {
 protected:
-	std::size_t _iterations;
+	std::set<RenderDirectionalLightObject*>::iterator _directionalLightsIterator;
 	VolumetricLightVolume* _volumetricLightVolume;
 
 public:

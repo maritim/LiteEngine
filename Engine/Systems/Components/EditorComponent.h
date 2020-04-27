@@ -3,7 +3,7 @@
 
 #include "PersistentComponent.h"
 
-class EditorComponent : public PersistentComponent
+class ENGINE_API EditorComponent : public PersistentComponent
 {
 public:
 	virtual void Show () = 0;

@@ -54,7 +54,7 @@ RenderVolumeCollection* SpotLightShadowMapRenderPass::Execute (const RenderScene
 
 	EndShadowMapPass ();
 
-	return rvc->Insert ("ShadowMapSpotLightVolume", _volume);
+	return rvc->Insert ("ShadowMapSpotLightVolume", _volume, false);
 }
 
 void SpotLightShadowMapRenderPass::Clear ()
@@ -205,8 +205,9 @@ void SpotLightShadowMapRenderPass::UpdateLightCamera (const RenderLightObject* r
 	lightCamera->SetPosition (lightTransform->GetPosition ());
 	lightCamera->SetRotation (glm::conjugate (lightTransform->GetRotation ()));
 
+	lightCamera->SetZNear (0.05f);
 	lightCamera->SetZFar (renderSpotLightObject->GetLightRange ());
-	lightCamera->SetFieldOfView (renderSpotLightObject->GetLightSpotOuterCutoff () * 2);
+	lightCamera->SetFieldOfViewAngle (renderSpotLightObject->GetLightSpotOuterCutoff () * 2);
 	lightCamera->SetAspect (1.0f);
 }
 

@@ -1,5 +1,7 @@
 #include "RenderObject.h"
 
+#include <algorithm>
+
 #include "Renderer/Pipeline.h"
 
 RenderObject::RenderObject () :

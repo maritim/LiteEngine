@@ -6,17 +6,15 @@ PerspectiveCamera::PerspectiveCamera () :
 	Camera (),
 	_fieldOfViewAngle (0.0f)
 {
-	_aspect = 0.0f;
-	_zNear = 0.3f;
-	_zFar = 100.0f;
+
 }
 
-float PerspectiveCamera::GetFieldOfView () const
+float PerspectiveCamera::GetFieldOfViewAngle () const
 {
 	return _fieldOfViewAngle;
 }
 
-void PerspectiveCamera::SetFieldOfView (float FOV)
+void PerspectiveCamera::SetFieldOfViewAngle (float FOV)
 {
 	_fieldOfViewAngle = FOV * 3.14 / 180;
 }

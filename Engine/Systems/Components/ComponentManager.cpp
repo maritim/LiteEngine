@@ -9,11 +9,21 @@ ComponentManager::ComponentManager ()
 
 ComponentManager::~ComponentManager ()
 {
-	Clear ();
+
 }
 
 void ComponentManager::Update ()
 {
+	for (auto component : _needRemoveComponents) {
+		auto it = std::find (_components.begin (), _components.end (), component);
+
+		if (it != _components.end ()) {
+			_components.erase (it);
+		}
+	}
+
+	_needRemoveComponents.clear ();
+
 	for (auto component : _components) {
 		component->Update ();
 	}
@@ -36,30 +46,5 @@ void ComponentManager::Register (Component* component)
 
 void ComponentManager::Unregister (Component* component)
 {
-	auto it = std::find (_components.begin (), _components.end (), component);
-
-	if (it == _components.end ()) {
-		return ;
-	}
-
-	delete *it;
-
-	_components.erase (it);
-}
-
-void ComponentManager::Clear ()
-{
-	for (auto component : _components) {
-		delete component;
-	}
-
-	for (auto component : _newComponents) {
-		delete component;
-	}
-
-	_components.clear ();
-	_components.shrink_to_fit ();
-
-	_newComponents.clear ();
-	_newComponents.shrink_to_fit ();
+	_needRemoveComponents.push_back (component);
 }

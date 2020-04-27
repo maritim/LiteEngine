@@ -10,11 +10,6 @@ SceneIterator::SceneIterator (Transform* transform)
 	_childIt.push (transform->begin<Transform*> ());
 }
 
-SceneIterator::~SceneIterator ()
-{
-
-}
-
 SceneIterator& SceneIterator::operator ++ ()
 {
 	while (_transforms.empty () == false &&

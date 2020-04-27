@@ -129,7 +129,7 @@ Color ENGINE_API ComponentAttributeLoader::Load<Color> (TiXmlElement* xmlElem)
 	return color;
 }
 
-#include "Components/LightComponent.h"
+#include "Components/Lighting/LightComponent.h"
 
 template <>
 LightComponent::ShadowInformation ENGINE_API ComponentAttributeLoader::Load<LightComponent::ShadowInformation> (TiXmlElement* xmlElem)

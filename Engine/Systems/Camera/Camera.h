@@ -19,7 +19,7 @@ protected:
 	float _zNear;
 	float _zFar;
 
-	bool _constraintAspect;
+	bool _constrainAspect;
 
 public:
 	Camera(void);
@@ -31,7 +31,7 @@ public:
 	virtual float GetAspect () const;
 	virtual float GetZNear () const;
 	virtual float GetZFar () const;
-	virtual bool GetConstraintAspect () const;
+	virtual bool GetConstrainAspect () const;
 
 	virtual void SetPosition (const glm::vec3& position);
 	virtual void SetRotation (const glm::quat& rotation);
@@ -40,7 +40,7 @@ public:
 	virtual void SetZNear (float zNear);
 	virtual void SetZFar (float zFar);
 	virtual void SetAspect (float aspect);
-	virtual void SetConstraintAspect (bool constraintAspect);
+	virtual void SetConstrainAspect (bool constraintAspect);
 
 	virtual glm::vec3 GetForward () const;
 	virtual glm::vec3 GetUp () const;

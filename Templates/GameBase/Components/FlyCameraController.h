@@ -3,7 +3,7 @@
 
 #include "Systems/Components/Component.h"
 
-class FlyCameraController : public Component
+class ENGINE_API FlyCameraController : public Component
 {
 	DECLARE_COMPONENT(FlyCameraController)
 

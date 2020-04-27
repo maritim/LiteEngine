@@ -31,7 +31,7 @@ void DirectionalLightComponent::Awake ()
 
 	auto renderLightObject = (RenderDirectionalLightObject*) _renderLightObject;
 
-	RenderManager::Instance ()->SetRenderDirectionalLightObject (renderLightObject);
+	RenderManager::Instance ()->AttachRenderDirectionalLightObject (renderLightObject);
 }
 
 void DirectionalLightComponent::OnAttachedToScene ()
@@ -42,7 +42,7 @@ void DirectionalLightComponent::OnAttachedToScene ()
 
 	auto renderLightObject = (RenderDirectionalLightObject*) _renderLightObject;
 
-	RenderManager::Instance ()->SetRenderDirectionalLightObject (renderLightObject);
+	RenderManager::Instance ()->AttachRenderDirectionalLightObject (renderLightObject);
 }
 
 void DirectionalLightComponent::OnDetachedFromScene ()
@@ -51,5 +51,7 @@ void DirectionalLightComponent::OnDetachedFromScene ()
 		return;
 	}
 
-	RenderManager::Instance ()->SetRenderDirectionalLightObject (nullptr);
+	auto renderLightObject = (RenderDirectionalLightObject*) _renderLightObject;
+
+	RenderManager::Instance ()->DetachRenderDirectionalLightObject (renderLightObject);
 }

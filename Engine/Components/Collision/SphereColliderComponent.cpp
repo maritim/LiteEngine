@@ -1,9 +1,16 @@
 #include "SphereColliderComponent.h"
 
+#include <algorithm>
 #include <glm/geometric.hpp>
 #include <bullet/BulletCollision/CollisionShapes/btSphereShape.h>
 
 #include "SceneGraph/SceneObject.h"
+
+SphereColliderComponent::SphereColliderComponent () :
+	_radius (1.0f)
+{
+
+}
 
 void SphereColliderComponent::Awake ()
 {

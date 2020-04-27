@@ -7,9 +7,9 @@
 #include "SceneGraph/SceneObject.h"
 
 ColliderComponent::ColliderComponent () :
+	_offset (0.0f),
 	_collisionShape (nullptr),
 	_collisionObject (new btCollisionObject ()),
-	_offset (0.0f),
 	_isSelected (false),
 	_isSelectedLastFrame (false)
 {
@@ -18,8 +18,13 @@ ColliderComponent::ColliderComponent () :
 
 ColliderComponent::~ColliderComponent ()
 {
-	delete _collisionShape;
 	delete _collisionObject;
+	delete _collisionShape;
+}
+
+void ColliderComponent::Awake ()
+{
+	SetActive (_parent->IsActive ());
 }
 
 void ColliderComponent::Update ()
@@ -47,6 +52,14 @@ void ColliderComponent::Update ()
 	_isSelected = false;
 }
 
+void ColliderComponent::SetActive (bool isActive)
+{
+	int flags = _collisionObject->getActivationState ();
+	flags = isActive ? flags &~ DISABLE_SIMULATION : flags | DISABLE_SIMULATION;
+
+	_collisionObject->setActivationState (flags);
+}
+
 void ColliderComponent::OnGizmo ()
 {
 	_isSelected = true;
@@ -60,7 +73,7 @@ void ColliderComponent::OnGizmo ()
 void ColliderComponent::OnAttachedToScene ()
 {
 	_collisionObject->setCollisionShape (_collisionShape);
-	_collisionObject->setCollisionFlags (_collisionObject->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
+	// _collisionObject->setCollisionFlags (_collisionObject->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
 
 	/*
 	 * Attach collisionObject to physics system
