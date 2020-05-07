@@ -22,6 +22,7 @@ public:
 	glm::vec3 ambientColor;
 	glm::vec3 diffuseColor;
 	glm::vec3 specularColor;
+	glm::vec3 emissiveColor;
 	float shininess;
 	float transparency;
 	float refractiveIndex;
@@ -30,6 +31,7 @@ public:
 	Resource<Texture> ambientTexture;
 	Resource<Texture> diffuseTexture;
 	Resource<Texture> specularTexture;
+	Resource<Texture> emissiveTexture;
 	Resource<Texture> specularHighlight;
 	Resource<Texture> alphaTexture;
 	Resource<Texture> bumpTexture;

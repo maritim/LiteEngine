@@ -4,6 +4,7 @@ layout (location = 0) out vec4 out_position;
 layout (location = 1) out vec4 out_normal;
 layout (location = 2) out vec4 out_diffuse;
 layout (location = 3) out vec4 out_specular;
+layout (location = 4) out vec4 out_emissive;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -14,6 +15,7 @@ uniform mat3 normalWorldMatrix;
 
 uniform vec3 MaterialDiffuse;
 uniform vec3 MaterialSpecular;
+uniform vec3 MaterialEmissive;
 
 uniform float MaterialShininess;
 uniform float MaterialTransparency;
@@ -21,6 +23,7 @@ uniform float MaterialRefractiveIndex;
 
 uniform sampler2D DiffuseMap;
 uniform sampler2D SpecularMap;
+uniform sampler2D EmissiveMap;
 uniform sampler2D AlphaMap;
 
 uniform vec3 cameraPosition;
@@ -47,6 +50,7 @@ void main()
 
 	vec3 diffuseMap = MaterialDiffuse * srgbDiffuseMap;
 	vec3 specularMap = MaterialSpecular * vec3 (texture2D (SpecularMap, geom_texcoord.xy));
+	vec3 emissiveMap = MaterialEmissive * vec3 (texture2D (EmissiveMap, geom_texcoord.xy));
 	vec3 alphaMap = vec3 (texture2D (AlphaMap, geom_texcoord.xy));
 
 	/*
@@ -71,4 +75,5 @@ void main()
 	out_diffuse = vec4 (diffuseMap, MaterialTransparency);
 	out_normal = vec4 (norm, MaterialRefractiveIndex);
 	out_specular = vec4 (specularMap, MaterialShininess);
+	out_emissive = vec4 (emissiveMap, 1.0);
 }

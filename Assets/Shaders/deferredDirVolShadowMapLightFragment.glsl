@@ -22,7 +22,8 @@ uniform float lightIntensity;
 #include "ShadowMap/cascadedShadowMap.glsl"
 #include "AmbientLight/ambientLight.glsl"
 
-vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
+vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse,
+	vec3 in_specular, vec3 in_emissive, float in_shininess)
 {
 	// Diffuse contribution
 	float dCont = max (dot (in_normal, -lightDirection), 0.0);
@@ -44,7 +45,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// Calculate ambient light
 	vec3 ambientColor = in_diffuse * CalcAmbientLight ();
 
-	return shadow * (diffuseColor + specularColor) * lightIntensity + ambientColor;
+	return in_emissive + shadow * (diffuseColor + specularColor) * lightIntensity + ambientColor;
 }
 
 void main()
@@ -54,9 +55,10 @@ void main()
 	vec3 in_diffuse = texture2D (gDiffuseMap, texCoord).xyz;
 	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
 	vec3 in_specular = texture2D (gSpecularMap, texCoord).xyz;
+	vec3 in_emissive = texture2D (gEmissiveMap, texCoord).xyz;
 	float in_shininess = texture2D (gSpecularMap, texCoord).w;
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
+	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_emissive, in_shininess);
 }

@@ -405,6 +405,7 @@ void Pipeline::SendMaterial(Resource<MaterialView> mat, const Resource<ShaderVie
 	GL::Uniform3fv (currentShaderView->GetUniformLocation ("MaterialDiffuse"), 1, glm::value_ptr (mat->diffuseColor));
 	// GL::Uniform3fv (shader->GetUniformLocation ("MaterialAmbient"), 1, glm::value_ptr (mat->ambientColor));
 	GL::Uniform3fv (currentShaderView->GetUniformLocation ("MaterialSpecular"), 1, glm::value_ptr (mat->specularColor));
+	GL::Uniform3fv (currentShaderView->GetUniformLocation ("MaterialEmissive"), 1, glm::value_ptr (mat->emissiveColor));
 	GL::Uniform1f (currentShaderView->GetUniformLocation ("MaterialShininess"), mat->shininess);
 	GL::Uniform1f (currentShaderView->GetUniformLocation ("MaterialTransparency"), mat->transparency);
 	GL::Uniform1f (currentShaderView->GetUniformLocation ("MaterialRefractiveIndex"), mat->refractiveIndex);
@@ -439,6 +440,15 @@ void Pipeline::SendMaterial(Resource<MaterialView> mat, const Resource<ShaderVie
 		++ _textureCount;
 	} else {
 		GL::Uniform1i (currentShaderView->GetUniformLocation ("SpecularMap"), 0);
+	}
+
+	if (mat->emissiveTexture != nullptr) {
+		mat->emissiveTexture->Activate (_textureCount);
+		GL::Uniform1i (currentShaderView->GetUniformLocation ("EmissiveMap"), _textureCount);
+
+		++ _textureCount;
+	} else {
+		GL::Uniform1i (currentShaderView->GetUniformLocation ("EmissiveMap"), 0);
 	}
 
 	if (mat->bumpTexture != nullptr) {

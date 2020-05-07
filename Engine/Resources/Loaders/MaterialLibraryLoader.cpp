@@ -199,6 +199,13 @@ void MaterialLibraryLoader::ProcessDefaultAttributes(std::ifstream &file, Materi
 
 		currentMaterial->specularColor = glm::vec3 (x, y, z);
 	}
+	else if (fileType == "Ke")
+	{
+		float x, y, z;
+		file >> x >> y >> z;
+
+		currentMaterial->emissiveColor = glm::vec3 (x, y, z);
+	}
 	else if (fileType == "Ns")
 	{
 		file >> currentMaterial->shininess;
@@ -257,6 +264,9 @@ void MaterialLibraryLoader::ProcessDefaultAttributes(std::ifstream &file, Materi
 		}
 		else if (fileType == "map_Ks") {
 			currentMaterial->specularTexture = texture;
+		}
+		else if (fileType == "map_Ke") {
+			currentMaterial->emissiveTexture = texture;
 		}
 		else if (fileType == "map_Ns") {
 			currentMaterial->specularHighlight = texture;

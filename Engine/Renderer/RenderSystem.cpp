@@ -987,6 +987,7 @@ void RenderSystem::ProcessMaterial (const Resource<Material>& material, Material
 	materialView->ambientColor = material->ambientColor;
 	materialView->diffuseColor = material->diffuseColor;
 	materialView->specularColor = material->specularColor;
+	materialView->emissiveColor = material->emissiveColor;
 	materialView->shininess = material->shininess;
 	materialView->transparency = material->transparency;
 	materialView->refractiveIndex = material->refractiveIndex;
@@ -1001,6 +1002,10 @@ void RenderSystem::ProcessMaterial (const Resource<Material>& material, Material
 
 	if (material->specularTexture != nullptr) {
 		materialView->specularTexture = LoadTexture (material->specularTexture);
+	}
+
+	if (material->emissiveTexture != nullptr) {
+		materialView->emissiveTexture = LoadTexture (material->emissiveTexture);
 	}
 
 	if (material->alphaTexture != nullptr) {
