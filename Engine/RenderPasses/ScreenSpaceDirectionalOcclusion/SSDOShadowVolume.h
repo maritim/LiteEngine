@@ -1,5 +1,5 @@
 #ifndef SSDOSHADOWVOLUME_H
-#define SSDOSHADOWMAPVOLUME_H
+#define SSDOSHADOWVOLUME_H
 
 #include "RenderPasses/PostProcess/PostProcessMapVolume.h"
 

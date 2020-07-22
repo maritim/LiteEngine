@@ -2,11 +2,6 @@
 
 layout(location = 0) out vec3 out_color;
 
-uniform sampler2D gPositionMap;
-uniform sampler2D gNormalMap;
-uniform sampler2D gDiffuseMap;
-uniform sampler2D gSpecularMap;
-
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 modelViewMatrix;
@@ -16,8 +11,6 @@ uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
 
 uniform vec3 cameraPosition;
-
-uniform vec2 screenSize;
 
 layout(std140) uniform ssdoSamples
 {
@@ -30,11 +23,16 @@ uniform float ssdoRadius;
 uniform float ssdoBias;
 uniform float ssdoIndirectIntensity;
 
-vec2 CalcTexCoord()
+uniform sampler2D postProcessMap;
+
+uniform int ssdoTemporalFilter;
+
+vec2 CalcTexCoordSSDO()
 {
 	return gl_FragCoord.xy / ssdoResolution;
 }
 
+#include "deferred.glsl"
 #include "AmbientLight/ambientLight.glsl"
 
 /*
@@ -50,16 +48,37 @@ vec3 Orthogonal(vec3 u)
 	return abs(dot(u, v)) > 0.99 ? cross(u, vec3(0, 0, 1)) : cross(u, v);
 }
 
-vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec2 texCoord)
+float rand(vec2 co){
+  return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
+vec3 rand3(vec3 p)
+{
+	vec3 q = vec3(
+		dot(p, vec3(127.1, 311.7, 74.7)),
+		dot(p, vec3(269.5, 183.3, 246.1)),
+		dot(p, vec3(113.5, 271.9, 124.6))
+		);
+
+	return fract(sin(q) * 43758.5453123);
+}
+
+vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal, vec2 texCoord)
 {
 	vec3 occlusionColor = vec3 (0.0);
 	float occlusion = 0.0;
 
-	/*
-	 * Compute noise scale to map the noise on the whole screen
-	*/
+	float r = ssdoTemporalFilter <= 0 ? 1 : rand (in_position.xy + in_position.yz + in_position.xz);
+	vec3 randomVec = rand3 (in_position) - rand3 (2 * in_position);
 
-	vec3 tangent = Orthogonal (in_normal);
+	vec3 tangent;
+
+	if (ssdoTemporalFilter > 0) {
+		tangent = normalize (randomVec - in_normal * dot (randomVec, in_normal));
+	} else {
+		tangent = Orthogonal (in_normal);
+	}
+
 	vec3 bitangent = cross (in_normal, tangent);
 	mat3 tangentMatrix = mat3 (tangent, bitangent, in_normal);
 
@@ -67,7 +86,8 @@ vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal, vec3
 
 	for (int sampleIndex = 0; sampleIndex < ssdoSamplesCount; ++ sampleIndex) {
 		vec3 sample = tangentMatrix * ssdoSample [sampleIndex];
-		sample = in_position + sample * ssdoRadius;
+
+		sample = in_position + sample * ssdoRadius * r;
 
 		vec4 offset = projectionMatrix * vec4 (sample, 1.0);
 		offset.xyz /= offset.w;
@@ -79,7 +99,7 @@ vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal, vec3
 
 		vec3 samplePos = texture2D (gPositionMap, offset.xy).xyz;
 		vec3 sampleNormal = texture2D (gNormalMap, offset.xy).xyz;
-		vec3 sampleDiffuse = texture2D (gDiffuseMap, offset.xy).xyz;
+		vec3 sampleDiffuse = texture2D (postProcessMap, offset.xy).xyz;
 
 		sampleNormal = normalize (sampleNormal);
 
@@ -101,19 +121,19 @@ vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal, vec3
 	samplesCount = max (samplesCount, 1);
 
 	occlusion = 1.0 - (occlusion / samplesCount);
-	occlusionColor /= samplesCount;
+	// occlusionColor /= samplesCount;
 
-	return min (occlusion + occlusionColor * ssdoIndirectIntensity, 1.0) * ambientLightColor * ambientLightIntensity;
+	return max (occlusionColor * ssdoIndirectIntensity, vec3 (0.0));
+	// return occlusion * ambientLightColor * ambientLightIntensity; * min (occlusionColor * ssdoIndirectIntensity, 1.0);
 }
 
 void main()
 {
-	vec2 texCoord = CalcTexCoord();
+	vec2 texCoord = CalcTexCoordSSDO();
 	vec3 in_position = texture2D (gPositionMap, texCoord).xyz;
 	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
-	vec3 in_diffuse = texture2D (gDiffuseMap, texCoord).xyz;
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcScreenSpaceDirectionalOcclusion (in_position, in_normal, in_diffuse, texCoord);
+	out_color = CalcScreenSpaceDirectionalOcclusion (in_position, in_normal, texCoord);
 }

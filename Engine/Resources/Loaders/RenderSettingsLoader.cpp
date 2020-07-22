@@ -31,6 +31,9 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 		else if (name == "SSAO") {
 			ProcessSSAO (content, settings);
 		}
+		else if (name == "SSDO") {
+			ProcessSSDO (content, settings);
+		}
 		else if (name == "SSR") {
 			ProcessSSR (content, settings);
 		}
@@ -60,9 +63,6 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 		}
 		else if (name == "VCT") {
 			ProcessVCT (content, settings);
-		}
-		else if (name == "SSDO") {
-			ProcessSSDO (content, settings);
 		}
 
 		content = content->NextSiblingElement ();
@@ -99,6 +99,31 @@ void RenderSettingsLoader::ProcessSSAO (TiXmlElement* xmlElem, RenderSettings* s
 	settings->ssao_radius = std::stof (radius);
 	settings->ssao_bias = std::stof (bias);
 	settings->ssao_blur_enabled = Extensions::StringExtend::ToBool (blurEnabled);
+}
+
+void RenderSettingsLoader::ProcessSSDO (TiXmlElement* xmlElem, RenderSettings* settings)
+{
+	std::string enabled = xmlElem->Attribute ("enabled");
+	std::string temporalFilterEnabled = xmlElem->Attribute ("temporalFilterEnabled");
+	std::string scale = xmlElem->Attribute ("scale");
+	std::string samples = xmlElem->Attribute ("samples");
+	std::string radius = xmlElem->Attribute ("radius");
+	std::string bias = xmlElem->Attribute ("bias");
+	std::string rayShadow = xmlElem->Attribute ("rayShadow");
+	std::string shadowScale = xmlElem->Attribute ("shadowScale");
+	std::string shadowStride = xmlElem->Attribute ("shadowStride");
+	std::string indirectIntensity = xmlElem->Attribute ("indirectIntensity");
+
+	settings->ssdo_enabled = Extensions::StringExtend::ToBool (enabled);
+	settings->ssdo_temporal_filter_enabled = Extensions::StringExtend::ToBool (temporalFilterEnabled);
+	settings->ssdo_scale = std::stof (scale);
+	settings->ssdo_samples = std::stoi (samples);
+	settings->ssdo_radius = std::stof (radius);
+	settings->ssdo_bias = std::stof (bias);
+	settings->ssdo_ray_shadow = Extensions::StringExtend::ToBool (rayShadow);
+	settings->ssdo_shadow_scale = std::stof (shadowScale);
+	settings->ssdo_shadow_stride = std::stoul (shadowStride);
+	settings->ssdo_indirect_intensity = std::stof (indirectIntensity);
 }
 
 void RenderSettingsLoader::ProcessSSR (TiXmlElement* xmlElem, RenderSettings* settings)
@@ -231,23 +256,4 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	settings->vct_refractive_cone_ratio = std::stof (refractiveConeRatio);
 	settings->vct_shadow_cone_ratio = std::stof (shadowConeRatio);
 	settings->vct_shadow_cone_distance = std::stof (shadowConeDistance);
-}
-
-void RenderSettingsLoader::ProcessSSDO (TiXmlElement* xmlElem, RenderSettings* settings)
-{
-	std::string scale = xmlElem->Attribute ("scale");
-	std::string shadowScale = xmlElem->Attribute ("shadowScale");
-	std::string samples = xmlElem->Attribute ("samples");
-	std::string radius = xmlElem->Attribute ("radius");
-	std::string bias = xmlElem->Attribute ("bias");
-	std::string shadowStride = xmlElem->Attribute ("shadowStride");
-	std::string indirectIntensity = xmlElem->Attribute ("indirectIntensity");
-
-	settings->ssdo_scale = std::stof (scale);
-	settings->ssdo_shadow_scale = std::stof (shadowScale);
-	settings->ssdo_samples = std::stoi (samples);
-	settings->ssdo_radius = std::stof (radius);
-	settings->ssdo_bias = std::stof (bias);
-	settings->ssdo_shadow_stride = std::stoul (shadowStride);
-	settings->ssdo_indirect_intensity = std::stof (indirectIntensity);
 }

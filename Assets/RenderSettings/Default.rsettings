@@ -3,14 +3,18 @@
 <RenderSettings>
 	<RenderMode mode="DirectLightingRenderModule" />
 
-	<SSAO enabled="true" scale="0.5" samples="32" noiseSize="4" radius="0.2" bias="0.025" blurEnabled="true" />
+	<SSAO enabled="true" scale="1" samples="32" noiseSize="4" radius="0.2" bias="0.025" blurEnabled="true" />
+
+	<SSDO enabled="true" temporalFilterEnabled="true" scale="1" samples="8" radius="10" bias="0.025"
+		indirectIntensity="0.5" rayShadow="false" shadowMapping="true" shadowScale="0.5" shadowStride="2" />
+
 	<SSR enabled="false" scale="0.5" iterations="1000" roughness="0.035" thickness="0.1" stride="2" intensity="5" />
 
 	<TAA enabled="true" />
 
 	<Bloom enabled="false" scale="0.5" threshold="0.5" intensity="0.4" />
 
-	<HDR enabled="false" exposure="2" />
+	<HDR enabled="true" exposure="2" />
 	<LUT enabled="false" path="Assets/Textures/LUTDefault.png" intensity="0.5" />
 
 	<Gamma enabled="false" />
@@ -18,11 +22,10 @@
 	<RSM scale="1" samples="16" radius="0.12" intensity="200" />
 	<TRSM temporalFilterEnabled="true" blurEnabled="false" />
 
-	<LPV volumeSize="32" iterations="5" injectionBias="0.5" geometryOcclusion="true" intensity="1" />
+	<LPV volumeSize="32" iterations="5" injectionBias="0" geometryOcclusion="true" intensity="1" />
 
 	<VCT voxelsSize="512" continuousVoxelization="false" bordering="false"
 		mipmapLevels="6" indirectIntensity="1" refractiveIndirectIntensity="1" diffuseConeDistance="0.3"
 		specularConeDistance="0.6" refractiveConeRatio="0.1" refractiveConeDistance="0.6"
 		shadowConeRatio="0.01" shadowConeDistance="0.365" />
-	<SSDO scale="0.5" shadowScale="0.5" samples="32" radius="3" bias="0.025" shadowStride="2" indirectIntensity="5" />
 </RenderSettings>

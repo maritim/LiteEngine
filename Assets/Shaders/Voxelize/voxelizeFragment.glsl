@@ -13,10 +13,12 @@ uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
 
 uniform vec3 MaterialDiffuse;
+uniform vec3 MaterialEmissive;
 
 uniform float MaterialTransparency;
 
 uniform sampler2D DiffuseMap;
+uniform sampler2D EmissiveMap;
 
 uniform vec3 minPosition;
 uniform vec3 maxPosition;
@@ -78,8 +80,9 @@ void main()
 	*/
 
 	vec3 diffuseMap = MaterialDiffuse * vec3 (texture2D (DiffuseMap, geom_texcoord.xy));
+	vec3 emissiveMap = MaterialEmissive * vec3 (texture2D (EmissiveMap, geom_texcoord.xy));
 
-	vec3 fragmentColor = diffuseMap;
+	vec3 fragmentColor = emissiveMap + diffuseMap;
 
 	/*
 	 * Calculate the position in texture 3D
@@ -91,6 +94,11 @@ void main()
 	 * Save in texture
 	*/
 
-	imageStore (voxelVolume, ivec3 (coords), vec4 (fragmentColor, 1.0 - MaterialTransparency));
+	if (dot (emissiveMap, emissiveMap) > 0) {
+		imageStore (voxelVolume, ivec3 (coords), vec4 (fragmentColor, 0.99));
+	} else {
+		imageStore (voxelVolume, ivec3 (coords), vec4 (fragmentColor, 1.0 - MaterialTransparency));
+	}
+
 	// ImageAtomicAverageRGBA8 (voxelVolume, ivec3 (coords), fragmentColor);
 }

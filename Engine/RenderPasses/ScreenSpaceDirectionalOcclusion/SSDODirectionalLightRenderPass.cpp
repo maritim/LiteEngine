@@ -44,14 +44,19 @@ std::vector<PipelineAttribute> SSDODirectionalLightRenderPass::GetCustomAttribut
 	std::vector<PipelineAttribute> attributes;
 
 	PipelineAttribute indirectIntensity;
+	PipelineAttribute ssdoRayShadow;
 
 	indirectIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+	ssdoRayShadow.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	indirectIntensity.name = "indirectIntensity";
+	ssdoRayShadow.name = "ssdoRayShadow";
 
-	indirectIntensity.value.x = settings.vct_indirect_intensity;
+	indirectIntensity.value.x = settings.ssdo_indirect_intensity;
+	ssdoRayShadow.value.x = settings.ssdo_ray_shadow;
 
 	attributes.push_back (indirectIntensity);
+	attributes.push_back (ssdoRayShadow);
 
 	return attributes;
 }

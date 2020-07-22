@@ -89,13 +89,16 @@ struct RenderSettings : public Object
 	bool vct_debug_show_voxels;
 	std::size_t vct_debug_volume_mipmap_level;
 
+	bool ssdo_enabled;
+	bool ssdo_temporal_filter_enabled;
 	float ssdo_scale;
-	float ssdo_shadow_scale;
 	std::size_t ssdo_samples;
 	float ssdo_radius;
 	float ssdo_bias;
 	std::size_t ssdo_shadow_stride;
 	float ssdo_indirect_intensity;
+	bool ssdo_ray_shadow;
+	float ssdo_shadow_scale;
 };
 
 #endif

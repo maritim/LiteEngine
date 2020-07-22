@@ -47,7 +47,8 @@ vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shinine
 	return specularColor;
 }
 
-vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess)
+vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse,
+	vec3 in_specular, vec3 in_emissive, float in_shininess)
 {
 	vec3 directDiffuseColor = CalcDirectDiffuseLight (in_position, in_normal);
 
@@ -64,7 +65,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	vec3 indirectDiffuseColor = in_diffuse * CalcIndirectDiffuseLight ();
 	// vec3 indirectSpecularColor = in_specular * CalcIndirectSpecularLight ();
 
-	return (directDiffuseColor * in_diffuse
+	return in_emissive + (directDiffuseColor * in_diffuse
 			+ directSpecularColor * in_specular) * lightIntensity
 			// + indirectSpecularColor + indirectDiffuseColor + ambientColor;
 			+ indirectDiffuseColor + ambientColor;
@@ -77,9 +78,10 @@ void main()
 	vec3 in_diffuse = texture2D (gDiffuseMap, texCoord).xyz;
 	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
 	vec3 in_specular = texture2D (gSpecularMap, texCoord).xyz;
+	vec3 in_emissive = texture2D (gEmissiveMap, texCoord).xyz;
 	float in_shininess = texture2D (gSpecularMap, texCoord).w;
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
+	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_emissive, in_shininess);
 } 

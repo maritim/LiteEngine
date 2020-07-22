@@ -1,19 +1,13 @@
 #ifndef TAASWAPRENDERPASS_H
 #define TAASWAPRENDERPASS_H
 
-#include "RenderPasses/Container/ContainerRenderSubPassI.h"
+#include "RenderPasses/TemporalFiltering/TemporalFilterSwapRenderPass.h"
 
-class ENGINE_API TAASwapRenderPass : public ContainerRenderSubPassI
+class ENGINE_API TAASwapRenderPass : public TemporalFilterSwapRenderPass
 {
 	DECLARE_RENDER_PASS(TAASwapRenderPass)
 
 public:
-	void Init (const RenderSettings& settings);
-	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
-		const RenderSettings& settings, RenderVolumeCollection* rvc);
-
-	void Clear ();
-
 	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 };

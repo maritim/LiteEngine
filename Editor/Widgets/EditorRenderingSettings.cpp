@@ -379,67 +379,6 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
     ImGui::Spacing();
 
-	if (ImGui::CollapsingHeader ("Screen Space Global Illumination")) {
-
-		float scale = _settings->ssdo_scale;
-		ImGui::InputFloat ("Scale", &scale);
-		if (scale > 0) {
-			_settings->ssdo_scale = scale;
-		}
-
-		float shadowScale = _settings->ssdo_shadow_scale;
-		ImGui::InputFloat ("Shadow Scale", &shadowScale);
-		if (shadowScale > 0) {
-			_settings->ssdo_shadow_scale = shadowScale;
-		}
-
-		std::size_t limit1 = 1, limit2 = 200;
-		ImGui::SliderScalar ("Samples Size", ImGuiDataType_U32, &_settings->ssdo_samples, &limit1, &limit2);
-
-		ImGui::InputFloat ("Radius", &_settings->ssdo_radius, 0.1f);
-		ImGui::InputFloat ("Bias", &_settings->ssdo_bias, 0.1f);
-
-		std::size_t strideStep = 1;
-		ImGui::InputScalar ("Shadow Stride", ImGuiDataType_U32, &_settings->ssdo_shadow_stride, &strideStep);
-
-		ImGui::InputFloat ("Indirect Light Intensity", &_settings->ssdo_indirect_intensity, 0.1f);
-
-		ImGui::Separator ();
-
-		if (ImGui::TreeNode ("Debug")) {
-			StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSDOStatisticsObject");
-			SSDOStatisticsObject* ssdoStat = nullptr;
-
-			if (stat != nullptr) {
-				ssdoStat = dynamic_cast<SSDOStatisticsObject*> (stat);
-			}
-
-			if (ssdoStat != nullptr) {
-
-				int windowWidth = ImGui::GetWindowWidth() * 0.9f;
-
-				FrameBuffer2DVolume* ssdoMapVolume = ssdoStat->ssdoMapVolume;
-
-				glm::ivec2 size = ssdoMapVolume->GetSize ();
-
-				int width = windowWidth;
-				int height = ((float) size.y / size.x) * width;
-
-				ImGui::Text ("SSDO Map");
-				ShowImage (ssdoMapVolume->GetColorTextureID (), glm::ivec2 (width, height));
-
-				FrameBuffer2DVolume* ssdoShadowVolume = ssdoStat->ssdoShadowVolume;
-
-				ImGui::Text ("SSDO Shadow Map");
-				ShowImage (ssdoShadowVolume->GetColorTextureID (), glm::ivec2 (width, height));
-			}
-
-			ImGui::TreePop();
-		}
-	}
-
-    ImGui::Spacing();
-
 	if (ImGui::CollapsingHeader ("Post Processing")) {
 		if (ImGui::TreeNode ("Screen Space Ambient Occlusion")) {
 
@@ -485,6 +424,74 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 					ImGui::Text ("SSAO Noise Map");
 					ShowImage (ssaoStat->noiseMapID, glm::ivec2 (windowWidth, windowWidth));
+				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode ("Screen Space Directional Occlusion")) {
+
+			ImGui::Checkbox ("Enabled", &_settings->ssdo_enabled);
+			ImGui::Checkbox ("Temporal Filter Enabled", &_settings->ssdo_temporal_filter_enabled);
+
+			float scale = _settings->ssdo_scale;
+			ImGui::InputFloat ("Scale", &scale);
+			if (scale > 0) {
+				_settings->ssdo_scale = scale;
+			}
+
+			std::size_t limit1 = 1, limit2 = 200;
+			ImGui::SliderScalar ("Samples Size", ImGuiDataType_U32, &_settings->ssdo_samples, &limit1, &limit2);
+
+			ImGui::InputFloat ("Radius", &_settings->ssdo_radius, 0.1f);
+			ImGui::InputFloat ("Bias", &_settings->ssdo_bias, 0.1f);
+
+			ImGui::InputFloat ("Indirect Light Intensity", &_settings->ssdo_indirect_intensity, 0.1f);
+
+			ImGui::Separator ();
+
+			ImGui::Checkbox ("Shadow 2D Ray Cast", &_settings->ssdo_ray_shadow);
+
+			float shadowScale = _settings->ssdo_shadow_scale;
+			ImGui::InputFloat ("Shadow Scale", &shadowScale);
+			if (shadowScale > 0) {
+				_settings->ssdo_shadow_scale = shadowScale;
+			}
+
+			std::size_t strideStep = 1;
+			ImGui::InputScalar ("Shadow Stride", ImGuiDataType_U32, &_settings->ssdo_shadow_stride, &strideStep);
+
+			ImGui::Separator ();
+
+			if (ImGui::TreeNode ("Debug")) {
+				StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSDOStatisticsObject");
+				SSDOStatisticsObject* ssdoStat = nullptr;
+
+				if (stat != nullptr) {
+					ssdoStat = dynamic_cast<SSDOStatisticsObject*> (stat);
+				}
+
+				if (ssdoStat != nullptr) {
+
+					int windowWidth = ImGui::GetWindowWidth() * 0.9f;
+
+					FrameBuffer2DVolume* ssdoMapVolume = ssdoStat->ssdoMapVolume;
+
+					glm::ivec2 size = ssdoMapVolume->GetSize ();
+
+					int width = windowWidth;
+					int height = ((float) size.y / size.x) * width;
+
+					ImGui::Text ("SSDO Map");
+					ShowImage (ssdoMapVolume->GetColorTextureID (), glm::ivec2 (width, height));
+
+					FrameBuffer2DVolume* ssdoShadowVolume = ssdoStat->ssdoShadowVolume;
+
+					ImGui::Text ("SSDO Shadow Map");
+					ShowImage (ssdoShadowVolume->GetColorTextureID (), glm::ivec2 (width, height));
 				}
 
 				ImGui::TreePop();

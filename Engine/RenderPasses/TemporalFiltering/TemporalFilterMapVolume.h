@@ -1,16 +1,16 @@
-#ifndef TAAMAPVOLUME_H
-#define TAAMAPVOLUME_H
+#ifndef TEMPORALFILTERMAPVOLUME_H
+#define TEMPORALFILTERMAPVOLUME_H
 
 #include "RenderPasses/PostProcess/PostProcessMapVolume.h"
 
-class TAAMapVolume : public PostProcessMapVolume
+class TemporalFilterMapVolume : public PostProcessMapVolume
 {
 protected:
 	glm::mat4 _viewProjectionMatrix;
 	bool _current;
 
 public:
-	TAAMapVolume ();
+	TemporalFilterMapVolume ();
 
 	void SetViewProjectionMatrix (const glm::mat4& viewProjectionMatrix);
 	void SetCurrent (bool current);

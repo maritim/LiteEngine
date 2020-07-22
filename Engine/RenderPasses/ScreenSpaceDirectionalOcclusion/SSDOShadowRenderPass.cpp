@@ -14,7 +14,7 @@ bool SSDOShadowRenderPass::IsAvailable (const RenderScene* renderScene, const Ca
 	 * Always execute screen space shadow render pass
 	*/
 
-	return true;
+	return settings.ssdo_ray_shadow;
 }
 
 std::string SSDOShadowRenderPass::GetPostProcessFragmentShaderPath () const

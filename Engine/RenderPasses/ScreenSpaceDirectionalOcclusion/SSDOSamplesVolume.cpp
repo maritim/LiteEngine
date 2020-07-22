@@ -30,7 +30,7 @@ bool SSDOSamplesVolume::Init (std::size_t samplesCount)
 		glm::vec3 sample (
 			std::cos (index * 2 * M_PI / samplesCount),
 			std::sin (index * 2 * M_PI / samplesCount),
-			1.0f
+			Random::Instance ()->RangeF (0.0f, 1.0f)
 		);
 
 		/*

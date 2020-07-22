@@ -17,6 +17,7 @@ uniform vec3 cameraPosition;
 
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
+uniform float lightIntensity;
 
 uniform sampler3D volumeTexture;
 
@@ -179,7 +180,7 @@ vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal)
 	float dCont = max (dot (in_normal, -lightDirection), 0.0);
 
 	// Attenuation is 1.0 for Directional Lights
-	vec3 diffuseColor = lightColor * dCont;
+	vec3 diffuseColor = lightColor * dCont * lightIntensity;
 
 	return diffuseColor;
 }
@@ -192,7 +193,7 @@ vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shinine
 	// Specular contribution
 	float sCont = pow (max (dot (surface2view, reflection), 0.0), in_shininess);
 
-	vec3 specularColor = lightColor * sCont;
+	vec3 specularColor = lightColor * sCont * lightIntensity;
 
 	return specularColor;
 }
@@ -266,7 +267,8 @@ float CalcShadow (vec3 in_position)
 	return 1.0 - occlusion;
 }
 
-vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, vec3 in_specular, float in_shininess,
+vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse,
+	vec3 in_specular, vec3 in_emissive, float in_shininess,
 	float in_transparency, float in_refractiveIndex)
 {
 	// Compute fragment world position and world normal
@@ -298,7 +300,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	// return indirectSpecularColor;
 	// return refractiveColor;
 	vec3 directLight = directDiffuseColor * in_diffuse + directSpecularColor * in_specular;
-	vec3 indirectLight = (indirectDiffuseColor * indirectIntensity) * in_diffuse
+	vec3 indirectLight = in_emissive + (indirectDiffuseColor * indirectIntensity) * in_diffuse
 		   + (indirectSpecularColor * indirectIntensity) * in_specular
 		   + ambientColor * in_diffuse;
 
@@ -312,12 +314,13 @@ void main()
 	vec3 in_diffuse = texture2D (gDiffuseMap, texCoord).xyz;
 	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
 	vec3 in_specular = texture2D (gSpecularMap, texCoord).xyz;
+	vec3 in_emissive = texture2D (gEmissiveMap, texCoord).xyz;
 	float in_shininess = texture2D (gSpecularMap, texCoord).w;
 	float in_transparency = texture2D (gDiffuseMap, texCoord).w;
 	float in_refractiveIndex = texture2D (gNormalMap, texCoord).w;
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcDirectionalLight (in_position, in_normal, in_diffuse, in_specular, in_shininess,
-		in_transparency, in_refractiveIndex);
+	out_color = CalcDirectionalLight (in_position, in_normal, in_diffuse,
+		in_specular, in_emissive, in_shininess, in_transparency, in_refractiveIndex);
 } 

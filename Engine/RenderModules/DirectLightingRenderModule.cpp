@@ -33,6 +33,12 @@
 #include "RenderPasses/SpotLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/IdleRenderPass.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOSamplesGenerationRenderPass.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDORenderPass.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOShadowRenderPass.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOTemporalFilterRenderPass.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOTemporalFilterSwapRenderPass.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOAccumulationRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRAccumulationRenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAARenderPass.h"
@@ -77,6 +83,18 @@ void DirectLightingRenderModule::Init ()
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
 		.Attach (new IdleRenderPass ())
+		.Attach (ContainerRenderPass::Builder ()
+			.Volume (new IterateOverRenderVolumeCollection (1))
+			.Attach (new SSDOSamplesGenerationRenderPass ())
+			.Attach (new SSDOShadowRenderPass ())
+			.Attach (new SSDORenderPass ())
+			.Attach (ContainerRenderPass::Builder ()
+				.Volume (new IterateOverRenderVolumeCollection (1))
+				.Attach (new SSDOTemporalFilterRenderPass ())
+				.Attach (new SSDOTemporalFilterSwapRenderPass ())
+				.Build ())
+			.Attach (new SSDOAccumulationRenderPass ())
+			.Build ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new SSRRenderPass ())
