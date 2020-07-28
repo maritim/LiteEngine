@@ -1,11 +1,11 @@
-#include "RSMIndirectDiffuseLightRenderPass.h"
+#include "RSMIndirectSpecularLightRenderPass.h"
 
-#include "RenderPasses/IndirectDiffuseLightMapVolume.h"
+#include "RenderPasses/IndirectSpecularLightMapVolume.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/RSMStatisticsObject.h"
 
-bool RSMIndirectDiffuseLightRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+bool RSMIndirectSpecularLightRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
@@ -15,17 +15,17 @@ bool RSMIndirectDiffuseLightRenderPass::IsAvailable (const RenderScene* renderSc
 	return true;
 }
 
-std::string RSMIndirectDiffuseLightRenderPass::GetPostProcessFragmentShaderPath () const
+std::string RSMIndirectSpecularLightRenderPass::GetPostProcessFragmentShaderPath () const
 {
-	return "Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapIndirectDiffuseFragment.glsl";
+	return "Assets/Shaders/ReflectiveShadowMapping/reflectiveShadowMapIndirectSpecularFragment.glsl";
 }
 
-std::string RSMIndirectDiffuseLightRenderPass::GetPostProcessVolumeName () const
+std::string RSMIndirectSpecularLightRenderPass::GetPostProcessVolumeName () const
 {
-	return "IndirectDiffuseMap";
+	return "IndirectSpecularMap";
 }
 
-glm::ivec2 RSMIndirectDiffuseLightRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
+glm::ivec2 RSMIndirectSpecularLightRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
 	if (_postProcessMapVolume != nullptr) {
 		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
@@ -38,20 +38,20 @@ glm::ivec2 RSMIndirectDiffuseLightRenderPass::GetPostProcessVolumeResolution (co
 
 		rsmStatisticsObject = dynamic_cast<RSMStatisticsObject*> (stat);
 
-		rsmStatisticsObject->rsmIndirectDiffuseMapVolume = _postProcessMapVolume;
+		rsmStatisticsObject->rsmIndirectSpecularMapVolume = _postProcessMapVolume;
 	}
 
 	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
 }
 
-PostProcessMapVolume* RSMIndirectDiffuseLightRenderPass::CreatePostProcessVolume () const
+PostProcessMapVolume* RSMIndirectSpecularLightRenderPass::CreatePostProcessVolume () const
 {
-	IndirectDiffuseLightMapVolume* indirectDiffuseLightMapVolume = new IndirectDiffuseLightMapVolume();
+	IndirectSpecularLightMapVolume* indirectSpecularLightMapVolume = new IndirectSpecularLightMapVolume();
 
-	return indirectDiffuseLightMapVolume;
+	return indirectSpecularLightMapVolume;
 }
 
-std::vector<PipelineAttribute> RSMIndirectDiffuseLightRenderPass::GetCustomAttributes (const Camera* camera,
+std::vector<PipelineAttribute> RSMIndirectSpecularLightRenderPass::GetCustomAttributes (const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -65,25 +65,25 @@ std::vector<PipelineAttribute> RSMIndirectDiffuseLightRenderPass::GetCustomAttri
 	*/
 
 	PipelineAttribute rsmResolution;
-	PipelineAttribute rsmRadius;
+	PipelineAttribute rsmThickness;
 	PipelineAttribute rsmIntensity;
 
 	rsmResolution.type = PipelineAttribute::AttrType::ATTR_2F;
-	rsmRadius.type = PipelineAttribute::AttrType::ATTR_1F;
+	rsmThickness.type = PipelineAttribute::AttrType::ATTR_1F;
 	rsmIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	rsmResolution.name = "rsmResolution";
-	rsmRadius.name = "rsmRadius";
+	rsmThickness.name = "rsmThickness";
 	rsmIntensity.name = "rsmIntensity";
 
 	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
 
 	rsmResolution.value = glm::vec3 (resolution, 0.0f);
-	rsmRadius.value.x = settings.rsm_radius;
+	rsmThickness.value.x = settings.rsm_thickness;
 	rsmIntensity.value.x = settings.rsm_intensity;
 
 	attributes.push_back (rsmResolution);
-	attributes.push_back (rsmRadius);
+	attributes.push_back (rsmThickness);
 	attributes.push_back (rsmIntensity);
 
 	return attributes;
