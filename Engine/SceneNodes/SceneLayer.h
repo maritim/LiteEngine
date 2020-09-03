@@ -6,7 +6,8 @@ enum SceneLayer {
 	DYNAMIC = 2,
 	ANIMATION = 4,
 	NORMAL_MAP = 8,
-	LIGHT_MAP = 16
+	LIGHT_MAP = 16,
+	TRANSLUCENCY = 32
 };
 
 #endif

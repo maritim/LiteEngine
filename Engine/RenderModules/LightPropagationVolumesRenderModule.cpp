@@ -27,6 +27,8 @@
 #include "RenderPasses/LightPropagationVolumes/LPVPropagationRenderPass.h"
 #include "RenderPasses/LightPropagationVolumes/LPVIndirectDiffuseLightRenderPass.h"
 #include "RenderPasses/LightPropagationVolumes/LPVIndirectSpecularLightRenderPass.h"
+#include "RenderPasses/LightPropagationVolumes/LPVSubsurfaceScatteringRenderPass.h"
+#include "RenderPasses/LightPropagationVolumes/LPVAmbientOcclusionRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
@@ -74,8 +76,10 @@ void LightPropagationVolumesRenderModule::Init ()
 		.Attach (new LPVGeometryInjectionRenderPass ())
 		.Attach (new LPVBlitRenderPass ())
 		.Attach (new LPVPropagationRenderPass ())
+		.Attach (new LPVAmbientOcclusionRenderPass ())
 		.Attach (new LPVIndirectDiffuseLightRenderPass ())
 		.Attach (new LPVIndirectSpecularLightRenderPass ())
+		.Attach (new LPVSubsurfaceScatteringRenderPass ())
 		.Attach (new RSMDirectionalLightRenderPass ())
 		.Build ());
 	// _renderPasses.push_back (ContainerRenderPass::Builder ()

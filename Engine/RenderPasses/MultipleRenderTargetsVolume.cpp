@@ -48,10 +48,9 @@ bool MultipleRenderTargetsVolume::Init(const glm::ivec2& size)
 	for (std::size_t index = 0 ; index < m_texturesCount ; index++) {
 		GL::BindTexture(GL_TEXTURE_2D, m_textures[index]);
 
-		GL::TexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		GL::TexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 		GL::TexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 
 		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
@@ -156,6 +155,19 @@ void MultipleRenderTargetsVolume::Clear ()
 	m_fbo = 0;
 }
 
+void MultipleRenderTargetsVolume::GenerateMipmap ()
+{
+	/*
+	 * Generate mipmap for each texture
+	*/
+
+	for (std::size_t index = 0 ; index < m_texturesCount ; index++) {
+		GL::BindTexture(GL_TEXTURE_2D, m_textures[index]);
+
+		GL::GenerateMipmap (GL_TEXTURE_2D);
+	}
+}
+
 void MultipleRenderTargetsVolume::BindForReading ()
 {
 	/*
@@ -187,6 +199,26 @@ void MultipleRenderTargetsVolume::BindForWriting ()
 	*/
 
 	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
+void MultipleRenderTargetsVolume::BindDraw ()
+{
+	/*
+	 * Bind current framebuffer for writting
+	*/
+
+	GL::BindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+
+	/*
+	 * Enable all color attachments correspunding with color textures
+	*/
+
+	std::vector<GLenum> DrawBuffers;
+	for (std::size_t index = 0; index < m_texturesCount; index ++) {
+		DrawBuffers.push_back ((GLenum)(GL_COLOR_ATTACHMENT0 + index));
+	}
+
+	GL::DrawBuffers(DrawBuffers.size (), DrawBuffers.data ());
 }
 
 std::vector<PipelineAttribute> MultipleRenderTargetsVolume::GetCustomAttributes () const

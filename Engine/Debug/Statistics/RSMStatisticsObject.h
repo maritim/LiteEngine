@@ -14,6 +14,10 @@ struct ENGINE_API RSMStatisticsObject : public StatisticsObject
 
 	FrameBuffer2DVolume* rsmIndirectDiffuseMapVolume;
 	FrameBuffer2DVolume* rsmIndirectSpecularMapVolume;
+	FrameBuffer2DVolume* rsmSubsurfaceScatteringMapVolume;
+	FrameBuffer2DVolume* rsmAmbientOcclusionMapVolume;
+
+	FrameBuffer2DVolume* rsmInterpolatedIndirectDiffuseMapVolume;
 };
 
 #endif

@@ -66,25 +66,25 @@ std::vector<PipelineAttribute> RSMIndirectSpecularLightRenderPass::GetCustomAttr
 
 	PipelineAttribute rsmResolution;
 	PipelineAttribute rsmThickness;
-	PipelineAttribute rsmIntensity;
+	PipelineAttribute rsmSpecularIntensity;
 
 	rsmResolution.type = PipelineAttribute::AttrType::ATTR_2F;
 	rsmThickness.type = PipelineAttribute::AttrType::ATTR_1F;
-	rsmIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+	rsmSpecularIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	rsmResolution.name = "rsmResolution";
 	rsmThickness.name = "rsmThickness";
-	rsmIntensity.name = "rsmIntensity";
+	rsmSpecularIntensity.name = "rsmSpecularIntensity";
 
 	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
 
 	rsmResolution.value = glm::vec3 (resolution, 0.0f);
 	rsmThickness.value.x = settings.rsm_thickness;
-	rsmIntensity.value.x = settings.rsm_intensity;
+	rsmSpecularIntensity.value.x = settings.rsm_specular_intensity;
 
 	attributes.push_back (rsmResolution);
 	attributes.push_back (rsmThickness);
-	attributes.push_back (rsmIntensity);
+	attributes.push_back (rsmSpecularIntensity);
 
 	return attributes;
 }

@@ -23,6 +23,7 @@
 
 DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
 	_frameBuffer (new GBuffer ()),
+	_translucencyFrameBuffer (new TranslucencyGBuffer ()),
 	_haltonGenerator (2, 3)
 {
 
@@ -30,6 +31,7 @@ DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
 
 DeferredGeometryRenderPass::~DeferredGeometryRenderPass ()
 {
+	delete _translucencyFrameBuffer;
 	delete _frameBuffer;
 }
 
@@ -123,7 +125,14 @@ RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const RenderScene* 
 
 	EndDrawing ();
 
-	return rvc->Insert ("GBuffer", _frameBuffer);
+	/*
+	 * Generate mipmaps
+	*/
+
+	GenerateMipmap ();
+
+	return rvc->Insert ("GBuffer", _frameBuffer)
+				->Insert ("TranslucencyGBuffer", _translucencyFrameBuffer);
 }
 
 bool DeferredGeometryRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
@@ -152,6 +161,7 @@ void DeferredGeometryRenderPass::PrepareDrawing ()
 	*/
 
 	_frameBuffer->BindForWriting ();
+	_translucencyFrameBuffer->BindForWriting ();
 }
 
 void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, const Camera* camera, const RenderSettings& settings)
@@ -232,6 +242,12 @@ void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, c
 		drawnObjectsCount++;
 
 		/*
+		* Deferred Rendering: Prepare for rendering
+		*/
+
+		BindFrameBuffer (renderObject->GetSceneLayers ());
+
+		/*
 		 * Lock shader according to object layers
 		*/
 
@@ -265,6 +281,34 @@ void DeferredGeometryRenderPass::EndDrawing ()
 	*/
 
 	Pipeline::UnlockShader ();
+}
+
+void DeferredGeometryRenderPass::GenerateMipmap ()
+{
+	/*
+	 * Generate GBuffer mipmap
+	*/
+
+	_frameBuffer->GenerateMipmap ();
+}
+
+void DeferredGeometryRenderPass::BindFrameBuffer (int sceneLayers)
+{
+	/*
+	 * Bind generic framebuffer
+	*/
+
+	if (!(sceneLayers & SceneLayer::TRANSLUCENCY)) {
+		_frameBuffer->BindDraw ();
+	}
+
+	/*
+	 * Bind framebuffer for translucency
+	*/
+
+	if (sceneLayers & SceneLayer::TRANSLUCENCY) {
+		_translucencyFrameBuffer->BindDraw ();
+	}
 }
 
 void DeferredGeometryRenderPass::LockShader (int sceneLayers)
@@ -356,6 +400,7 @@ void DeferredGeometryRenderPass::UpdateVolumes (const RenderSettings& settings, 
 		*/
 
 		_frameBuffer->Clear ();
+		_translucencyFrameBuffer->Clear ();
 
 		/*
 		 * Initialize framebuffer
@@ -382,6 +427,13 @@ void DeferredGeometryRenderPass::InitGBufferVolume (const RenderSettings& settin
 	*/
 
 	if (!_frameBuffer->Init (glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height))) {
+		Console::LogError (std::string () +
+			"Geometry buffer for deferred rendering cannot be initialized!" +
+			" It is not possible to continue the process. End now!");
+		exit (GBUFFER_FBO_NOT_INIT);
+	}
+
+	if (!_translucencyFrameBuffer->Init (glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height))) {
 		Console::LogError (std::string () +
 			"Geometry buffer for deferred rendering cannot be initialized!" +
 			" It is not possible to continue the process. End now!");

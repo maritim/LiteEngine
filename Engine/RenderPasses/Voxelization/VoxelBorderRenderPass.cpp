@@ -7,10 +7,14 @@
 
 #include "VoxelVolume.h"
 
-VoxelBorderRenderPass::VoxelBorderRenderPass () :
-	_firstTime (true)
+bool VoxelBorderRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
+	/*
+	 * Check if voxel border is enabled
+	*/
 
+	return settings.vct_bordering;
 }
 
 void VoxelBorderRenderPass::Init (const RenderSettings& settings)
@@ -27,28 +31,23 @@ void VoxelBorderRenderPass::Init (const RenderSettings& settings)
 RenderVolumeCollection* VoxelBorderRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
-	if (settings.vct_bordering && (_firstTime || settings.vct_continuous_voxelization)) {
+	/*
+	* Start mipmapping pass
+	*/
 
-		/*
-		* Start mipmapping pass
-		*/
+	StartVoxelBordering ();
 
-		StartVoxelBordering ();
+	/*
+	* Mipmapping pass
+	*/
 
-		/*
-		* Mipmapping pass
-		*/
+	BorderVoxelVolume (settings, rvc);
 
-		BorderVoxelVolume (settings, rvc);
+	/*
+	* End mipmapping pass
+	*/
 
-		/*
-		* End mipmapping pass
-		*/
-
-		EndVoxelBordering ();
-
-		_firstTime = false;
-	}
+	EndVoxelBordering ();
 
 	return rvc;
 }

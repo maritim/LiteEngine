@@ -7,10 +7,14 @@
 
 #include "VoxelVolume.h"
 
-VoxelMipmapRenderPass::VoxelMipmapRenderPass () :
-	_firstTime (true)
+bool VoxelMipmapRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
+	/*
+	 * Always allow voxel mipmap
+	*/
 
+	return true;
 }
 
 void VoxelMipmapRenderPass::Init (const RenderSettings& settings)
@@ -27,28 +31,23 @@ void VoxelMipmapRenderPass::Init (const RenderSettings& settings)
 RenderVolumeCollection* VoxelMipmapRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
-	if (_firstTime || settings.vct_continuous_voxelization) {
+	/*
+	* Start mipmapping pass
+	*/
 
-		/*
-		* Start mipmapping pass
-		*/
+	StartVoxelMipmaping ();
 
-		StartVoxelMipmaping ();
+	/*
+	* Mipmapping pass
+	*/
 
-		/*
-		* Mipmapping pass
-		*/
+	GenerateMipmaps (settings, rvc);
 
-		GenerateMipmaps (settings, rvc);
+	/*
+	* End mipmapping pass
+	*/
 
-		/*
-		* End mipmapping pass
-		*/
-
-		EndVoxelMipmaping ();
-
-		_firstTime = false;
-	}
+	EndVoxelMipmaping ();
 
 	return rvc;
 }

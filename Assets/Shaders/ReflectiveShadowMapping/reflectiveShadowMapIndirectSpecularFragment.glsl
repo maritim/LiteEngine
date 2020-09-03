@@ -18,7 +18,7 @@ uniform vec2 cameraZLimits;
 
 uniform vec2 rsmResolution;
 uniform float rsmThickness;
-uniform float rsmIntensity;
+uniform float rsmSpecularIntensity;
 
 #include "deferred.glsl"
 #include "ReflectiveShadowMapping/reflectiveShadowMapping.glsl"
@@ -34,25 +34,21 @@ vec2 CalcRSMReflection (vec3 worldPosition, vec3 worldNormal)
 	vec3 viewDirection = normalize (worldPosition - cameraPosition);
 
 	vec3 reflectionDirection = normalize (reflect (viewDirection, worldNormal));
+	reflectionDirection = normalize (vec3 (lightViewMatrix * vec4 (reflectionDirection, 0.0)));
 
 	vec2 rsmSize = textureSize (rsmPositionMap, 0);
 
 	mat4 pixelProjectionMatrix = mat4 (
-		0.5 * rsmSize.x, 0, 0, 0,
-		0, 0.5 * rsmSize.y, 0, 0,
+		0.5f * rsmSize.x, 0, 0, 0,
+		0, 0.5f * rsmSize.y, 0, 0,
 		0, 0, 0, 0,
-		0.5 * rsmSize.x, 0.5 * rsmSize.y, 0, 1.0f)
-		* inverse (mat4 (
-			0.5, 0, 0, 0,
-			0, 0.5, 0, 0,
-			0, 0, 0.5, 0,
-			0.5, 0.5, 0.5, 1.0f
-		)) * lightSpaceMatrix;
+		0.5f * rsmSize.x, 0.5f * rsmSize.y, 0, 1.0f) * lightProjectionMatrix;
 
 	vec2 reflectionPos;
 	vec3 reflectionViewPos;
 
-	vec3 rayPosition = worldPosition + reflectionDirection * 0.1;
+	vec3 rayPosition = vec3 (lightViewMatrix * vec4 (worldPosition, 1.0));
+	rayPosition += reflectionDirection * 0.1;
 
 	bool intersect = traceScreenSpaceRay (rayPosition, reflectionDirection, pixelProjectionMatrix,
 		rsmPositionMap, rsmSize, rsmThickness, -cameraZLimits.x, 1, 0, 1000,
@@ -77,22 +73,25 @@ vec3 CalcRSMIndirectSpecular (vec3 in_position, vec3 in_normal)
 
 	vec2 reflectionPos = CalcRSMReflection (worldPosition, worldNormal);
 
-	vec3 reflectionColorColor = texture2D (rsmFluxMap, reflectionPos).xyz;
+	vec3 reflectionColor = texture2D (rsmFluxMap, reflectionPos).xyz;
 	vec3 reflectionNormal = normalize (texture2D (rsmNormalMap, reflectionPos).xyz);
 
-	if (dot (worldNormal, -reflectionNormal) < 0) {
+	vec3 lightSpaceNormal = normalize (vec3 (lightViewMatrix * vec4 (worldNormal, 0.0)));
+
+	if (dot (lightSpaceNormal, -reflectionNormal) < 0) {
 		return vec3 (0);
 	}
 
-	vec3 viewDirection = normalize (worldPosition - cameraPosition);
-	vec3 reflectionDirection = normalize (reflect (viewDirection, worldNormal));
+	// vec3 viewDirection = normalize (worldPosition - cameraPosition);
+	// vec3 reflectionDirection = normalize (reflect (viewDirection, worldNormal));
 
-	vec3 fresnel = fresnelSchlick(max(dot(worldNormal, normalize(viewDirection)), 0.0), vec3 (0.0f));
+	// vec3 fresnel = fresnelSchlick(max(dot(worldNormal, normalize(viewDirection)), 0.0), vec3 (0.0f));
 
-	vec3 reflectionPosition = texture (rsmPositionMap, reflectionPos).xyz;
-	float d = distance (reflectionPosition, worldPosition);
+	// vec3 reflectionPosition = texture (rsmPositionMap, reflectionPos).xyz;
+	// float d = distance (reflectionPosition, worldPosition);
 
-	return (reflectionColorColor * fresnel) / max (d / 3, 1.0f);
+	return reflectionColor * rsmSpecularIntensity;
+	// return (reflectionColor * fresnel) / max (d / 3, 1.0f);
 }
 
 void main()

@@ -9,6 +9,8 @@ struct ENGINE_API LPVStatisticsObject : public StatisticsObject
 {
 	FrameBuffer2DVolume* lpvIndirectDiffuseMapVolume;
 	FrameBuffer2DVolume* lpvIndirectSpecularMapVolume;
+	FrameBuffer2DVolume* lpvSubsurfaceScatteringMapVolume;
+	FrameBuffer2DVolume* lpvAmbientOcclusionMapVolume;
 };
 
 #endif

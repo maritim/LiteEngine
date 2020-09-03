@@ -82,7 +82,7 @@ void main()
 	vec3 diffuseMap = MaterialDiffuse * vec3 (texture2D (DiffuseMap, geom_texcoord.xy));
 	vec3 emissiveMap = MaterialEmissive * vec3 (texture2D (EmissiveMap, geom_texcoord.xy));
 
-	vec3 fragmentColor = emissiveMap + diffuseMap;
+	vec3 fragmentColor = emissiveMap;// + diffuseMap;
 
 	/*
 	 * Calculate the position in texture 3D

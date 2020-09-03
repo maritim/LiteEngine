@@ -113,6 +113,8 @@ std::vector<PipelineAttribute> RSMVolume::GetCustomAttributes () const
 	PipelineAttribute reflectiveShadowMapNormal;
 	PipelineAttribute reflectiveShadowMapFlux;
 	PipelineAttribute lightSpaceMatrix;
+	PipelineAttribute lightViewMatrix;
+	PipelineAttribute lightProjectionMatrix;
 	PipelineAttribute shadowBias;
 
 	reflectiveShadowMapDepth.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
@@ -120,6 +122,8 @@ std::vector<PipelineAttribute> RSMVolume::GetCustomAttributes () const
 	reflectiveShadowMapNormal.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 	reflectiveShadowMapFlux.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 	lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
+	lightViewMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
+	lightProjectionMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
 	shadowBias.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	reflectiveShadowMapDepth.name = "shadowMap";
@@ -127,6 +131,8 @@ std::vector<PipelineAttribute> RSMVolume::GetCustomAttributes () const
 	reflectiveShadowMapNormal.name = "rsmNormalMap";
 	reflectiveShadowMapFlux.name = "rsmFluxMap";
 	lightSpaceMatrix.name = "lightSpaceMatrix";
+	lightViewMatrix.name = "lightViewMatrix";
+	lightProjectionMatrix.name = "lightProjectionMatrix";
 	shadowBias.name = "shadowBias";
 
 	reflectiveShadowMapDepth.value.x = _shadowMapBuffer->GetDepthBuffer ();
@@ -139,6 +145,8 @@ std::vector<PipelineAttribute> RSMVolume::GetCustomAttributes () const
 	glm::mat4 screenMatrix = glm::scale (glm::translate (glm::mat4 (1), glm::vec3 (0.5f)), glm::vec3 (0.5f));
 
 	lightSpaceMatrix.matrix = screenMatrix * lightProjection * lightView;
+	lightViewMatrix.matrix = lightView;
+	lightProjectionMatrix.matrix = lightProjection;
 	shadowBias.value.x = _shadowBias;
 
 	attributes.push_back (reflectiveShadowMapDepth);
@@ -146,6 +154,8 @@ std::vector<PipelineAttribute> RSMVolume::GetCustomAttributes () const
 	attributes.push_back (reflectiveShadowMapNormal);
 	attributes.push_back (reflectiveShadowMapFlux);
 	attributes.push_back (lightSpaceMatrix);
+	attributes.push_back (lightViewMatrix);
+	attributes.push_back (lightProjectionMatrix);
 	attributes.push_back (shadowBias);
 
 	return attributes;

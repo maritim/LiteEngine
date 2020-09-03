@@ -64,6 +64,13 @@ struct RenderSettings : public Object
 	std::size_t rsm_samples;
 	float rsm_radius;
 	float rsm_intensity;
+	float rsm_specular_intensity;
+	float rsm_indirect_refractive_intensity;
+	float rsm_thickness;
+	float rsm_interpolation_scale;
+	float rsm_min_interpolation_distance;
+	float rsm_min_interpolation_angle;
+	bool rsm_debug_interpolation;
 
 	bool trsm_temporal_filter_enabled;
 	bool trsm_blur_enabled;
@@ -73,12 +80,14 @@ struct RenderSettings : public Object
 	float lpv_injection_bias;
 	bool lpv_geometry_occlusion;
 	float lpv_intensity;
+	float lpv_indirect_refractive_intensity;
 
 	std::size_t vct_voxels_size;
 	bool vct_continuous_voxelization;
 	bool vct_bordering;
 	std::size_t vct_mipmap_levels;
-	float vct_indirect_intensity;
+	float vct_indirect_diffuse_intensity;
+	float vct_indirect_specular_intensity;
 	float vct_indirect_refractive_intensity;
 	float vct_diffuse_cone_distance;
 	float vct_specular_cone_distance;
@@ -88,6 +97,7 @@ struct RenderSettings : public Object
 	float vct_shadow_cone_distance;
 	bool vct_debug_show_voxels;
 	std::size_t vct_debug_volume_mipmap_level;
+	float vct_origin_bias;
 
 	bool ssdo_enabled;
 	bool ssdo_temporal_filter_enabled;

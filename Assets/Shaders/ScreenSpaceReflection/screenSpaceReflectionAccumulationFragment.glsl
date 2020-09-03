@@ -39,10 +39,10 @@ void main()
 
 	in_normal = normalize (in_normal);
 
-	vec3 reflection = texture (postProcessMap, in_reflection).xyz;
+	vec3 reflection = vec3 (0.0f);
 
-	if (length (in_reflection) == 0.0f) {
-		reflection = vec3 (0.0f);
+	if (length (in_reflection) > 0.0f) {
+		reflection = texture (postProcessMap, in_reflection).xyz;
 	}
 
 	float screenEdgeFade = 1.0f - clamp (length (vec2 (0.5f) - in_reflection), 0.0f, 0.5f) * 2.0f;

@@ -5,50 +5,18 @@
 
 #include "Renderer/Pipeline.h"
 
-VoxelRadianceInjectionRenderPass::VoxelRadianceInjectionRenderPass () :
-	_firstTime (true)
-{
-
-}
-
 void VoxelRadianceInjectionRenderPass::Init (const RenderSettings& settings)
 {
 	/*
-	 * Shader for voxel radiance injection render pass
+	 * Initialize post processing shader
 	*/
 
-	Resource<Shader> shader = Resources::LoadComputeShader ("Assets/Shaders/Voxelize/voxelRadianceInjectionCompute.glsl");
+	Resource<Shader> shader = Resources::LoadShader ({
+		"Assets/Shaders/PostProcess/postProcessVertex.glsl",
+		"Assets/Shaders/Voxelize/voxelRadianceInjectionFragment.glsl"
+	});
 
-	_shaderView = RenderSystem::LoadComputeShader (shader);
-}
-
-RenderVolumeCollection* VoxelRadianceInjectionRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
-	const RenderSettings& settings, RenderVolumeCollection* rvc)
-{
-	if (_firstTime || settings.vct_continuous_voxelization) {
-
-		/*
-		* Start radiance injecting pass
-		*/
-
-		StartRadianceInjectionPass ();
-
-		/*
-		* Radiance Injecting pass
-		*/
-
-		RadianceInjectPass (settings, rvc);
-
-		/*
-		* End radiance injecting pass
-		*/
-
-		EndRadianceInjectionPass ();
-
-		_firstTime = false;
-	}
-
-	return rvc;
+	_shaderView = RenderSystem::LoadShader (shader);
 }
 
 void VoxelRadianceInjectionRenderPass::Clear ()
@@ -56,77 +24,131 @@ void VoxelRadianceInjectionRenderPass::Clear ()
 
 }
 
-void VoxelRadianceInjectionRenderPass::StartRadianceInjectionPass ()
+RenderVolumeCollection* VoxelRadianceInjectionRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
-	Pipeline::SetShader (_shaderView);
+	/*
+	 * Get volumetric light from render volume collection
+	*/
+
+	RenderLightObject* renderLightObject = GetRenderLightObject (rvc);
+
+	/*
+	 * Start screen space ambient occlusion generation pass
+	*/
+
+	StartPostProcessPass (rvc);
+
+	/*
+	 * Screen space ambient occlusion generation pass
+	*/
+
+	PostProcessPass (renderScene, camera, settings, renderLightObject, rvc);
+
+	/*
+	 * End screen space ambient occlusion generation pass
+	*/
+
+	EndPostProcessPass ();
+
+	return rvc;
 }
 
-void VoxelRadianceInjectionRenderPass::RadianceInjectPass (const RenderSettings& settings, RenderVolumeCollection* rvc)
+bool VoxelRadianceInjectionRenderPass::IsAvailable (const RenderLightObject*) const
 {
-	auto shadowMapVolume = rvc->GetRenderVolume ("ShadowMapDirectionalLightVolume");
-	auto voxelVolume = rvc->GetRenderVolume ("VoxelVolume");
-
 	/*
-	 * Bind render volumes for reading
+	 * Always execute light propagation volumes radiance injection render pass
 	*/
 
-	shadowMapVolume->BindForReading ();
-
-	voxelVolume->BindForReading ();
-
-	/*
-	 * Send custom attributes of render volumes to pipeline
-	*/
-
-	Pipeline::SendCustomAttributes (_shaderView, shadowMapVolume->GetCustomAttributes ());
-
-	Pipeline::SendCustomAttributes (_shaderView, voxelVolume->GetCustomAttributes ());
-
-	/*
-	 * Bind voxel volume for writing
-	*/
-
-	voxelVolume->BindForWriting ();
-
-	/*
-	 * Inject radiance
-	*/
-
-	int numWorkGroups = (int) std::ceil (settings.vct_voxels_size / 4.0f);
-	GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);
+	return true;
 }
 
-void VoxelRadianceInjectionRenderPass::EndRadianceInjectionPass ()
+void VoxelRadianceInjectionRenderPass::StartPostProcessPass (RenderVolumeCollection* rvc)
 {
 	/*
-	* Make sure writing to image has finished before read
+	 * Bind screen space ambient occlusion volume for writing
 	*/
 
-	GL::MemoryBarrier (GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+	rvc->GetRenderVolume ("VoxelVolume")->BindForWriting ();
 }
 
-std::vector<PipelineAttribute> VoxelRadianceInjectionRenderPass::GetCustomAttributes (const RenderSettings& settings) const
+void VoxelRadianceInjectionRenderPass::PostProcessPass (const RenderScene* renderScene,
+	const Camera* camera, const RenderSettings& settings,
+	const RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
 {
 	/*
-	 * Attach voxel radiance injection attributes to pipeline
+	 * Set viewport
 	*/
 
+	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
+	glm::ivec2 rsmSize = shadow.resolution;
+
+	GL::Viewport (0, 0, rsmSize.x, rsmSize.y);
+
+	/*
+	 * No rendering target
+	*/
+
+	// GL::DrawBuffer (GL_NONE);
+
+	/*
+	 * Don't need to write the light on depth buffer.
+	*/
+
+	GL::Disable (GL_DEPTH_TEST);
+
+	/*
+	 * Disable face culling
+	*/
+
+	GL::Disable (GL_CULL_FACE);
+
+	/*
+	 * Lock post-process shader
+	*/
+
+	Pipeline::LockShader (_shaderView);
+
+	/*
+	 * Send custom uniforms
+	*/
+
+	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("ReflectiveShadowMapVolume")->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("VoxelVolume")->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes (settings, renderLightObject));
+
+	/*
+	 * Draw a screen covering triangle
+	*/
+
+	GL::DrawArrays (GL_TRIANGLES, 0, 3);
+}
+
+void VoxelRadianceInjectionRenderPass::EndPostProcessPass ()
+{
+	/*
+	 * Unlock current shader
+	*/
+
+	Pipeline::UnlockShader ();
+}
+
+std::vector<PipelineAttribute> VoxelRadianceInjectionRenderPass::GetCustomAttributes (const RenderSettings& settings,
+	const RenderLightObject* renderLightObject) const
+{
 	std::vector<PipelineAttribute> attributes;
 
-	PipelineAttribute shadowConeRatio;
-	PipelineAttribute shadowConeDistance;
+	PipelineAttribute rsmResolution;
 
-	shadowConeRatio.type = PipelineAttribute::AttrType::ATTR_1F;
-	shadowConeDistance.type = PipelineAttribute::AttrType::ATTR_1F;
+	rsmResolution.type = PipelineAttribute::AttrType::ATTR_2F;
 
-	shadowConeRatio.name = "shadowConeRatio";
-	shadowConeDistance.name = "shadowConeDistance";
+	rsmResolution.name = "rsmResolution";
 
-	shadowConeRatio.value.x = settings.vct_shadow_cone_ratio;
-	shadowConeDistance.value.x = settings.vct_shadow_cone_distance;
+	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
-	attributes.push_back (shadowConeRatio);
-	attributes.push_back (shadowConeDistance);
+	rsmResolution.value = glm::vec3 (shadow.resolution, 0.0f);
+
+	attributes.push_back (rsmResolution);
 
 	return attributes;
 }

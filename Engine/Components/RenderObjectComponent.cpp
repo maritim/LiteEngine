@@ -7,7 +7,7 @@
 #include "SceneNodes/SceneLayer.h"
 
 RenderObjectComponent::RenderObjectComponent () :
-	_renderStage (1),
+	_renderStage ((int) RenderStage::RENDER_STAGE_DEFERRED),
 	_layer (1),
 	_model (nullptr),
 	_renderObject (nullptr)
@@ -25,7 +25,7 @@ void RenderObjectComponent::Awake ()
 	SetLayer (_layer);
 
 	_renderObject->SetTransform (_parent->GetTransform ());
-	_renderObject->SetRenderStage (RenderStage::RENDER_STAGE_DEFERRED);
+	_renderObject->SetRenderStage ((RenderStage) _renderStage);
 	_renderObject->SetActive (_parent->IsActive ());
 }
 
@@ -50,6 +50,10 @@ void RenderObjectComponent::SetActive (bool isActive)
 void RenderObjectComponent::OnAttachedToScene ()
 {
 	if (_renderObject == nullptr) {
+		return;
+	}
+
+	if (_model == nullptr) {
 		return;
 	}
 

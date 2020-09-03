@@ -24,15 +24,15 @@ vec3 CalcIndirectSpecularLight ()
 {
 	vec2 texCoord = CalcTexCoord();
 
-	// float ambientOcclusion = 1.0f;
+	float ambientOcclusion = 1.0f;
 
-	// if (ambientOcclusionEnabled == 1) {
-	// 	float in_ao = texture2D (ambientOcclusionMap, texCoord).x;
+	if (ambientOcclusionEnabled == 1) {
+		float in_ao = texture2D (ambientOcclusionMap, texCoord).x;
 
-	// 	ambientOcclusion = in_ao;
-	// }
+		ambientOcclusion = in_ao;
+	}
 
 	vec3 in_indirect = texture2D (indirectSpecularMap, texCoord).xyz;
 
-	return in_indirect;// * ambientOcclusion;
+	return in_indirect * ambientOcclusion;
 }

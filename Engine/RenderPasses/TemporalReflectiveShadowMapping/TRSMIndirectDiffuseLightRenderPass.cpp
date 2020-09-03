@@ -91,7 +91,7 @@ bool TRSMIndirectDiffuseLightRenderPass::IsAvailable (const RenderScene* renderS
 
 std::string TRSMIndirectDiffuseLightRenderPass::GetPostProcessFragmentShaderPath () const
 {
-	return "Assets/Shaders/TemporalReflectiveShadowMapping/temporalReflectiveShadowMapIndirectFragment.glsl";
+	return "Assets/Shaders/TemporalReflectiveShadowMapping/temporalReflectiveShadowMapIndirectDiffuseFragment.glsl";
 }
 
 PostProcessMapVolume* TRSMIndirectDiffuseLightRenderPass::CreatePostProcessVolume () const

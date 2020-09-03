@@ -22,8 +22,11 @@ public:
 
 	virtual bool Init(const glm::ivec2& size);
 
+	void GenerateMipmap ();
+
 	void BindForReading ();
 	void BindForWriting ();
+	void BindDraw ();
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
 
 	unsigned int GetColorBuffer (std::size_t index) const;

@@ -8,7 +8,7 @@
 	<SSDO enabled="true" temporalFilterEnabled="true" scale="1" samples="8" radius="10" bias="0.025"
 		indirectIntensity="0.5" rayShadow="false" shadowMapping="true" shadowScale="0.5" shadowStride="2" />
 
-	<SSR enabled="false" scale="0.5" iterations="1000" roughness="0.035" thickness="0.1" stride="2" intensity="5" />
+	<SSR enabled="false" scale="1" iterations="1000" roughness="0.035" thickness="0.1" stride="2" intensity="5" />
 
 	<TAA enabled="true" />
 
@@ -19,13 +19,11 @@
 
 	<Gamma enabled="false" />
 
-	<RSM scale="1" samples="16" radius="0.12" intensity="200" />
+	<RSM scale="1" samples="16" radius="0.12" intensity="200" specularIntensity="0" thickness="0" refractiveIndirectIntensity="1" interpolationScale="0.2" minInterpolationDistance="1" minInterpolationAngle="30" />
 	<TRSM temporalFilterEnabled="true" blurEnabled="false" />
 
-	<LPV volumeSize="32" iterations="5" injectionBias="0" geometryOcclusion="true" intensity="1" />
+	<LPV volumeSize="32" iterations="5" injectionBias="0" geometryOcclusion="true" intensity="1" indirectRefractiveIntensity="1" />
 
 	<VCT voxelsSize="512" continuousVoxelization="false" bordering="false"
-		mipmapLevels="6" indirectIntensity="1" refractiveIndirectIntensity="1" diffuseConeDistance="0.3"
-		specularConeDistance="0.6" refractiveConeRatio="0.1" refractiveConeDistance="0.6"
-		shadowConeRatio="0.01" shadowConeDistance="0.365" />
+		mipmapLevels="6" voxelShadowBias="0" indirectDiffuseIntensity="1" indirectSpecularIntensity="1" refractiveIndirectIntensity="1" diffuseConeDistance="0.3" specularConeDistance="0.6" refractiveConeRatio="0.1" refractiveConeDistance="0.6" shadowConeRatio="0.01" shadowConeDistance="0.365" originBias="0.0025" />
 </RenderSettings>

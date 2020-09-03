@@ -3,8 +3,6 @@
 
 #include "RenderPasses/PostProcess/PostProcessRenderPass.h"
 
-#include <glm/mat4x4.hpp>
-
 class ENGINE_API TRSMTemporalFilterRenderPass : public PostProcessRenderPass
 {
 	DECLARE_RENDER_PASS(TRSMTemporalFilterRenderPass)

@@ -1,10 +1,10 @@
-#include "SSAOMapVolume.h"
+#include "AmbientOcclusionMapVolume.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
 #include "Core/Console/Console.h"
 
-bool SSAOMapVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
+bool AmbientOcclusionMapVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
 {
 	/*
 	 * Create framebuffer
@@ -53,14 +53,14 @@ bool SSAOMapVolume::Init (std::size_t bufferWidth, std::size_t bufferHeight)
 	return true;
 }
 
-void SSAOMapVolume::BindForReading ()
+void AmbientOcclusionMapVolume::BindForReading ()
 {
 	/*
 	 * Do nothing
 	*/
 }
 
-std::vector<PipelineAttribute> SSAOMapVolume::GetCustomAttributes () const
+std::vector<PipelineAttribute> AmbientOcclusionMapVolume::GetCustomAttributes () const
 {
 	std::vector<PipelineAttribute> attributes;
 

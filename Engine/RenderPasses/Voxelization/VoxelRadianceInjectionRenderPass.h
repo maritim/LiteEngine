@@ -1,33 +1,37 @@
 #ifndef VOXELRADIANCEINJECTIONRENDERPASS_H
 #define VOXELRADIANCEINJECTIONRENDERPASS_H
 
-#include "Renderer/RenderPassI.h"
+#include "RenderPasses/VolumetricLightRenderPassI.h"
 
 #include "Core/Resources/Resource.h"
 #include "Renderer/RenderViews/ShaderView.h"
 
-class VoxelRadianceInjectionRenderPass : public RenderPassI
+#include "VoxelVolume.h"
+
+class ENGINE_API VoxelRadianceInjectionRenderPass : public VolumetricLightRenderPassI
 {
 	DECLARE_RENDER_PASS(VoxelRadianceInjectionRenderPass)
 
 protected:
 	Resource<ShaderView> _shaderView;
-	bool _firstTime;
 
 public:
-	VoxelRadianceInjectionRenderPass ();
-
-	virtual void Init (const RenderSettings& settings);
-	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
+	void Init (const RenderSettings& settings);
+	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void Clear ();
 protected:
-	void StartRadianceInjectionPass ();
-	void RadianceInjectPass (const RenderSettings&, RenderVolumeCollection*);
-	void EndRadianceInjectionPass ();
+	bool IsAvailable (const RenderLightObject*) const;
 
-	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings&) const;
+	void StartPostProcessPass (RenderVolumeCollection* rvc);
+	void PostProcessPass (const RenderScene* renderScene, const Camera* camera,
+		const RenderSettings& settings, const RenderLightObject* renderLightObject,
+		RenderVolumeCollection* rvc);
+	void EndPostProcessPass ();
+
+	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings,
+		const RenderLightObject* renderLightObject) const;
 };
 
 #endif

@@ -1,6 +1,6 @@
 #include "SSAORenderPass.h"
 
-#include "SSAOMapVolume.h"
+#include "AmbientOcclusionMapVolume.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
 #include "Debug/Statistics/SSAOStatisticsObject.h"
@@ -46,7 +46,7 @@ glm::ivec2 SSAORenderPass::GetPostProcessVolumeResolution (const RenderSettings&
 
 PostProcessMapVolume* SSAORenderPass::CreatePostProcessVolume () const
 {
-	SSAOMapVolume* ssaoMapVolume = new SSAOMapVolume ();
+	AmbientOcclusionMapVolume* ssaoMapVolume = new AmbientOcclusionMapVolume ();
 
 	return ssaoMapVolume;
 }

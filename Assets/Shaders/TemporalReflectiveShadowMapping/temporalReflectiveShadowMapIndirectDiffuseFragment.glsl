@@ -15,14 +15,7 @@ uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
 
-layout(std140) uniform rsmSamples
-{
-	int rsmSamplesCount;
-	vec2 rsmSample[2000];
-};
-
 uniform vec2 rsmResolution;
-uniform float rsmRadius;
 uniform float rsmIntensity;
 
 #include "deferred.glsl"
@@ -45,15 +38,15 @@ vec2 CalcTexCoordRSM ()
 vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
 {
 	// Compute fragment world position and world normal
-	vec3 worldSpacePos = vec3 (inverseViewMatrix * vec4 (in_position, 1.0));
-	vec3 worldSpaceNormal = normalMatrix * inverseNormalWorldMatrix * in_normal;
+	vec3 lightViewSpacePos = vec3 (lightViewMatrix * inverseViewMatrix * vec4 (in_position, 1.0));
+	vec3 lightViewSpaceNormal = vec3 (lightViewMatrix * vec4 (normalMatrix * inverseNormalWorldMatrix * in_normal, 0.0));
 
 	vec3 indirectColor = vec3 (0.0);
 
-	vec4 lightSpacePos = lightSpaceMatrix * vec4 (worldSpacePos, 1.0);
-	vec3 rsmProjCoords = lightSpacePos.xyz / lightSpacePos.w;
+	vec4 lightSpacePos = lightProjectionMatrix * vec4 (lightViewSpacePos, 1.0);
+	vec3 rsmProjCoords = (lightSpacePos.xyz / lightSpacePos.w) * 0.5 + 0.5;
 
-	vec2 noiseTexcoord = worldSpacePos.xy + worldSpacePos.yz + worldSpacePos.xz;
+	vec2 noiseTexcoord = lightViewSpacePos.xy + lightViewSpacePos.yz + lightViewSpacePos.xz;
 
 	float r = 2 * 3.14 * rand (noiseTexcoord);
 	vec2 randomVec = vec2 (cos (r), sin (r));
@@ -65,14 +58,14 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
 
 		vec2 coords = rsmProjCoords.xy + rnd * rsmRadius;
 
-		vec3 rsmWorldSpacePos = texture2D (rsmPositionMap, coords).xyz;
-		vec3 rsmWorldSpaceNormal = texture2D (rsmNormalMap, coords).xyz;
+		vec3 rsmLightViewSpacePos = texture2D (rsmPositionMap, coords).xyz;
+		vec3 rsmLightViewSpaceNormal = texture2D (rsmNormalMap, coords).xyz;
 		vec3 rsmFlux = texture2D (rsmFluxMap, coords).xyz;
 
 		vec3 result = rsmFlux *
-			((max (0.0, dot (rsmWorldSpaceNormal, worldSpacePos - rsmWorldSpacePos))
-				* max (0.0, dot (worldSpaceNormal, rsmWorldSpacePos - worldSpacePos)))
-			/ pow (length (worldSpacePos - rsmWorldSpacePos), 4.0));
+			((max (0.0, dot (rsmLightViewSpaceNormal, lightViewSpacePos - rsmLightViewSpacePos))
+				* max (0.0, dot (lightViewSpaceNormal, rsmLightViewSpacePos - lightViewSpacePos)))
+			/ pow (length (lightViewSpacePos - rsmLightViewSpacePos), 4.0));
 
 		float dist = length (rnd);
 

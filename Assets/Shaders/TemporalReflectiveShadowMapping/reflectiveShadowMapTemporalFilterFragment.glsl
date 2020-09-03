@@ -28,7 +28,7 @@ vec2 CalcTexCoordRSM ()
 	return gl_FragCoord.xy / rsmResolution;
 }
 
-vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal, vec3 in_indirect, vec2 texCoord)
+vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_indirect, vec2 texCoord)
 {
 	vec2 lastTexCoord = CalcReprojectedTexCoord (in_position, texCoord);
 
@@ -43,10 +43,7 @@ void main()
 {
 	vec2 texCoord = CalcTexCoordRSM();
 	vec3 in_position = texture2D (gPositionMap, texCoord).xyz;
-	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
 	vec3 in_indirect = texture2D (indirectDiffuseMap, texCoord).xyz;
 
-	in_normal = normalize(in_normal);
-
-	out_color = CalcIndirectDiffuseLight(in_position, in_normal, in_indirect, texCoord);
+	out_color = CalcIndirectDiffuseLight(in_position, in_indirect, texCoord);
 }

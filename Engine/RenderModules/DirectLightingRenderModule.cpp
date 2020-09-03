@@ -41,6 +41,7 @@
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOAccumulationRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRAccumulationRenderPass.h"
+#include "RenderPasses/ScreenSpaceSubsurfaceScattering/SSSubsurfaceScatteringRenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAARenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAASwapRenderPass.h"
 #include "RenderPasses/Bloom/BrightExtractionRenderPass.h"
@@ -100,6 +101,7 @@ void DirectLightingRenderModule::Init ()
 			.Attach (new SSRRenderPass ())
 			.Attach (new SSRAccumulationRenderPass ())
 			.Build ())
+		.Attach (new SSSubsurfaceScatteringRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach	(new TAARenderPass ())

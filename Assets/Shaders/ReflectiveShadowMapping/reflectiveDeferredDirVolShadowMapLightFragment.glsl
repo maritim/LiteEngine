@@ -21,6 +21,7 @@ uniform float lightIntensity;
 
 #include "deferred.glsl"
 #include "IndirectLight/indirectLight.glsl"
+#include "SubsurfaceScattering/subsurfaceScattering.glsl"
 #include "ReflectiveShadowMapping/reflectiveShadowMapping.glsl"
 
 vec3 CalcDirectDiffuseLight (vec3 in_position, vec3 in_normal)
@@ -48,7 +49,7 @@ vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shinine
 }
 
 vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse,
-	vec3 in_specular, vec3 in_emissive, float in_shininess)
+	vec3 in_specular, vec3 in_emissive, float in_shininess, float in_transparency)
 {
 	vec3 directDiffuseColor = CalcDirectDiffuseLight (in_position, in_normal);
 
@@ -64,11 +65,14 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse,
 	vec3 ambientColor = in_diffuse * CalcAmbientLight ();
 	vec3 indirectDiffuseColor = in_diffuse * CalcIndirectDiffuseLight ();
 	vec3 indirectSpecularColor = in_specular * CalcIndirectSpecularLight ();
+	vec3 subsurfaceScatteringColor = CalcSubsurfaceScatteringLight ();
 
-	return in_emissive + (directDiffuseColor * in_diffuse
+	vec3 light = in_emissive + (directDiffuseColor * in_diffuse
 			+ directSpecularColor * in_specular) * lightIntensity
 			+ indirectSpecularColor + indirectDiffuseColor + ambientColor;
 			+ indirectDiffuseColor + ambientColor;
+
+	return mix (light, subsurfaceScatteringColor, in_transparency);
 }
 
 void main()
@@ -80,8 +84,10 @@ void main()
 	vec3 in_specular = texture2D (gSpecularMap, texCoord).xyz;
 	vec3 in_emissive = texture2D (gEmissiveMap, texCoord).xyz;
 	float in_shininess = texture2D (gSpecularMap, texCoord).w;
+	float in_transparency = texture2D (gDiffuseMap, texCoord).w;
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_emissive, in_shininess);
+	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular,
+		in_emissive, in_shininess, in_transparency);
 } 

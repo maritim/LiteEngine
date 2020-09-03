@@ -34,10 +34,10 @@ void main()
 	 * Emit position on the world
 	*/
 
-	vert_position = (modelViewMatrix * localPosition).xyz;
+	vert_position = (modelMatrix * localPosition).xyz;
 
 	vec4 localNormal = boneTransform * vec4 (in_normal, 0.0);
-	vert_normal = (normalWorldMatrix * vec3 (localNormal)).xyz;
+	vert_normal = (normalMatrix * vec3 (localNormal)).xyz;
 
 	vert_texcoord = in_texcoord;
 }

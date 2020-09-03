@@ -23,6 +23,7 @@ uniform mat4 modelViewProjectionMatrix;
 uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
 uniform mat4 inverseViewMatrix;
+uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 minVertex;
 uniform vec3 maxVertex;

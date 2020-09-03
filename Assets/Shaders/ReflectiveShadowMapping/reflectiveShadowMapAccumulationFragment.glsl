@@ -7,6 +7,8 @@ layout(location = 2) out vec4 out_flux;
 uniform vec3 MaterialDiffuse;
 uniform vec3 MaterialSpecular;
 
+uniform float MaterialTransparency;
+
 uniform sampler2D DiffuseMap;
 uniform sampler2D SpecularMap;
 uniform sampler2D AlphaMap;
@@ -36,6 +38,14 @@ void main()
 	*/
 
 	if (alphaMap == nullInAlphaMap) {
+		discard;
+	}
+
+	/*
+	 * Discard translucent objects
+	*/
+
+	if (MaterialTransparency > 0) {
 		discard;
 	}
 

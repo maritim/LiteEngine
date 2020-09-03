@@ -20,7 +20,7 @@
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOAccumulationRenderPass.h"
 
 #include "RenderPasses/ShadowMap/DirectionalLightShadowMapRenderPass.h"
-#include "RenderPasses/DeferredDirectionalLightRenderPass.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDODirectionalLightRenderPass.h"
 
 #include "RenderPasses/AmbientOcclusion/SSAOSamplesGenerationRenderPass.h"
 #include "RenderPasses/AmbientOcclusion/SSAONoiseGenerationRenderPass.h"
@@ -36,7 +36,9 @@
 
 #include "RenderPasses/IdleRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
+#include "RenderPasses/ScreenSpaceReflection/SSRSpecularRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflection/SSRAccumulationRenderPass.h"
+#include "RenderPasses/ScreenSpaceSubsurfaceScattering/SSSubsurfaceScatteringRenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAARenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAASwapRenderPass.h"
 #include "RenderPasses/Bloom/BrightExtractionRenderPass.h"
@@ -64,7 +66,8 @@ void ScreenSpaceDirectionalOcclusionRenderModule::Init ()
 		.Attach (new DirectionalLightShadowMapRenderPass ())
 		// .Attach (new DirectionalLightExponentialShadowMapRenderPass ())
 		// .Attach (new ExponentialShadowMapBlurRenderPass ())
-		.Attach (new DeferredDirectionalLightRenderPass ())
+		.Attach (new SSDOShadowRenderPass ())
+		.Attach (new SSDODirectionalLightRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
@@ -73,7 +76,6 @@ void ScreenSpaceDirectionalOcclusionRenderModule::Init ()
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new SSDOSamplesGenerationRenderPass ())
-			.Attach (new SSDOShadowRenderPass ())
 			.Attach (new SSDORenderPass ())
 			.Attach (ContainerRenderPass::Builder ()
 				.Volume (new IterateOverRenderVolumeCollection (1))
@@ -85,8 +87,10 @@ void ScreenSpaceDirectionalOcclusionRenderModule::Init ()
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new SSRRenderPass ())
+			.Attach (new SSRSpecularRenderPass ())
 			.Attach (new SSRAccumulationRenderPass ())
 			.Build ())
+		.Attach (new SSSubsurfaceScatteringRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach	(new TAARenderPass ())

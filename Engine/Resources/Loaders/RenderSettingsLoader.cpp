@@ -198,11 +198,23 @@ void RenderSettingsLoader::ProcessRSM (TiXmlElement* xmlElem, RenderSettings* se
 	std::string samples = xmlElem->Attribute ("samples");
 	std::string radius = xmlElem->Attribute ("radius");
 	std::string intensity = xmlElem->Attribute ("intensity");
+	std::string specularIntensity = xmlElem->Attribute ("specularIntensity");
+	std::string refractiveIndirectIntensity = xmlElem->Attribute ("refractiveIndirectIntensity");
+	std::string thickness = xmlElem->Attribute ("thickness");
+	std::string interpolationScale = xmlElem->Attribute ("interpolationScale");
+	std::string minInterpolationDistance = xmlElem->Attribute ("minInterpolationDistance");
+	std::string minInterpolationAngle = xmlElem->Attribute ("minInterpolationAngle");
 
 	settings->rsm_scale = std::stof (scale);
 	settings->rsm_samples = std::stoi (samples);
 	settings->rsm_radius = std::stof (radius);
 	settings->rsm_intensity = std::stof (intensity);
+	settings->rsm_specular_intensity = std::stof (specularIntensity);
+	settings->rsm_indirect_refractive_intensity = std::stof (refractiveIndirectIntensity);
+	settings->rsm_thickness = std::stof (thickness);
+	settings->rsm_interpolation_scale = std::stof (interpolationScale);
+	settings->rsm_min_interpolation_distance = std::stof (minInterpolationDistance);
+	settings->rsm_min_interpolation_angle = std::stof (minInterpolationAngle);
 }
 
 void RenderSettingsLoader::ProcessTRSM (TiXmlElement* xmlElem, RenderSettings* settings)
@@ -221,12 +233,14 @@ void RenderSettingsLoader::ProcessLPV (TiXmlElement* xmlElem, RenderSettings* se
 	std::string injectionBias = xmlElem->Attribute ("injectionBias");
 	std::string geometryOcclusion = xmlElem->Attribute ("geometryOcclusion");
 	std::string intensity = xmlElem->Attribute ("intensity");
+	std::string indirectRefractiveIntensity = xmlElem->Attribute ("indirectRefractiveIntensity");
 
 	settings->lpv_volume_size = std::stoi (volumeSize);
 	settings->lpv_iterations = std::stoi (iterations);
 	settings->lpv_injection_bias = std::stof (injectionBias);
 	settings->lpv_geometry_occlusion = Extensions::StringExtend::ToBool (geometryOcclusion);
 	settings->lpv_intensity = std::stof (intensity);
+	settings->lpv_indirect_refractive_intensity = std::stof (indirectRefractiveIntensity);
 }
 
 void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings)
@@ -235,7 +249,8 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	std::string continuousVoxelization = xmlElem->Attribute ("continuousVoxelization");
 	std::string bordering = xmlElem->Attribute ("bordering");
 	std::string mipmapLevels = xmlElem->Attribute ("mipmapLevels");
-	std::string indirectIntensity = xmlElem->Attribute ("indirectIntensity");
+	std::string indirectDiffuseIntensity = xmlElem->Attribute ("indirectDiffuseIntensity");
+	std::string indirectSpecularIntensity = xmlElem->Attribute ("indirectSpecularIntensity");
 	std::string refractiveIndirectIntensity = xmlElem->Attribute ("refractiveIndirectIntensity");
 	std::string diffuseConeDistance = xmlElem->Attribute ("diffuseConeDistance");
 	std::string specularConeDistance = xmlElem->Attribute ("specularConeDistance");
@@ -243,12 +258,14 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	std::string refractiveConeDistance = xmlElem->Attribute ("refractiveConeDistance");
 	std::string shadowConeRatio = xmlElem->Attribute ("shadowConeRatio");
 	std::string shadowConeDistance = xmlElem->Attribute ("shadowConeDistance");
+	std::string originBias = xmlElem->Attribute ("originBias");
 
 	settings->vct_voxels_size = std::stoi (voxelsSize);
 	settings->vct_continuous_voxelization = Extensions::StringExtend::ToBool (continuousVoxelization);
 	settings->vct_bordering = Extensions::StringExtend::ToBool (bordering);
 	settings->vct_mipmap_levels = std::stoi (mipmapLevels);
-	settings->vct_indirect_intensity = std::stof (indirectIntensity);
+	settings->vct_indirect_diffuse_intensity = std::stof (indirectDiffuseIntensity);
+	settings->vct_indirect_specular_intensity = std::stof (indirectSpecularIntensity);
 	settings->vct_indirect_refractive_intensity = std::stof (refractiveIndirectIntensity);
 	settings->vct_diffuse_cone_distance = std::stof (diffuseConeDistance);
 	settings->vct_specular_cone_distance = std::stof (specularConeDistance);
@@ -256,4 +273,5 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	settings->vct_refractive_cone_ratio = std::stof (refractiveConeRatio);
 	settings->vct_shadow_cone_ratio = std::stof (shadowConeRatio);
 	settings->vct_shadow_cone_distance = std::stof (shadowConeDistance);
+	settings->vct_origin_bias = std::stof (originBias);
 }

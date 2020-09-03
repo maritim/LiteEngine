@@ -15,7 +15,7 @@ protected:
 	Resource<ShaderView> _animationShaderView;
 
 public:
-	void Init (const RenderSettings& settings);
+	virtual void Init (const RenderSettings& settings);
 protected:
 	void LockShader (int sceneLayers);
 	Camera* GetLightCamera (const RenderScene* renderScene, const RenderLightObject* renderLightObject);

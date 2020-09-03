@@ -15,15 +15,14 @@ uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
 
-layout(std140) uniform rsmSamples
-{
-	int rsmSamplesCount;
-	vec2 rsmSample[2000];
-};
-
 uniform vec2 rsmResolution;
-uniform float rsmRadius;
 uniform float rsmIntensity;
+uniform float rsmInterpolationScale;
+uniform float rsmMinInterpolationDistance;
+uniform float rsmMinInterpolationAngle;
+uniform int rsmDebugInterpolation;
+
+uniform sampler2D indirectDiffuseMap;
 
 #include "deferred.glsl"
 #include "ReflectiveShadowMapping/reflectiveShadowMapping.glsl"
@@ -33,45 +32,29 @@ vec2 CalcTexCoordRSM ()
 	return gl_FragCoord.xy / rsmResolution;	
 }
 
-/*
- * Indirect Illumination Calculation
- * Thanks to: http://ericpolman.com/reflective-shadow-maps-part-2-the-implementation/
-*/
-
-vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
+vec3 CalcInterpolatedIndirectDiffuseLight (vec3 in_position, vec3 in_normal, vec2 texCoord)
 {
-	// Compute fragment world position and world normal
-	vec3 worldSpacePos = vec3 (inverseViewMatrix * vec4 (in_position, 1.0));
-	vec3 worldSpaceNormal = normalMatrix * inverseNormalWorldMatrix * in_normal;
-
-	vec3 indirectColor = vec3 (0.0);
-
-	vec4 lightSpacePos = lightSpaceMatrix * vec4 (worldSpacePos, 1.0);
-	vec3 rsmProjCoords = lightSpacePos.xyz / lightSpacePos.w;
-
-	for (int index = 0; index < rsmSamplesCount; index ++) {
-
-		vec2 rnd = rsmSample [index].xy;
-
-		vec2 coords = rsmProjCoords.xy + rnd * rsmRadius;
-
-		vec3 rsmWorldSpacePos = texture2D (rsmPositionMap, coords).xyz;
-		vec3 rsmWorldSpaceNormal = texture2D (rsmNormalMap, coords).xyz;
-		vec3 rsmFlux = texture2D (rsmFluxMap, coords).xyz;
-
-		vec3 result = rsmFlux *
-			((max (0.0, dot (rsmWorldSpaceNormal, worldSpacePos - rsmWorldSpacePos))
-				* max (0.0, dot (worldSpaceNormal, rsmWorldSpacePos - worldSpacePos)))
-			/ pow (length (worldSpacePos - rsmWorldSpacePos), 4.0));
-
-		float dist = length (rnd);
-
-		result = result * dist * dist;
-
-		indirectColor += result;
+	if (dot (in_position, in_position) == 0) {
+		return vec3 (0);
 	}
 
-	return clamp (indirectColor * rsmIntensity, 0.0, 1.0);
+	vec3 indirectDiffuseLight = vec3 (0);
+
+	vec3 interpolatedPosition = textureLod (gPositionMap, texCoord, log2 (1.0 / rsmInterpolationScale)).xyz;
+	vec3 interpolatedNormal = textureLod (gNormalMap, texCoord, log2 (1.0 / rsmInterpolationScale)).xyz;
+
+	if (distance (interpolatedPosition, in_position) < rsmMinInterpolationDistance
+		&& dot (interpolatedNormal, in_normal) > rsmMinInterpolationAngle) {
+		indirectDiffuseLight = texture (indirectDiffuseMap, texCoord).xyz;
+	} else {
+		if (rsmDebugInterpolation == 1) {
+			indirectDiffuseLight = vec3 (1, 0, 0);
+		} else {
+			indirectDiffuseLight = clamp (CalcViewIndirectDiffuseLight(in_position, in_normal) * rsmIntensity, 0.0, 1.0);
+		}
+	}
+
+	return indirectDiffuseLight;
 }
 
 void main()
@@ -82,5 +65,5 @@ void main()
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcIndirectDiffuseLight(in_position, in_normal);
-} 
+	out_color = CalcInterpolatedIndirectDiffuseLight (in_position, in_normal, texCoord);
+}

@@ -62,11 +62,11 @@ vec3 CalcIndirectSpecularLight (vec3 in_position, vec3 in_normal)
 	vec3 worldSpaceNormal = normalMatrix * inverseNormalWorldMatrix * in_normal;
 
 	vec3 surface2view = normalize (cameraPosition - worldSpacePos);
-	vec3 reflection = reflect (surface2view, worldSpaceNormal);
+	vec3 reflection = reflect (-surface2view, worldSpaceNormal);
 
 	vec4 SHintensity = evalSH_direct( -reflection );
 
-	vec3 reflectionStep = 1.0f / volumeSize * reflection;// * 1.732;
+	vec3 reflectionStep = 1.0f / volumeSize * reflection * 1.732;
 	vec3 volumePos = GetPositionInVolume (worldSpacePos);
 
 	vec3 indirectSpecularColor = vec3 (0.0f);

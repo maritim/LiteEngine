@@ -5,6 +5,13 @@ uniform sampler2D gSpecularMap;
 uniform sampler2D gEmissiveMap;
 uniform sampler2D gDepthMap;
 
+uniform sampler2D gTrPositionMap;
+uniform sampler2D gTrNormalMap;
+uniform sampler2D gTrDiffuseMap;
+uniform sampler2D gTrSpecularMap;
+uniform sampler2D gTrEmissiveMap;
+uniform sampler2D gTrDepthMap;
+
 uniform vec2 screenSize;
 
 vec2 CalcTexCoord()

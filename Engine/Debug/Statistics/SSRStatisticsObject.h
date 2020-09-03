@@ -8,6 +8,7 @@
 struct ENGINE_API SSRStatisticsObject : public StatisticsObject
 {
 	FrameBuffer2DVolume* ssrPositionMapVolume;
+	FrameBuffer2DVolume* ssrMapVolume;
 };
 
 #endif

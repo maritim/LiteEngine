@@ -156,7 +156,7 @@ void Pipeline::UpdateMatrices (const Resource<ShaderView>& shaderView)
 	GL::UniformMatrix3fv (currentShaderView->GetUniformLocation ("inverseNormalWorldMatrix"), 1, GL_FALSE, glm::value_ptr (inverseNormalWorldMatrix));
 
 	GL::Uniform3fv (currentShaderView->GetUniformLocation ("cameraPosition"), 1, glm::value_ptr (_currentCamera->GetPosition ()));
-	GL::Uniform2f (currentShaderView->GetUniformLocation ("cameraZLimit"), _currentCamera->GetZNear (), _currentCamera->GetZFar ());
+	GL::Uniform2f (currentShaderView->GetUniformLocation ("cameraZLimits"), _currentCamera->GetZNear (), _currentCamera->GetZFar ());
 
 	// TODO: Change this
 	bool gammaCorrectionEnabled = SettingsManager::Instance ()->GetValue<bool> ("gamma_correction", false);

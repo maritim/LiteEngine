@@ -2,7 +2,7 @@
 
 #include "RenderPasses/ResultFrameBufferGenerationRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelizationRenderPass.h"
-#include "RenderPasses/Voxelization/VoxelDirectionalShadowMapRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelRadianceInjectionRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelMipmapRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelBorderRenderPass.h"
@@ -16,16 +16,21 @@
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
 
+#include "RenderPasses/VoxelConeTracing/VCTVoxelizationCheckRenderVolumeCollection.h"
 #include "RenderPasses/VoxelConeTracing/VCTDebugCheckRenderVolumeCollection.h"
 
-#include "RenderPasses/AmbientOcclusion/SSAOSamplesGenerationRenderPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAONoiseGenerationRenderPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAORenderPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAOBlurRenderPass.h"
+// #include "RenderPasses/AmbientOcclusion/SSAOSamplesGenerationRenderPass.h"
+// #include "RenderPasses/AmbientOcclusion/SSAONoiseGenerationRenderPass.h"
+// #include "RenderPasses/AmbientOcclusion/SSAORenderPass.h"
+// #include "RenderPasses/AmbientOcclusion/SSAOBlurRenderPass.h"
 
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
 #include "RenderPasses/VoxelConeTracing/VCTDirectionalLightRenderPass.h"
+#include "RenderPasses/VoxelConeTracing/VCTIndirectDiffuseLightRenderPass.h"
+#include "RenderPasses/VoxelConeTracing/VCTIndirectSpecularLightRenderPass.h"
+#include "RenderPasses/VoxelConeTracing/VCTAmbientOcclusionRenderPass.h"
+#include "RenderPasses/VoxelConeTracing/VCTSubsurfaceScatteringRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/IdleRenderPass.h"
@@ -49,24 +54,34 @@ void VoxelConeTracingRenderModule::Init ()
 
 	_renderPasses.push_back (new ResultFrameBufferGenerationRenderPass ());
 	_renderPasses.push_back (new VoxelizationRenderPass ());
-	_renderPasses.push_back (new VoxelDirectionalShadowMapRenderPass ());
-	_renderPasses.push_back (new VoxelRadianceInjectionRenderPass ());
-	_renderPasses.push_back (new VoxelMipmapRenderPass ());
-	_renderPasses.push_back (new VoxelBorderRenderPass ());
 	_renderPasses.push_back (new VRTRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new VCTDebugCheckRenderVolumeCollection ())
 		.Attach (new DeferredGeometryRenderPass ())
-		.Attach (ContainerRenderPass::Builder ()
-			.Volume (new IterateOverRenderVolumeCollection (1))
-			.Attach (new SSAOSamplesGenerationRenderPass ())
-			.Attach (new SSAONoiseGenerationRenderPass ())
-			.Attach (new SSAORenderPass ())
-			.Attach (new SSAOBlurRenderPass ())
-			.Build ())
+		// .Attach (ContainerRenderPass::Builder ()
+		// 	.Volume (new IterateOverRenderVolumeCollection (1))
+		// 	.Attach (new SSAOSamplesGenerationRenderPass ())
+		// 	.Attach (new SSAONoiseGenerationRenderPass ())
+		// 	.Attach (new SSAORenderPass ())
+		// 	.Attach (new SSAOBlurRenderPass ())
+		// 	.Build ())
 		.Attach (new AmbientLightRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
+			.Volume (new VCTVoxelizationCheckRenderVolumeCollection ())
+			.Attach (ContainerRenderPass::Builder ()
+				.Volume (new DirectionalLightContainerRenderVolumeCollection ())
+				.Attach (new RSMDirectionalLightAccumulationRenderPass ())
+				.Attach (new VoxelRadianceInjectionRenderPass ())
+				.Build ())
+			.Attach (new VoxelMipmapRenderPass ())
+			.Attach (new VoxelBorderRenderPass ())
+			.Build ())
+		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new DirectionalLightContainerRenderVolumeCollection ())
+			.Attach (new VCTIndirectDiffuseLightRenderPass ())
+			.Attach (new VCTIndirectSpecularLightRenderPass ())
+			.Attach (new VCTAmbientOcclusionRenderPass ())
+			.Attach (new VCTSubsurfaceScatteringRenderPass ())
 			.Attach (new VCTDirectionalLightRenderPass ())
 			.Build ())
 		.Attach (new DeferredSkyboxRenderPass ())

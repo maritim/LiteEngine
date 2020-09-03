@@ -48,7 +48,7 @@ void VoxelizationRenderPass::Init (const RenderSettings& settings)
 	*/
 
 	Resource<Shader> animationShader = Resources::LoadShader ({
-		"Assets/Shaders/Voxelize/voxelizeVertex.glsl",
+		"Assets/Shaders/Voxelize/voxelizeAnimationVertex.glsl",
 		"Assets/Shaders/Voxelize/voxelizeFragment.glsl",
 		"Assets/Shaders/Voxelize/voxelizeGeometry.glsl"
 	});

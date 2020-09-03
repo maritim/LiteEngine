@@ -7,6 +7,7 @@
 #include "Renderer/RenderViews/ShaderView.h"
 
 #include "GBuffer.h"
+#include "Translucency/TranslucencyGBuffer.h"
 
 #include "Utils/Sequences/HaltonGenerator.h"
 
@@ -20,6 +21,7 @@ protected:
 	Resource<ShaderView> _lightMapShaderView;
 	Resource<ShaderView> _animationShaderView;
 	GBuffer* _frameBuffer;
+	TranslucencyGBuffer* _translucencyFrameBuffer;
 	HaltonGenerator _haltonGenerator;
 
 public:
@@ -40,6 +42,9 @@ protected:
 	void GeometryPass (const RenderScene* renderScene, const Camera* camera, const RenderSettings& settings);
 	void EndDrawing ();
 
+	void GenerateMipmap ();
+
+	void BindFrameBuffer (int sceneLayers);
 	void LockShader (int sceneLayers);
 
 	void UpdateVolumes (const RenderSettings& settings, RenderVolumeCollection* rvc);
