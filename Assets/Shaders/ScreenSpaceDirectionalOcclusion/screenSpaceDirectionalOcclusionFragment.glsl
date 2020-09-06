@@ -15,7 +15,7 @@ uniform vec3 cameraPosition;
 layout(std140) uniform ssdoSamples
 {
 	int ssdoSamplesCount;
-	vec3 ssdoSample[200];
+	vec3 ssdoSample[500];
 };
 
 uniform vec2 ssdoResolution;
@@ -76,7 +76,7 @@ vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal, vec2
 	if (ssdoTemporalFilter > 0) {
 		tangent = normalize (randomVec - in_normal * dot (randomVec, in_normal));
 	} else {
-		tangent = Orthogonal (in_normal);
+		tangent = normalize (vec3 (1, 0, 0) - in_normal * dot (vec3 (1, 0, 0), in_normal));
 	}
 
 	vec3 bitangent = cross (in_normal, tangent);
@@ -97,8 +97,8 @@ vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal, vec2
 			continue;
 		}
 
-		vec3 samplePos = texture2D (gPositionMap, offset.xy).xyz;
-		vec3 sampleNormal = texture2D (gNormalMap, offset.xy).xyz;
+		vec3 samplePos = textureLod (gPositionMap, offset.xy, 0).xyz;
+		vec3 sampleNormal = textureLod (gNormalMap, offset.xy, 0).xyz;
 		vec3 sampleDiffuse = texture2D (postProcessMap, offset.xy).xyz;
 
 		sampleNormal = normalize (sampleNormal);
@@ -135,8 +135,8 @@ vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal, vec2
 void main()
 {
 	vec2 texCoord = CalcTexCoordSSDO();
-	vec3 in_position = texture2D (gPositionMap, texCoord).xyz;
-	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
+	vec3 in_position = textureLod (gPositionMap, texCoord, 0).xyz;
+	vec3 in_normal = textureLod (gNormalMap, texCoord, 0).xyz;
 
 	in_normal = normalize(in_normal);
 

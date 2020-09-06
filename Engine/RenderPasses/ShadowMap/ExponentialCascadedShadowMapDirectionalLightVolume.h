@@ -15,7 +15,7 @@ public:
 
 	void SetExponential (float exponential);
 
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
+	// std::vector<PipelineAttribute> GetCustomAttributes () const;
 };
 
 #endif

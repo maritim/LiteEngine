@@ -15,18 +15,21 @@
 #include "Renderer/RenderSystem.h"
 #include "Renderer/RenderManager.h"
 
+#include "RenderPasses/FramebufferRenderVolume.h"
+
 #include "Utils/Files/FileSystem.h"
 
 #include "Utils/Extensions/MathExtend.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/RSMStatisticsObject.h"
-#include "Debug/Statistics/LPVStatisticsObject.h"
-#include "Debug/Statistics/VCTStatisticsObject.h"
-#include "Debug/Statistics/SSDOStatisticsObject.h"
-#include "Debug/Statistics/SSAOStatisticsObject.h"
-#include "Debug/Statistics/SSRStatisticsObject.h"
-#include "Debug/Statistics/SSSubsurfaceScatteringStatisticsObject.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMStatisticsObject.h"
+#include "RenderPasses/TemporalReflectiveShadowMapping/TRSMStatisticsObject.h"
+#include "RenderPasses/LightPropagationVolumes/LPVStatisticsObject.h"
+#include "RenderPasses/VoxelConeTracing/VCTStatisticsObject.h"
+#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAOStatisticsObject.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOStatisticsObject.h"
+#include "RenderPasses/ScreenSpaceReflections/SSRStatisticsObject.h"
+#include "RenderPasses/ScreenSpaceSubsurfaceScattering/SSSubsurfaceScatteringStatisticsObject.h"
 
 namespace fs = std::experimental::filesystem;
 
@@ -187,39 +190,34 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 				_settings->vct_debug_volume_mipmap_level, (std::size_t) 0,
 				(std::size_t) _settings->vct_mipmap_levels - 1);
 
-			StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("VCTStatisticsObject");
-			VCTStatisticsObject* vctStat = nullptr;
-
-			if (stat != nullptr) {
-				vctStat = dynamic_cast<VCTStatisticsObject*> (stat);
-			}
+			auto vctStat = StatisticsManager::Instance ()->GetStatisticsObject <VCTStatisticsObject> ();
 
 			if (ImGui::TreeNode ("Indirect Light")) {
-				if (vctStat != nullptr) {
 
-					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
+				int windowWidth = ImGui::GetWindowWidth() * 0.95f;
 
-					FrameBuffer2DVolume* vctIndirectDiffuseMapVolume = vctStat->vctIndirectDiffuseMapVolume;
-					FrameBuffer2DVolume* vctIndirectSpecularMapVolume = vctStat->vctIndirectSpecularMapVolume;
-					FrameBuffer2DVolume* vctAmbientOcclusionMapVolume = vctStat->vctAmbientOcclusionMapVolume;
-					FrameBuffer2DVolume* vctSubsurfaceScatteringMapVolume = vctStat->vctSubsurfaceScatteringMapVolume;
+				FramebufferRenderVolume* vctIndirectDiffuseMapVolume = vctStat->vctIndirectDiffuseMapVolume;
+				FramebufferRenderVolume* vctIndirectSpecularMapVolume = vctStat->vctIndirectSpecularMapVolume;
+				FramebufferRenderVolume* vctAmbientOcclusionMapVolume = vctStat->vctAmbientOcclusionMapVolume;
+				FramebufferRenderVolume* vctSubsurfaceScatteringMapVolume = vctStat->vctSubsurfaceScatteringMapVolume;
 
-					glm::ivec2 vctMapSize = vctIndirectDiffuseMapVolume->GetSize ();
+				if (vctIndirectDiffuseMapVolume != nullptr) {
+					auto vctMapSize = vctIndirectDiffuseMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
 					int vctMapWidth = windowWidth;
-					int vctMapHeight = ((float) vctMapSize.y / vctMapSize.x) * vctMapWidth;
+					int vctMapHeight = ((float) vctMapSize.height / vctMapSize.width) * vctMapWidth;
 
 					ImGui::Text ("Indirect Diffuse Light Map");
-					ShowImage (vctIndirectDiffuseMapVolume->GetColorTextureID (), glm::ivec2 (vctMapWidth, vctMapHeight));
+					ShowImage (vctIndirectDiffuseMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
 
 					ImGui::Text ("Indirect Specular Light Map");
-					ShowImage (vctIndirectSpecularMapVolume->GetColorTextureID (), glm::ivec2 (vctMapWidth, vctMapHeight));
+					ShowImage (vctIndirectSpecularMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
 
 					ImGui::Text ("Subsurface Scattering Map");
-					ShowImage (vctSubsurfaceScatteringMapVolume->GetColorTextureID (), glm::ivec2 (vctMapWidth, vctMapHeight));
+					ShowImage (vctSubsurfaceScatteringMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
 
 					ImGui::Text ("Ambient Occlusion Map");
-					ShowImage (vctAmbientOcclusionMapVolume->GetColorTextureID (), glm::ivec2 (vctMapWidth, vctMapHeight));
+					ShowImage (vctAmbientOcclusionMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
 				}
 
 				ImGui::TreePop();
@@ -274,65 +272,62 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 		if (ImGui::TreeNode ("Debug")) {
 
-			StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
-			RSMStatisticsObject* rsmStat = nullptr;
-
-			if (stat != nullptr) {
-				rsmStat = dynamic_cast<RSMStatisticsObject*> (stat);
-			}
+			auto rsmStat = StatisticsManager::Instance ()->GetStatisticsObject <RSMStatisticsObject> ();
 
 			if (ImGui::TreeNode ("Reflective Shadow Map")) {
-				if (rsmStat != nullptr) {
+				if (rsmStat->rsmVolume != nullptr) {
+
+					FramebufferRenderVolume* rsmVolume = rsmStat->rsmVolume;
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.65f;
 
 					ImGui::Text ("Depth Map");
-					ShowImage (rsmStat->rsmDepthMapID, glm::ivec2 (windowWidth, windowWidth));
+					ShowImage (rsmVolume->GetFramebufferView ()->GetDepthTextureView ()->GetGPUIndex (), glm::ivec2 (windowWidth, windowWidth));
 
 					ImGui::Text ("Position Map");
-					ShowImage (rsmStat->rsmPosMapID, glm::ivec2 (windowWidth, windowWidth));
+					ShowImage (rsmVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (windowWidth, windowWidth));
 
 					ImGui::Text ("Normal Map");
-					ShowImage (rsmStat->rsmNormalMapID, glm::ivec2 (windowWidth, windowWidth));
+					ShowImage (rsmVolume->GetFramebufferView ()->GetTextureView (1)->GetGPUIndex (), glm::ivec2 (windowWidth, windowWidth));
 
 					ImGui::Text ("Flux Map");
-					ShowImage (rsmStat->rsmFluxMapID, glm::ivec2 (windowWidth, windowWidth));
+					ShowImage (rsmVolume->GetFramebufferView ()->GetTextureView (2)->GetGPUIndex (), glm::ivec2 (windowWidth, windowWidth));
 				}
 
 				ImGui::TreePop();
 			}
 
 			if (ImGui::TreeNode ("Indirect Light")) {
-				if (rsmStat != nullptr) {
+				if (rsmStat->rsmIndirectDiffuseMapVolume != nullptr) {
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
 
-					FrameBuffer2DVolume* rsmIndirectDiffuseMapVolume = rsmStat->rsmIndirectDiffuseMapVolume;
-					FrameBuffer2DVolume* rsmIndirectSpecularMapVolume = rsmStat->rsmIndirectSpecularMapVolume;
-					FrameBuffer2DVolume* rsmSubsurfaceScatteringMapVolume = rsmStat->rsmSubsurfaceScatteringMapVolume;
-					FrameBuffer2DVolume* rsmAmbientOcclusionMapVolume = rsmStat->rsmAmbientOcclusionMapVolume;
+					FramebufferRenderVolume* rsmIndirectDiffuseMapVolume = rsmStat->rsmIndirectDiffuseMapVolume;
+					FramebufferRenderVolume* rsmIndirectSpecularMapVolume = rsmStat->rsmIndirectSpecularMapVolume;
+					FramebufferRenderVolume* rsmSubsurfaceScatteringMapVolume = rsmStat->rsmSubsurfaceScatteringMapVolume;
+					FramebufferRenderVolume* rsmAmbientOcclusionMapVolume = rsmStat->rsmAmbientOcclusionMapVolume;
 
-					FrameBuffer2DVolume* rsmInterpolatedIndirectDiffuseMapVolume = rsmStat->rsmInterpolatedIndirectDiffuseMapVolume;
+					FramebufferRenderVolume* rsmInterpolatedIndirectDiffuseMapVolume = rsmStat->rsmInterpolatedIndirectDiffuseMapVolume;
 
-					glm::ivec2 rsmMapSize = rsmIndirectDiffuseMapVolume->GetSize ();
+					auto rsmMapSize = rsmIndirectDiffuseMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
 					int rsmMapWidth = windowWidth;
-					int rsmMapHeight = ((float) rsmMapSize.y / rsmMapSize.x) * rsmMapWidth;
+					int rsmMapHeight = ((float) rsmMapSize.height / rsmMapSize.width) * rsmMapWidth;
 
 					ImGui::Text ("Screen Space Interpolation Indirect Diffuse Light Map");
-					ShowImage (rsmInterpolatedIndirectDiffuseMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+					ShowImage (rsmInterpolatedIndirectDiffuseMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
 
 					ImGui::Text ("Indirect Diffuse Light Map");
-					ShowImage (rsmIndirectDiffuseMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+					ShowImage (rsmIndirectDiffuseMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
 
 					ImGui::Text ("Indirect Specular Light Map");
-					ShowImage (rsmIndirectSpecularMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+					ShowImage (rsmIndirectSpecularMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
 
 					ImGui::Text ("Subsurface Scattering Map");
-					ShowImage (rsmSubsurfaceScatteringMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+					ShowImage (rsmSubsurfaceScatteringMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
 
 					ImGui::Text ("Ambient Occlusion Map");
-					ShowImage (rsmAmbientOcclusionMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+					ShowImage (rsmAmbientOcclusionMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
 				}
 
 				ImGui::TreePop();
@@ -356,60 +351,58 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 		ImGui::PushID ("TRSMDebug");
 		if (ImGui::TreeNode ("Debug")) {
 
-			StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
-			RSMStatisticsObject* rsmStat = nullptr;
-
-			if (stat != nullptr) {
-				rsmStat = dynamic_cast<RSMStatisticsObject*> (stat);
-			}
+			auto rsmStat = StatisticsManager::Instance ()->GetStatisticsObject <RSMStatisticsObject> ();
+			auto trsmStat = StatisticsManager::Instance ()->GetStatisticsObject <TRSMStatisticsObject> ();
 
 			if (ImGui::TreeNode ("Reflective Shadow Map")) {
-				if (rsmStat != nullptr) {
+				if (rsmStat->rsmVolume != nullptr) {
+
+					FramebufferRenderVolume* rsmVolume = rsmStat->rsmVolume;
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.65f;
 
 					ImGui::Text ("Depth Map");
-					ShowImage (rsmStat->rsmDepthMapID, glm::ivec2 (windowWidth, windowWidth));
+					ShowImage (rsmVolume->GetFramebufferView ()->GetDepthTextureView ()->GetGPUIndex (), glm::ivec2 (windowWidth, windowWidth));
 
 					ImGui::Text ("Position Map");
-					ShowImage (rsmStat->rsmPosMapID, glm::ivec2 (windowWidth, windowWidth));
+					ShowImage (rsmVolume->GetFramebufferView ()->GetTextureView (1)->GetGPUIndex (), glm::ivec2 (windowWidth, windowWidth));
 
 					ImGui::Text ("Normal Map");
-					ShowImage (rsmStat->rsmNormalMapID, glm::ivec2 (windowWidth, windowWidth));
+					ShowImage (rsmVolume->GetFramebufferView ()->GetTextureView (2)->GetGPUIndex (), glm::ivec2 (windowWidth, windowWidth));
 
 					ImGui::Text ("Flux Map");
-					ShowImage (rsmStat->rsmFluxMapID, glm::ivec2 (windowWidth, windowWidth));
+					ShowImage (rsmVolume->GetFramebufferView ()->GetTextureView (3)->GetGPUIndex (), glm::ivec2 (windowWidth, windowWidth));
 				}
 
 				ImGui::TreePop();
 			}
 
 			if (ImGui::TreeNode ("Indirect Light")) {
-				if (rsmStat != nullptr) {
+				if (trsmStat->trsmIndirectDiffuseMapVolume != nullptr) {
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
 
-					FrameBuffer2DVolume* rsmIndirectDiffuseMapVolume = rsmStat->rsmIndirectDiffuseMapVolume;
-					FrameBuffer2DVolume* rsmIndirectSpecularMapVolume = rsmStat->rsmIndirectSpecularMapVolume;
-					FrameBuffer2DVolume* rsmSubsurfaceScatteringMapVolume = rsmStat->rsmSubsurfaceScatteringMapVolume;
-					FrameBuffer2DVolume* rsmAmbientOcclusionMapVolume = rsmStat->rsmAmbientOcclusionMapVolume;
+					FramebufferRenderVolume* trsmIndirectDiffuseMapVolume = trsmStat->trsmTemporalFilterMapVolume;
+					FramebufferRenderVolume* rsmIndirectSpecularMapVolume = rsmStat->rsmIndirectSpecularMapVolume;
+					FramebufferRenderVolume* rsmSubsurfaceScatteringMapVolume = rsmStat->rsmSubsurfaceScatteringMapVolume;
+					FramebufferRenderVolume* rsmAmbientOcclusionMapVolume = rsmStat->rsmAmbientOcclusionMapVolume;
 
-					glm::ivec2 rsmMapSize = rsmIndirectDiffuseMapVolume->GetSize ();
+					auto trsmMapSize = trsmIndirectDiffuseMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
-					int rsmMapWidth = windowWidth;
-					int rsmMapHeight = ((float) rsmMapSize.y / rsmMapSize.x) * rsmMapWidth;
+					int trsmMapWidth = windowWidth;
+					int trsmMapHeight = ((float) trsmMapSize.height / trsmMapSize.width) * trsmMapWidth;
 
 					ImGui::Text ("Indirect Diffuse Light Map");
-					ShowImage (rsmIndirectDiffuseMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+					ShowImage (trsmIndirectDiffuseMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (trsmMapWidth, trsmMapHeight));
 
 					ImGui::Text ("Indirect Specular Light Map");
-					ShowImage (rsmIndirectSpecularMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+					ShowImage (rsmIndirectSpecularMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (trsmMapWidth, trsmMapHeight));
 
 					ImGui::Text ("Subsurface Scattering Map");
-					ShowImage (rsmSubsurfaceScatteringMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+					ShowImage (rsmSubsurfaceScatteringMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (trsmMapWidth, trsmMapHeight));
 
 					ImGui::Text ("Ambient Occlusion Map");
-					ShowImage (rsmAmbientOcclusionMapVolume->GetColorTextureID (), glm::ivec2 (rsmMapWidth, rsmMapHeight));
+					ShowImage (rsmAmbientOcclusionMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (trsmMapWidth, trsmMapHeight));
 				}
 
 				ImGui::TreePop();
@@ -443,38 +436,33 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 		if (ImGui::TreeNode ("Debug")) {
 
-			StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("LPVStatisticsObject");
-			LPVStatisticsObject* lpvStat = nullptr;
+			auto lpvStat = StatisticsManager::Instance ()->GetStatisticsObject <LPVStatisticsObject> ();
 
-			if (stat != nullptr) {
-				lpvStat = dynamic_cast<LPVStatisticsObject*> (stat);
-			}
-
-			if (lpvStat != nullptr) {
+			if (lpvStat->lpvIndirectDiffuseMapVolume != nullptr) {
 
 				int windowWidth = ImGui::GetWindowWidth() * 0.95f;
 
-				FrameBuffer2DVolume* lpvIndirectDiffuseMapVolume = lpvStat->lpvIndirectDiffuseMapVolume;
-				FrameBuffer2DVolume* lpvIndirectSpecularMapVolume = lpvStat->lpvIndirectSpecularMapVolume;
-				FrameBuffer2DVolume* lpvSubsurfaceScatteringMapVolume = lpvStat->lpvSubsurfaceScatteringMapVolume;
-				FrameBuffer2DVolume* lpvAmbientOcclusionMapVolume = lpvStat->lpvAmbientOcclusionMapVolume;
+				FramebufferRenderVolume* lpvIndirectDiffuseMapVolume = lpvStat->lpvIndirectDiffuseMapVolume;
+				FramebufferRenderVolume* lpvIndirectSpecularMapVolume = lpvStat->lpvIndirectSpecularMapVolume;
+				FramebufferRenderVolume* lpvSubsurfaceScatteringMapVolume = lpvStat->lpvSubsurfaceScatteringMapVolume;
+				FramebufferRenderVolume* lpvAmbientOcclusionMapVolume = lpvStat->lpvAmbientOcclusionMapVolume;
 
-				glm::ivec2 lpvMapSize = lpvIndirectDiffuseMapVolume->GetSize ();
+				auto lpvMapSize = lpvIndirectDiffuseMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
 				int lpvMapWidth = windowWidth;
-				int lpvMapHeight = ((float) lpvMapSize.y / lpvMapSize.x) * lpvMapWidth;
+				int lpvMapHeight = ((float) lpvMapSize.height / lpvMapSize.width) * lpvMapWidth;
 
 				ImGui::Text ("Indirect Diffuse Light Map");
-				ShowImage (lpvIndirectDiffuseMapVolume->GetColorTextureID (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
+				ShowImage (lpvIndirectDiffuseMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
 
 				ImGui::Text ("Indirect Specular Light Map");
-				ShowImage (lpvIndirectSpecularMapVolume->GetColorTextureID (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
+				ShowImage (lpvIndirectSpecularMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
 
 				ImGui::Text ("Subsurface Scattering Map");
-				ShowImage (lpvSubsurfaceScatteringMapVolume->GetColorTextureID (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
+				ShowImage (lpvSubsurfaceScatteringMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
 
 				ImGui::Text ("Subsurface Scattering Map");
-				ShowImage (lpvAmbientOcclusionMapVolume->GetColorTextureID (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
+				ShowImage (lpvAmbientOcclusionMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (lpvMapWidth, lpvMapHeight));
 			}
 
 			ImGui::TreePop();
@@ -507,29 +495,26 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			ImGui::Separator ();
 
 			if (ImGui::TreeNode ("Debug")) {
-				StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSAOStatisticsObject");
-				SSAOStatisticsObject* ssaoStat = nullptr;
 
-				if (stat != nullptr) {
-					ssaoStat = dynamic_cast<SSAOStatisticsObject*> (stat);
-				}
+				auto ssaoStat = StatisticsManager::Instance ()->GetStatisticsObject <SSAOStatisticsObject> ();
 
-				if (ssaoStat != nullptr) {
+				if (ssaoStat->ssaoMapVolume != nullptr) {
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
 
-					FrameBuffer2DVolume* ssaoMapVolume = ssaoStat->ssaoMapVolume;
+					FramebufferRenderVolume* ssaoMapVolume = ssaoStat->ssaoMapVolume;
+					TextureRenderVolume* ssaoNoiseMapVolume = ssaoStat->ssaoNoiseMapVolume;
 
-					glm::ivec2 ssaoMapSize = ssaoMapVolume->GetSize ();
+					auto ssaoMapSize = ssaoMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
 					int ssaoMapWidth = windowWidth;
-					int ssaoMapHeight = ((float) ssaoMapSize.y / ssaoMapSize.x) * ssaoMapWidth;
+					int ssaoMapHeight = ((float) ssaoMapSize.height / ssaoMapSize.width) * ssaoMapWidth;
 
 					ImGui::Text ("SSAO Map");
-					ShowImage (ssaoMapVolume->GetColorTextureID (), glm::ivec2 (ssaoMapWidth, ssaoMapHeight));
+					ShowImage (ssaoMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (ssaoMapWidth, ssaoMapHeight));
 
 					ImGui::Text ("SSAO Noise Map");
-					ShowImage (ssaoStat->noiseMapID, glm::ivec2 (windowWidth, windowWidth));
+					ShowImage (ssaoNoiseMapVolume->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (windowWidth, windowWidth));
 				}
 
 				ImGui::TreePop();
@@ -573,31 +558,30 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			ImGui::Separator ();
 
 			if (ImGui::TreeNode ("Debug")) {
-				StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSDOStatisticsObject");
-				SSDOStatisticsObject* ssdoStat = nullptr;
+				auto ssdoStat = StatisticsManager::Instance ()->GetStatisticsObject <SSDOStatisticsObject> ();
 
-				if (stat != nullptr) {
-					ssdoStat = dynamic_cast<SSDOStatisticsObject*> (stat);
-				}
-
-				if (ssdoStat != nullptr) {
+				if (ssdoStat->ssdoMapVolume != nullptr) {
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.9f;
 
-					FrameBuffer2DVolume* ssdoMapVolume = ssdoStat->ssdoMapVolume;
+					FramebufferRenderVolume* ssdoMapVolume = ssdoStat->ssdoMapVolume;
+					FramebufferRenderVolume* ssdoTemporalFilterMapVolume = ssdoStat->ssdoTemporalFilterMapVolume;
 
-					glm::ivec2 size = ssdoMapVolume->GetSize ();
+					auto size = ssdoMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
 					int width = windowWidth;
-					int height = ((float) size.y / size.x) * width;
+					int height = ((float) size.height / size.width) * width;
 
 					ImGui::Text ("SSDO Map");
-					ShowImage (ssdoMapVolume->GetColorTextureID (), glm::ivec2 (width, height));
+					ShowImage (ssdoMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (width, height));
 
-					FrameBuffer2DVolume* ssdoShadowVolume = ssdoStat->ssdoShadowVolume;
+					ImGui::Text ("SSDO Temporal Filter Map");
+					ShowImage (ssdoTemporalFilterMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (width, height));
 
-					ImGui::Text ("SSDO Shadow Map");
-					ShowImage (ssdoShadowVolume->GetColorTextureID (), glm::ivec2 (width, height));
+					// FramebufferRenderVolume* ssdoShadowVolume = ssdoStat->ssdoShadowVolume;
+
+					// ImGui::Text ("SSDO Shadow Map");
+					// ShowImage (ssdoShadowVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (width, height));
 				}
 
 				ImGui::TreePop();
@@ -631,30 +615,25 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			ImGui::Separator ();
 
 			if (ImGui::TreeNode ("Debug")) {
-				StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSRStatisticsObject");
-				SSRStatisticsObject* ssrStat = nullptr;
+				auto ssrStat = StatisticsManager::Instance ()->GetStatisticsObject <SSRStatisticsObject> ();
 
-				if (stat != nullptr) {
-					ssrStat = dynamic_cast<SSRStatisticsObject*> (stat);
-				}
-
-				if (ssrStat != nullptr) {
+				if (ssrStat->ssrPositionMapVolume != nullptr) {
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
 
-					FrameBuffer2DVolume* ssrPositionMapVolume = ssrStat->ssrPositionMapVolume;
-					FrameBuffer2DVolume* ssrMapVolume = ssrStat->ssrMapVolume;
+					FramebufferRenderVolume* ssrPositionMapVolume = ssrStat->ssrPositionMapVolume;
+					FramebufferRenderVolume* ssrMapVolume = ssrStat->ssrMapVolume;
 
-					glm::ivec2 ssrMapSize = ssrPositionMapVolume->GetSize ();
+					auto ssrMapSize = ssrPositionMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
 					int ssrMapWidth = windowWidth;
-					int ssrMapHeight = ((float) ssrMapSize.y / ssrMapSize.x) * ssrMapWidth;
+					int ssrMapHeight = ((float) ssrMapSize.height / ssrMapSize.width) * ssrMapWidth;
 
 					ImGui::Text ("SSR Position Map");
-					ShowImage (ssrPositionMapVolume->GetColorTextureID (), glm::ivec2 (ssrMapWidth, ssrMapHeight));
+					ShowImage (ssrPositionMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (ssrMapWidth, ssrMapHeight));
 
 					ImGui::Text ("SSR Map");
-					ShowImage (ssrMapVolume->GetColorTextureID (), glm::ivec2 (ssrMapWidth, ssrMapHeight));
+					ShowImage (ssrMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (ssrMapWidth, ssrMapHeight));
 				}
 
 				ImGui::TreePop();
@@ -688,26 +667,21 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 			// ImGui::Separator ();
 
 			if (ImGui::TreeNode ("Debug")) {
-				StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSSubsurfaceScatteringStatisticsObject");
-				SSSubsurfaceScatteringStatisticsObject* ssrStat = nullptr;
+				auto ssrStat = StatisticsManager::Instance ()->GetStatisticsObject <SSSubsurfaceScatteringStatisticsObject> ();
 
-				if (stat != nullptr) {
-					ssrStat = dynamic_cast<SSSubsurfaceScatteringStatisticsObject*> (stat);
-				}
-
-				if (ssrStat != nullptr) {
+				if (ssrStat->ssrMapVolume != nullptr) {
 
 					int windowWidth = ImGui::GetWindowWidth() * 0.95f;
 
-					FrameBuffer2DVolume* ssrMapVolume = ssrStat->ssrMapVolume;
+					FramebufferRenderVolume* ssrMapVolume = ssrStat->ssrMapVolume;
 
-					glm::ivec2 ssrMapSize = ssrMapVolume->GetSize ();
+					auto ssrMapSize = ssrMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
 					int ssrMapWidth = windowWidth;
-					int ssrMapHeight = ((float) ssrMapSize.y / ssrMapSize.x) * ssrMapWidth;
+					int ssrMapHeight = ((float) ssrMapSize.height / ssrMapSize.width) * ssrMapWidth;
 
 					ImGui::Text ("SSR Map");
-					ShowImage (ssrMapVolume->GetColorTextureID (), glm::ivec2 (ssrMapWidth, ssrMapHeight));
+					ShowImage (ssrMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (ssrMapWidth, ssrMapHeight));
 				}
 
 				ImGui::TreePop();

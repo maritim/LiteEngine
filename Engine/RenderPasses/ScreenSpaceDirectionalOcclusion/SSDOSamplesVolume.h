@@ -9,7 +9,7 @@ struct SSDOSamples
 {
 	int samplesCount;
 	int samplesCountPadding [3];
-	float samples [800];
+	float samples [2000];
 };
 
 class ENGINE_API SSDOSamplesVolume : public RenderVolumeI
@@ -18,18 +18,15 @@ protected:
 	SSDOSamples _samples;
 	unsigned int _samplesUBO;
 
+	std::vector<PipelineAttribute> _attributes;
+
 public:
-	SSDOSamplesVolume ();
+	SSDOSamplesVolume (std::size_t samplesCount);
+	~SSDOSamplesVolume ();
 
-	bool Init (std::size_t samplesCount);
-
-	void BindForReading ();
-	void BindForWriting ();
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
+	const std::vector<PipelineAttribute>& GetCustomAttributes () const;
 
 	std::size_t GetSamplesCount () const;
-
-	void Clear ();
 };
 
 #endif

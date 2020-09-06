@@ -49,7 +49,11 @@ Camera* RSMDirectionalLightAccumulationRenderPass::GetLightCamera (const RenderS
 
 	auto& bBox = renderScene->GetBoundingBox ();
 
-	OrthographicCamera* lightCamera = new OrthographicCamera();
+	OrthographicCamera* lightCamera = (OrthographicCamera*) _rsmVolume->GetLightCamera ();
+
+	if (lightCamera == nullptr) {
+		lightCamera = new OrthographicCamera ();
+	}
 
 	for (int x = 0; x <= 1; x++) {
 		for (int y = 0; y <= 1; y++) {

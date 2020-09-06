@@ -14,10 +14,7 @@ protected:
 	std::string GetPostProcessFragmentShaderPath () const;
 	std::string GetPostProcessVolumeName () const;	
 	glm::ivec2 GetPostProcessVolumeResolution (const RenderSettings& settings) const;
-	PostProcessMapVolume* CreatePostProcessVolume () const;
-
-	std::vector<PipelineAttribute> GetCustomAttributes (const Camera* camera,
-		const RenderSettings& settings, RenderVolumeCollection* rvc);
+	FramebufferRenderVolume* CreatePostProcessVolume (const RenderSettings& settings) const;
 };
 
 #endif

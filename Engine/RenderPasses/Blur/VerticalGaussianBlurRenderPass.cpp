@@ -1,7 +1,5 @@
 #include "VerticalGaussianBlurRenderPass.h"
 
-#include "BlurMapVolume.h"
-
 std::string VerticalGaussianBlurRenderPass::GetPostProcessFragmentShaderPath () const
 {
 	return "Assets/Shaders/Blur/verticalGaussianBlurFragment.glsl";
@@ -12,11 +10,25 @@ std::string VerticalGaussianBlurRenderPass::GetPostProcessVolumeName () const
 	return "BlurMapVolume";
 }
 
-PostProcessMapVolume* VerticalGaussianBlurRenderPass::CreatePostProcessVolume () const
+FramebufferRenderVolume* VerticalGaussianBlurRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	BlurMapVolume* blurMapVolume = new BlurMapVolume ();
+	Resource<Texture> texture = Resource<Texture> (new Texture ("blurMap"));
 
-	return blurMapVolume;
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
+
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	return new FramebufferRenderVolume (framebuffer);
 }
 
 std::vector<PipelineAttribute> VerticalGaussianBlurRenderPass::GetCustomAttributes (const Camera* camera,

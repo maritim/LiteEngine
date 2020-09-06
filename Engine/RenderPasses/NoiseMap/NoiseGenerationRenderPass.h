@@ -3,16 +3,15 @@
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
-#include "NoiseMapVolume.h"
+#include "RenderPasses/TextureRenderVolume.h"
 
 class ENGINE_API NoiseGenerationRenderPass : public ContainerRenderSubPassI
 {
 protected:
-	NoiseMapVolume* _noiseMapVolume;
+	TextureRenderVolume* _noiseMapVolume;
 
 public:
 	NoiseGenerationRenderPass ();
-	~NoiseGenerationRenderPass ();
 
 	void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
@@ -20,11 +19,10 @@ public:
 
 	void Clear ();
 protected:
-	void InitNoiseMapVolume (const RenderSettings& settings);
-
 	void UpdateNoiseMapVolume (const RenderSettings& settings);
 
 	virtual glm::ivec2 GetNoiseMapVolumeResolution (const RenderSettings& settings) const = 0;
+	virtual TextureRenderVolume* CreateNoiseMapVolume (const RenderSettings& settings) const = 0;
 };
 
 #endif

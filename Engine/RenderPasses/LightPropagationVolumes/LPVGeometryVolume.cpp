@@ -56,51 +56,39 @@ bool LPVGeometryVolume::Init(std::size_t volumeSize)
 
 	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
 
+	_attributes.clear ();
+
+	PipelineAttribute geometryTexture;
+	PipelineAttribute minVertex;
+	PipelineAttribute maxVertex;
+	PipelineAttribute volumeSizeAttribute;
+
+	geometryTexture.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
+	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
+	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
+	volumeSizeAttribute.type = PipelineAttribute::AttrType::ATTR_3I;
+
+	geometryTexture.name = "geometryTexture";
+	minVertex.name = "minVertex";
+	maxVertex.name = "maxVertex";
+	volumeSizeAttribute.name = "volumeSize";
+
+	geometryTexture.value.x = _volumeTextures [0];
+	minVertex.value = _minVertex;
+	maxVertex.value = _maxVertex;
+	volumeSizeAttribute.value = glm::vec3 ((float) _volumeSize);
+
+	_attributes.push_back (geometryTexture);
+	_attributes.push_back (minVertex);
+	_attributes.push_back (maxVertex);
+	_attributes.push_back (volumeSizeAttribute);
+
 	return true;
 }
 
 void LPVGeometryVolume::BindForWriting ()
 {
 	GL::BindImageTexture (3, _volumeTextures [0], 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
-}
-
-void LPVGeometryVolume::BindForReading ()
-{
-	/*
-	 * Do nothing
-	*/
-}
-
-std::vector<PipelineAttribute> LPVGeometryVolume::GetCustomAttributes () const
-{
-	std::vector<PipelineAttribute> attributes;
-
-	PipelineAttribute geometryTexture;
-	PipelineAttribute minVertex;
-	PipelineAttribute maxVertex;
-	PipelineAttribute volumeSize;
-
-	geometryTexture.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
-	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
-	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
-	volumeSize.type = PipelineAttribute::AttrType::ATTR_3I;
-
-	geometryTexture.name = "geometryTexture";
-	minVertex.name = "minVertex";
-	maxVertex.name = "maxVertex";
-	volumeSize.name = "volumeSize";
-
-	geometryTexture.value.x = _volumeTextures [0];
-	minVertex.value = _minVertex;
-	maxVertex.value = _maxVertex;
-	volumeSize.value = glm::vec3 ((float) _volumeSize);
-
-	attributes.push_back (geometryTexture);
-	attributes.push_back (minVertex);
-	attributes.push_back (maxVertex);
-	attributes.push_back (volumeSize);
-
-	return attributes;
 }
 
 void LPVGeometryVolume::ClearVolume()

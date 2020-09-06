@@ -22,38 +22,26 @@ std::string SSDOAccumulationRenderPass::GetPostProcessVolumeName () const
 
 glm::ivec2 SSDOAccumulationRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	return glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height);
+	return glm::ivec2 (settings.resolution.width, settings.resolution.height);
 }
 
-PostProcessMapVolume* SSDOAccumulationRenderPass::CreatePostProcessVolume () const
+FramebufferRenderVolume* SSDOAccumulationRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	PostProcessMapVolume* volume = new PostProcessMapVolume ();
+	Resource<Texture> texture = Resource<Texture> (new Texture ("postProcessMap"));
 
-	return volume;
-}
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
 
-std::vector<PipelineAttribute> SSDOAccumulationRenderPass::GetCustomAttributes (const Camera* camera,
-	const RenderSettings& settings, RenderVolumeCollection* rvc)
-{
-	/*
-	 * Attach post process volume attributes to pipeline
-	*/
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
 
-	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (camera, settings, rvc);
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
 
-	/*
-	 * Attach bloom attributes to pipeline
-	*/
-
-	PipelineAttribute bloomIntensity;
-
-	bloomIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
-
-	bloomIntensity.name = "bloomIntensity";
-
-	bloomIntensity.value.x = settings.bloom_intensity;
-
-	attributes.push_back (bloomIntensity);
-
-	return attributes;
+	return new FramebufferRenderVolume (framebuffer);
 }

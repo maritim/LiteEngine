@@ -1,11 +1,9 @@
 #include "SSDOShadowRenderPass.h"
 
-#include "SSDOShadowVolume.h"
-
 #include "RenderPasses/VolumetricLightVolume.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/SSDOStatisticsObject.h"
+#include "SSDOStatisticsObject.h"
 
 bool SSDOShadowRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
@@ -30,27 +28,45 @@ std::string SSDOShadowRenderPass::GetPostProcessVolumeName () const
 glm::ivec2 SSDOShadowRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
 	if (_postProcessMapVolume != nullptr) {
-		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSDOStatisticsObject");
-		SSDOStatisticsObject* ssdoStatisticsObject = nullptr;
 
-		if (stat == nullptr) {
-			stat = new SSDOStatisticsObject ();
-			StatisticsManager::Instance ()->SetStatisticsObject ("SSDOStatisticsObject", stat);
-		}
-
-		ssdoStatisticsObject = dynamic_cast<SSDOStatisticsObject*> (stat);
-
-		ssdoStatisticsObject->ssdoShadowVolume = _postProcessMapVolume;
 	}
 
-	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssdo_shadow_scale);
+	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssdo_shadow_scale);
 }
 
-PostProcessMapVolume* SSDOShadowRenderPass::CreatePostProcessVolume () const
+FramebufferRenderVolume* SSDOShadowRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	SSDOShadowVolume* ssdoShadowVolume = new SSDOShadowVolume ();
+	/*
+	 * Create screen space directional occlusion shadow framebuffer
+	*/
 
-	return ssdoShadowVolume;
+	Resource<Texture> texture = Resource<Texture> (new Texture ("ssdoShadowMap"));
+
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
+
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_R8);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RED);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_UNSIGNED_BYTE);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
+
+	/*
+	 * Update statistics object
+	*/
+
+	auto ssdoStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <SSDOStatisticsObject> ();
+
+	ssdoStatisticsObject->ssdoShadowVolume = renderVolume;
+
+	return renderVolume;
 }
 
 std::vector<PipelineAttribute> SSDOShadowRenderPass::GetCustomAttributes (const Camera* camera,
@@ -95,7 +111,7 @@ std::vector<PipelineAttribute> SSDOShadowRenderPass::GetCustomAttributes (const 
 	glm::mat3 viewMatrix = glm::mat3_cast (camera->GetRotation ());
 	lightDir = glm::normalize (viewMatrix * lightDir);
 
-	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssdo_shadow_scale);
+	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssdo_shadow_scale);
 
 	ssdoShadowResolution.value = glm::vec3 (resolution, 0.0f);
 	ssdoShadowStride.value.x = settings.ssdo_shadow_stride;

@@ -7,17 +7,12 @@
 #include "Core/Console/Console.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/RSMStatisticsObject.h"
+#include "RSMStatisticsObject.h"
 
 RSMAccumulationRenderPass::RSMAccumulationRenderPass () :
-	_reflectiveShadowMapVolume (new RSMVolume ())
+	_rsmVolume (nullptr)
 {
 
-}
-
-RSMAccumulationRenderPass::~RSMAccumulationRenderPass ()
-{
-	delete _reflectiveShadowMapVolume;
 }
 
 RenderVolumeCollection* RSMAccumulationRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -46,7 +41,7 @@ RenderVolumeCollection* RSMAccumulationRenderPass::Execute (const RenderScene* r
 	*/
 
 	Camera* lightCamera = GetLightCamera (renderScene, renderLightObject);
-	_reflectiveShadowMapVolume->SetLightCamera (lightCamera);
+	_rsmVolume->SetLightCamera (lightCamera);
 
 	/*
 	* Render geometry on shadow map
@@ -60,7 +55,7 @@ RenderVolumeCollection* RSMAccumulationRenderPass::Execute (const RenderScene* r
 
 	EndShadowMapPass ();
 
-	return rvc->Insert ("ReflectiveShadowMapVolume", _reflectiveShadowMapVolume);
+	return rvc->Insert ("ReflectiveShadowMapVolume", _rsmVolume);
 }
 
 bool RSMAccumulationRenderPass::IsAvailable (const RenderLightObject* renderLightObject) const
@@ -74,7 +69,7 @@ bool RSMAccumulationRenderPass::IsAvailable (const RenderLightObject* renderLigh
 
 void RSMAccumulationRenderPass::Clear ()
 {
-	_reflectiveShadowMapVolume->Clear ();
+	delete _rsmVolume;
 }
 
 void RSMAccumulationRenderPass::StartShadowMapPass ()
@@ -83,7 +78,7 @@ void RSMAccumulationRenderPass::StartShadowMapPass ()
 	* Bind shadow map volume for writing
 	*/
 
-	_reflectiveShadowMapVolume->BindForWriting ();
+	_rsmVolume->GetFramebufferView ()->Activate ();
 }
 
 void RSMAccumulationRenderPass::ShadowMapGeometryPass (const RenderScene* renderScene, const Camera* lightCamera,
@@ -101,6 +96,14 @@ void RSMAccumulationRenderPass::ShadowMapGeometryPass (const RenderScene* render
 	*/
 
 	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	/*
+	 * Set viewport
+	*/
+
+	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
+
+	GL::Viewport (0, 0, shadow.resolution.x, shadow.resolution.y);
 
 	/*
 	* Shadow map is a depth test
@@ -178,33 +181,71 @@ void RSMAccumulationRenderPass::ShadowMapGeometryPass (const RenderScene* render
 
 void RSMAccumulationRenderPass::EndShadowMapPass ()
 {
-	_reflectiveShadowMapVolume->EndDrawing ();
+	Pipeline::UnlockShader ();
 }
 
 void RSMAccumulationRenderPass::InitRSMVolume (const RenderLightObject* renderLightObject)
 {
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
-	if (!_reflectiveShadowMapVolume->Init (shadow.resolution)) {
-		Console::LogError (std::string () + "Reflective shadow map cannot be initialized!" +
-			"It is not possible to continue the process. End now!");
-		exit (REFLECTIVE_SHADOW_MAP_FBO_NOT_INIT);
+	/*
+	 * Create framebuffer
+	*/
+
+	std::vector<Resource<Texture>> textures;
+	Resource<Texture> depthTexture;
+
+	std::vector<std::string> volumeNames = { "rsmPositionMap", "rsmNormalMap", "rsmFluxMap" };
+
+	for (auto volumeName : volumeNames) {
+		Resource<Texture> texture = Resource<Texture> (new Texture (volumeName));
+
+		texture->SetSize (Size (shadow.resolution.x, shadow.resolution.y));
+		texture->SetMipmapGeneration (false);
+		texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+		texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+		texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+		texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+		texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+		texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+		texture->SetAnisotropicFiltering (false);
+
+		textures.push_back (texture);
 	}
+
+	depthTexture = Resource<Texture> (new Texture ("shadowMap"));
+
+	depthTexture->SetSize (Size (shadow.resolution.x, shadow.resolution.y));
+	depthTexture->SetMipmapGeneration (false);
+	depthTexture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_DEPTH32);
+	depthTexture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_DEPTH);
+	depthTexture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	depthTexture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_BORDER);
+	depthTexture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+	depthTexture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+	depthTexture->SetAnisotropicFiltering (false);
+	depthTexture->SetBorderColor (Color (glm::vec4 (1.0)));
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (textures, depthTexture));
+
+	_rsmVolume = new RSMVolume (framebuffer);
+
+	_rsmVolume->SetShadowBias (shadow.bias);
 }
 
 void RSMAccumulationRenderPass::UpdateRSMVolume (const RenderLightObject* renderLightObject)
 {
-	glm::ivec2 rsmSize = _reflectiveShadowMapVolume->GetSize ();
-
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
-	if (rsmSize != shadow.resolution) {
+	if (_rsmVolume == nullptr ||
+		_rsmVolume->GetFramebuffer ()->GetTexture (0)->GetSize ().width != (std::size_t) shadow.resolution.x ||
+		_rsmVolume->GetFramebuffer ()->GetTexture (0)->GetSize ().height != (std::size_t) shadow.resolution.y) {
 
 		/*
 		 * Clear framebuffer
 		*/
 
-		_reflectiveShadowMapVolume->Clear ();
+		delete _rsmVolume;
 
 		/*
 		 * Initialize framebuffer
@@ -213,22 +254,13 @@ void RSMAccumulationRenderPass::UpdateRSMVolume (const RenderLightObject* render
 		InitRSMVolume (renderLightObject);
 	}
 
-	_reflectiveShadowMapVolume->SetShadowBias (shadow.bias);
+	/*
+	 * Update statistics object
+	*/
 
-	StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
-	RSMStatisticsObject* rsmStatisticsObject = nullptr;
+	auto rsmStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <RSMStatisticsObject> ();
 
-	if (stat == nullptr) {
-		stat = new RSMStatisticsObject ();
-		StatisticsManager::Instance ()->SetStatisticsObject ("RSMStatisticsObject", stat);
-	}
-
-	rsmStatisticsObject = dynamic_cast<RSMStatisticsObject*> (stat);
-
-	rsmStatisticsObject->rsmPosMapID = _reflectiveShadowMapVolume->GetShadowMapBuffer ()->GetColorBuffer (0);
-	rsmStatisticsObject->rsmNormalMapID = _reflectiveShadowMapVolume->GetShadowMapBuffer ()->GetColorBuffer (1);
-	rsmStatisticsObject->rsmFluxMapID = _reflectiveShadowMapVolume->GetShadowMapBuffer ()->GetColorBuffer (2);
-	rsmStatisticsObject->rsmDepthMapID = _reflectiveShadowMapVolume->GetShadowMapBuffer ()->GetDepthBuffer ();
+	rsmStatisticsObject->rsmVolume = _rsmVolume;
 }
 
 std::vector<PipelineAttribute> RSMAccumulationRenderPass::GetCustomAttributes (const RenderLightObject* renderLightObject) const

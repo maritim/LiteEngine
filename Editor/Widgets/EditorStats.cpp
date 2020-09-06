@@ -10,7 +10,7 @@
 #include "Systems/Time/Time.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/RenderStatisticsObject.h"
+#include "RenderPasses/RenderStatisticsObject.h"
 
 EditorStats::EditorStats () :
 	_timeElapsed (0.0f),
@@ -67,18 +67,11 @@ void EditorStats::ShowStatistics ()
 
 		ImGui::Spacing ();
 
-		std::size_t drawnVerticesCount = 0;
-		std::size_t drawnPolygonsCount = 0;
-		std::size_t drawnObjectsCount = 0;
+		auto renderStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <RenderStatisticsObject> ();
 
-		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RenderStatisticsObject");
-		RenderStatisticsObject* renderStatisticsObject = dynamic_cast<RenderStatisticsObject*> (stat);
-
-		if (renderStatisticsObject != nullptr) {
-			drawnVerticesCount = renderStatisticsObject->DrawnVerticesCount;
-			drawnPolygonsCount = renderStatisticsObject->DrawnPolygonsCount;
-			drawnObjectsCount = renderStatisticsObject->DrawnObjectsCount;
-		}
+		std::size_t drawnVerticesCount = renderStatisticsObject->DrawnVerticesCount;
+		std::size_t drawnPolygonsCount = renderStatisticsObject->DrawnPolygonsCount;
+		std::size_t drawnObjectsCount = renderStatisticsObject->DrawnObjectsCount;
 
 		std::string verticesCount = std::to_string (drawnVerticesCount % 1000);
 		while (drawnVerticesCount /= 1000) {

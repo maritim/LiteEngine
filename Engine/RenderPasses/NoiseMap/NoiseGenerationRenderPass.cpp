@@ -3,14 +3,9 @@
 #include "Core/Console/Console.h"
 
 NoiseGenerationRenderPass::NoiseGenerationRenderPass () :
-	_noiseMapVolume (new NoiseMapVolume ())
+	_noiseMapVolume (nullptr)
 {
 
-}
-
-NoiseGenerationRenderPass::~NoiseGenerationRenderPass ()
-{
-	delete _noiseMapVolume;
 }
 
 void NoiseGenerationRenderPass::Init (const RenderSettings& settings)
@@ -19,7 +14,7 @@ void NoiseGenerationRenderPass::Init (const RenderSettings& settings)
 	 * Initialize screen space ambient occlusion noise map volume
 	*/
 
-	InitNoiseMapVolume (settings);
+	_noiseMapVolume = CreateNoiseMapVolume (settings);
 }
 
 RenderVolumeCollection* NoiseGenerationRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -37,20 +32,22 @@ RenderVolumeCollection* NoiseGenerationRenderPass::Execute (const RenderScene* r
 void NoiseGenerationRenderPass::UpdateNoiseMapVolume (const RenderSettings& settings)
 {
 	glm::ivec2 noiseMapResolution = GetNoiseMapVolumeResolution (settings);
+	auto size = _noiseMapVolume->GetTexture (0)->GetSize ();
 
-	if (noiseMapResolution != _noiseMapVolume->GetSize ()) {
+	if ((std::size_t) noiseMapResolution.x != size.width ||
+		(std::size_t) noiseMapResolution.y != size.height) {
 
 		/*
 		 * Clear screen space ambient occlusion noise map volume
 		*/
 
-		_noiseMapVolume->Clear ();
+		delete _noiseMapVolume;
 
 		/*
 		 * Initialize screen space ambient occlusion noise map volume
 		*/
 
-		InitNoiseMapVolume (settings);
+		_noiseMapVolume = CreateNoiseMapVolume (settings);
 	}
 }
 
@@ -60,16 +57,5 @@ void NoiseGenerationRenderPass::Clear ()
 	 * Clear screen space ambient occlusion noise map volume
 	*/
 
-	_noiseMapVolume->Clear ();
-}
-
-void NoiseGenerationRenderPass::InitNoiseMapVolume (const RenderSettings& settings)
-{
-	glm::ivec2 noiseMapResolution = GetNoiseMapVolumeResolution (settings);
-
-	if (!_noiseMapVolume->Init (noiseMapResolution.x, noiseMapResolution.y)) {
-		Console::LogError (std::string () + "Noise map cannot be initialized! " +
-			"It is not possible to continue the process. End now!");
-		exit (NOISE_NOT_INIT);
-	}
+	delete _noiseMapVolume;
 }

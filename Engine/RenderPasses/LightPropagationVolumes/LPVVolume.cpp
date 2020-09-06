@@ -70,6 +70,41 @@ bool LPVVolume::Init(std::size_t volumeSize)
 
 	GL::BindFramebuffer (GL_DRAW_FRAMEBUFFER, 0);
 
+	_attributes.clear ();
+
+	PipelineAttribute volumeTextureR;
+	PipelineAttribute volumeTextureG;
+	PipelineAttribute volumeTextureB;
+	PipelineAttribute minVertex;
+	PipelineAttribute maxVertex;
+	PipelineAttribute volumeSizeAttribute;
+
+	volumeTextureR.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
+	volumeTextureG.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
+	volumeTextureB.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
+	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
+	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
+	volumeSizeAttribute.type = PipelineAttribute::AttrType::ATTR_3I;
+
+	volumeTextureR.name = "volumeTextureR";
+	volumeTextureG.name = "volumeTextureG";
+	volumeTextureB.name = "volumeTextureB";
+	minVertex.name = "minVertex";
+	maxVertex.name = "maxVertex";
+	volumeSizeAttribute.name = "volumeSize";
+
+	volumeTextureR.value.x = _volumeTextures [0];
+	volumeTextureG.value.x = _volumeTextures [1];
+	volumeTextureB.value.x = _volumeTextures [2];
+	volumeSizeAttribute.value = glm::vec3 ((float) _volumeSize);
+
+	_attributes.push_back (volumeTextureR);
+	_attributes.push_back (volumeTextureG);
+	_attributes.push_back (volumeTextureB);
+	_attributes.push_back (minVertex);
+	_attributes.push_back (maxVertex);
+	_attributes.push_back (volumeSizeAttribute);
+
 	return true;
 }
 
@@ -80,53 +115,9 @@ void LPVVolume::BindForWriting ()
 	}
 }
 
-void LPVVolume::BindForReading ()
+const std::vector<PipelineAttribute>& LPVVolume::GetCustomAttributes () const
 {
-	/*
-	 * Do nothing
-	*/
-}
-
-std::vector<PipelineAttribute> LPVVolume::GetCustomAttributes () const
-{
-	std::vector<PipelineAttribute> attributes;
-
-	PipelineAttribute volumeTextureR;
-	PipelineAttribute volumeTextureG;
-	PipelineAttribute volumeTextureB;
-	PipelineAttribute minVertex;
-	PipelineAttribute maxVertex;
-	PipelineAttribute volumeSize;
-
-	volumeTextureR.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
-	volumeTextureG.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
-	volumeTextureB.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
-	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
-	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
-	volumeSize.type = PipelineAttribute::AttrType::ATTR_3I;
-
-	volumeTextureR.name = "volumeTextureR";
-	volumeTextureG.name = "volumeTextureG";
-	volumeTextureB.name = "volumeTextureB";
-	minVertex.name = "minVertex";
-	maxVertex.name = "maxVertex";
-	volumeSize.name = "volumeSize";
-
-	volumeTextureR.value.x = _volumeTextures [0];
-	volumeTextureG.value.x = _volumeTextures [1];
-	volumeTextureB.value.x = _volumeTextures [2];
-	minVertex.value = _minVertex;
-	maxVertex.value = _maxVertex;
-	volumeSize.value = glm::vec3 ((float) _volumeSize);
-
-	attributes.push_back (volumeTextureR);
-	attributes.push_back (volumeTextureG);
-	attributes.push_back (volumeTextureB);
-	attributes.push_back (minVertex);
-	attributes.push_back (maxVertex);
-	attributes.push_back (volumeSize);
-
-	return attributes;
+	return _attributes;
 }
 
 void LPVVolume::ClearVolume()
@@ -176,6 +167,13 @@ void LPVVolume::UpdateBoundingBox(const glm::vec3& minVertex, const glm::vec3& m
 
 	_minVertex -= glm::vec3(difX / 2.0f, difY / 2.0f, difZ / 2.0f);
 	_maxVertex += glm::vec3(difX / 2.0f, difY / 2.0f, difZ / 2.0f);
+
+	/*
+	 * Update attributes
+	*/
+
+	_attributes [3].value = _minVertex;
+	_attributes [4].value = _maxVertex;
 }
 
 std::size_t LPVVolume::GetVolumeSize () const

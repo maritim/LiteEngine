@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "RenderPasses/FrameBuffer2DVolume.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
@@ -52,8 +52,9 @@ void ForwardRenderPass::StartForwardPass (RenderVolumeCollection* rvc)
 	 * Bind framebuffer for writing
 	*/
 
-	FrameBuffer2DVolume* framebuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
-	framebuffer->BindForWriting ();
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
+
+	resultVolume->GetFramebufferView ()->Activate ();
 }
 
 bool cmpForwardPass (RenderObject* a, RenderObject* b) {

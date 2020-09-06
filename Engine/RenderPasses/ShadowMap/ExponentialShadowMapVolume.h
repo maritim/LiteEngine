@@ -1,18 +1,18 @@
 #ifndef EXPONENTIALSHADOWMAPVOLUME_H
 #define EXPONENTIALSHADOWMAPVOLUME_H
 
-#include "ShadowMapVolume.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 #include "Wrappers/OpenGL/GL.h"
 
-class ExponentialShadowMapVolume : public ShadowMapVolume
+class ExponentialShadowMapVolume : public FramebufferRenderVolume
 {
 protected:
 	unsigned int _depthBuffer;
 
 public:
-	ExponentialShadowMapVolume ();
-	~ExponentialShadowMapVolume ();
+	// ExponentialShadowMapVolume ();
+	// ~ExponentialShadowMapVolume ();
 
 	bool Init (std::size_t bufferWidth, std::size_t bufferHeight);
 

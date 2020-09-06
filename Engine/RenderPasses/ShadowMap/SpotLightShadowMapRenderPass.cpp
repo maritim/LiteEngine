@@ -11,14 +11,9 @@
 #include "SceneNodes/SceneLayer.h"
 
 SpotLightShadowMapRenderPass::SpotLightShadowMapRenderPass () :
-	_volume (new PerspectiveShadowMapVolume ())
+	_volume (nullptr)
 {
 
-}
-
-SpotLightShadowMapRenderPass::~SpotLightShadowMapRenderPass ()
-{
-	delete _volume;
 }
 
 RenderVolumeCollection* SpotLightShadowMapRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -63,7 +58,7 @@ void SpotLightShadowMapRenderPass::Clear ()
 	 * Clear shadow map volume
 	*/
 
-	_volume->Clear ();
+	delete _volume;
 }
 
 bool SpotLightShadowMapRenderPass::IsAvailable (const RenderLightObject* renderLightObject) const
@@ -81,15 +76,17 @@ void SpotLightShadowMapRenderPass::ShadowMapPass (const RenderScene* renderScene
 	 * Change resolution on viewport as shadow map size
 	*/
 
-	glm::ivec2 resolution = _volume->GetSize ();
+	auto resolution = _volume->GetFramebuffer ()->GetDepthTexture ()->GetSize ();
 
-	GL::Viewport (0, 0, resolution.x, resolution.y);
+	GL::Viewport (0, 0, resolution.width, resolution.height);
 
 	/*
 	 * Bind shadow map for writing
 	*/
 
-	_volume->BindForWriting ();
+	_volume->GetFramebufferView ()->Activate ();
+
+	GL::Clear (GL_DEPTH_BUFFER_BIT);
 
 	/*
 	 * Shadow map is a depth test
@@ -209,19 +206,23 @@ void SpotLightShadowMapRenderPass::UpdateLightCamera (const RenderLightObject* r
 	lightCamera->SetZFar (renderSpotLightObject->GetLightRange ());
 	lightCamera->SetFieldOfViewAngle (renderSpotLightObject->GetLightSpotOuterCutoff () * 2);
 	lightCamera->SetAspect (1.0f);
+
+	_volume->SetLightCamera (lightCamera);
 }
 
 void SpotLightShadowMapRenderPass::UpdateShadowMapVolume (const RenderLightObject* renderLightObject)
 {
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
-	if (_volume->GetSize () != shadow.resolution) {
+	if (_volume == nullptr ||
+		_volume->GetFramebuffer ()->GetDepthTexture ()->GetSize ().width != (std::size_t) shadow.resolution.x ||
+		_volume->GetFramebuffer ()->GetDepthTexture ()->GetSize ().height != (std::size_t) shadow.resolution.y) {
 
 		/*
 		 * Clear shadow map volume
 		*/
 
-		_volume->Clear ();
+		delete _volume;
 
 		/*
 		 * Initialize shadow map volume
@@ -229,21 +230,33 @@ void SpotLightShadowMapRenderPass::UpdateShadowMapVolume (const RenderLightObjec
 
 		InitShadowMapVolume (renderLightObject);
 	}
-
-	_volume->SetShadowBias (shadow.bias);
 }
 
 void SpotLightShadowMapRenderPass::InitShadowMapVolume (const RenderLightObject* renderLightObject)
 {
 	/*
-	 * Initialize shadow map volume
+	 * Create perspective shadow map volume
 	*/
+
+	Resource<Texture> texture = Resource<Texture> (new Texture ("shadowMap"));
 
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
-	if (!_volume->Init (new PerspectiveCamera (), shadow.resolution)) {
-		Console::LogError (std::string () + "Shadow map cannot be initialized!" +
-			" It is not possible to continue the process. End now!");
-		exit (SHADOW_MAP_FBO_NOT_INIT);
-	}
+	texture->SetSize (Size (shadow.resolution.x, shadow.resolution.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_DEPTH16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_DEPTH);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_BORDER);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+	texture->SetAnisotropicFiltering (false);
+	texture->SetBorderColor (Color (glm::vec4 (1.0)));
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (nullptr, texture));
+
+	_volume = new PerspectiveShadowMapVolume (framebuffer);
+
+	_volume->SetLightCamera (new PerspectiveCamera ());
+	_volume->SetShadowBias (shadow.bias);
 }

@@ -22,7 +22,7 @@ layout(std140) uniform ssaoSamples
 };
 
 uniform sampler2D noiseMap;
-uniform vec2 noiseSize;
+uniform ivec2 noiseMapSize;
 
 uniform float ssaoRadius;
 uniform float ssaoBias;
@@ -47,7 +47,7 @@ float CalcRSMAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 texCoord)
 
 	vec2 rsmSize = textureSize (rsmPositionMap, 0);
 
-	vec2 noiseScale = rsmSize / noiseSize;
+	vec2 noiseScale = rsmSize / noiseMapSize;
 
 	vec3 randomVec = texture (noiseMap, texCoord * noiseScale).xyz;
 
@@ -88,8 +88,8 @@ float CalcRSMAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 texCoord)
 void main()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_position = texture2D (gPositionMap, texCoord).xyz;
-	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
+	vec3 in_position = textureLod (gPositionMap, texCoord, 0).xyz;
+	vec3 in_normal = textureLod (gNormalMap, texCoord, 0).xyz;
 
 	in_normal = normalize(in_normal);
 

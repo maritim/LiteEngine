@@ -10,9 +10,7 @@ class LPVGeometryVolume : public LPVVolume
 public:
 	virtual bool Init (std::size_t size);
 
-	virtual void BindForReading ();
 	virtual void BindForWriting ();
-	virtual std::vector<PipelineAttribute> GetCustomAttributes () const;
 
 	virtual void ClearVolume();
 

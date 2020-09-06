@@ -37,7 +37,7 @@ vec3 CalcTemporalFiltering (vec3 in_position, vec3 in_light, vec2 texCoord)
 void main()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_position = texture2D (gPositionMap, texCoord).xyz;
+	vec3 in_position = textureLod (gPositionMap, texCoord, 0).xyz;
 	vec3 in_light = texture2D (postProcessMap, CalcUnjitterTexCoord (texCoord)).xyz;
 
 	out_color = CalcTemporalFiltering(in_position, in_light, texCoord);

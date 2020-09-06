@@ -1,9 +1,7 @@
 #include "SSDORenderPass.h"
 
-#include "SSDOMapVolume.h"
-
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/SSDOStatisticsObject.h"
+#include "SSDOStatisticsObject.h"
 
 bool SSDORenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
@@ -27,28 +25,42 @@ std::string SSDORenderPass::GetPostProcessVolumeName () const
 
 glm::ivec2 SSDORenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	if (_postProcessMapVolume != nullptr) {
-		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSDOStatisticsObject");
-		SSDOStatisticsObject* ssdoStatisticsObject = nullptr;
-
-		if (stat == nullptr) {
-			stat = new SSDOStatisticsObject ();
-			StatisticsManager::Instance ()->SetStatisticsObject ("SSDOStatisticsObject", stat);
-		}
-
-		ssdoStatisticsObject = dynamic_cast<SSDOStatisticsObject*> (stat);
-
-		ssdoStatisticsObject->ssdoMapVolume = _postProcessMapVolume;
-	}
-
-	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssdo_scale);
+	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssdo_scale);
 }
 
-PostProcessMapVolume* SSDORenderPass::CreatePostProcessVolume () const
+FramebufferRenderVolume* SSDORenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	SSDOMapVolume* ssdoMapVolume = new SSDOMapVolume ();
+	/*
+	 * Create screen space directional occlusion framebuffer
+	*/
 
-	return ssdoMapVolume;
+	Resource<Texture> texture = Resource<Texture> (new Texture ("ssdoMap"));
+
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
+
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
+
+	/*
+	 * Update statistics object
+	*/
+
+	auto ssdoStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <SSDOStatisticsObject> ();
+
+	ssdoStatisticsObject->ssdoMapVolume = renderVolume;
+
+	return renderVolume;
 }
 
 std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const Camera* camera,
@@ -82,7 +94,7 @@ std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const Camera
 	ssdoIndirectIntensity.name = "ssdoIndirectIntensity";
 	ssdoTemporalFilter.name = "ssdoTemporalFilter";
 
-	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssdo_scale);
+	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssdo_scale);
 
 	ssdoResolution.value = glm::vec3 (resolution, 0.0f);
 	ssdoRadius.value.x = settings.ssdo_radius;

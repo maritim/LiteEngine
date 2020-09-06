@@ -1,5 +1,7 @@
 #include "LPVGeometryInjectionRenderPass.h"
 
+#include "LPVGeometryVolume.h"
+
 #include "Resources/Resources.h"
 #include "Renderer/RenderSystem.h"
 
@@ -71,7 +73,7 @@ void LPVGeometryInjectionRenderPass::StartPostProcessPass (RenderVolumeCollectio
 	 * Bind screen space ambient occlusion volume for writing
 	*/
 
-	rvc->GetRenderVolume ("LPVGeometryVolume")->BindForWriting ();
+	((LPVGeometryVolume*) rvc->GetRenderVolume ("LPVGeometryVolume"))->BindForWriting ();
 }
 
 void LPVGeometryInjectionRenderPass::PostProcessPass (const RenderScene* renderScene,
@@ -82,7 +84,7 @@ void LPVGeometryInjectionRenderPass::PostProcessPass (const RenderScene* renderS
 	 * Set viewport
 	*/
 
-	glm::ivec2 rsmSize = glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height) / 4;
+	glm::ivec2 rsmSize = glm::ivec2 (settings.resolution.width, settings.resolution.height) / 4;
 
 	GL::Viewport (0, 0, rsmSize.x, rsmSize.y);
 

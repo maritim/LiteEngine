@@ -9,7 +9,7 @@
 #include "Core/Resources/Resource.h"
 #include "Renderer/RenderViews/ShaderView.h"
 
-#include "RenderPasses/PostProcess/PostProcessMapVolume.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 #include "Renderer/PipelineAttribute.h"
 
@@ -17,11 +17,10 @@ class ENGINE_API PostProcessRenderPass : public ContainerRenderSubPassI
 {
 protected:
 	Resource<ShaderView> _shaderView;
-	PostProcessMapVolume* _postProcessMapVolume;
+	FramebufferRenderVolume* _postProcessMapVolume;
 
 public:
 	PostProcessRenderPass ();
-	virtual ~PostProcessRenderPass ();
 
 	void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
@@ -37,14 +36,12 @@ protected:
 	virtual std::vector<PipelineAttribute> GetCustomAttributes (const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
-	virtual void ReinitPostProcessVolume (const RenderSettings& settings);
-
 	virtual void UpdatePostProcessSettings (const RenderSettings& settings);
 
 	virtual std::string GetPostProcessFragmentShaderPath () const = 0;
 	virtual std::string GetPostProcessVolumeName () const = 0;
 	virtual glm::ivec2 GetPostProcessVolumeResolution (const RenderSettings& settings) const = 0;
-	virtual PostProcessMapVolume* CreatePostProcessVolume () const = 0;
+	virtual FramebufferRenderVolume* CreatePostProcessVolume (const RenderSettings& settings) const = 0;
 };
 
 #endif

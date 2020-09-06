@@ -1,9 +1,7 @@
 #include "RSMIndirectDiffuseLightRenderPass.h"
 
-#include "RenderPasses/IndirectDiffuseLightMapVolume.h"
-
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/RSMStatisticsObject.h"
+#include "RSMStatisticsObject.h"
 
 #include "Utils/Extensions/MathExtend.h"
 
@@ -29,28 +27,42 @@ std::string RSMIndirectDiffuseLightRenderPass::GetPostProcessVolumeName () const
 
 glm::ivec2 RSMIndirectDiffuseLightRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	if (_postProcessMapVolume != nullptr) {
-		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
-		RSMStatisticsObject* rsmStatisticsObject = nullptr;
-
-		if (stat == nullptr) {
-			stat = new RSMStatisticsObject ();
-			StatisticsManager::Instance ()->SetStatisticsObject ("RSMStatisticsObject", stat);
-		}
-
-		rsmStatisticsObject = dynamic_cast<RSMStatisticsObject*> (stat);
-
-		rsmStatisticsObject->rsmIndirectDiffuseMapVolume = _postProcessMapVolume;
-	}
-
-	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
+	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.rsm_scale);
 }
 
-PostProcessMapVolume* RSMIndirectDiffuseLightRenderPass::CreatePostProcessVolume () const
+FramebufferRenderVolume* RSMIndirectDiffuseLightRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	IndirectDiffuseLightMapVolume* indirectDiffuseLightMapVolume = new IndirectDiffuseLightMapVolume();
+	/*
+	 * Create reflective shadow mapping indirect diffuse light framebuffer
+	*/
 
-	return indirectDiffuseLightMapVolume;
+	Resource<Texture> texture = Resource<Texture> (new Texture ("indirectDiffuseMap"));
+
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
+
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
+
+	/*
+	 * Update statistics object
+	*/
+
+	auto rsmStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <RSMStatisticsObject> ();
+
+	rsmStatisticsObject->rsmIndirectDiffuseMapVolume = renderVolume;
+
+	return renderVolume;
 }
 
 std::vector<PipelineAttribute> RSMIndirectDiffuseLightRenderPass::GetCustomAttributes (const Camera* camera,
@@ -90,7 +102,7 @@ std::vector<PipelineAttribute> RSMIndirectDiffuseLightRenderPass::GetCustomAttri
 	rsmMinInterpolationAngle.name = "rsmMinInterpolationAngle";
 	rsmDebugInterpolation.name = "rsmDebugInterpolation";
 
-	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
+	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.rsm_scale);
 
 	rsmResolution.value = glm::vec3 (resolution, 0.0f);
 	rsmRadius.value.x = settings.rsm_radius;

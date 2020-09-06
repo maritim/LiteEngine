@@ -4,6 +4,7 @@
 #include "Core/Interfaces/Object.h"
 
 #include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 
 class ENGINE_API Color : public Object
 {
@@ -21,8 +22,10 @@ public:
 	Color (const Color& other);
 	Color (unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255);
 	Color (const glm::vec3& color);
+	Color (const glm::vec4& color);
 
 	glm::vec3 ToVector3 () const;
+	glm::vec4 ToVector4 () const;
 };
 
 #endif

@@ -9,7 +9,7 @@
 #include "Systems/Time/Time.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/RenderStatisticsObject.h"
+#include "RenderPasses/RenderStatisticsObject.h"
 
 void StatsView::Start ()
 {
@@ -65,18 +65,11 @@ void StatsView::ShowStatisticsWindow ()
 
 		ImGui::Spacing ();
 
-		std::size_t drawnVerticesCount = 0;
-		std::size_t drawnPolygonsCount = 0;
-		std::size_t drawnObjectsCount = 0;
+		auto renderStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <RenderStatisticsObject> ();
 
-		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RenderStatisticsObject");
-		RenderStatisticsObject* renderStatisticsObject = dynamic_cast<RenderStatisticsObject*> (stat);
-
-		if (renderStatisticsObject != nullptr) {
-			drawnVerticesCount = renderStatisticsObject->DrawnVerticesCount;
-			drawnPolygonsCount = renderStatisticsObject->DrawnPolygonsCount;
-			drawnObjectsCount = renderStatisticsObject->DrawnObjectsCount;
-		}
+		std::size_t drawnVerticesCount = renderStatisticsObject->DrawnVerticesCount;
+		std::size_t drawnPolygonsCount = renderStatisticsObject->DrawnPolygonsCount;
+		std::size_t drawnObjectsCount = renderStatisticsObject->DrawnObjectsCount;
 
 		ImGui::Text ("Vertices: %lu Triangles: %lu", drawnVerticesCount, drawnPolygonsCount);
 		ImGui::Text ("Objects: %lu", drawnObjectsCount);

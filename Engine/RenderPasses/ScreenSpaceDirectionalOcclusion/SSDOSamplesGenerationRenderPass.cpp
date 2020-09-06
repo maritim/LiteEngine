@@ -3,23 +3,18 @@
 #include "Core/Console/Console.h"
 
 SSDOSamplesGenerationRenderPass::SSDOSamplesGenerationRenderPass () :
-	_ssdoSamplesVolume (new SSDOSamplesVolume ())
+	_ssdoSamplesVolume (nullptr)
 {
 
-}
-
-SSDOSamplesGenerationRenderPass::~SSDOSamplesGenerationRenderPass ()
-{
-	delete _ssdoSamplesVolume;
 }
 
 void SSDOSamplesGenerationRenderPass::Init (const RenderSettings& settings)
 {
 	/*
-	 * Initialize screen space directional occlusion samples volume
+	 * Create screen space directional occlusion samples volume
 	*/
 
-	InitSamplesVolume (settings);
+	_ssdoSamplesVolume = new SSDOSamplesVolume (settings.ssdo_samples);
 }
 
 RenderVolumeCollection* SSDOSamplesGenerationRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -50,7 +45,7 @@ void SSDOSamplesGenerationRenderPass::Clear ()
 	 * Clear screen space directional occlusion samples volume
 	*/
 
-	_ssdoSamplesVolume->Clear ();
+	delete _ssdoSamplesVolume;
 }
 
 void SSDOSamplesGenerationRenderPass::UpdateSamplesVolume (const RenderSettings& settings)
@@ -61,21 +56,12 @@ void SSDOSamplesGenerationRenderPass::UpdateSamplesVolume (const RenderSettings&
 		 * Clear screen space ambient occlusion samples volume
 		*/
 
-		_ssdoSamplesVolume->Clear ();
+		delete _ssdoSamplesVolume;
 
 		/*
-		 * Initialize screen space ambient occlusion samples volume
+		 * Create screen space ambient occlusion samples volume
 		*/
 
-		InitSamplesVolume (settings);
-	}
-}
-
-void SSDOSamplesGenerationRenderPass::InitSamplesVolume (const RenderSettings& settings)
-{
-	if (!_ssdoSamplesVolume->Init (settings.ssdo_samples)) {
-		Console::LogError (std::string () + "Screen space directional occlusion samples cannot be initialized! " +
-			"It is not possible to continue the process. End now!");
-		exit (SSDO_SAMPLES_NOT_INIT);
+		_ssdoSamplesVolume = new SSDOSamplesVolume (settings.ssdo_samples);
 	}
 }

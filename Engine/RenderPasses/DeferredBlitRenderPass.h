@@ -3,7 +3,7 @@
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
-#include "RenderPasses/FrameBuffer2DVolume.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 class ENGINE_API DeferredBlitRenderPass : public ContainerRenderSubPassI
 {
@@ -20,8 +20,8 @@ public:
 
 	void Clear ();
 protected:
-	void EndDrawing (FrameBuffer2DVolume* frameBufferVolume, FrameBuffer2DVolume* resultFramebuffer,
-		const RenderSettings& settings);
+	void EndDrawing (FramebufferRenderVolume* frameBufferVolume,
+		FramebufferRenderVolume* resultFramebuffer, const RenderSettings& settings);
 };
 
 #endif

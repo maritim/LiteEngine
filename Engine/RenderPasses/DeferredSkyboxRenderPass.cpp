@@ -1,6 +1,7 @@
 #include "DeferredSkyboxRenderPass.h"
 
 #include "RenderPasses/GBuffer.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 #include "Renderer/Pipeline.h"
 
@@ -57,9 +58,9 @@ void DeferredSkyboxRenderPass::StartSkyboxPass (RenderVolumeCollection* rvc)
 	 * Bind light accumulation framebuffer for writing
 	*/
 
-	auto resultFrameBuffer = rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
 
-	resultFrameBuffer->BindForWriting ();
+	resultVolume->GetFramebufferView ()->Activate ();
 }
 
 void DeferredSkyboxRenderPass::SkyboxPass (const RenderScene* renderScene, const Camera* camera,

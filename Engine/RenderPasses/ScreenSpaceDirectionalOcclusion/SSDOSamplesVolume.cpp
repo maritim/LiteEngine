@@ -10,13 +10,10 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
-SSDOSamplesVolume::SSDOSamplesVolume () :
+#include "Utils/Sequences/HaltonGenerator.h"
+
+SSDOSamplesVolume::SSDOSamplesVolume (std::size_t samplesCount) :
 	_samplesUBO (0)
-{
-
-}
-
-bool SSDOSamplesVolume::Init (std::size_t samplesCount)
 {
 	/*
 	 * Initialize samples
@@ -26,11 +23,14 @@ bool SSDOSamplesVolume::Init (std::size_t samplesCount)
 
 	_samples.samplesCount = samplesCount;
 
+	HaltonGenerator haltonGenerator (2, 3);
+
 	for (std::size_t index = 0; index < samplesCount; index++) {
+
 		glm::vec3 sample (
 			std::cos (index * 2 * M_PI / samplesCount),
 			std::sin (index * 2 * M_PI / samplesCount),
-			Random::Instance ()->RangeF (0.0f, 1.0f)
+			haltonGenerator.Next ().x
 		);
 
 		/*
@@ -38,7 +38,7 @@ bool SSDOSamplesVolume::Init (std::size_t samplesCount)
 		*/
 
 		sample = glm::normalize (sample);
-		sample *= Random::Instance ()->RangeF (0.5f, 1.0f);
+		sample *= haltonGenerator.Next ().x;
 
 		_samples.samples [index * 4] = sample.x;
 		_samples.samples [index * 4 + 1] = sample.y;
@@ -50,26 +50,9 @@ bool SSDOSamplesVolume::Init (std::size_t samplesCount)
 	GL::BufferData (GL_UNIFORM_BUFFER, sizeof (_samples), &_samples, GL_STATIC_DRAW);
 	GL::BindBuffer (GL_UNIFORM_BUFFER, 0);
 
-	return true;
-}
-
-void SSDOSamplesVolume::BindForReading ()
-{
 	/*
-	 * Nothing
+	 * Update attributes
 	*/
-}
-
-void SSDOSamplesVolume::BindForWriting ()
-{
-	/*
-	 * Nothing
-	*/
-}
-
-std::vector<PipelineAttribute> SSDOSamplesVolume::GetCustomAttributes () const
-{
-	std::vector<PipelineAttribute> attributes;
 
 	PipelineAttribute ssdoSamples;
 
@@ -79,17 +62,20 @@ std::vector<PipelineAttribute> SSDOSamplesVolume::GetCustomAttributes () const
 
 	ssdoSamples.value.x = _samplesUBO;
 
-	attributes.push_back (ssdoSamples);
+	_attributes.push_back (ssdoSamples);
+}
 
-	return attributes;
+SSDOSamplesVolume::~SSDOSamplesVolume ()
+{
+	GL::DeleteBuffers (1, &_samplesUBO);
+}
+
+const std::vector<PipelineAttribute>& SSDOSamplesVolume::GetCustomAttributes () const
+{
+	return _attributes;
 }
 
 std::size_t SSDOSamplesVolume::GetSamplesCount () const
 {
 	return _samples.samplesCount;
-}
-
-void SSDOSamplesVolume::Clear ()
-{
-	GL::DeleteBuffers (1, &_samplesUBO);
 }

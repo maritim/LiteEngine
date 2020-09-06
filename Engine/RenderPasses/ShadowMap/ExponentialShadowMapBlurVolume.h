@@ -1,9 +1,9 @@
 #ifndef EXPONENTIALSHADOWMAPBLURVOLUME_H
 #define EXPONENTIALSHADOWMAPBLURVOLUME_H
 
-#include "RenderPasses/PostProcess/PostProcessMapVolume.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
-class ExponentialShadowMapBlurVolume : public PostProcessMapVolume
+class ExponentialShadowMapBlurVolume : public FramebufferRenderVolume
 {
 protected:
 	glm::ivec2 _resolution;
@@ -11,7 +11,7 @@ protected:
 public:
 	bool Init (std::size_t bufferWidth, std::size_t bufferHeight);
 
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
+	const std::vector<PipelineAttribute>& GetCustomAttributes () const;
 };
 
 #endif

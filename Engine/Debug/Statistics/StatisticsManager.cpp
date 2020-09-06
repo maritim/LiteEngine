@@ -1,14 +1,14 @@
 #include "StatisticsManager.h"
 
 StatisticsManager::StatisticsManager () :
-	_statistics ()
+	_statisticsObjects ()
 {
 
 }
 
 StatisticsManager::~StatisticsManager ()
 {
-	for (auto it : _statistics) {
+	for (auto it : _statisticsObjects) {
 		if (it.second == nullptr) {
 			continue;
 		}
@@ -18,19 +18,3 @@ StatisticsManager::~StatisticsManager ()
 }
 
 SPECIALIZE_SINGLETON(StatisticsManager)
-
-StatisticsObject* StatisticsManager::GetStatisticsObject (const std::string& name) const
-{
-	auto it = _statistics.find (name);
-
-	if (it == _statistics.end ()) {
-		return nullptr;
-	}
-
-	return it->second;
-}
-
-void StatisticsManager::SetStatisticsObject (const std::string& name, StatisticsObject* object)
-{
-	_statistics [name] = object;
-}

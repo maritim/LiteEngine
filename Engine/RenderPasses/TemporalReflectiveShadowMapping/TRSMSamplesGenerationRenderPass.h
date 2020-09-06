@@ -8,7 +8,9 @@ class TRSMSamplesGenerationRenderPass : public RSMSamplesGenerationRenderPass
 	DECLARE_RENDER_PASS(TRSMSamplesGenerationRenderPass)
 
 public:
-	TRSMSamplesGenerationRenderPass ();
+	void Init (const RenderSettings& settings);
+protected:
+	void UpdateRSMSamplesVolume (const RenderSettings& settings);
 };
 
 #endif

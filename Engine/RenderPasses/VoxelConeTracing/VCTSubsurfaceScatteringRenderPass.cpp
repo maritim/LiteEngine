@@ -1,9 +1,7 @@
 #include "VCTSubsurfaceScatteringRenderPass.h"
 
-#include "RenderPasses/SubsurfaceScatteringMapVolume.h"
-
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/VCTStatisticsObject.h"
+#include "VCTStatisticsObject.h"
 
 bool VCTSubsurfaceScatteringRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
@@ -27,28 +25,42 @@ std::string VCTSubsurfaceScatteringRenderPass::GetPostProcessVolumeName () const
 
 glm::ivec2 VCTSubsurfaceScatteringRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	if (_postProcessMapVolume != nullptr) {
-		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("VCTStatisticsObject");
-		VCTStatisticsObject* vctStatisticsObject = nullptr;
-
-		if (stat == nullptr) {
-			stat = new VCTStatisticsObject ();
-			StatisticsManager::Instance ()->SetStatisticsObject ("VCTStatisticsObject", stat);
-		}
-
-		vctStatisticsObject = dynamic_cast<VCTStatisticsObject*> (stat);
-
-		vctStatisticsObject->vctSubsurfaceScatteringMapVolume = _postProcessMapVolume;
-	}
-
-	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
+	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.rsm_scale);
 }
 
-PostProcessMapVolume* VCTSubsurfaceScatteringRenderPass::CreatePostProcessVolume () const
+FramebufferRenderVolume* VCTSubsurfaceScatteringRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	SubsurfaceScatteringMapVolume* vctsssMapVolume = new SubsurfaceScatteringMapVolume ();
+	/*
+	 * Create subsurface scattering framebuffer
+	*/
 
-	return vctsssMapVolume;
+	Resource<Texture> texture = Resource<Texture> (new Texture ("subsurfaceScatteringMap"));
+
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
+
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
+
+	/*
+	 * Update statistics object
+	*/
+
+	auto vctStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <VCTStatisticsObject> ();
+
+	vctStatisticsObject->vctSubsurfaceScatteringMapVolume = renderVolume;
+
+	return renderVolume;
 }
 
 std::vector<PipelineAttribute> VCTSubsurfaceScatteringRenderPass::GetCustomAttributes (const Camera* camera,

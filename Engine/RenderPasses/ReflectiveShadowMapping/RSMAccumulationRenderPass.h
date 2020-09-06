@@ -8,11 +8,10 @@
 class RSMAccumulationRenderPass : public VolumetricLightRenderPassI
 {
 protected:
-	RSMVolume* _reflectiveShadowMapVolume;
+	RSMVolume* _rsmVolume;
 
 public:
 	RSMAccumulationRenderPass ();
-	virtual ~RSMAccumulationRenderPass ();
 
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);

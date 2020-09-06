@@ -1,6 +1,7 @@
 #include "DirectionalVolumetricLightRenderPass.h"
 
 #include "RenderPasses/GBuffer.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 #include "Renderer/Pipeline.h"
 
@@ -48,22 +49,14 @@ void DirectionalVolumetricLightRenderPass::StartDirectionalLightPass (RenderVolu
 	 * Bind light accumulation framebuffer for writing
 	*/
 
-	auto resultFrameBuffer = rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
 
-	resultFrameBuffer->BindForWriting ();
+	resultVolume->GetFramebufferView ()->Activate ();
 }
 
 void DirectionalVolumetricLightRenderPass::DirectionalLightPass (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
-	/*
-	 * Bind all render volumes
-	*/
-
-	for (RenderVolumeI* renderVolume : *rvc) {
-		renderVolume->BindForReading ();
-	}
-
 	/*
 	 * Get volumetric light from render volume collection
 	*/

@@ -22,14 +22,28 @@ std::string HDRRenderPass::GetPostProcessVolumeName () const
 
 glm::ivec2 HDRRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	return glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height);
+	return glm::ivec2 (settings.resolution.width, settings.resolution.height);
 }
 
-PostProcessMapVolume* HDRRenderPass::CreatePostProcessVolume () const
+FramebufferRenderVolume* HDRRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	PostProcessMapVolume* volume = new PostProcessMapVolume ();
+	Resource<Texture> texture = Resource<Texture> (new Texture ("postProcessMap"));
 
-	return volume;
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
+
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	return new FramebufferRenderVolume (framebuffer);
 }
 
 std::vector<PipelineAttribute> HDRRenderPass::GetCustomAttributes (const Camera* camera,

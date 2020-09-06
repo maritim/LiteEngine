@@ -1,28 +1,23 @@
 #ifndef PERSPECTIVESHADOWMAPVOLUME_H
 #define PERSPECTIVESHADOWMAPVOLUME_H
 
-#include "RenderPasses/ShadowMap/ShadowMapVolume.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 #include "Cameras/PerspectiveCamera.h"
 
-class PerspectiveShadowMapVolume : public ShadowMapVolume
+class PerspectiveShadowMapVolume : public FramebufferRenderVolume
 {
 protected:
 	PerspectiveCamera* _lightCamera;
-	float _shadowBias;
 
 public:
-	PerspectiveShadowMapVolume ();
+	PerspectiveShadowMapVolume (const Resource<Framebuffer>& framebuffer);
+	~PerspectiveShadowMapVolume ();
 
-	bool Init (PerspectiveCamera* lightCamera, const glm::ivec2& size);
-
-	void Clear ();
-
+	void SetLightCamera (PerspectiveCamera* lightCamera);
 	void SetShadowBias (float shadowBias);
 
 	PerspectiveCamera* GetLightCamera ();
-
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
 };
 
 #endif

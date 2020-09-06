@@ -90,10 +90,10 @@ vec3 CalcIndirectRefractiveLight (vec3 in_position, vec3 in_normal, float in_ref
 void main()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_position = texture2D (gPositionMap, texCoord).xyz;
-	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
-	float in_transparency = texture2D (gDiffuseMap, texCoord).w;
-	float in_refractiveIndex = texture2D (gNormalMap, texCoord).w;
+	vec3 in_position = textureLod (gPositionMap, texCoord, 0).xyz;
+	vec3 in_normal = textureLod (gNormalMap, texCoord, 0).xyz;
+	float in_transparency = textureLod (gDiffuseMap, texCoord, 0).w;
+	float in_refractiveIndex = textureLod (gNormalMap, texCoord, 0).w;
 
 	in_normal = normalize(in_normal);
 

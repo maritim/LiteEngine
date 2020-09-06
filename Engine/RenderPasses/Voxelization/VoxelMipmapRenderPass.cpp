@@ -68,8 +68,6 @@ void VoxelMipmapRenderPass::GenerateMipmaps (const RenderSettings& settings, Ren
 
 	VoxelVolume* voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
 
-	voxelVolume->BindForReading ();
-
 	for (std::size_t mipLevel = 0; mipLevel < voxelVolume->GetVolumeMipmapLevels () - 1; mipLevel++) {
 
 		Pipeline::SendCustomAttributes (_shaderView, voxelVolume->GetCustomAttributes ());

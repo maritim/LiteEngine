@@ -12,5 +12,5 @@ bool BloomHorizontalBlurRenderPass::IsAvailable (const RenderScene* renderScene,
 
 glm::ivec2 BloomHorizontalBlurRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.bloom_scale);
+	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.bloom_scale);
 }

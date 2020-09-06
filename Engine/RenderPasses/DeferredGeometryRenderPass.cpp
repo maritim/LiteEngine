@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "ResultFrameBuffer2DVolume.h"
+#include "FramebufferRenderVolume.h"
 
 #include "Resources/Resources.h"
 #include "Renderer/RenderSystem.h"
@@ -15,15 +15,15 @@
 
 #include "Debug/Profiler/Profiler.h"
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/RenderStatisticsObject.h"
+#include "RenderStatisticsObject.h"
 
 #include "Core/Console/Console.h"
 
 #include "SceneNodes/SceneLayer.h"
 
 DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
-	_frameBuffer (new GBuffer ()),
-	_translucencyFrameBuffer (new TranslucencyGBuffer ()),
+	_framebuffer (nullptr),
+	_translucencyFramebuffer (nullptr),
 	_haltonGenerator (2, 3)
 {
 
@@ -31,8 +31,7 @@ DeferredGeometryRenderPass::DeferredGeometryRenderPass () :
 
 DeferredGeometryRenderPass::~DeferredGeometryRenderPass ()
 {
-	delete _translucencyFrameBuffer;
-	delete _frameBuffer;
+
 }
 
 void DeferredGeometryRenderPass::Init (const RenderSettings& settings)
@@ -129,10 +128,10 @@ RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const RenderScene* 
 	 * Generate mipmaps
 	*/
 
-	GenerateMipmap ();
+	GenerateMipmaps ();
 
-	return rvc->Insert ("GBuffer", _frameBuffer)
-				->Insert ("TranslucencyGBuffer", _translucencyFrameBuffer);
+	return rvc->Insert ("GBuffer", _framebuffer)
+				->Insert ("TranslucencyGBuffer", _translucencyFramebuffer);
 }
 
 bool DeferredGeometryRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
@@ -151,17 +150,29 @@ void DeferredGeometryRenderPass::Clear ()
 	 * Clear GBuffer volume
 	*/
 
-	_frameBuffer->Clear ();
+	delete _translucencyFramebuffer;
+	delete _framebuffer;
 }
 
 void DeferredGeometryRenderPass::PrepareDrawing ()
 {
 	/*
-	 * Bind framebuffer for writting
+	 * Clear framebuffer
 	*/
 
-	_frameBuffer->BindForWriting ();
-	_translucencyFrameBuffer->BindForWriting ();
+	GL::DepthMask (GL_TRUE);
+
+	_framebuffer->GetFramebufferView ()->Activate ();
+
+	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	/*
+	 * Clear translucency framebuffer
+	*/
+
+	_translucencyFramebuffer->GetFramebufferView ()->Activate ();
+
+	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, const Camera* camera, const RenderSettings& settings)
@@ -260,12 +271,11 @@ void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, c
 		renderObject->Draw ();
 	}
 
-	static RenderStatisticsObject* renderStatisticsObject = new RenderStatisticsObject ();
+	auto renderStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <RenderStatisticsObject> ();
+
 	renderStatisticsObject->DrawnVerticesCount = drawnVerticesCount;
 	renderStatisticsObject->DrawnPolygonsCount = drawnPolygonsCount;
 	renderStatisticsObject->DrawnObjectsCount = drawnObjectsCount;
-
-	StatisticsManager::Instance ()->SetStatisticsObject ("RenderStatisticsObject", renderStatisticsObject);
 
 	/*
 	* Disable Stecil Test for further rendering
@@ -283,13 +293,17 @@ void DeferredGeometryRenderPass::EndDrawing ()
 	Pipeline::UnlockShader ();
 }
 
-void DeferredGeometryRenderPass::GenerateMipmap ()
+void DeferredGeometryRenderPass::GenerateMipmaps ()
 {
 	/*
 	 * Generate GBuffer mipmap
 	*/
 
-	_frameBuffer->GenerateMipmap ();
+	for (std::size_t index = 0 ; index < 4 ; index++) {
+		_framebuffer->GetFramebufferView ()->GetTextureView (index)->Activate (0);
+
+		GL::GenerateMipmap (GL_TEXTURE_2D);
+	}
 }
 
 void DeferredGeometryRenderPass::BindFrameBuffer (int sceneLayers)
@@ -299,7 +313,7 @@ void DeferredGeometryRenderPass::BindFrameBuffer (int sceneLayers)
 	*/
 
 	if (!(sceneLayers & SceneLayer::TRANSLUCENCY)) {
-		_frameBuffer->BindDraw ();
+		_framebuffer->GetFramebufferView ()->Activate ();
 	}
 
 	/*
@@ -307,7 +321,7 @@ void DeferredGeometryRenderPass::BindFrameBuffer (int sceneLayers)
 	*/
 
 	if (sceneLayers & SceneLayer::TRANSLUCENCY) {
-		_translucencyFrameBuffer->BindDraw ();
+		_translucencyFramebuffer->GetFramebufferView ()->Activate ();
 	}
 }
 
@@ -365,23 +379,23 @@ void DeferredGeometryRenderPass::UpdateCamera (const Camera* camera, const Rende
 
 		jitter /= glm::vec2 (settings.viewport.width, settings.viewport.height);
 
-		_frameBuffer->SetFrustumJitter (jitter);
+		_framebuffer->SetFrustumJitter (jitter);
 
 		glm::mat4 projectionMatrix = camera->GetProjectionMatrix ();
 		glm::mat4 jitteringMatrix = glm::translate (glm::mat4 (1.0f), glm::vec3 (jitter, 0.0f));
 		projectionMatrix = jitteringMatrix * projectionMatrix;
 
-		_frameBuffer->SetProjectionMatrix (projectionMatrix);
+		_framebuffer->SetProjectionMatrix (projectionMatrix);
 	}
 
 	if (settings.taa_enabled == false) {
-		_frameBuffer->SetFrustumJitter (glm::vec2 (0.0f));
+		_framebuffer->SetFrustumJitter (glm::vec2 (0.0f));
 
-		_frameBuffer->SetProjectionMatrix (camera->GetProjectionMatrix ());
+		_framebuffer->SetProjectionMatrix (camera->GetProjectionMatrix ());
 	}
 
 	// Create projection matrix
-	Pipeline::CreateProjection (_frameBuffer->GetProjectionMatrix ());
+	Pipeline::CreateProjection (_framebuffer->GetProjectionMatrix ());
 
 	// Create View Matrix
 	Pipeline::SendCamera (camera);
@@ -389,18 +403,19 @@ void DeferredGeometryRenderPass::UpdateCamera (const Camera* camera, const Rende
 
 void DeferredGeometryRenderPass::UpdateVolumes (const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
-	Framebuffer framebuffer = settings.framebuffer;
+	Resolution resolution = settings.resolution;
 
-	glm::ivec2 fbSize = _frameBuffer->GetSize ();
+	auto framebufferSize = _framebuffer->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
-	if ((std::size_t) fbSize.x != framebuffer.width || (std::size_t) fbSize.y != framebuffer.height) {
+	if (framebufferSize.width != resolution.width ||
+		framebufferSize.height != resolution.height) {
 
 		/*
 		 * Clear framebuffer
 		*/
 
-		_frameBuffer->Clear ();
-		_translucencyFrameBuffer->Clear ();
+		delete _framebuffer;
+		delete _translucencyFramebuffer;
 
 		/*
 		 * Initialize framebuffer
@@ -413,10 +428,23 @@ void DeferredGeometryRenderPass::UpdateVolumes (const RenderSettings& settings, 
 	 * Update result framebuffer
 	*/
 
-	ResultFrameBuffer2DVolume* resultFrameBufferVolume = (ResultFrameBuffer2DVolume*) rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
 
-	if (resultFrameBufferVolume->GetDepthBuffer () != _frameBuffer->GetDepthBuffer ()) {
-		resultFrameBufferVolume->AttachDepthBuffer (_frameBuffer->GetDepthBuffer ());
+	auto depthTextureView = _framebuffer->GetFramebufferView ()->GetDepthTextureView ();
+
+	if (resultVolume->GetFramebufferView ()->GetDepthTextureView () != depthTextureView) {
+
+		resultVolume->GetFramebufferView ()->Activate ();
+
+		depthTextureView->Activate (0);
+
+		GL::FramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTextureView->GetGPUIndex (), 0);
+
+		/*
+		 * Update framebuffer view
+		*/
+
+		resultVolume->GetFramebufferView ()->SetDepthTextureView (depthTextureView);
 	}
 }
 
@@ -426,17 +454,59 @@ void DeferredGeometryRenderPass::InitGBufferVolume (const RenderSettings& settin
 	 * Initialize GBuffer volume
 	*/
 
-	if (!_frameBuffer->Init (glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height))) {
-		Console::LogError (std::string () +
-			"Geometry buffer for deferred rendering cannot be initialized!" +
-			" It is not possible to continue the process. End now!");
-		exit (GBUFFER_FBO_NOT_INIT);
+	std::vector<Resource<Texture>> textures;
+	Resource<Texture> depthTexture;
+
+	std::vector<std::string> volumeNames = { "gPositionMap", "gNormalMap", "gDiffuseMap", "gSpecularMap", "gEmissiveMap" };
+
+	for (auto volumeName : volumeNames) {
+		Resource<Texture> texture = Resource<Texture> (new Texture (volumeName));
+
+		texture->SetSize (Size (settings.resolution.width, settings.resolution.height));
+		texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGBA32);
+		texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGBA);
+		texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+		texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_BORDER);
+		texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST_MIPMAP_NEAREST);
+		texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+		texture->SetAnisotropicFiltering (false);
+		texture->SetBorderColor (Color (glm::vec4 (1.0)));
+
+		textures.push_back (texture);
 	}
 
-	if (!_translucencyFrameBuffer->Init (glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height))) {
-		Console::LogError (std::string () +
-			"Geometry buffer for deferred rendering cannot be initialized!" +
-			" It is not possible to continue the process. End now!");
-		exit (GBUFFER_FBO_NOT_INIT);
+	depthTexture = Resource<Texture> (new Texture ("gDepthMap"));
+
+	depthTexture->SetSize (Size (settings.resolution.width, settings.resolution.height));
+	depthTexture->SetMipmapGeneration (false);
+	depthTexture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_DEPTH24_STENCIL8);
+	depthTexture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_DEPTH_STENCIL);
+	depthTexture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	depthTexture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_BORDER);
+	depthTexture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	depthTexture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	depthTexture->SetAnisotropicFiltering (false);
+	depthTexture->SetBorderColor (Color (glm::vec4 (1.0)));
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (textures, depthTexture));
+
+	_framebuffer = new GBuffer (framebuffer);
+
+	/*
+	 * Initialize translucency gbuffer
+	*/
+
+	volumeNames = { "gTrPositionMap", "gTrNormalMap", "gTrDiffuseMap", "gTrSpecularMap", "gTrEmissiveMap" };
+
+	for (std::size_t index = 0; index < textures.size (); index ++) {
+		textures [index]->SetName (volumeNames [index]);
+		textures [index]->SetMipmapGeneration (false);
+		textures [index]->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
 	}
+
+	depthTexture->SetName ("gTrDepthMap");
+
+	framebuffer = Resource<Framebuffer> (new Framebuffer (textures, depthTexture));
+
+	_translucencyFramebuffer = new GBuffer (framebuffer);
 }

@@ -30,14 +30,14 @@ RenderVolumeCollection* TemporalFilterSwapRenderPass::Execute (const RenderScene
 	 * Blit current framebuffer into last history framebuffer
 	*/
 
-	currentTemporalFilterMapVolume->BindForBliting ();
-	temporalFilterMapVolume->BindToBlit ();
+	temporalFilterMapVolume->GetFramebufferView ()->Activate ();
+	currentTemporalFilterMapVolume->GetFramebufferView ()->ActivateSource ();
 
-	glm::ivec2 currentTemporalFilterMapSize = currentTemporalFilterMapVolume->GetSize ();
-	glm::ivec2 temporalFilterMapSize = temporalFilterMapVolume->GetSize ();
+	auto currentTemporalFilterMapSize = currentTemporalFilterMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
+	auto temporalFilterMapSize = temporalFilterMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
-	GL::BlitFramebuffer (0, 0, currentTemporalFilterMapSize.x, currentTemporalFilterMapSize.y,
-		0, 0, temporalFilterMapSize.x, temporalFilterMapSize.y,
+	GL::BlitFramebuffer (0, 0, currentTemporalFilterMapSize.width, currentTemporalFilterMapSize.height,
+		0, 0, temporalFilterMapSize.width, temporalFilterMapSize.height,
 		GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
 	return rvc;

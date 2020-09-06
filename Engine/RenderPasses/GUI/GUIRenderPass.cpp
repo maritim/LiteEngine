@@ -160,10 +160,10 @@ void GUIRenderPass::EditorPass (const RenderSettings& settings)
 			if (!pcmd->UserCallback) {
 				ImVec4 clip_rect = ImVec4 (pcmd->ClipRect.x - pos.x, pcmd->ClipRect.y - pos.y, pcmd->ClipRect.z - pos.x, pcmd->ClipRect.w - pos.y);
 
-				if (clip_rect.x < settings.framebuffer.width && clip_rect.y < settings.framebuffer.height && clip_rect.z >= 0.0f && clip_rect.w >= 0.0f) {
+				if (clip_rect.x < settings.resolution.width && clip_rect.y < settings.resolution.height && clip_rect.z >= 0.0f && clip_rect.w >= 0.0f) {
 
                     // Apply scissor/clipping rectangle
-					GL::Scissor((int)clip_rect.x, (int)(settings.framebuffer.height - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y));
+					GL::Scissor((int)clip_rect.x, (int)(settings.resolution.height - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y));
 
 					/*
 					 * Draw

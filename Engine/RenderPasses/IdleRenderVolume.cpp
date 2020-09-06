@@ -1,31 +1,10 @@
 #include "IdleRenderVolume.h"
 
-void IdleRenderVolume::BindForReading ()
-{
-	/*
-	 * Nothing
-	*/
-}
-
-void IdleRenderVolume::BindForWriting ()
-{
-	/*
-	 * Nothing
-	*/
-}
-
-std::vector<PipelineAttribute> IdleRenderVolume::GetCustomAttributes () const
+const std::vector<PipelineAttribute>& IdleRenderVolume::GetCustomAttributes () const
 {
 	/*
 	 * Nothing
 	*/
 
-	return std::vector<PipelineAttribute> ();
-}
-
-void IdleRenderVolume::Clear ()
-{
-	/*
-	 * Nothing
-	*/
+	return _attributes;
 }

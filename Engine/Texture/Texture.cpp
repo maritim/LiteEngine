@@ -8,13 +8,17 @@
 Texture::Texture(const std::string& name) :
 	_name (name),
 	_size (0, 0),
-	_generateMipmaps (true),
+	_generateMipmap (true),
 	_mipmapLevels (1),
-	_internalFormat (0),
-	_pixelFormat (TEXTURE_PIXEL_FORMAT::FORMAT_RGBA8),
+	_sizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGBA8),
+	_internalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGBA),
+	_channelType (TEXTURE_CHANNEL_TYPE::CHANNEL_UNSIGNED_BYTE),
 	_wrapMode (TEXTURE_WRAP_MODE::WRAP_REPEAT),
-	_mipmapFilter (TEXTURE_MIPMAP_FILTER::MIPMAP_ANISOTROPIC),
+	_minFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR_MIPMAP_LINEAR),
+	_magFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR),
 	_compressionType (TEXTURE_COMPRESSION_TYPE::COMPRESS_NONE),
+	_anisotropicFiltering (true),
+	_borderColor (Color::Black),
 	_isDirty (false)
 {
 	for (std::size_t i=0;i<MAX_TEXTURE_MIPMAP_LEVEL; i++) {
@@ -29,74 +33,6 @@ Texture::~Texture()
 	}
 }
 
-Size Texture::GetSize () const
-{
-	return _size;
-}
-
-std::string Texture::GetName() const
-{
-	return _name;
-}
-
-bool Texture::GenerateMipmaps () const
-{
-	return _generateMipmaps;
-}
-
-bool Texture::HasMipmaps () const
-{
-	return _mipmapLevels > 1;
-}
-
-std::size_t Texture::GetMipMapLevels () const
-{
-	return _mipmapLevels;
-}
-
-int Texture::GetInternalFormat () const
-{
-	return _internalFormat;
-}
-
-TEXTURE_PIXEL_FORMAT Texture::GetPixelFormat () const
-{
-	return _pixelFormat;
-}
-
-TEXTURE_WRAP_MODE Texture::GetWrapMode () const
-{
-	return _wrapMode;
-}
-
-TEXTURE_MIPMAP_FILTER Texture::GetMipmapFilter () const
-{
-	return _mipmapFilter;
-}
-
-TEXTURE_COMPRESSION_TYPE Texture::GetCompressionType () const
-{
-	return _compressionType;
-}
-
-unsigned char* Texture::GetPixels () const
-{
-	return GetMipmapLevel (0);
-}
-
-unsigned char* Texture::GetMipmapLevel (std::size_t mipmapLevel) const
-{
-	if (mipmapLevel >= _mipmapLevels) {
-		Console::LogWarning ("Texture mipmap index exceed mipmaps count. \
-			You are searching for " + std::to_string (mipmapLevel) +
-			" and the size is " + std::to_string (_mipmapLevels));
-
-		return nullptr;
-	}
-
-	return _pixels [mipmapLevel];
-}
-
 void Texture::SetName(const std::string& name)
 {
 	_name = name;
@@ -108,20 +44,25 @@ void Texture::SetSize (Size size)
 	_isDirty = true;
 }
 
-void Texture::SetMipmapsGeneration (bool generate)
+void Texture::SetMipmapGeneration (bool generateMipmap)
 {
-	_generateMipmaps = generate;
+	_generateMipmap = generateMipmap;
 	_isDirty = true;
 }
 
-void Texture::SetInternalFormat (int internalFormat)
+void Texture::SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT sizedInternalFormat)
+{
+	_sizedInternalFormat = sizedInternalFormat;
+}
+
+void Texture::SetInternalFormat (TEXTURE_INTERNAL_FORMAT internalFormat)
 {
 	_internalFormat = internalFormat;
 }
 
-void Texture::SetPixelFormat (TEXTURE_PIXEL_FORMAT pixelFormat)
+void Texture::SetChannelType (TEXTURE_CHANNEL_TYPE channelType)
 {
-	_pixelFormat = pixelFormat;
+	_channelType = channelType;
 }
 
 void Texture::SetWrapMode (TEXTURE_WRAP_MODE wrapMode)
@@ -130,9 +71,21 @@ void Texture::SetWrapMode (TEXTURE_WRAP_MODE wrapMode)
 	_isDirty = true;
 }
 
-void Texture::SetMipmapFilter (TEXTURE_MIPMAP_FILTER mipmapFilter)
+void Texture::SetMinFilter (TEXTURE_FILTER_MODE minFilter)
 {
-	_mipmapFilter = mipmapFilter;
+	_minFilter = minFilter;
+	_isDirty = true;
+}
+
+void Texture::SetMagFilter (TEXTURE_FILTER_MODE magFilter)
+{
+	_magFilter = magFilter;
+	_isDirty = true;
+}
+
+void Texture::SetAnisotropicFiltering (bool anisotropicFiltering)
+{
+	_anisotropicFiltering = anisotropicFiltering;
 	_isDirty = true;
 }
 
@@ -179,4 +132,97 @@ void Texture::SetMipmapLevel (const unsigned char* pixels, std::size_t mipmapLev
 
 	_pixels [mipmapLevel] = new unsigned char [length];
 	memcpy (_pixels [mipmapLevel], pixels, length);
+}
+
+void Texture::SetBorderColor (const Color& borderColor)
+{
+	_borderColor = borderColor;
+}
+
+Size Texture::GetSize () const
+{
+	return _size;
+}
+
+std::string Texture::GetName() const
+{
+	return _name;
+}
+
+bool Texture::GenerateMipmap () const
+{
+	return _generateMipmap;
+}
+
+bool Texture::HasMipmap () const
+{
+	return _mipmapLevels > 1;
+}
+
+std::size_t Texture::GetMipMapLevels () const
+{
+	return _mipmapLevels;
+}
+
+TEXTURE_SIZED_INTERNAL_FORMAT Texture::GetSizedInternalFormat () const
+{
+	return _sizedInternalFormat;
+}
+
+TEXTURE_INTERNAL_FORMAT Texture::GetInternalFormat () const
+{
+	return _internalFormat;
+}
+
+TEXTURE_CHANNEL_TYPE Texture::GetChannelType () const
+{
+	return _channelType;
+}
+
+TEXTURE_WRAP_MODE Texture::GetWrapMode () const
+{
+	return _wrapMode;
+}
+
+TEXTURE_FILTER_MODE Texture::GetMinFilter () const
+{
+	return _minFilter;
+}
+
+TEXTURE_FILTER_MODE Texture::GetMagFilter () const
+{
+	return _magFilter;
+}
+
+bool Texture::HasAnisotropicFiltering () const
+{
+	return _anisotropicFiltering;
+}
+
+TEXTURE_COMPRESSION_TYPE Texture::GetCompressionType () const
+{
+	return _compressionType;
+}
+
+unsigned char* Texture::GetPixels () const
+{
+	return GetMipmapLevel (0);
+}
+
+unsigned char* Texture::GetMipmapLevel (std::size_t mipmapLevel) const
+{
+	if (mipmapLevel >= _mipmapLevels) {
+		Console::LogWarning ("Texture mipmap index exceed mipmaps count. \
+			You are searching for " + std::to_string (mipmapLevel) +
+			" and the size is " + std::to_string (_mipmapLevels));
+
+		return nullptr;
+	}
+
+	return _pixels [mipmapLevel];
+}
+
+const Color& Texture::GetBorderColor () const
+{
+	return _borderColor;
 }

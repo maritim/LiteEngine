@@ -120,8 +120,8 @@ void Game::DisplayScene()
 
 	//TODO: Change this
 	RenderSettings* settings = RenderSettingsManager::Instance ()->GetActive ();
-	settings->framebuffer.width = Window::GetWidth ();
-	settings->framebuffer.height = Window::GetHeight ();
+	settings->resolution.width = Window::GetWidth ();
+	settings->resolution.height = Window::GetHeight ();
 	settings->viewport.x = 0;
 	settings->viewport.y = 0;
 	settings->viewport.width = Window::GetWidth ();

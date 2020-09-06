@@ -46,7 +46,7 @@ Camera* RSMSpotLightAccumulationRenderPass::GetLightCamera (const RenderScene* r
 
 	const Transform* lightTransform = renderSpotLightObject->GetTransform ();
 
-	PerspectiveCamera* lightCamera = (PerspectiveCamera*) _reflectiveShadowMapVolume->GetLightCamera ();
+	PerspectiveCamera* lightCamera = (PerspectiveCamera*) _rsmVolume->GetLightCamera ();
 
 	if (lightCamera == nullptr) {
 		lightCamera = new PerspectiveCamera ();

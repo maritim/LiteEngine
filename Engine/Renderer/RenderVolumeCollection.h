@@ -23,6 +23,7 @@ public:
 	RenderVolumeCollection ();
 
 	RenderVolumeCollection* Insert (const std::string& name, RenderVolumeI* volume, bool external = true);
+	void Clear ();
 
 	RenderVolumeCollection* StartScope ();
 	RenderVolumeCollection* ReleaseScope ();

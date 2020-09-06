@@ -8,7 +8,7 @@
 #include "Renderer/RenderManager.h"
 #include "Renderer/RenderSystem.h"
 
-#include "RenderPasses/FrameBuffer2DVolume.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 #include "Managers/SceneManager.h"
 #include "Managers/RenderSettingsManager.h"
@@ -107,8 +107,8 @@ void EditorScene::Render ()
 	_elapsedFrameTime = _targetFrameRate == 0.0f ? 100 : 1.0f / _targetFrameRate;
 
 	// _renderSettings->renderMode = "SceneRenderModule";
-	_renderSettings->framebuffer.width = _size.x;
-	_renderSettings->framebuffer.height = _size.y;
+	_renderSettings->resolution.width = _size.x;
+	_renderSettings->resolution.height = _size.y;
 	_renderSettings->viewport.x = 0;
 	_renderSettings->viewport.y = 0;
 	_renderSettings->viewport.width = _size.x;
@@ -116,8 +116,8 @@ void EditorScene::Render ()
 
 	RenderProduct result = RenderManager::Instance ()->Render (_sceneCamera, *_renderSettings);
 
-	FrameBuffer2DVolume* framebuffer = dynamic_cast<FrameBuffer2DVolume*> (result.resultVolume);
-	_textureID = framebuffer->GetColorTextureID ();
+	FramebufferRenderVolume* renderVolume = dynamic_cast<FramebufferRenderVolume*> (result.resultVolume);
+	_textureID = renderVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex ();
 }
 
 Camera* EditorScene::GetCamera ()

@@ -1,10 +1,11 @@
 #include "TemporalFilterMapVolume.h"
 
-TemporalFilterMapVolume::TemporalFilterMapVolume () :
+TemporalFilterMapVolume::TemporalFilterMapVolume (const Resource<Framebuffer>& framebuffer) :
+	FramebufferRenderVolume (framebuffer),
 	_viewProjectionMatrix (1.0f),
 	_current (false)
 {
-
+	SetCurrent (_current);
 }
 
 void TemporalFilterMapVolume::SetViewProjectionMatrix (const glm::mat4& viewProjectionMatrix)
@@ -15,16 +16,12 @@ void TemporalFilterMapVolume::SetViewProjectionMatrix (const glm::mat4& viewProj
 void TemporalFilterMapVolume::SetCurrent (bool current)
 {
 	_current = current;
-}
 
-const glm::mat4& TemporalFilterMapVolume::GetViewProjectionMatrix () const
-{
-	return _viewProjectionMatrix;
-}
+	/*
+	 * Update attributes
+	*/
 
-std::vector<PipelineAttribute> TemporalFilterMapVolume::GetCustomAttributes () const
-{
-	std::vector<PipelineAttribute> attributes;
+	_attributes.clear ();
 
 	PipelineAttribute temporalFilterMap;
 
@@ -32,9 +29,17 @@ std::vector<PipelineAttribute> TemporalFilterMapVolume::GetCustomAttributes () c
 
 	temporalFilterMap.name = _current == true ? "postProcessMap" : "temporalFilterMap";
 
-	temporalFilterMap.value.x = _colorBuffer;
+	temporalFilterMap.value.x = _framebufferView->GetTextureView (0)->GetGPUIndex ();
 
-	attributes.push_back (temporalFilterMap);
+	_attributes.push_back (temporalFilterMap);
+}
 
-	return attributes;
+const glm::mat4& TemporalFilterMapVolume::GetViewProjectionMatrix () const
+{
+	return _viewProjectionMatrix;
+}
+
+const std::vector<PipelineAttribute>& TemporalFilterMapVolume::GetCustomAttributes () const
+{
+	return _attributes;
 }

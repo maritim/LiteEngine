@@ -3,7 +3,7 @@
 
 #include "Renderer/RenderPassI.h"
 
-#include "RenderPasses/FrameBuffer2DVolume.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 class WindowBlitRenderPass : public RenderPassI
 {
@@ -18,7 +18,7 @@ public:
 
 	void Clear ();
 protected:
-	void EndDrawing (FrameBuffer2DVolume* frameBufferVolume, const RenderSettings& settings);
+	void EndDrawing (FramebufferRenderVolume* frameBufferVolume, const RenderSettings& settings);
 };
 
 #endif

@@ -9,11 +9,13 @@
 #include "Texture/Texture.h"
 #include "Shader/Shader.h"
 #include "Shader/ShaderContent.h"
+#include "Framebuffer/Framebuffer.h"
 
 #include "RenderViews/ModelView.h"
 #include "RenderViews/MaterialView.h"
 #include "RenderViews/TextureView.h"
 #include "RenderViews/ShaderView.h"
+#include "RenderViews/FramebufferView.h"
 
 #include "Fonts/Font.h"
 
@@ -78,6 +80,8 @@ public:
 
 	static Resource<ShaderView> LoadShader (const Resource<Shader>& shader);
 	static Resource<ShaderView> LoadComputeShader (const Resource<Shader>& shader);
+
+	static Resource<FramebufferView> LoadFramebuffer (const Resource<Framebuffer>& framebuffer);
 
 	static Resource<Texture> SaveTexture (const Resource<TextureView>& textureView);
 private:

@@ -6,7 +6,8 @@
 
 #include "Utils/Sequences/HaltonGenerator.h"
 
-bool TRSMSamplesVolume::Init (std::size_t samplesCount)
+TRSMSamplesVolume::TRSMSamplesVolume (std::size_t samplesCount) :
+	RSMSamplesVolume (samplesCount)
 {
 	std::memset (&_samples, 0, sizeof (_samples));
 
@@ -21,10 +22,28 @@ bool TRSMSamplesVolume::Init (std::size_t samplesCount)
 		_samples.samples [index * 4 + 1] = sample.y;
 	}
 
+	GL::DeleteBuffers (1, &_samplesUBO);
+
 	GL::GenBuffers (1, &_samplesUBO);
 	GL::BindBuffer (GL_UNIFORM_BUFFER, _samplesUBO);
 	GL::BufferData (GL_UNIFORM_BUFFER, sizeof (_samples), &_samples, GL_STATIC_DRAW);
 	GL::BindBuffer (GL_UNIFORM_BUFFER, 0);
 
-	return true;
+	/*
+	 * Update attributes
+	*/
+
+	_attributes.clear ();
+
+	std::vector<PipelineAttribute> attributes;
+
+	PipelineAttribute rsmSamples;
+
+	rsmSamples.type = PipelineAttribute::AttrType::ATTR_BLOCK;
+
+	rsmSamples.name = "rsmSamples";
+
+	rsmSamples.value.x = _samplesUBO;
+
+	_attributes.push_back (rsmSamples);
 }

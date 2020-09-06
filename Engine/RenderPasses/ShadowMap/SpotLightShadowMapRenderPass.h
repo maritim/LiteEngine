@@ -12,7 +12,6 @@ protected:
 
 public:
 	SpotLightShadowMapRenderPass ();
-	~SpotLightShadowMapRenderPass ();
 
 	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);

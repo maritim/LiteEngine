@@ -1,10 +1,11 @@
 #include "TRSMIndirectDiffuseLightMapVolume.h"
 
-TRSMIndirectDiffuseLightMapVolume::TRSMIndirectDiffuseLightMapVolume () :
+TRSMIndirectDiffuseLightMapVolume::TRSMIndirectDiffuseLightMapVolume (const Resource<Framebuffer>& framebuffer) :
+	FramebufferRenderVolume (framebuffer),
 	_viewProjectionMatrix (1.0f),
 	_current (true)
 {
-
+	SetCurrent (_current);
 }
 
 void TRSMIndirectDiffuseLightMapVolume::SetViewProjectionMatrix (const glm::mat4& viewProjectionMatrix)
@@ -15,16 +16,12 @@ void TRSMIndirectDiffuseLightMapVolume::SetViewProjectionMatrix (const glm::mat4
 void TRSMIndirectDiffuseLightMapVolume::SetCurrent (bool current)
 {
 	_current = current;
-}
 
-const glm::mat4& TRSMIndirectDiffuseLightMapVolume::GetViewProjectionMatrix () const
-{
-	return _viewProjectionMatrix;
-}
+	/*
+	 * Update attributes
+	*/
 
-std::vector<PipelineAttribute> TRSMIndirectDiffuseLightMapVolume::GetCustomAttributes () const
-{
-	std::vector<PipelineAttribute> attributes;
+	_attributes.clear ();
 
 	PipelineAttribute indirectDiffuseMap;
 
@@ -32,9 +29,12 @@ std::vector<PipelineAttribute> TRSMIndirectDiffuseLightMapVolume::GetCustomAttri
 
 	indirectDiffuseMap.name = _current == true ? "indirectDiffuseMap" : "lastIndirectDiffuseMap";
 
-	indirectDiffuseMap.value.x = _colorBuffer;
+	indirectDiffuseMap.value.x = _framebufferView->GetTextureView (0)->GetGPUIndex ();
 
-	attributes.push_back (indirectDiffuseMap);
+	_attributes.push_back (indirectDiffuseMap);
+}
 
-	return attributes;
+const glm::mat4& TRSMIndirectDiffuseLightMapVolume::GetViewProjectionMatrix () const
+{
+	return _viewProjectionMatrix;
 }

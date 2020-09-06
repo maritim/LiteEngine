@@ -32,6 +32,12 @@ RenderVolumeCollection* RenderVolumeCollection::Insert (const std::string& name,
 	return this;
 }
 
+void RenderVolumeCollection::Clear ()
+{
+	_nestedRenderVolumes.clear ();
+	_scopedVolumes = std::stack<std::pair<std::string, std::size_t>> ();
+}
+
 RenderVolumeCollection* RenderVolumeCollection::StartScope ()
 {
 	_currentLevel ++;

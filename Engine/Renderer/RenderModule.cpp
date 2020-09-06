@@ -45,6 +45,12 @@ RenderProduct RenderModule::Render (const RenderScene* renderScene, const Camera
 	RenderProduct product;
 
 	/*
+	 * Start scope
+	*/
+
+	_rvc->StartScope ();
+
+	/*
 	 * Iterate on every pass on associated order to draw scene
 	*/
 
@@ -59,7 +65,13 @@ RenderProduct RenderModule::Render (const RenderScene* renderScene, const Camera
 	 * Initialize render product
 	*/
 
-	product.resultVolume = _rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
+	product.resultVolume = _rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
+
+	/*
+	 * Release scope
+	*/
+
+	_rvc->ReleaseScope ();
 
 	return product;
 }

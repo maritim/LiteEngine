@@ -3,18 +3,17 @@
 
 #include "Container/ContainerRenderSubPassI.h"
 
-#include "ResultFrameBuffer2DVolume.h"
+#include "FramebufferRenderVolume.h"
 
 class ENGINE_API ResultFrameBufferGenerationRenderPass : public ContainerRenderSubPassI
 {
 	DECLARE_RENDER_PASS(ResultFrameBufferGenerationRenderPass)
 
 protected:
-	ResultFrameBuffer2DVolume* _frameBuffer;
+	FramebufferRenderVolume* _resultVolume;
 
 public:
 	ResultFrameBufferGenerationRenderPass ();
-	~ResultFrameBufferGenerationRenderPass ();
 
 	void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,

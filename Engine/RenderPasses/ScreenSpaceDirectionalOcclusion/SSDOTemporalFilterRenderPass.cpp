@@ -3,7 +3,7 @@
 #include "SSDOTemporalFilterMapVolume.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/SSDOStatisticsObject.h"
+#include "SSDOStatisticsObject.h"
 
 bool SSDOTemporalFilterRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
@@ -25,30 +25,40 @@ std::string SSDOTemporalFilterRenderPass::GetPostProcessVolumeName () const
 	return "SSDOMapVolume";
 }
 
-PostProcessMapVolume* SSDOTemporalFilterRenderPass::CreatePostProcessVolume () const
-{
-	SSDOTemporalFilterMapVolume* ssdoTemporalFilterMapVolume = new SSDOTemporalFilterMapVolume ();
-
-	return ssdoTemporalFilterMapVolume;
-}
-
 glm::ivec2 SSDOTemporalFilterRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	if (_postProcessMapVolume != nullptr) {
-		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSDOStatisticsObject");
-		SSDOStatisticsObject* ssdoStatisticsObject = nullptr;
+	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssdo_scale);
+}
 
-		if (stat == nullptr) {
-			stat = new SSDOStatisticsObject ();
-			StatisticsManager::Instance ()->SetStatisticsObject ("SSDOStatisticsObject", stat);
-		}
+FramebufferRenderVolume* SSDOTemporalFilterRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
+{
+	Resource<Texture> texture = Resource<Texture> (new Texture ("ssdoTemporalMap"));
 
-		ssdoStatisticsObject = dynamic_cast<SSDOStatisticsObject*> (stat);
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
 
-		ssdoStatisticsObject->ssdoMapVolume = _postProcessMapVolume;
-	}
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
 
-	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssdo_scale);
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	FramebufferRenderVolume* renderVolume = new SSDOTemporalFilterMapVolume (framebuffer);
+
+	/*
+	 * Update statistics object
+	*/
+
+	auto ssdoStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <SSDOStatisticsObject> ();
+
+	ssdoStatisticsObject->ssdoTemporalFilterMapVolume = renderVolume;
+
+	return renderVolume;
 }
 
 std::vector<PipelineAttribute> SSDOTemporalFilterRenderPass::GetCustomAttributes (const Camera* camera,
@@ -70,7 +80,7 @@ std::vector<PipelineAttribute> SSDOTemporalFilterRenderPass::GetCustomAttributes
 
 	ssdoResolution.name = "ssdoResolution";
 
-	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssdo_scale);
+	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssdo_scale);
 
 	ssdoResolution.value = glm::vec3 (resolution, 0.0f);
 

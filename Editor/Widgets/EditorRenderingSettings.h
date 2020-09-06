@@ -11,7 +11,6 @@
 #include "Core/Resources/Resource.h"
 #include "Texture/Texture.h"
 #include "Renderer/RenderViews/TextureView.h"
-#include "RenderPasses/FrameBuffer2DVolume.h"
 
 class EditorRenderingSettings : public EditorWidget
 {

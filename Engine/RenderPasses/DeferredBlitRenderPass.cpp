@@ -21,19 +21,19 @@ RenderVolumeCollection* DeferredBlitRenderPass::Execute (const RenderScene* rend
 	 * Get frame buffer from render volume collection
 	*/
 
-	FrameBuffer2DVolume* frameBuffer = (FrameBuffer2DVolume*) rvc->GetPreviousVolume ();
+	auto previousVolume = (FramebufferRenderVolume*) rvc->GetPreviousVolume ();
 
 	/*
 	 * Get depth buffer from render volume collection
 	*/
 
-	FrameBuffer2DVolume* resultFramebuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
 
 	/*
 	* Render skybox
 	*/
 
-	EndDrawing (frameBuffer, resultFramebuffer, settings);
+	EndDrawing (previousVolume, resultVolume, settings);
 
 	return rvc;
 }
@@ -55,15 +55,15 @@ void DeferredBlitRenderPass::Clear ()
 	*/
 }
 
-void DeferredBlitRenderPass::EndDrawing (FrameBuffer2DVolume* frameBufferVolume, FrameBuffer2DVolume* resultFramebuffer,
-	const RenderSettings& settings)
+void DeferredBlitRenderPass::EndDrawing (FramebufferRenderVolume* previousVolume,
+	FramebufferRenderVolume* resultVolume, const RenderSettings& settings)
 {
 	/*
 	 * Bind framebuffer to blit
 	*/
 
-	frameBufferVolume->BindForBliting ();
-	resultFramebuffer->BindToBlit ();
+	resultVolume->GetFramebufferView ()->Activate ();
+	previousVolume->GetFramebufferView ()->ActivateSource ();
 
 	GL::BlitFramebuffer (settings.viewport.x, settings.viewport.y,
 		settings.viewport.width, settings.viewport.height,

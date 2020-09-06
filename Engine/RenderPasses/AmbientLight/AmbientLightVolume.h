@@ -8,20 +8,12 @@
 class AmbientLightVolume : public RenderVolumeI
 {
 protected:
-	float _ambientLightIntensity;
-	Color _ambientLightColor;
-	bool _ambientOcclusionEnabled;
+	std::vector<PipelineAttribute> _attributes;
 
 public:
-	AmbientLightVolume ();
-
 	void SetAmbientLight (float, const Color&, bool);
 
-	void BindForReading ();
-	void BindForWriting ();
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
-
-	void Clear ();
+	const std::vector<PipelineAttribute>& GetCustomAttributes () const;
 };
 
 #endif

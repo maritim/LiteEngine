@@ -14,7 +14,7 @@ protected:
 	std::string GetPostProcessFragmentShaderPath () const;
 	std::string GetPostProcessVolumeName () const;	
 	glm::ivec2 GetPostProcessVolumeResolution (const RenderSettings& settings) const;
-	PostProcessMapVolume* CreatePostProcessVolume () const;
+	FramebufferRenderVolume* CreatePostProcessVolume (const RenderSettings& settings) const;
 };
 
 #endif

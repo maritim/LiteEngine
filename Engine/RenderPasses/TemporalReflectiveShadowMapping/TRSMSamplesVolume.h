@@ -6,7 +6,7 @@
 class TRSMSamplesVolume : public RSMSamplesVolume
 {
 public:
-	bool Init (std::size_t samplesCount);
+	TRSMSamplesVolume (std::size_t samplesCount);
 };
 
 #endif

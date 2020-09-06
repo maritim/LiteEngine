@@ -1,6 +1,7 @@
 #include "LPVEmissiveRadianceInjectionRenderPass.h"
 
 #include "LPVVolume.h"
+#include "LPVGeometryVolume.h"
 
 #include "Resources/Resources.h"
 #include "Renderer/RenderSystem.h"
@@ -95,8 +96,8 @@ void LPVEmissiveRadianceInjectionRenderPass::StartVoxelization ()
 
 void LPVEmissiveRadianceInjectionRenderPass::GeometryVoxelizationPass (const RenderScene* renderScene, RenderVolumeCollection* rvc)
 {
-	auto lpvVolume = rvc->GetRenderVolume ("LightPropagationVolume");
-	auto lpvGeometryVolume = rvc->GetRenderVolume ("LPVGeometryVolume");
+	auto lpvVolume = (LPVVolume*) rvc->GetRenderVolume ("LightPropagationVolume");
+	auto lpvGeometryVolume = (LPVGeometryVolume*) rvc->GetRenderVolume ("LPVGeometryVolume");
 
 	/*
 	 * Set viewport
@@ -116,8 +117,6 @@ void LPVEmissiveRadianceInjectionRenderPass::GeometryVoxelizationPass (const Ren
 	/*
 	* Render geometry
 	*/
-
-	int x = 0;
 
 	for_each_type (RenderObject*, renderObject, *renderScene) {
 

@@ -42,7 +42,21 @@ Color::Color (const glm::vec3& color) :
 
 }
 
+Color::Color (const glm::vec4& color) :
+	r (color.x * 255),
+	g (color.y * 255),
+	b (color.z * 255),
+	a (color.a * 255)
+{
+
+}
+
 glm::vec3 Color::ToVector3 () const
 {
-	return glm::vec3 (r / 255.0f, g / 255.0f, b / 255.0f);	
+	return glm::vec3 (r / 255.0f, g / 255.0f, b / 255.0f);
+}
+
+glm::vec4 Color::ToVector4 () const
+{
+	return glm::vec4 (r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
 }

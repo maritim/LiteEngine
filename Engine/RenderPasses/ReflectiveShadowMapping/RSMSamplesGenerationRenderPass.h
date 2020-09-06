@@ -10,11 +10,10 @@ class RSMSamplesGenerationRenderPass : public VolumetricLightRenderPassI
 	DECLARE_RENDER_PASS(RSMSamplesGenerationRenderPass)
 
 protected:
-	RSMSamplesVolume* _reflectiveShadowMapSamplesVolume;
+	RSMSamplesVolume* _rsmSamplesVolume;
 
 public:
 	RSMSamplesGenerationRenderPass ();
-	~RSMSamplesGenerationRenderPass ();
 
 	virtual void Init(const RenderSettings& settings);
 	virtual RenderVolumeCollection* Execute(const RenderScene* renderScene, const Camera* camera,
@@ -24,8 +23,7 @@ public:
 
 	void Clear ();
 protected:
-	virtual void InitRSMSamplesVolume (const RenderSettings& settings);
-	void UpdateRSMSamplesVolume (const RenderSettings& settings);
+	virtual void UpdateRSMSamplesVolume (const RenderSettings& settings);
 };
 
 #endif

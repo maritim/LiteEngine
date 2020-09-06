@@ -6,7 +6,7 @@
 #include <string>
 #include <glm/vec2.hpp>
 
-struct Framebuffer
+struct Resolution
 {
 	std::size_t width;
 	std::size_t height;
@@ -25,7 +25,7 @@ struct RenderSettings : public Object
 	std::string name;
 
 	std::string renderMode;
-	Framebuffer framebuffer;
+	Resolution resolution;
 	Viewport viewport;
 
 	bool ssao_enabled;

@@ -6,33 +6,33 @@
 
 bool ExponentialCascadedShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels, const glm::ivec2& resolution)
 {
-	/*
-	 * Initialize cascaded levels
-	*/
+	// /*
+	//  * Initialize cascaded levels
+	// */
 
-	_cascadedLevels = cascadedLevels;
+	// _cascadedLevels = cascadedLevels;
 
-	/*
-	 * Initialize shadow maps
-	*/
+	// /*
+	//  * Initialize shadow maps
+	// */
 
-	_shadowMaps.resize (_cascadedLevels, nullptr);
-	_shadowMapResolutions.resize (_cascadedLevels);
-	_lightCameras.resize (_cascadedLevels, nullptr);
-	_shadowMapZEnd.resize (_cascadedLevels);
+	// _shadowMaps.resize (_cascadedLevels, nullptr);
+	// _shadowMapResolutions.resize (_cascadedLevels);
+	// _lightCameras.resize (_cascadedLevels, nullptr);
+	// _shadowMapZEnd.resize (_cascadedLevels);
 
-	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
-		_shadowMaps [index] = new ExponentialShadowMapVolume ();
-	}
+	// for (std::size_t index = 0; index < _cascadedLevels; index ++) {
+	// 	_shadowMaps [index] = new ExponentialShadowMapVolume ();
+	// }
 
-	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
-		_shadowMapResolutions [index] = resolution;
+	// for (std::size_t index = 0; index < _cascadedLevels; index ++) {
+	// 	_shadowMapResolutions [index] = resolution;
 
-		if (!_shadowMaps [index]->Init (_shadowMapResolutions [index])) {
-			Console::LogError ("Exponential Shadow Map Frame Buffer is not complete!");
-			return false;
-		}
-	}	
+	// 	if (!_shadowMaps [index]->Init (_shadowMapResolutions [index])) {
+	// 		Console::LogError ("Exponential Shadow Map Frame Buffer is not complete!");
+	// 		return false;
+	// 	}
+	// }	
 
 	return true;
 }
@@ -42,27 +42,27 @@ void ExponentialCascadedShadowMapDirectionalLightVolume::SetExponential (float e
 	_exponential = exponential;
 }
 
-std::vector<PipelineAttribute> ExponentialCascadedShadowMapDirectionalLightVolume::GetCustomAttributes () const
-{
-	/*
-	 * Attach cascade shadow map directional light volume attributes to pipeline
-	*/
+// const std::vector<PipelineAttribute>& ExponentialCascadedShadowMapDirectionalLightVolume::GetCustomAttributes () const
+// {
+	// /*
+	//  * Attach cascade shadow map directional light volume attributes to pipeline
+	// */
 
-	std::vector<PipelineAttribute> attributes = CascadedShadowMapDirectionalLightVolume::GetCustomAttributes ();
+	// std::vector<PipelineAttribute> attributes = CascadedShadowMapDirectionalLightVolume::GetCustomAttributes ();
 
-	/*
-	 * Attach exponential shadow map directional light volume attributes to pipeline
-	*/
+	
+	//  * Attach exponential shadow map directional light volume attributes to pipeline
+	
 
-	PipelineAttribute exponential;
+	// PipelineAttribute exponential;
 
-	exponential.type = PipelineAttribute::AttrType::ATTR_1F;
+	// exponential.type = PipelineAttribute::AttrType::ATTR_1F;
 
-	exponential.name = "exponential";
+	// exponential.name = "exponential";
 
-	exponential.value.x = _exponential;
+	// exponential.value.x = _exponential;
 
-	attributes.push_back (exponential);
+	// attributes.push_back (exponential);
 
-	return attributes;
-}
+	// return attributes;
+// }

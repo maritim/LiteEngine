@@ -3,7 +3,7 @@
 #include "TRSMIndirectDiffuseLightMapVolume.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/RSMStatisticsObject.h"
+#include "TRSMStatisticsObject.h"
 
 bool TRSMBlurRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
@@ -28,27 +28,44 @@ std::string TRSMBlurRenderPass::GetPostProcessVolumeName () const
 glm::ivec2 TRSMBlurRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
 	if (_postProcessMapVolume != nullptr) {
-		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
-		RSMStatisticsObject* rsmStatisticsObject = nullptr;
-
-		if (stat == nullptr) {
-			stat = new RSMStatisticsObject ();
-			StatisticsManager::Instance ()->SetStatisticsObject ("RSMStatisticsObject", stat);
-		}
-
-		rsmStatisticsObject = dynamic_cast<RSMStatisticsObject*> (stat);
-
-		rsmStatisticsObject->rsmIndirectDiffuseMapVolume = _postProcessMapVolume;
 	}
 
-	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
+	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.rsm_scale);
 }
 
-PostProcessMapVolume* TRSMBlurRenderPass::CreatePostProcessVolume () const
+FramebufferRenderVolume* TRSMBlurRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	TRSMIndirectDiffuseLightMapVolume* trsmIndirectDiffuseLightMapVolume = new TRSMIndirectDiffuseLightMapVolume ();
+	/*
+	 * Create temporal reflective shadow mapping blur framebuffer
+	*/
 
-	return trsmIndirectDiffuseLightMapVolume;
+	Resource<Texture> texture = Resource<Texture> (new Texture (""));
+
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
+
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	FramebufferRenderVolume* renderVolume = new TRSMIndirectDiffuseLightMapVolume (framebuffer);
+
+	/*
+	 * Update statistics object
+	*/
+
+	auto trsmStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <TRSMStatisticsObject> ();
+
+	trsmStatisticsObject->trsmBlurMapVolume = renderVolume;
+
+	return renderVolume;
 }
 
 std::vector<PipelineAttribute> TRSMBlurRenderPass::GetCustomAttributes (const Camera* camera,
@@ -70,7 +87,7 @@ std::vector<PipelineAttribute> TRSMBlurRenderPass::GetCustomAttributes (const Ca
 
 	rsmResolution.name = "rsmResolution";
 
-	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
+	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.rsm_scale);
 
 	rsmResolution.value = glm::vec3 (resolution, 0.0f);
 

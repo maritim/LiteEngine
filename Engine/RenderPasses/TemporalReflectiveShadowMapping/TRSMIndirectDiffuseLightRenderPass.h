@@ -8,11 +8,10 @@ class ENGINE_API TRSMIndirectDiffuseLightRenderPass : public RSMIndirectDiffuseL
 	DECLARE_RENDER_PASS(TRSMIndirectDiffuseLightRenderPass)
 
 protected:
-	PostProcessMapVolume* _lastPostProcessMapVolume;
+	FramebufferRenderVolume* _lastPostProcessMapVolume;
 
 public:
 	TRSMIndirectDiffuseLightRenderPass();
-	~TRSMIndirectDiffuseLightRenderPass();
 
 	void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
@@ -24,10 +23,9 @@ public:
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 protected:
 	std::string GetPostProcessFragmentShaderPath () const;
-	PostProcessMapVolume* CreatePostProcessVolume () const;
+	FramebufferRenderVolume* CreatePostProcessVolume (const RenderSettings& settings) const;
 
 	void UpdateTRSMIndirectDiffuseMapVolume (const RenderSettings& settings);
-	void InitTRSMIndirectDiffuseMapVolume (const RenderSettings& settings);
 };
 
 #endif

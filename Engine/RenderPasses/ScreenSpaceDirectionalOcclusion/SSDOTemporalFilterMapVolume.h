@@ -6,7 +6,9 @@
 class SSDOTemporalFilterMapVolume : public TemporalFilterMapVolume
 {
 public:
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
+	using TemporalFilterMapVolume::TemporalFilterMapVolume;
+
+	virtual void SetCurrent (bool current);
 };
 
 #endif

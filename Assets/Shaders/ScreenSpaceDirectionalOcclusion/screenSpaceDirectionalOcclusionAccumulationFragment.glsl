@@ -12,8 +12,6 @@ uniform mat3 normalWorldMatrix;
 
 uniform vec3 cameraPosition;
 
-uniform float bloomIntensity;
-
 uniform sampler2D postProcessMap;
 uniform sampler2D ssdoMap;
 
@@ -23,7 +21,7 @@ uniform sampler2D ssdoMap;
 void main ()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_diffuse = texture2D (gDiffuseMap, texCoord).xyz;
+	vec3 in_diffuse = textureLod (gDiffuseMap, texCoord, 0).xyz;
 	vec3 in_postProcess = texture2D (postProcessMap, texCoord).xyz;
 	vec3 in_ssdo = texture2D (ssdoMap, texCoord).xyz;
 
@@ -35,5 +33,5 @@ void main ()
 		ambientOcclusion = in_ao;
 	}
 
-	out_color = in_postProcess + in_diffuse * in_ssdo * ambientOcclusion;// * bloomIntensity;
+	out_color = in_postProcess + in_diffuse * in_ssdo * ambientOcclusion;
 }

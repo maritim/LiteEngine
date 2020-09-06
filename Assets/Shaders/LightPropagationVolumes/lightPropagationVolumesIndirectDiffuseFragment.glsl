@@ -78,8 +78,8 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
 void main()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_position = texture2D (gPositionMap, texCoord).xyz;
-	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
+	vec3 in_position = textureLod (gPositionMap, texCoord, 0).xyz;
+	vec3 in_normal = textureLod (gNormalMap, texCoord, 0).xyz;
 
 	in_normal = normalize(in_normal);
 

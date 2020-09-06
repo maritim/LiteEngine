@@ -12,10 +12,10 @@
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
 
-#include "RenderPasses/AmbientOcclusion/SSAOSamplesGenerationRenderPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAONoiseGenerationRenderPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAORenderPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAOBlurRenderPass.h"
+#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAOSamplesGenerationRenderPass.h"
+#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAONoiseGenerationRenderPass.h"
+#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAORenderPass.h"
+#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAOBlurRenderPass.h"
 
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
@@ -35,12 +35,11 @@
 #include "RenderPasses/IdleRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOSamplesGenerationRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDORenderPass.h"
-#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOShadowRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOTemporalFilterRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOTemporalFilterSwapRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOAccumulationRenderPass.h"
-#include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
-#include "RenderPasses/ScreenSpaceReflection/SSRAccumulationRenderPass.h"
+#include "RenderPasses/ScreenSpaceReflections/SSRRenderPass.h"
+#include "RenderPasses/ScreenSpaceReflections/SSRAccumulationRenderPass.h"
 #include "RenderPasses/ScreenSpaceSubsurfaceScattering/SSSubsurfaceScatteringRenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAARenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAASwapRenderPass.h"
@@ -87,7 +86,6 @@ void DirectLightingRenderModule::Init ()
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new SSDOSamplesGenerationRenderPass ())
-			.Attach (new SSDOShadowRenderPass ())
 			.Attach (new SSDORenderPass ())
 			.Attach (ContainerRenderPass::Builder ()
 				.Volume (new IterateOverRenderVolumeCollection (1))

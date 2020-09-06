@@ -3,14 +3,9 @@
 #include "Core/Console/Console.h"
 
 RSMSamplesGenerationRenderPass::RSMSamplesGenerationRenderPass () :
-	_reflectiveShadowMapSamplesVolume (new RSMSamplesVolume ())
+	_rsmSamplesVolume (nullptr)
 {
 
-}
-
-RSMSamplesGenerationRenderPass::~RSMSamplesGenerationRenderPass ()
-{
-	delete _reflectiveShadowMapSamplesVolume;
 }
 
 void RSMSamplesGenerationRenderPass::Init (const RenderSettings& settings)
@@ -19,7 +14,7 @@ void RSMSamplesGenerationRenderPass::Init (const RenderSettings& settings)
 	 * Initialize reflective shadow map samples volume
 	*/
 
-	InitRSMSamplesVolume (settings);
+	_rsmSamplesVolume = new RSMSamplesVolume (settings.rsm_samples);
 }
 
 RenderVolumeCollection* RSMSamplesGenerationRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -31,7 +26,7 @@ RenderVolumeCollection* RSMSamplesGenerationRenderPass::Execute (const RenderSce
 
 	UpdateRSMSamplesVolume (settings);
 
-	return rvc->Insert ("ReflectiveShadowMapSamplesVolume", _reflectiveShadowMapSamplesVolume);
+	return rvc->Insert ("ReflectiveShadowMapSamplesVolume", _rsmSamplesVolume);
 }
 
 bool RSMSamplesGenerationRenderPass::IsAvailable (const RenderLightObject* renderLightObject) const
@@ -45,21 +40,12 @@ bool RSMSamplesGenerationRenderPass::IsAvailable (const RenderLightObject* rende
 
 void RSMSamplesGenerationRenderPass::Clear ()
 {
-	_reflectiveShadowMapSamplesVolume->Clear ();
-}
-
-void RSMSamplesGenerationRenderPass::InitRSMSamplesVolume (const RenderSettings& settings)
-{
-	if (!_reflectiveShadowMapSamplesVolume->Init(settings.rsm_samples)) {
-		Console::LogError(std::string () + "Reflective shadow map samples cannot be initialized! " +
-			"It is not possible to continue the process. End now!");
-		exit(REFLECTIVE_SHADOW_MAP_SAMPLES_NOT_INIT);
-	}
+	delete _rsmSamplesVolume;
 }
 
 void RSMSamplesGenerationRenderPass::UpdateRSMSamplesVolume (const RenderSettings& settings)
 {
-	std::size_t rsmSamplesSize = _reflectiveShadowMapSamplesVolume->GetSize ();
+	std::size_t rsmSamplesSize = _rsmSamplesVolume->GetSize ();
 
 	if (rsmSamplesSize != settings.rsm_samples) {
 
@@ -67,12 +53,12 @@ void RSMSamplesGenerationRenderPass::UpdateRSMSamplesVolume (const RenderSetting
 		 * Clear reflective shadow map samples
 		*/
 
-		_reflectiveShadowMapSamplesVolume->Clear ();
+		delete _rsmSamplesVolume;
 
 		/*
 		 * Initialize reflective shadow map samples
 		*/
 
-		InitRSMSamplesVolume (settings);
+		_rsmSamplesVolume = new RSMSamplesVolume (settings.rsm_samples);
 	}
 }

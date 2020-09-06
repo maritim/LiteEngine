@@ -241,6 +241,8 @@ void DirectionalLightShadowMapRenderPass::UpdateLightCameras (const Camera* view
 			cuboidExtendsMin.y, cuboidExtendsMax.y,
 			cuboidExtendsMin.z - LIGHT_CAMERA_OFFSET, cuboidExtendsMax.z + LIGHT_CAMERA_OFFSET
 		);
+
+		_volume->SetLightCamera (index, lightCamera);
 	}
 }
 
@@ -360,8 +362,10 @@ void DirectionalLightShadowMapRenderPass::UpdateShadowMapVolume (const RenderLig
 {
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
+	//TODO: Fix this
 	if (_volume->GetCascadesCount () != shadow.cascadesCount ||
-		_volume->GetShadowMapVolume (0)->GetSize () != shadow.resolution) {
+		_volume->GetShadowMapVolume (0)->GetFramebuffer ()->GetDepthTexture ()->GetSize ().width != (std::size_t) shadow.resolution.x ||
+		_volume->GetShadowMapVolume (0)->GetFramebuffer ()->GetDepthTexture ()->GetSize ().height != (std::size_t) shadow.resolution.y) {
 
 		/*
 		 * Clear shadow map volume
@@ -390,7 +394,7 @@ void DirectionalLightShadowMapRenderPass::InitShadowMapVolume (const RenderLight
 	if (!_volume->Init (shadow.cascadesCount, shadow.resolution)) {
 		Console::LogError (std::string () + "Shadow map cannot be initialized!" +
 			" It is not possible to continue the process. End now!");
-		exit (SHADOW_MAP_FBO_NOT_INIT);
+		exit (1);
 	}
 
 	for (std::size_t index = 0; index < shadow.cascadesCount; index ++) {

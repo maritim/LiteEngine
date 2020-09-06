@@ -3,18 +3,17 @@
 
 #include "Container/ContainerRenderSubPassI.h"
 
-#include "RenderPasses/PostProcess/PostProcessMapVolume.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 class ENGINE_API IdleRenderPass : public ContainerRenderSubPassI
 {
 	DECLARE_RENDER_PASS(IdleRenderPass)
 
 protected:
-	PostProcessMapVolume* _postProcessMapVolume;
+	FramebufferRenderVolume* _framebufferRenderVolume;
 
 public:
 	IdleRenderPass ();
-	~IdleRenderPass ();
 
 	void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,

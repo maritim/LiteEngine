@@ -5,14 +5,9 @@
 #include "Core/Console/Console.h"
 
 ResultFrameBufferGenerationRenderPass::ResultFrameBufferGenerationRenderPass () :
-	_frameBuffer (new ResultFrameBuffer2DVolume ())
+	_resultVolume (nullptr)
 {
 
-}
-
-ResultFrameBufferGenerationRenderPass::~ResultFrameBufferGenerationRenderPass ()
-{
-	delete _frameBuffer;
 }
 
 void ResultFrameBufferGenerationRenderPass::Init (const RenderSettings& settings)
@@ -30,19 +25,15 @@ RenderVolumeCollection* ResultFrameBufferGenerationRenderPass::Execute (const Re
 	UpdateVolume (settings);
 
 	/*
-	 * Bind light accumulation volume for writting
-	*/
-
-	_frameBuffer->BindForWriting ();
-
-	/*
 	 * Clear light accumulation buffer
 	*/
 
-	GL::DepthMask (GL_TRUE);
-	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	_resultVolume->GetFramebufferView ()->Activate ();
 
-	return rvc->Insert ("ResultFrameBuffer2DVolume", _frameBuffer);
+	GL::ClearColor (0, 0, 0, 0);
+	GL::Clear (GL_COLOR_BUFFER_BIT);
+
+	return rvc->Insert ("ResultFramebufferRenderVolume", _resultVolume);
 }
 
 bool ResultFrameBufferGenerationRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
@@ -61,22 +52,22 @@ void ResultFrameBufferGenerationRenderPass::Clear ()
 	 * Clear post process map volume
 	*/
 
-	_frameBuffer->Clear ();
+	delete _resultVolume;
 }
 
 void ResultFrameBufferGenerationRenderPass::UpdateVolume (const RenderSettings& settings)
 {
-	Framebuffer framebuffer = settings.framebuffer;
+	Resolution resolution = settings.resolution;
 
-	glm::ivec2 size = _frameBuffer->GetSize ();
+	auto size = _resultVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
-	if ((std::size_t) size.x != framebuffer.width || (std::size_t) size.y != framebuffer.height) {
+	if (size.width != resolution.width || size.height != resolution.height) {
 
 		/*
 		 * Clear post process volume
 		*/
 
-		_frameBuffer->Clear ();
+		delete _resultVolume;
 
 		/*
 		 * Initialize post process volume
@@ -88,9 +79,19 @@ void ResultFrameBufferGenerationRenderPass::UpdateVolume (const RenderSettings& 
 
 void ResultFrameBufferGenerationRenderPass::InitVolume (const RenderSettings& settings)
 {
-	if (!_frameBuffer->Init (glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height))) {
-		Console::LogError (std::string () + "Post-process volume cannot be initialized!" +
-			"It is not possible to continue the process. End now!");
-		exit (RESULT_FRAMEBUFFER_FBO_NOT_INIT);
-	}
+	Resource<Texture> texture = Resource<Texture> (new Texture ("lightAccumulationMap"));
+
+	texture->SetSize (Size (settings.resolution.width, settings.resolution.height));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	_resultVolume = new FramebufferRenderVolume (framebuffer);
 }

@@ -5,6 +5,8 @@
 #include "Resources/Resources.h"
 #include "Renderer/RenderSystem.h"
 
+#include "RenderPasses/FramebufferRenderVolume.h"
+
 void RSMRenderPass::Init (const RenderSettings& settings)
 {
 	/*
@@ -41,8 +43,9 @@ RenderVolumeCollection* RSMRenderPass::Execute (const RenderScene* renderScene, 
 	 * Bind framebuffer for writing
 	*/
 
-	auto framebuffer = rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
-	framebuffer->BindForWriting ();
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
+
+	resultVolume->GetFramebufferView ()->Activate ();
 
 	/*
 	 * Lock post-process shader

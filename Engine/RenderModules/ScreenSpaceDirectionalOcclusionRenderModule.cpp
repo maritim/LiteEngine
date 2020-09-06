@@ -22,10 +22,10 @@
 #include "RenderPasses/ShadowMap/DirectionalLightShadowMapRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDODirectionalLightRenderPass.h"
 
-#include "RenderPasses/AmbientOcclusion/SSAOSamplesGenerationRenderPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAONoiseGenerationRenderPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAORenderPass.h"
-#include "RenderPasses/AmbientOcclusion/SSAOBlurRenderPass.h"
+#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAOSamplesGenerationRenderPass.h"
+#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAONoiseGenerationRenderPass.h"
+#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAORenderPass.h"
+#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAOBlurRenderPass.h"
 
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
@@ -35,9 +35,9 @@
 #include "RenderPasses/PointLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/IdleRenderPass.h"
-#include "RenderPasses/ScreenSpaceReflection/SSRRenderPass.h"
-#include "RenderPasses/ScreenSpaceReflection/SSRSpecularRenderPass.h"
-#include "RenderPasses/ScreenSpaceReflection/SSRAccumulationRenderPass.h"
+#include "RenderPasses/ScreenSpaceReflections/SSRRenderPass.h"
+#include "RenderPasses/ScreenSpaceReflections/SSRSpecularRenderPass.h"
+#include "RenderPasses/ScreenSpaceReflections/SSRAccumulationRenderPass.h"
 #include "RenderPasses/ScreenSpaceSubsurfaceScattering/SSSubsurfaceScatteringRenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAARenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAASwapRenderPass.h"

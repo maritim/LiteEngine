@@ -509,8 +509,9 @@ Resource<MaterialView> RenderSystem::LoadMaterial (const Resource<Material>& mat
 
 Resource<TextureView> RenderSystem::LoadTexture (const Resource<Texture>& texture)
 {
-	if (Resource<TextureView>::GetResource (texture->GetName ()) != nullptr) {
-		return Resource<TextureView>::GetResource (texture->GetName ());
+	if (texture.GetPath () != std::string () &&
+		Resource<TextureView>::GetResource (texture.GetPath ()) != nullptr) {
+		return Resource<TextureView>::GetResource (texture.GetPath ());
 	}
 
 	TextureView* textureView = new TextureView ();
@@ -521,7 +522,7 @@ Resource<TextureView> RenderSystem::LoadTexture (const Resource<Texture>& textur
 
 	textureView->SetGPUIndex (LoadTextureGPU (texture));
 
-	return Resource<TextureView> (textureView, texture->GetName ());
+	return Resource<TextureView> (textureView, texture.GetPath ());
 }
 
 Resource<TextureView> RenderSystem::LoadCubeMap (const Resource<Texture>& texture)
@@ -620,6 +621,80 @@ Resource<ShaderView> RenderSystem::LoadComputeShader (const Resource<Shader>& sh
 	ShaderView* shaderView = new ShaderView (program);
 
 	return Resource<ShaderView> (shaderView, shader->GetName ());
+}
+
+Resource<FramebufferView> RenderSystem::LoadFramebuffer (const Resource<Framebuffer>& framebuffer)
+{
+	unsigned int gpuIndex = 0;
+	std::vector<Resource<TextureView>> textureViews;
+	Resource<TextureView> depthTextureView = nullptr;
+
+	/*
+	 * Create framebuffer
+	*/
+
+	GL::GenFramebuffers (1, &gpuIndex);
+	GL::BindFramebuffer (GL_FRAMEBUFFER, gpuIndex);
+
+	/*
+	 * Create texture views
+	*/
+
+	std::size_t index = 0;
+
+	for_each_type (Resource<Texture>, texture, *framebuffer) {
+
+		Resource<TextureView> textureView = RenderSystem::LoadTexture (texture);
+
+		GL::FramebufferTexture2D (GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, textureView->GetGPUIndex (), 0);
+
+		textureViews.push_back (textureView);
+
+		++ index;
+	}
+
+	/*
+	 * Create depth texture view
+	*/
+
+	auto depthTexture = framebuffer->GetDepthTexture ();
+
+	if (depthTexture != nullptr) {
+
+		depthTextureView = RenderSystem::LoadTexture (depthTexture);
+
+		if (depthTexture->GetInternalFormat () == FORMAT_DEPTH) {
+			GL::FramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTextureView->GetGPUIndex (), 0);
+		}
+		else if (depthTexture->GetInternalFormat () == FORMAT_DEPTH_STENCIL) {
+			GL::FramebufferTexture2D (GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTextureView->GetGPUIndex (), 0);
+		}
+	}
+
+	/*
+	 * Get framebuffer status
+	*/
+
+	GLenum status = GL::CheckFramebufferStatus (GL_FRAMEBUFFER);
+
+	/*
+	 * Unbind framebuffer
+	*/
+
+	GL::BindFramebuffer (GL_FRAMEBUFFER, 0);
+
+	/*
+	 * Check that framebuffer was successfully initialized
+	*/
+
+	if (status != GL_FRAMEBUFFER_COMPLETE) {
+		Console::LogError ("Framebuffer status error: " + status);
+		return nullptr;
+	}
+
+	FramebufferView* framebufferView = new FramebufferView (gpuIndex, textureViews, depthTextureView);
+
+	return Resource<FramebufferView> (framebufferView);
 }
 
 Resource<Texture> RenderSystem::SaveTexture (const Resource<TextureView>& textureView)
@@ -1038,23 +1113,82 @@ unsigned int RenderSystem::LoadTextureGPU (const Resource<Texture>& texture)
 	 * Get Pixel Format
 	*/
 
-	int pixelFormat = GL_RGBA;
+	int sizedInternalFormat = GL_RGBA8;
 
-	switch (texture->GetPixelFormat ()) {
+	switch (texture->GetSizedInternalFormat ()) {
+		case FORMAT_R8:
+			sizedInternalFormat = GL_R8;
+			break;
+		case FORMAT_R16:
+			sizedInternalFormat = GL_R16;
+			break;
+		case FORMAT_RG8:
+			sizedInternalFormat = GL_RG8;
+			break;
+		case FORMAT_RG16F:
+			sizedInternalFormat = GL_RG16F;
+			break;
+		case FORMAT_RG32F:
+			sizedInternalFormat = GL_RG32F;
+			break;
 		case FORMAT_RGB8:
-			pixelFormat = GL_RGB;
+			sizedInternalFormat = GL_RGB8;
 			break;
-		case FORMAT_BGR8:
-			pixelFormat = GL_BGR;
+		case FORMAT_RGB16:
+			sizedInternalFormat = GL_RGB16F;
 			break;
-		case FORMAT_RGBA8:
-			pixelFormat = GL_RGBA;
+		case FORMAT_RGB32:
+			sizedInternalFormat = GL_RGB32F;
 			break;
-		case FORMAT_ABGR8:
-			pixelFormat = GL_BGRA;
+		case FORMAT_RGBA32:
+			sizedInternalFormat = GL_RGBA32F;
+			break;
+		case FORMAT_DEPTH16:
+			sizedInternalFormat = GL_DEPTH_COMPONENT16;
+			break;
+		case FORMAT_DEPTH32:
+			sizedInternalFormat = GL_DEPTH_COMPONENT32F;
+			break;
+		case FORMAT_DEPTH24_STENCIL8:
+			sizedInternalFormat = GL_DEPTH24_STENCIL8;
 			break;
 		default:
-			pixelFormat = GL_RGBA;
+			sizedInternalFormat = GL_RGBA8;
+			break;
+	}
+
+	int internalFormat = GL_RGBA;
+
+	switch (texture->GetInternalFormat ()) {
+		case FORMAT_RED:
+			internalFormat = GL_RED;
+			break;
+		case FORMAT_RG:
+			internalFormat = GL_RG;
+			break;
+		case FORMAT_RGB:
+			internalFormat = GL_RGB;
+			break;
+		case FORMAT_RGBA:
+			internalFormat = GL_RGBA;
+			break;
+		case FORMAT_DEPTH:
+		case FORMAT_DEPTH_STENCIL:
+			internalFormat = GL_DEPTH_COMPONENT;
+			break;
+		default:
+			internalFormat = GL_RGBA;
+			break;
+	}
+
+	int channelType = GL_UNSIGNED_BYTE;
+
+	switch (texture->GetChannelType ()) {
+		case CHANNEL_FLOAT:
+			channelType = GL_FLOAT;
+			break;
+		default:
+			channelType = GL_UNSIGNED_BYTE;
 			break;
 	}
 
@@ -1062,14 +1196,10 @@ unsigned int RenderSystem::LoadTextureGPU (const Resource<Texture>& texture)
 	 * Send MipMaps to GPU
 	*/
 
+	if (texture->GetMipMapLevels ())
+
 	for (std::size_t i=0;i<texture->GetMipMapLevels ();i++) {
-		int internalFormat = texture->GetInternalFormat ();
-
-		if (internalFormat == 0) {
-			internalFormat = GL_RGBA;
-		}
-
-		GL::TexImage2D(GL_TEXTURE_2D, i, internalFormat, size.width >> i, size.height >> i, 0, pixelFormat, GL_UNSIGNED_BYTE, texture->GetMipmapLevel (i));
+		GL::TexImage2D(GL_TEXTURE_2D, i, sizedInternalFormat, size.width >> i, size.height >> i, 0, internalFormat, channelType, texture->GetMipmapLevel (i));
 	}
 
 	/*
@@ -1080,42 +1210,93 @@ unsigned int RenderSystem::LoadTextureGPU (const Resource<Texture>& texture)
 		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
 		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);		
 	}
-	else if (texture->GetWrapMode () == TEXTURE_WRAP_MODE::WRAP_CLAMP) {
-		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);		
+	else if (texture->GetWrapMode () == TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE) {
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+	}
+	else if (texture->GetWrapMode () == TEXTURE_WRAP_MODE::WRAP_CLAMP_BORDER) {
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_BORDER);
+		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_BORDER);
+
+		glm::vec4 color = texture->GetBorderColor ().ToVector4 ();
+		GLfloat borderColor[] = { color.r, color.g, color.b, color.a };
+		GL::TexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 	}
 
 	/*
 	 * Magnifying and minifying properties
 	*/
 
-	if (texture->GetMipmapFilter () == TEXTURE_MIPMAP_FILTER::MIPMAP_NEAREST) {
-		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST_MIPMAP_NEAREST);
+	int minFilter = GL_NEAREST;
+
+	switch (texture->GetMinFilter ())
+	{
+		case FILTER_LINEAR:
+			minFilter = GL_LINEAR;
+			break;
+		case FILTER_NEAREST_MIPMAP_NEAREST:
+			minFilter = GL_NEAREST_MIPMAP_NEAREST;
+			break;
+		case FILTER_LINEAR_MIPMAP_NEAREST:
+			minFilter = GL_LINEAR_MIPMAP_NEAREST;
+			break;
+		case FILTER_NEAREST_MIPMAP_LINEAR:
+			minFilter = GL_NEAREST_MIPMAP_LINEAR;
+			break;
+		case FILTER_LINEAR_MIPMAP_LINEAR:
+			minFilter = GL_LINEAR_MIPMAP_LINEAR;
+			break;
+		default:
+			minFilter = GL_NEAREST;
+			break;
 	}
-	else if (texture->GetMipmapFilter () == TEXTURE_MIPMAP_FILTER::MIPMAP_BILINEAR) {
-		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-		GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+
+	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,minFilter);
+
+	int magFilter = GL_NEAREST;
+
+	switch (texture->GetMagFilter ())
+	{
+		case FILTER_LINEAR:
+			magFilter = GL_LINEAR;
+			break;
+		default:
+			magFilter = GL_NEAREST;
+			break;
 	}
-	else if (texture->GetMipmapFilter () == TEXTURE_MIPMAP_FILTER::MIPMAP_ANISOTROPIC) {
+
+	GL::TexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,magFilter);
+
+	/*
+	 * Anisotropic settings
+	*/
+
+	if (texture->HasAnisotropicFiltering ()) {
 		GLfloat maxAnisotropy;
 		GL::GetFloatv (GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
 
 		maxAnisotropy = Extensions::MathExtend::Clamp (maxAnisotropy, 0.0f, 8.0f);
 		GL::TexParameterf (GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy);
-	} 
-	else if (texture->GetMipmapFilter () == TEXTURE_MIPMAP_FILTER::MIPMAP_NONE) {
-		GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		GL::TexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}
 
 	/*
-	 * Generate mipmaps
+	 * Shadow mapping
 	 *
-	 * TODO: Extend this to create mipmaps with multiple filters.
+	 * TODO: Fix this
 	*/
 
-	if (texture->GenerateMipmaps () && !texture->HasMipmaps ()) {
+	if (texture->GetInternalFormat () == FORMAT_DEPTH) {
+		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+		GL::TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	}
+
+	/*
+	 * Generate mipmap
+	 *
+	 * TODO: Extend this to create mipmap with multiple filters.
+	*/
+
+	if (texture->GenerateMipmap () && !texture->HasMipmap ()) {
 		GL::GenerateMipmap (GL_TEXTURE_2D);
 	}
 

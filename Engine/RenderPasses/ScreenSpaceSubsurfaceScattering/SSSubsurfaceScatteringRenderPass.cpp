@@ -1,7 +1,7 @@
 #include "SSSubsurfaceScatteringRenderPass.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/SSSubsurfaceScatteringStatisticsObject.h"
+#include "SSSubsurfaceScatteringStatisticsObject.h"
 
 bool SSSubsurfaceScatteringRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
@@ -25,28 +25,38 @@ std::string SSSubsurfaceScatteringRenderPass::GetPostProcessVolumeName () const
 
 glm::ivec2 SSSubsurfaceScatteringRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	if (_postProcessMapVolume != nullptr) {
-		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("SSSubsurfaceScatteringStatisticsObject");
-		SSSubsurfaceScatteringStatisticsObject* ssSubsurfaceScatteringStatisticsObject = nullptr;
-
-		if (stat == nullptr) {
-			stat = new SSSubsurfaceScatteringStatisticsObject ();
-			StatisticsManager::Instance ()->SetStatisticsObject ("SSSubsurfaceScatteringStatisticsObject", stat);
-		}
-
-		ssSubsurfaceScatteringStatisticsObject = dynamic_cast<SSSubsurfaceScatteringStatisticsObject*> (stat);
-
-		ssSubsurfaceScatteringStatisticsObject->ssrMapVolume = _postProcessMapVolume;
-	}
-
-	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssr_scale);
+	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssr_scale);
 }
 
-PostProcessMapVolume* SSSubsurfaceScatteringRenderPass::CreatePostProcessVolume () const
+FramebufferRenderVolume* SSSubsurfaceScatteringRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	PostProcessMapVolume* postProcessMapVolume = new PostProcessMapVolume ();
+	Resource<Texture> texture = Resource<Texture> (new Texture ("postProcessMap"));
 
-	return postProcessMapVolume;
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
+
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
+
+	/*
+	 * Update statistics object
+	*/
+
+	auto ssSubsurfaceScatteringStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <SSSubsurfaceScatteringStatisticsObject> ();
+
+	ssSubsurfaceScatteringStatisticsObject->ssrMapVolume = renderVolume;
+
+	return renderVolume;
 }
 
 std::vector<PipelineAttribute> SSSubsurfaceScatteringRenderPass::GetCustomAttributes (const Camera* camera,
@@ -80,7 +90,7 @@ std::vector<PipelineAttribute> SSSubsurfaceScatteringRenderPass::GetCustomAttrib
 	ssrThickness.name = "ssrThickness";
 	ssrStride.name = "ssrStride";
 
-	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.ssr_scale);
+	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssr_scale);
 
 	ssrResolution.value = glm::vec3 (resolution, 0.0f);
 	ssrIterations.value.x = settings.ssr_iterations;

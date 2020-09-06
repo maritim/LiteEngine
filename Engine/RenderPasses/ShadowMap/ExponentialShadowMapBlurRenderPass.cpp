@@ -14,9 +14,9 @@
 ExponentialShadowMapBlurRenderPass::ExponentialShadowMapBlurRenderPass () :
 	_framebuffers (new ExponentialShadowMapBlurVolume* [2])
 {
-	for (std::size_t index = 0; index < 2; index ++) {
-		_framebuffers [index] = new ExponentialShadowMapBlurVolume ();
-	}
+	// for (std::size_t index = 0; index < 2; index ++) {
+	// 	_framebuffers [index] = new ExponentialShadowMapBlurVolume ();
+	// }
 }
 
 ExponentialShadowMapBlurRenderPass::~ExponentialShadowMapBlurRenderPass ()
@@ -72,8 +72,10 @@ void ExponentialShadowMapBlurRenderPass::Clear ()
 	*/
 
 	for (std::size_t index = 0; index < 2; index ++) {
-		_framebuffers [index]->Clear ();
+		delete _framebuffers [index];
 	}
+
+	delete[] _framebuffers;
 
 	/*
 	 * Clear settings
@@ -84,47 +86,39 @@ void ExponentialShadowMapBlurRenderPass::Clear ()
 
 RenderVolumeCollection* ExponentialShadowMapBlurRenderPass::Execute (const RenderScene* renderScene, const Camera* camera, RenderVolumeCollection* rvc)
 {
-	/*
-	 * Bind all render volumes
-	*/
-
-	for (RenderVolumeI* renderVolume : *rvc) {
-		renderVolume->BindForReading ();
-	}
-
 	auto volume = (ExponentialCascadedShadowMapDirectionalLightVolume*) rvc->GetRenderVolume ("ShadowMapDirectionalLightVolume");
 
-	for (std::size_t cascadeIndex = 0; cascadeIndex < _cascades; cascadeIndex ++) {
+	// for (std::size_t cascadeIndex = 0; cascadeIndex < _cascades; cascadeIndex ++) {
 
-		ShadowMapVolume* shadowMap = volume->GetShadowMapVolume (cascadeIndex);
+	// 	ShadowMapVolume* shadowMap = volume->GetShadowMapVolume (cascadeIndex);
 
-		shadowMap->BindForBliting ();
-		_framebuffers [0]->BindToBlit ();
+	// 	shadowMap->BindForBliting ();
+	// 	_framebuffers [0]->BindToBlit ();
 
-		GL::BlitFramebuffer (0, 0, _resolution.x, _resolution.y, 0, 0, _resolution.x, _resolution.y,
-			GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	// 	GL::BlitFramebuffer (0, 0, _resolution.x, _resolution.y, 0, 0, _resolution.x, _resolution.y,
+	// 		GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-		for (std::size_t index = 0; index < 1; index ++) {
+	// 	for (std::size_t index = 0; index < 1; index ++) {
 
-			Pipeline::LockShader (_horizontalShaderViewer);
+	// 		Pipeline::LockShader (_horizontalShaderViewer);
 
-			Blur (_framebuffers [index % 2], _framebuffers [1 - index % 2]);
+	// 		Blur (_framebuffers [index % 2], _framebuffers [1 - index % 2]);
 
-			Pipeline::UnlockShader ();
+	// 		Pipeline::UnlockShader ();
 
-			Pipeline::LockShader (_verticalShaderViewer);
+	// 		Pipeline::LockShader (_verticalShaderViewer);
 
-			Blur (_framebuffers [1 - index % 2], _framebuffers [index % 2]);
+	// 		Blur (_framebuffers [1 - index % 2], _framebuffers [index % 2]);
 
-			Pipeline::UnlockShader ();
-		}
+	// 		Pipeline::UnlockShader ();
+	// 	}
 
-		_framebuffers [1]->BindForBliting ();
-		shadowMap->BindToBlit ();
+	// 	_framebuffers [1]->BindForBliting ();
+	// 	shadowMap->BindToBlit ();
 
-		GL::BlitFramebuffer (0, 0, _resolution.x, _resolution.y, 0, 0, _resolution.x, _resolution.y,
-			GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	}
+	// 	GL::BlitFramebuffer (0, 0, _resolution.x, _resolution.y, 0, 0, _resolution.x, _resolution.y,
+	// 		GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	// }
 
 	return rvc->Insert ("ShadowMapDirectionalLightVolume", volume);
 }
@@ -152,9 +146,9 @@ void ExponentialShadowMapBlurRenderPass::Notify (Object* sender, const SettingsO
 		 * Clear ping pong framebuffers
 		*/
 
-		for (std::size_t index = 0; index < 2; index ++) {
-			_framebuffers [index]->Clear ();
-		}
+		// for (std::size_t index = 0; index < 2; index ++) {
+		// 	_framebuffers [index]->Clear ();
+		// }
 
 		/*
 		 * Initialize shadow map blur volumes
@@ -166,39 +160,38 @@ void ExponentialShadowMapBlurRenderPass::Notify (Object* sender, const SettingsO
 
 void ExponentialShadowMapBlurRenderPass::Blur (ExponentialShadowMapBlurVolume* fb1, ExponentialShadowMapBlurVolume* fb2)
 {
-	fb1->BindForReading ();
-	fb2->BindForWriting ();
+	// fb2->BindForWriting ();
 
-	/*
-	 * Set viewport
-	*/
+	// /*
+	//  * Set viewport
+	// */
 
-	GL::Viewport (0, 0, _resolution.x, _resolution.y);
+	// GL::Viewport (0, 0, _resolution.x, _resolution.y);
 
-	/*
-	 * Enable color blending
-	*/
+	// /*
+	//  * Enable color blending
+	// */
 
-	GL::Enable (GL_BLEND);
-	GL::BlendFunc (GL_ONE, GL_ZERO);
+	// GL::Enable (GL_BLEND);
+	// GL::BlendFunc (GL_ONE, GL_ZERO);
 
-	/*
-	 * Disable face culling
-	*/
+	
+	//  * Disable face culling
+	
 
-	GL::Disable (GL_CULL_FACE);
+	// GL::Disable (GL_CULL_FACE);
 
-	/*
-	 * Send custom uniforms
-	*/
+	// /*
+	//  * Send custom uniforms
+	// */
 
-	Pipeline::SendCustomAttributes (nullptr, fb1->GetCustomAttributes ());
+	// Pipeline::SendCustomAttributes (nullptr, fb1->GetCustomAttributes ());
 
-	/*
-	 * Draw a screen covering triangle
-	*/
+	// /*
+	//  * Draw a screen covering triangle
+	// */
 
-	GL::DrawArrays (GL_TRIANGLES, 0, 3);
+	// GL::DrawArrays (GL_TRIANGLES, 0, 3);
 }
 
 bool ExponentialShadowMapBlurRenderPass::IsAvailable (const RenderLightObject* renderLightObject) const
@@ -248,11 +241,11 @@ void ExponentialShadowMapBlurRenderPass::InitShadowMapBlurVolumes ()
 	 * Initialize ping pong framebuffers
 	*/
 
-	for (std::size_t index = 0; index < 2; index ++) {
-		if (!_framebuffers [index]->Init (_resolution.x, _resolution.y)) {
-			Console::LogError (std::string () + "Exponential shadow map cascade blur volume cannot be initialized!" +
-				"It is not possible to continue the process. End now!");
-			exit (0);
-		}
-	}
+	// for (std::size_t index = 0; index < 2; index ++) {
+	// 	if (!_framebuffers [index]->Init (_resolution.x, _resolution.y)) {
+	// 		Console::LogError (std::string () + "Exponential shadow map cascade blur volume cannot be initialized!" +
+	// 			"It is not possible to continue the process. End now!");
+	// 		exit (0);
+	// 	}
+	// }
 }

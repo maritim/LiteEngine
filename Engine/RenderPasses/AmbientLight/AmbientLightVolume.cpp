@@ -1,37 +1,12 @@
 #include "AmbientLightVolume.h"
 
-AmbientLightVolume::AmbientLightVolume () :
-	_ambientLightIntensity (1.0f),
-	_ambientLightColor (Color::Black),
-	_ambientOcclusionEnabled (false)
-{
-
-}
-
 void AmbientLightVolume::SetAmbientLight (float intensity, const Color& color, bool aoEnabled)
 {
-	_ambientLightIntensity = intensity;
-	_ambientLightColor = color;
-	_ambientOcclusionEnabled = aoEnabled;
-}
-
-void AmbientLightVolume::BindForReading ()
-{
 	/*
-	 * Nothing
+	 * Update attributes
 	*/
-}
 
-void AmbientLightVolume::BindForWriting ()
-{
-	/*
-	 * Nothing
-	*/
-}
-
-std::vector<PipelineAttribute> AmbientLightVolume::GetCustomAttributes () const
-{
-	std::vector<PipelineAttribute> attributes;
+	_attributes.clear ();
 
 	PipelineAttribute ambientLightIntensity;
 	PipelineAttribute ambientLightColor;
@@ -45,20 +20,16 @@ std::vector<PipelineAttribute> AmbientLightVolume::GetCustomAttributes () const
 	ambientLightColor.name = "ambientLightColor";
 	ambientOcclusionEnabled.name = "ambientOcclusionEnabled";
 
-	ambientLightIntensity.value.x = _ambientLightIntensity;
-	ambientLightColor.value = _ambientLightColor.ToVector3 ();
-	ambientOcclusionEnabled.value.x = (int) _ambientOcclusionEnabled;
+	ambientLightIntensity.value.x = intensity;
+	ambientLightColor.value = color.ToVector3 ();
+	ambientOcclusionEnabled.value.x = (int) aoEnabled;
 
-	attributes.push_back (ambientLightIntensity);
-	attributes.push_back (ambientLightColor);
-	attributes.push_back (ambientOcclusionEnabled);
-
-	return attributes;
+	_attributes.push_back (ambientLightIntensity);
+	_attributes.push_back (ambientLightColor);
+	_attributes.push_back (ambientOcclusionEnabled);
 }
 
-void AmbientLightVolume::Clear ()
+const std::vector<PipelineAttribute>& AmbientLightVolume::GetCustomAttributes () const
 {
-	/*
-	 * Nothing
-	*/
+	return _attributes;
 }

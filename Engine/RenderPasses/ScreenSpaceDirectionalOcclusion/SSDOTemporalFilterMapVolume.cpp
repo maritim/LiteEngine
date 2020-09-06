@@ -1,18 +1,26 @@
 #include "SSDOTemporalFilterMapVolume.h"
 
-std::vector<PipelineAttribute> SSDOTemporalFilterMapVolume::GetCustomAttributes () const
+void SSDOTemporalFilterMapVolume::SetCurrent (bool current)
 {
-	std::vector<PipelineAttribute> attributes;
+	/*
+	 * Set current
+	*/
 
-	PipelineAttribute ssdoMap;
+	TemporalFilterMapVolume::SetCurrent (current);
 
-	ssdoMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
+	/*
+	 * Update attributes
+	*/
 
-	ssdoMap.name = _current == true ? "ssdoMap" : "temporalFilterMap";
+	_attributes.clear ();
 
-	ssdoMap.value.x = _colorBuffer;
+	PipelineAttribute temporalFilterMap;
 
-	attributes.push_back (ssdoMap);
+	temporalFilterMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 
-	return attributes;
+	temporalFilterMap.name = _current == true ? "ssdoMap" : "temporalFilterMap";
+
+	temporalFilterMap.value.x = _framebufferView->GetTextureView (0)->GetGPUIndex ();
+
+	_attributes.push_back (temporalFilterMap);
 }

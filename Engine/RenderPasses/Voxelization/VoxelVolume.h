@@ -18,8 +18,7 @@ protected:
 	std::size_t _volumeSize;
 	std::size_t _volumeMipmapLevels;
 
-	glm::vec3 _minVertex;
-	glm::vec3 _maxVertex;
+	std::vector<PipelineAttribute> _attributes;
 
 public:
 	VoxelVolume ();
@@ -27,10 +26,9 @@ public:
 
 	virtual bool Init (std::size_t size);
 
-	virtual void BindForReading ();
 	virtual void BindForWriting ();
 	virtual void BindForWriting (std::size_t mipmap, bool permit = false);
-	virtual std::vector<PipelineAttribute> GetCustomAttributes () const;
+	virtual const std::vector<PipelineAttribute>& GetCustomAttributes () const;
 
 	virtual void ClearVoxels();
 	virtual void UpdateBoundingBox (const glm::vec3& minVertex, const glm::vec3& maxVertex);

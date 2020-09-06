@@ -37,7 +37,7 @@ vec3 CalcTemporalAntialiasing (vec3 in_position, vec3 in_light, vec2 texCoord)
 void main()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec4 in_position = texture2D (gPositionMap, texCoord);
+	vec4 in_position = textureLod (gPositionMap, texCoord, 0);
 	vec3 in_light = texture2D (postProcessMap, CalcUnjitterTexCoord (texCoord)).xyz;
 
 	out_color = CalcTemporalAntialiasing(in_position.xyz, in_light, texCoord);

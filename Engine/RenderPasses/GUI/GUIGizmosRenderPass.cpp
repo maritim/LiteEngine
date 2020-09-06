@@ -5,7 +5,7 @@
 #include "Resources/Resources.h"
 #include "Renderer/RenderSystem.h"
 
-#include "RenderPasses/FrameBuffer2DVolume.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 #include "Renderer/Pipeline.h"
 
@@ -59,8 +59,9 @@ void GUIGizmosRenderPass::StartGizmoDraw (RenderVolumeCollection* rvc)
 	 * Bind framebuffer for writing
 	*/
 
-	FrameBuffer2DVolume* framebuffer = (FrameBuffer2DVolume*) rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
-	framebuffer->BindForWriting ();
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
+
+	resultVolume->GetFramebufferView ()->Activate ();
 }
 
 void GUIGizmosRenderPass::DrawGizmos (const Camera* camera, const RenderSettings& settings)

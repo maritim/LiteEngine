@@ -6,7 +6,7 @@
 #include <map>
 #include <string>
 
-#include "StatisticsObject.h"
+#include "Debug/Statistics/StatisticsObject.h"
 
 class ENGINE_API StatisticsManager : public Singleton<StatisticsManager>
 {
@@ -15,16 +15,32 @@ class ENGINE_API StatisticsManager : public Singleton<StatisticsManager>
 	DECLARE_SINGLETON(StatisticsManager)
 
 private:
-	std::map<std::string, StatisticsObject*> _statistics;
+	std::map<std::string, StatisticsObject*> _statisticsObjects;
 
 public:
-	StatisticsObject* GetStatisticsObject (const std::string& name) const;
-	void SetStatisticsObject (const std::string&, StatisticsObject*);
+	template <class T>
+	T* GetStatisticsObject ();
 private:
 	StatisticsManager ();
 	StatisticsManager (const StatisticsManager&);
 	StatisticsManager& operator=(const StatisticsManager&);
 	~StatisticsManager ();
 };
+
+template <class T>
+T* StatisticsManager::GetStatisticsObject ()
+{
+	auto it = _statisticsObjects.find (T::GetName ());
+
+	if (it == _statisticsObjects.end ()) {
+		T* statisticsObject = new T ();
+
+		_statisticsObjects [T::GetName ()] = statisticsObject;
+
+		return statisticsObject;
+	}
+
+	return (T*) it->second;
+}
 
 #endif

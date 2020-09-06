@@ -12,11 +12,6 @@ TemporalFilterRenderPass::TemporalFilterRenderPass () :
 
 }
 
-TemporalFilterRenderPass::~TemporalFilterRenderPass ()
-{
-	delete _temporalFilterMapVolume;
-}
-
 void TemporalFilterRenderPass::Init (const RenderSettings& settings)
 {
 	/*
@@ -29,9 +24,7 @@ void TemporalFilterRenderPass::Init (const RenderSettings& settings)
 	 * Initialize last post process map volume
 	*/
 
-	_temporalFilterMapVolume = CreatePostProcessVolume ();
-
-	InitLastPostProcessMapVolume (settings);
+	_temporalFilterMapVolume = CreatePostProcessVolume (settings);
 
 	/*
 	 * Initialize ping-pong buffers
@@ -74,7 +67,7 @@ void TemporalFilterRenderPass::Clear ()
 	 * Clear last post processing volume
 	*/
 
-	_temporalFilterMapVolume->Clear ();
+	delete _temporalFilterMapVolume;
 
 	/*
 	 * Clear post process render pass
@@ -95,14 +88,28 @@ std::string TemporalFilterRenderPass::GetPostProcessVolumeName () const
 
 glm::ivec2 TemporalFilterRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height));
+	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height));
 }
 
-PostProcessMapVolume* TemporalFilterRenderPass::CreatePostProcessVolume () const
+FramebufferRenderVolume* TemporalFilterRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	TemporalFilterMapVolume* temporalFilterMapVolume = new TemporalFilterMapVolume ();
+	Resource<Texture> texture = Resource<Texture> (new Texture (""));
 
-	return temporalFilterMapVolume;
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
+
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	return new TemporalFilterMapVolume (framebuffer);
 }
 
 std::vector<PipelineAttribute> TemporalFilterRenderPass::GetCustomAttributes (const Camera* camera,
@@ -149,35 +156,21 @@ void TemporalFilterRenderPass::UpdateLastPostProcessMapVolume (const RenderSetti
 {
 	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution (settings);
 
-	glm::ivec2 temporalFilterMapSize = _temporalFilterMapVolume->GetSize ();
+	auto framebufferSize = _temporalFilterMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
-	if (temporalFilterMapSize != volumeResolution) {
+	if (framebufferSize.width != (std::size_t) volumeResolution.x ||
+		framebufferSize.height != (std::size_t) volumeResolution.y) {
 
 		/*
 		 * Clear temporal filtering map volume
 		*/
 
-		_temporalFilterMapVolume->Clear ();
+		delete _temporalFilterMapVolume;
 
 		/*
 		 * Initialize temporal filtering map volume
 		*/
 
-		InitLastPostProcessMapVolume (settings);
-	}
-}
-
-void TemporalFilterRenderPass::InitLastPostProcessMapVolume (const RenderSettings& settings)
-{
-	/*
-	 * Initialize temporal anti-aliasing map volume
-	*/
-
-	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution (settings);
-
-	if (!_temporalFilterMapVolume->Init (volumeResolution)) {
-		Console::LogError (std::string () + "Temporal anti-aliasing volume cannot be initialized!" +
-			"It is not possible to continue the process. End now!");
-		exit (POST_PROCESS_MAP_VOLUME_NOT_INIT);
+		_temporalFilterMapVolume = CreatePostProcessVolume (settings);
 	}
 }

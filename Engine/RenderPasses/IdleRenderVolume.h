@@ -5,12 +5,11 @@
 
 class IdleRenderVolume : public RenderVolumeI
 {
-public:
-	virtual void BindForReading ();
-	virtual void BindForWriting ();
-	virtual std::vector<PipelineAttribute> GetCustomAttributes () const;
+protected:
+	std::vector<PipelineAttribute> _attributes;
 
-	void Clear ();
+public:
+	virtual const std::vector<PipelineAttribute>& GetCustomAttributes () const;
 };
 
 #endif

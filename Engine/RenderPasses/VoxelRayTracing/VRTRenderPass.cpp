@@ -1,5 +1,7 @@
 #include "VRTRenderPass.h"
 
+#include "RenderPasses/FramebufferRenderVolume.h"
+
 #include "Resources/Resources.h"
 #include "Renderer/RenderSystem.h"
 
@@ -61,9 +63,9 @@ void VRTRenderPass::StartRayTrace (RenderVolumeCollection* rvc)
 	 * Bind light accumulation framebuffer for writing
 	*/
 
-	auto resultFrameBuffer = rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
 
-	resultFrameBuffer->BindForWriting ();
+	resultVolume->GetFramebufferView ()->Activate ();
 
 	/*
 	* Use voxel ray trace shader
@@ -80,12 +82,6 @@ void VRTRenderPass::VoxelRenderingRayTracePass (const Camera* camera, const Rend
 
 	GL::Viewport (settings.viewport.x, settings.viewport.y,
 		settings.viewport.width, settings.viewport.height);
-
-	/*
-	 * Bind voxel volume for reading
-	*/
-
-	rvc->GetRenderVolume ("VoxelVolume")->BindForReading ();
 
 	/*
 	 * Send voxel volume attributes to pipeline

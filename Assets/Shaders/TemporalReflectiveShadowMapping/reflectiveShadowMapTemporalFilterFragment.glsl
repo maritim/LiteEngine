@@ -42,7 +42,7 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_indirect, vec2 texCoord
 void main()
 {
 	vec2 texCoord = CalcTexCoordRSM();
-	vec3 in_position = texture2D (gPositionMap, texCoord).xyz;
+	vec3 in_position = textureLod (gPositionMap, texCoord, 0).xyz;
 	vec3 in_indirect = texture2D (indirectDiffuseMap, texCoord).xyz;
 
 	out_color = CalcIndirectDiffuseLight(in_position, in_indirect, texCoord);

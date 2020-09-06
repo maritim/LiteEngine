@@ -69,7 +69,7 @@ void VoxelRadianceInjectionRenderPass::StartPostProcessPass (RenderVolumeCollect
 	 * Bind screen space ambient occlusion volume for writing
 	*/
 
-	rvc->GetRenderVolume ("VoxelVolume")->BindForWriting ();
+	((VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume"))->BindForWriting ();
 }
 
 void VoxelRadianceInjectionRenderPass::PostProcessPass (const RenderScene* renderScene,

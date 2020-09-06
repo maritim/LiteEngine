@@ -2,19 +2,12 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
-#include "ResultFrameBuffer2DVolume.h"
-
 #include "Core/Console/Console.h"
 
 IdleRenderPass::IdleRenderPass () :
-	_postProcessMapVolume (new PostProcessMapVolume ())
+	_framebufferRenderVolume (nullptr)
 {
 
-}
-
-IdleRenderPass::~IdleRenderPass ()
-{
-	delete _postProcessMapVolume;
 }
 
 void IdleRenderPass::Init (const RenderSettings& settings)
@@ -35,19 +28,18 @@ RenderVolumeCollection* IdleRenderPass::Execute (const RenderScene* renderScene,
 	 * Get frame buffer from render volume collection
 	*/
 
-	ResultFrameBuffer2DVolume* resultFrameBufferVolume = (ResultFrameBuffer2DVolume*) rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
 
-	resultFrameBufferVolume->BindForBliting ();
-
-	_postProcessMapVolume->BindToBlit ();
+	_framebufferRenderVolume->GetFramebufferView ()->Activate ();
+	resultVolume->GetFramebufferView ()->ActivateSource ();
 
 	GL::BlitFramebuffer (settings.viewport.x, settings.viewport.y, 
 		settings.viewport.width, settings.viewport.height,
 		settings.viewport.x, settings.viewport.y,
 		settings.viewport.width, settings.viewport.height,
-		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-	return rvc->Insert ("PostProcessMapVolume", _postProcessMapVolume);
+	return rvc->Insert ("PostProcessMapVolume", _framebufferRenderVolume);
 }
 
 bool IdleRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
@@ -66,22 +58,22 @@ void IdleRenderPass::Clear ()
 	 * Clear post process map volume
 	*/
 
-	_postProcessMapVolume->Clear ();
+	delete _framebufferRenderVolume;
 }
 
 void IdleRenderPass::UpdateVolume (const RenderSettings& settings)
 {
-	Framebuffer framebuffer = settings.framebuffer;
+	Resolution resolution = settings.resolution;
 
-	glm::ivec2 size = _postProcessMapVolume->GetSize ();
+	auto size = _framebufferRenderVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
-	if ((std::size_t) size.x != framebuffer.width || (std::size_t) size.y != framebuffer.height) {
+	if ((std::size_t) size.width != resolution.width || (std::size_t) size.height != resolution.height) {
 
 		/*
 		 * Clear post process volume
 		*/
 
-		_postProcessMapVolume->Clear ();
+		delete _framebufferRenderVolume;
 
 		/*
 		 * Initialize post process volume
@@ -93,9 +85,23 @@ void IdleRenderPass::UpdateVolume (const RenderSettings& settings)
 
 void IdleRenderPass::InitVolume (const RenderSettings& settings)
 {
-	if (!_postProcessMapVolume->Init (glm::ivec2 (settings.framebuffer.width, settings.framebuffer.height))) {
-		Console::LogError (std::string () + "Post-process volume cannot be initialized!" +
-			"It is not possible to continue the process. End now!");
-		exit (POST_PROCESS_MAP_VOLUME_NOT_INIT);
-	}
+	/*
+	 * Create idle framebuffer
+	*/
+
+	Resource<Texture> texture = Resource<Texture> (new Texture ("postProcessMap"));
+
+	texture->SetSize (Size (settings.resolution.width, settings.resolution.height));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	_framebufferRenderVolume = new FramebufferRenderVolume (framebuffer);
 }

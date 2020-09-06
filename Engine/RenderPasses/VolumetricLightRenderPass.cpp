@@ -1,6 +1,7 @@
 #include "VolumetricLightRenderPass.h"
 
 #include "RenderPasses/GBuffer.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 #include "Renderer/Pipeline.h"
 
@@ -60,9 +61,9 @@ void VolumetricLightRenderPass::StartPointLightPass (RenderVolumeCollection* rvc
 	 * Bind light accumulation framebuffer for writing
 	*/
 
-	auto resultFrameBufferVolume = rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
 
-	resultFrameBufferVolume->BindForWriting ();
+	resultVolume->GetFramebufferView ()->Activate ();
 }
 
 void VolumetricLightRenderPass::PointLightPass (const RenderScene* renderScene, const Camera* camera,
@@ -178,14 +179,6 @@ void VolumetricLightRenderPass::PointLightDrawPass (const RenderScene* renderSce
 	const RenderSettings& settings, RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
 {
 	/*
-	 * Bind all render volumes
-	*/
-
-	for (RenderVolumeI* renderVolume : *rvc) {
-		renderVolume->BindForReading ();
-	}
-
-	/*
 	 * Lock shader for volumetric point light
 	*/
 
@@ -202,9 +195,9 @@ void VolumetricLightRenderPass::PointLightDrawPass (const RenderScene* renderSce
 	 * Bind light accumulation framebuffer for writing
 	*/
 
-	auto resultFrameBufferVolume = rvc->GetRenderVolume ("ResultFrameBuffer2DVolume");
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("ResultFramebufferRenderVolume");
 
-	resultFrameBufferVolume->BindForWriting ();
+	resultVolume->GetFramebufferView ()->Activate ();
 
 	/*
 	 * Don't need to write the light on depth buffer.

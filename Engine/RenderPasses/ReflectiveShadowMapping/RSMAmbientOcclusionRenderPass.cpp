@@ -1,9 +1,7 @@
 #include "RSMAmbientOcclusionRenderPass.h"
 
-#include "RenderPasses/AmbientOcclusion/AmbientOcclusionMapVolume.h"
-
 #include "Debug/Statistics/StatisticsManager.h"
-#include "Debug/Statistics/RSMStatisticsObject.h"
+#include "RSMStatisticsObject.h"
 
 bool RSMAmbientOcclusionRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
@@ -28,27 +26,45 @@ std::string RSMAmbientOcclusionRenderPass::GetPostProcessVolumeName () const
 glm::ivec2 RSMAmbientOcclusionRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
 	if (_postProcessMapVolume != nullptr) {
-		StatisticsObject* stat = StatisticsManager::Instance ()->GetStatisticsObject ("RSMStatisticsObject");
-		RSMStatisticsObject* rsmStatisticsObject = nullptr;
 
-		if (stat == nullptr) {
-			stat = new RSMStatisticsObject ();
-			StatisticsManager::Instance ()->SetStatisticsObject ("RSMStatisticsObject", stat);
-		}
-
-		rsmStatisticsObject = dynamic_cast<RSMStatisticsObject*> (stat);
-
-		rsmStatisticsObject->rsmAmbientOcclusionMapVolume = _postProcessMapVolume;
 	}
 
-	return glm::ivec2 (glm::vec2 (settings.framebuffer.width, settings.framebuffer.height) * settings.rsm_scale);
+	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.rsm_scale);
 }
 
-PostProcessMapVolume* RSMAmbientOcclusionRenderPass::CreatePostProcessVolume () const
+FramebufferRenderVolume* RSMAmbientOcclusionRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	AmbientOcclusionMapVolume* rsmaoMapVolume = new AmbientOcclusionMapVolume ();
+	/*
+	 * Create rsm ambient occlusion framebuffer
+	*/
 
-	return rsmaoMapVolume;
+	Resource<Texture> texture = Resource<Texture> (new Texture ("ambientOcclusionMap"));
+
+	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
+
+	texture->SetSize (Size (size.x, size.y));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_R8);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RED);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_UNSIGNED_BYTE);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetAnisotropicFiltering (false);
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
+
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
+
+	/*
+	 * Update statistics object
+	*/
+
+	auto rsmStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <RSMStatisticsObject> ();
+
+	rsmStatisticsObject->rsmAmbientOcclusionMapVolume = renderVolume;
+
+	return renderVolume;
 }
 
 std::vector<PipelineAttribute> RSMAmbientOcclusionRenderPass::GetCustomAttributes (const Camera* camera,

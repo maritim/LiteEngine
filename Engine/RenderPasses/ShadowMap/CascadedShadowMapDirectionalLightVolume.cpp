@@ -10,8 +10,7 @@ CascadedShadowMapDirectionalLightVolume::CascadedShadowMapDirectionalLightVolume
 	_shadowMaps (),
 	_shadowMapResolutions (),
 	_lightCameras (),
-	_shadowMapZEnd (),
-	_shadowBias (0.0f)
+	_shadowMapZEnd ()
 {
 
 }
@@ -43,20 +42,62 @@ bool CascadedShadowMapDirectionalLightVolume::Init (std::size_t cascadedLevels, 
 	*/
 
 	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
-		_shadowMaps [index] = new ShadowMapVolume ();
-	}
 
-	/*
-	 * Initialize shadow map
-	*/
-
-	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
 		_shadowMapResolutions [index] = resolution;
 
-		if (!_shadowMaps [index]->Init (_shadowMapResolutions [index])) {
-			Console::LogError ("Shadow Map Frame Buffer is not complete!");
-			return false;
-		}
+		Resource<Texture> texture = Resource<Texture> (new Texture ("shadowMap"));
+
+		texture->SetSize (Size (resolution.x, resolution.y));
+		texture->SetMipmapGeneration (false);
+		texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_DEPTH16);
+		texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_DEPTH);
+		texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+		texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_BORDER);
+		texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+		texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+		texture->SetAnisotropicFiltering (false);
+		texture->SetBorderColor (Color (glm::vec4 (1.0)));
+
+		Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (nullptr, texture));
+
+		_shadowMaps [index] = new FramebufferRenderVolume (framebuffer);
+	}
+
+	_attributes.clear ();
+
+	PipelineAttribute cascadesCount;
+	PipelineAttribute shadowBias;
+
+	cascadesCount.name = "cascadesCount";
+	shadowBias.name = "shadowBias";
+
+	cascadesCount.type = PipelineAttribute::AttrType::ATTR_1I;
+	shadowBias.type = PipelineAttribute::AttrType::ATTR_1F;
+
+	cascadesCount.value.x = _cascadedLevels;
+
+	_attributes.push_back (cascadesCount);
+	_attributes.push_back (shadowBias);
+
+	for (std::size_t index = 0; index<_cascadedLevels; index++) {
+
+		PipelineAttribute shadowMap;
+		PipelineAttribute lightSpaceMatrix;
+		PipelineAttribute clipZLevel;
+
+		shadowMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
+		lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
+		clipZLevel.type = PipelineAttribute::AttrType::ATTR_1F;
+
+		shadowMap.name = "shadowMaps[" + std::to_string (index) + "]";
+		lightSpaceMatrix.name = "lightSpaceMatrices[" + std::to_string (index) + "]";
+		clipZLevel.name = "clipZLevels[" + std::to_string (index) + "]";
+
+		shadowMap.value.x = _shadowMaps [index]->GetFramebufferView ()->GetDepthTextureView ()->GetGPUIndex ();
+
+		_attributes.push_back (shadowMap);
+		_attributes.push_back (lightSpaceMatrix);
+		_attributes.push_back (clipZLevel);
 	}
 
 	return true;
@@ -83,72 +124,14 @@ void CascadedShadowMapDirectionalLightVolume::BindForShadowMapCatch (std::size_t
 	 * Bind shadow map cascade for writing
 	*/
 
-	_shadowMaps [cascadedLevel]->BindForWriting ();
+	_shadowMaps [cascadedLevel]->GetFramebufferView ()->Activate ();
+
+	GL::Clear (GL_DEPTH_BUFFER_BIT);
 }
 
-void CascadedShadowMapDirectionalLightVolume::BindForReading ()
+const std::vector<PipelineAttribute>& CascadedShadowMapDirectionalLightVolume::GetCustomAttributes () const
 {
-	/*
-	 * Do nothing
-	*/
-}
-
-void CascadedShadowMapDirectionalLightVolume::BindForWriting ()
-{
-	/*
-	 * Nothing to do
-	*/
-}
-
-std::vector<PipelineAttribute> CascadedShadowMapDirectionalLightVolume::GetCustomAttributes () const
-{
-	std::vector<PipelineAttribute> attributes;
-
-	PipelineAttribute cascadesCount;
-	PipelineAttribute shadowBias;
-
-	cascadesCount.name = "cascadesCount";
-	shadowBias.name = "shadowBias";
-
-	cascadesCount.type = PipelineAttribute::AttrType::ATTR_1I;
-	shadowBias.type = PipelineAttribute::AttrType::ATTR_1F;
-
-	cascadesCount.value.x = _cascadedLevels;
-	shadowBias.value.x = _shadowBias;
-
-	attributes.push_back (cascadesCount);
-	attributes.push_back (shadowBias);
-
-	for (std::size_t index = 0; index<_cascadedLevels; index++) {
-
-		PipelineAttribute shadowMap;
-		PipelineAttribute lightSpaceMatrix;
-		PipelineAttribute clipZLevel;
-
-		shadowMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
-		lightSpaceMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
-		clipZLevel.type = PipelineAttribute::AttrType::ATTR_1F;
-
-		shadowMap.name = "shadowMaps[" + std::to_string (index) + "]";
-		lightSpaceMatrix.name = "lightSpaceMatrices[" + std::to_string (index) + "]";
-		clipZLevel.name = "clipZLevels[" + std::to_string (index) + "]";
-
-		shadowMap.value.x = _shadowMaps [index]->GetColorTextureID ();
-
-		glm::mat4 lightProjection = _lightCameras [index]->GetProjectionMatrix ();
-		glm::mat4 lightView = glm::translate (glm::mat4_cast(_lightCameras [index]->GetRotation ()), _lightCameras [index]->GetPosition () * -1.0f);
-		glm::mat4 screenMatrix = glm::scale (glm::translate (glm::mat4 (1), glm::vec3 (0.5f)), glm::vec3 (0.5f));
-
-		lightSpaceMatrix.matrix = screenMatrix * lightProjection * lightView;
-
-		clipZLevel.value.x = _shadowMapZEnd [index];
-
-		attributes.push_back (shadowMap);
-		attributes.push_back (lightSpaceMatrix);
-		attributes.push_back (clipZLevel);
-	}
-
-	return attributes;
+	return _attributes;
 }
 
 void CascadedShadowMapDirectionalLightVolume::SetLightCamera (std::size_t cascadedLevel, Camera* camera)
@@ -162,13 +145,23 @@ void CascadedShadowMapDirectionalLightVolume::SetLightCamera (std::size_t cascad
 		return;
 	}
 
-	delete _lightCameras [cascadedLevel];
+	// delete _lightCameras [cascadedLevel];
 
 	/*
 	 * Configure light camera
 	*/
 
 	_lightCameras [cascadedLevel] = camera;
+
+	/*
+	 * Update attributes
+	*/
+
+	glm::mat4 lightProjection = _lightCameras [cascadedLevel]->GetProjectionMatrix ();
+	glm::mat4 lightView = glm::translate (glm::mat4_cast(_lightCameras [cascadedLevel]->GetRotation ()), _lightCameras [cascadedLevel]->GetPosition () * -1.0f);
+	glm::mat4 screenMatrix = glm::scale (glm::translate (glm::mat4 (1), glm::vec3 (0.5f)), glm::vec3 (0.5f));
+
+	_attributes [2 + 1 + cascadedLevel * 3].matrix = screenMatrix * lightProjection * lightView;
 }
 
 void CascadedShadowMapDirectionalLightVolume::SetCameraLimit (std::size_t cascadedLevel, float zLimit)
@@ -187,11 +180,21 @@ void CascadedShadowMapDirectionalLightVolume::SetCameraLimit (std::size_t cascad
 	*/
 
 	_shadowMapZEnd [cascadedLevel] = zLimit;
+
+	/*
+	 * Update attributes
+	*/
+
+	_attributes [2 + 2 + cascadedLevel * 3].value.x = _shadowMapZEnd [cascadedLevel];
 }
 
 void CascadedShadowMapDirectionalLightVolume::SetShadowBias (float shadowBias)
 {
-	_shadowBias = shadowBias;
+	/*
+	 * Update attributes
+	*/
+
+	_attributes [1].value.x = shadowBias;
 }
 
 Camera* CascadedShadowMapDirectionalLightVolume::GetLightCamera (std::size_t cascadedLevel)
@@ -222,7 +225,7 @@ float CascadedShadowMapDirectionalLightVolume::GetCameraLimit (std::size_t casca
 	return _shadowMapZEnd [cascadedLevel];
 }
 
-ShadowMapVolume* CascadedShadowMapDirectionalLightVolume::GetShadowMapVolume (std::size_t cascadedLevel)
+FramebufferRenderVolume* CascadedShadowMapDirectionalLightVolume::GetShadowMapVolume (std::size_t cascadedLevel)
 {
 	/*
 	 * Check if cascaded level excedes the maximum level
@@ -243,14 +246,6 @@ std::size_t CascadedShadowMapDirectionalLightVolume::GetCascadesCount () const
 
 void CascadedShadowMapDirectionalLightVolume::Clear ()
 {
-	/*
-	 * Clear every shadow map
-	*/
-
-	for (std::size_t index = 0; index < _cascadedLevels; index ++) {
-		_shadowMaps [index]->Clear ();
-	}
-
 	/*
 	 * Delete shadow maps
 	*/

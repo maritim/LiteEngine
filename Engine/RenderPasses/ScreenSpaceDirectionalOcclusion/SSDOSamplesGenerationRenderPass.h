@@ -14,7 +14,6 @@ protected:
 
 public:
 	SSDOSamplesGenerationRenderPass ();
-	virtual ~SSDOSamplesGenerationRenderPass ();
 
 	virtual void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
@@ -26,8 +25,6 @@ public:
 	void Clear ();
 protected:
 	void UpdateSamplesVolume (const RenderSettings& settings);
-
-	void InitSamplesVolume (const RenderSettings& settings);
 };
 
 #endif

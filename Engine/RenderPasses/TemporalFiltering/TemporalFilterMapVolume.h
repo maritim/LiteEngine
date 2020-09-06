@@ -1,23 +1,23 @@
 #ifndef TEMPORALFILTERMAPVOLUME_H
 #define TEMPORALFILTERMAPVOLUME_H
 
-#include "RenderPasses/PostProcess/PostProcessMapVolume.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
-class TemporalFilterMapVolume : public PostProcessMapVolume
+class TemporalFilterMapVolume : public FramebufferRenderVolume
 {
 protected:
 	glm::mat4 _viewProjectionMatrix;
 	bool _current;
 
 public:
-	TemporalFilterMapVolume ();
+	TemporalFilterMapVolume (const Resource<Framebuffer>& framebuffer);
 
 	void SetViewProjectionMatrix (const glm::mat4& viewProjectionMatrix);
-	void SetCurrent (bool current);
+	virtual void SetCurrent (bool current);
 
 	const glm::mat4& GetViewProjectionMatrix () const;
 
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
+	const std::vector<PipelineAttribute>& GetCustomAttributes () const;
 };
 
 #endif

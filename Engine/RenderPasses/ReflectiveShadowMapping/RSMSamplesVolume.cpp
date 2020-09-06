@@ -10,25 +10,19 @@
 
 #include "Core/Random/Random.h"
 
-RSMSamplesVolume::RSMSamplesVolume () :
-	_samplesUBO (0)
-{
-}
+#include "Utils/Sequences/HaltonGenerator.h"
 
-bool RSMSamplesVolume::Init (std::size_t samplesCount)
+RSMSamplesVolume::RSMSamplesVolume (std::size_t samplesCount) :
+	_samplesUBO (0)
 {
 	std::memset (&_samples, 0, sizeof (_samples));
 
 	_samples.samplesCount = samplesCount;
 
+	HaltonGenerator haltonGenerator (2, 3);
+
 	for (std::size_t index = 0; index < samplesCount; index++) {
-		glm::vec2 sample;
-
-		float radius = Random::Instance ()->RangeF (0, 1.0f);
-		float angle = Random::Instance ()->RangeF (0, 2 * M_PI);
-
-		sample.x = radius * sin (angle);
-		sample.y = radius * cos (angle);
+		glm::vec2 sample = haltonGenerator.Next () * 2.0f - 1.0f;
 
 		_samples.samples [index * 4] = sample.x;
 		_samples.samples [index * 4 + 1] = sample.y;
@@ -39,25 +33,10 @@ bool RSMSamplesVolume::Init (std::size_t samplesCount)
 	GL::BufferData (GL_UNIFORM_BUFFER, sizeof (_samples), &_samples, GL_STATIC_DRAW);
 	GL::BindBuffer (GL_UNIFORM_BUFFER, 0);
 
-	return true;
-}
-
-void RSMSamplesVolume::BindForReading ()
-{
 	/*
-	 * Nothing
+	 * Update attributes
 	*/
-}
 
-void RSMSamplesVolume::BindForWriting ()
-{
-	/*
-	 * Nothing
-	*/
-}
-
-std::vector<PipelineAttribute> RSMSamplesVolume::GetCustomAttributes () const
-{
 	std::vector<PipelineAttribute> attributes;
 
 	PipelineAttribute rsmSamples;
@@ -68,17 +47,20 @@ std::vector<PipelineAttribute> RSMSamplesVolume::GetCustomAttributes () const
 
 	rsmSamples.value.x = _samplesUBO;
 
-	attributes.push_back (rsmSamples);
+	_attributes.push_back (rsmSamples);
+}
 
-	return attributes;
+RSMSamplesVolume::~RSMSamplesVolume ()
+{
+	GL::DeleteBuffers (1, &_samplesUBO);
+}
+
+const std::vector<PipelineAttribute>& RSMSamplesVolume::GetCustomAttributes () const
+{
+	return _attributes;
 }
 
 std::size_t RSMSamplesVolume::GetSize () const
 {
 	return _samples.samplesCount;
-}
-
-void RSMSamplesVolume::Clear ()
-{
-	GL::DeleteBuffers (1, &_samplesUBO);
 }

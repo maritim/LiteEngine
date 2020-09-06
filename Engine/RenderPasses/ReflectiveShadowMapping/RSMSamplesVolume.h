@@ -20,18 +20,15 @@ protected:
 	RSMSamples _samples;
 	unsigned int _samplesUBO;
 
+	std::vector<PipelineAttribute> _attributes;
+
 public:
-	RSMSamplesVolume ();
+	RSMSamplesVolume (std::size_t samplesCount);
+	~RSMSamplesVolume ();
 
-	virtual bool Init (std::size_t samplesCount);
-
-	void BindForReading ();
-	void BindForWriting ();
-	std::vector<PipelineAttribute> GetCustomAttributes () const;
+	const std::vector<PipelineAttribute>& GetCustomAttributes () const;
 
 	std::size_t GetSize () const;
-
-	void Clear ();
 };
 
 #endif

@@ -44,12 +44,12 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse,
 void main()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_position = texture2D (gPositionMap, texCoord).xyz;
-	vec3 in_diffuse = texture2D (gDiffuseMap, texCoord).xyz;
-	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
-	vec3 in_specular = texture2D (gSpecularMap, texCoord).xyz;
-	vec3 in_emissive = texture2D (gEmissiveMap, texCoord).xyz;
-	float in_shininess = texture2D (gSpecularMap, texCoord).w;
+	vec3 in_position = textureLod (gPositionMap, texCoord, 0).xyz;
+	vec3 in_diffuse = textureLod (gDiffuseMap, texCoord, 0).xyz;
+	vec3 in_normal = textureLod (gNormalMap, texCoord, 0).xyz;
+	vec3 in_specular = textureLod (gSpecularMap, texCoord, 0).xyz;
+	vec3 in_emissive = textureLod (gEmissiveMap, texCoord, 0).xyz;
+	float in_shininess = textureLod (gSpecularMap, texCoord, 0).w;
 
 	in_normal = normalize(in_normal);
 
