@@ -79,7 +79,8 @@ struct RenderSettings : public Object
 	std::size_t lpv_iterations;
 	float lpv_injection_bias;
 	bool lpv_geometry_occlusion;
-	float lpv_intensity;
+	float lpv_indirect_diffuse_intensity;
+	float lpv_indirect_specular_intensity;
 	float lpv_indirect_refractive_intensity;
 
 	std::size_t vct_voxels_size;
@@ -90,6 +91,7 @@ struct RenderSettings : public Object
 	float vct_indirect_specular_intensity;
 	float vct_indirect_refractive_intensity;
 	float vct_diffuse_cone_distance;
+	float vct_specular_cone_ratio;
 	float vct_specular_cone_distance;
 	float vct_refractive_cone_ratio;
 	float vct_refractive_cone_distance;
@@ -109,6 +111,11 @@ struct RenderSettings : public Object
 	float ssdo_indirect_intensity;
 	bool ssdo_ray_shadow;
 	float ssdo_shadow_scale;
+	bool ssdo_interpolation_enabled;
+	float ssdo_interpolation_scale;
+	float ssdo_min_interpolation_distance;
+	float ssdo_min_interpolation_angle;
+	bool ssdo_debug_interpolation;
 };
 
 #endif

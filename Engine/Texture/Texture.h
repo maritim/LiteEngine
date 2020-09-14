@@ -16,6 +16,7 @@ protected:
 
 	unsigned char *_pixels[MAX_TEXTURE_MIPMAP_LEVEL];
 
+	TEXTURE_TYPE _type;
 	Size _size;
 	bool _generateMipmap;
 	std::size_t _mipmapLevels;
@@ -36,6 +37,7 @@ public:
 	virtual ~Texture();
 
 	void SetName(const std::string& name);
+	void SetType (TEXTURE_TYPE type);
 	void SetSize (Size size);
 	void SetMipmapGeneration (bool generate);
 	void SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT internalFormat);
@@ -51,7 +53,8 @@ public:
 	void SetMipmapLevel (const unsigned char* pixels, std::size_t mipmapLevel, std::size_t length);
 	void SetBorderColor (const Color& color);
 
-	std::string GetName() const;
+	const std::string& GetName() const;
+	TEXTURE_TYPE GetType () const;
 	Size GetSize () const;
 	bool GenerateMipmap () const;
 	bool HasMipmap () const;

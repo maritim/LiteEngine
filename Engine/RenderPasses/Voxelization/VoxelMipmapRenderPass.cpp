@@ -20,10 +20,22 @@ bool VoxelMipmapRenderPass::IsAvailable (const RenderScene* renderScene, const C
 void VoxelMipmapRenderPass::Init (const RenderSettings& settings)
 {
 	/*
+	 * Anisotropic mipmap
+	*/
+
+	Resource<Shader> shader = Resources::LoadComputeShader (
+		"Assets/Shaders/Voxelize/voxelAnisotropicMipmapCompute.glsl"
+	);
+
+	_anisotropicShaderView = RenderSystem::LoadComputeShader (shader);
+
+	/*
 	 * Shader for voxel mipmap render pass
 	*/
 
-	Resource<Shader> shader = Resources::LoadComputeShader ("Assets/Shaders/Voxelize/voxelMipmapCompute.glsl");
+	shader = Resources::LoadComputeShader (
+		"Assets/Shaders/Voxelize/voxelMipmapCompute.glsl"
+	);
 
 	_shaderView = RenderSystem::LoadComputeShader (shader);
 }
@@ -68,20 +80,37 @@ void VoxelMipmapRenderPass::GenerateMipmaps (const RenderSettings& settings, Ren
 
 	VoxelVolume* voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
 
-	for (std::size_t mipLevel = 0; mipLevel < voxelVolume->GetVolumeMipmapLevels () - 1; mipLevel++) {
+	for (std::size_t mipLevel = 0; mipLevel < voxelVolume->GetFramebuffer ()->GetTextureCount () - 1; mipLevel++) {
 
-		Pipeline::SendCustomAttributes (_shaderView, voxelVolume->GetCustomAttributes ());
+		if (mipLevel == 0) {
+			Pipeline::SetShader (_anisotropicShaderView);
 
-		GL::Uniform1i (_shaderView->GetUniformLocation ("SrcMipLevel"), mipLevel);
-		GL::Uniform1i (_shaderView->GetUniformLocation ("DstMipRes"), dstMipRes);
+			Pipeline::SendCustomAttributes (_anisotropicShaderView, GetCustomAttributes (rvc, mipLevel));
 
-		voxelVolume->BindForWriting (mipLevel + 1);
+			GL::Uniform1i (_anisotropicShaderView->GetUniformLocation ("DstMipRes"), dstMipRes);
+		} else {
+			Pipeline::SetShader (_shaderView);
+
+			Pipeline::SendCustomAttributes (_shaderView, GetCustomAttributes (rvc, mipLevel));
+
+			GL::Uniform1i (_shaderView->GetUniformLocation ("DstMipRes"), dstMipRes);
+		}
+
+		unsigned int voxelTextureID = voxelVolume->GetFramebufferView ()->GetTextureView (mipLevel + 1)->GetGPUIndex ();
+		GL::BindImageTexture (0, voxelTextureID, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
 
 		int numWorkGroups = (int) std::ceil (dstMipRes / 4.0);
-		GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);
+
+		if (mipLevel == 0) {
+			GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);
+		} else {
+			GL::DispatchCompute (numWorkGroups * 6, numWorkGroups, numWorkGroups);
+		}
 
 		GL::MemoryBarrier (GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		dstMipRes >>= 1;
+
+		Pipeline::UnlockShader ();
 	}
 }
 
@@ -92,4 +121,43 @@ void VoxelMipmapRenderPass::EndVoxelMipmaping ()
 	*/
 
 	GL::MemoryBarrier (GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
+std::vector<PipelineAttribute> VoxelMipmapRenderPass::GetCustomAttributes (RenderVolumeCollection* rvc, std::size_t mipLevel)
+{
+	VoxelVolume* voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
+
+	std::vector<PipelineAttribute> attributes;
+
+	PipelineAttribute srcTextureMip;
+	PipelineAttribute minVertex;
+	PipelineAttribute maxVertex;
+	PipelineAttribute volumeSizeAttribute;
+	PipelineAttribute volumeMipmapLevels;
+
+	srcTextureMip.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
+	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
+	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
+	volumeSizeAttribute.type = PipelineAttribute::AttrType::ATTR_3I;
+	volumeMipmapLevels.type = PipelineAttribute::AttrType::ATTR_1I;
+
+	srcTextureMip.name = "srcTextureMip";
+	minVertex.name = "minVertex";
+	maxVertex.name = "maxVertex";
+	volumeSizeAttribute.name = "volumeSize";
+	volumeMipmapLevels.name = "volumeMipmapLevels";
+
+	srcTextureMip.value.x = voxelVolume->GetFramebufferView ()->GetTextureView (mipLevel)->GetGPUIndex ();
+	minVertex.value = voxelVolume->GetMinVertex ();
+	maxVertex.value = voxelVolume->GetMaxVertex ();
+	volumeSizeAttribute.value = glm::vec3 ((float) voxelVolume->GetFramebuffer ()->GetTexture (0)->GetSize ().width);
+	volumeMipmapLevels.value.x = voxelVolume->GetFramebuffer ()->GetTextureCount ();
+
+	attributes.push_back (srcTextureMip);
+	attributes.push_back (minVertex);
+	attributes.push_back (maxVertex);
+	attributes.push_back (volumeSizeAttribute);
+	attributes.push_back (volumeMipmapLevels);
+
+	return attributes;
 }

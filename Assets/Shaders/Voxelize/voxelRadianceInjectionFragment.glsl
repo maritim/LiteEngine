@@ -62,7 +62,7 @@ RSMSample GetRSMSample (vec2 texCoord)
 
 void RadianceInjection (in RSMSample rsmSample)
 {
-	vec4 voxelColor = texelFetch(volumeTexture, ivec3 (rsmSample.volumePos), 0);
+	vec4 voxelColor = texelFetch(voxelTexture [0], ivec3 (rsmSample.volumePos), 0);
 
 	vec4 fragmentColor = vec4 (rsmSample.flux, voxelColor.a);
 

@@ -7,6 +7,7 @@
 
 Texture::Texture(const std::string& name) :
 	_name (name),
+	_type (TEXTURE_TYPE::TEXTURE_2D),
 	_size (0, 0),
 	_generateMipmap (true),
 	_mipmapLevels (1),
@@ -36,6 +37,11 @@ Texture::~Texture()
 void Texture::SetName(const std::string& name)
 {
 	_name = name;
+}
+
+void Texture::SetType (TEXTURE_TYPE type)
+{
+	_type = type;
 }
 
 void Texture::SetSize (Size size)
@@ -139,14 +145,19 @@ void Texture::SetBorderColor (const Color& borderColor)
 	_borderColor = borderColor;
 }
 
+const std::string& Texture::GetName() const
+{
+	return _name;
+}
+
+TEXTURE_TYPE Texture::GetType () const
+{
+	return _type;
+}
+
 Size Texture::GetSize () const
 {
 	return _size;
-}
-
-std::string Texture::GetName() const
-{
-	return _name;
 }
 
 bool Texture::GenerateMipmap () const

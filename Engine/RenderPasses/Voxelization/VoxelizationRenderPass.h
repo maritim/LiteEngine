@@ -21,7 +21,6 @@ protected:
 
 public:
 	VoxelizationRenderPass ();
-	~VoxelizationRenderPass ();
 
 	void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
@@ -39,6 +38,8 @@ protected:
 
 	void InitVoxelVolume (const RenderSettings& settings);
 	void UpdateVoxelVolume (const RenderSettings& settings);
+
+	std::vector<PipelineAttribute> GetCustomAttributes ();
 };
 
 #endif

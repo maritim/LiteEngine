@@ -1,7 +1,7 @@
 #ifndef VOXELSVOLUME_H
 #define VOXELSVOLUME_H
 
-#include "Renderer/RenderVolumeI.h"
+#include "RenderPasses/FramebufferRenderVolume.h"
 
 #include <glm/glm.hpp>
 #include <vector>
@@ -10,35 +10,15 @@
 
 #define VOXEL_TEXTURE_NOT_INIT 360
 
-class VoxelVolume : public RenderVolumeI
+class VoxelVolume : public FramebufferRenderVolume
 {
-protected:
-	unsigned int _volumeTexture;
-	unsigned int _volumeFbo;
-	std::size_t _volumeSize;
-	std::size_t _volumeMipmapLevels;
-
-	std::vector<PipelineAttribute> _attributes;
-
 public:
-	VoxelVolume ();
-	virtual ~VoxelVolume ();
+	VoxelVolume (const Resource<Framebuffer>& framebuffer);
 
-	virtual bool Init (std::size_t size);
-
-	virtual void BindForWriting ();
-	virtual void BindForWriting (std::size_t mipmap, bool permit = false);
-	virtual const std::vector<PipelineAttribute>& GetCustomAttributes () const;
-
-	virtual void ClearVoxels();
 	virtual void UpdateBoundingBox (const glm::vec3& minVertex, const glm::vec3& maxVertex);
 
-	void SetVolumeMipmapLevels (std::size_t volumeMipmapLevels);
-
-	std::size_t GetVolumeSize () const;
-	std::size_t GetVolumeMipmapLevels () const;
-
-	virtual void Clear ();
+	const glm::vec3& GetMinVertex () const;
+	const glm::vec3& GetMaxVertex () const;
 };
 
 #endif

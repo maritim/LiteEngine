@@ -4,7 +4,7 @@ in vec2 geom_RayCoordinates;
 
 uniform vec3 cameraPosition;
 
-uniform sampler3D volumeTexture;
+uniform sampler3D voxelTexture[8];
 
 uniform vec3 minVertex;
 uniform vec3 maxVertex;
@@ -130,11 +130,19 @@ void main ()
  	// Calculate inverse of ray direction once.
  	vec3 invRayDir = 1.0 / rayDir;
 
+	int face = 0;
+
 	while (all(greaterThanEqual(voxelPos, vec3(0.0))) && all(lessThan(voxelPos, mipmapVolumeSize)))
 	{
 		// Sample 3D texture at current position.
 		vec3 texCoords = voxelPos / mipmapVolumeSize;
-		vec4 color = textureLod (volumeTexture, texCoords, volumeMipmapLevel);
+
+		if (volumeMipmapLevel > 0) {
+			texCoords.x /= 6.0;
+			texCoords.x += 1.0 / 6.0 * face;
+		}
+
+		vec4 color = texture (voxelTexture[volumeMipmapLevel], texCoords);
 
 
 		// Exit loop if a single sample has an alpha value greater than 0.
@@ -148,9 +156,9 @@ void main ()
 		vec3 t1 = (voxelPos + vec3(1.0) - startPos) * invRayDir;
 		vec3 tmax = max(t0, t1);
 		float t = min(tmax.x, min(tmax.y, tmax.z));
-		if (tmax.x == t) voxelPos.x += sign(rayDir.x);
-		else if (tmax.y == t) voxelPos.y += sign(rayDir.y);
-		else if (tmax.z == t) voxelPos.z += sign(rayDir.z);
+		if (tmax.x == t) { voxelPos.x += sign(rayDir.x); face = sign (rayDir.x) > 0 ? 0 : 1; }
+		else if (tmax.y == t) { voxelPos.y += sign(rayDir.y); face = sign (rayDir.y) > 0 ? 2 : 3; }
+		else if (tmax.z == t) { voxelPos.z += sign(rayDir.z); face = sign (rayDir.z) > 0 ? 4 : 5; }
 	}
     
  	/*

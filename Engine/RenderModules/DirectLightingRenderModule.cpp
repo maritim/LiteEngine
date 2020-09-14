@@ -34,6 +34,7 @@
 
 #include "RenderPasses/IdleRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOSamplesGenerationRenderPass.h"
+#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOInterpolatedRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDORenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOTemporalFilterRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOTemporalFilterSwapRenderPass.h"
@@ -86,6 +87,7 @@ void DirectLightingRenderModule::Init ()
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new SSDOSamplesGenerationRenderPass ())
+			.Attach (new SSDOInterpolatedRenderPass ())
 			.Attach (new SSDORenderPass ())
 			.Attach (ContainerRenderPass::Builder ()
 				.Volume (new IterateOverRenderVolumeCollection (1))

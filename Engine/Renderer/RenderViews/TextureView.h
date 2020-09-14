@@ -7,6 +7,7 @@ class ENGINE_API TextureView : public Object
 {
 protected:
 	unsigned int _gpuIndex;
+	int _textureType;
 
 public:
 	TextureView ();
@@ -15,6 +16,7 @@ public:
 	virtual void Activate (std::size_t textureUnit);
 
 	void SetGPUIndex (unsigned int gpuIndex);
+	void SetType (int textureType);
 
 	unsigned int GetGPUIndex () const;
 };

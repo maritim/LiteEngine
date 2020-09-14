@@ -34,3 +34,8 @@ Resource<Texture> Framebuffer::GetDepthTexture () const
 {
 	return _depthTexture;
 }
+
+std::size_t Framebuffer::GetTextureCount () const
+{
+	return _textures.size ();
+}

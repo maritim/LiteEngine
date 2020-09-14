@@ -1,4 +1,4 @@
-uniform sampler3D volumeTexture;
+uniform sampler3D voxelTexture[8];
 
 uniform vec3 minVertex;
 uniform vec3 maxVertex;
@@ -57,9 +57,49 @@ vec4 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
 		float sampleLOD = log2(sampleDiameter * minVoxelDiameterInv);
 		
 		vec3 samplePos = origin + dir * dist;
-		
-		vec4 sampleValue = textureLod (volumeTexture, samplePos, min (sampleLOD, volumeMipmapLevels - 1.0));
-		
+
+		ivec3 face = ivec3 (
+			dir.x < 0 ? 0 : 1,
+			dir.y < 0 ? 2 : 3,
+			dir.z < 0 ? 4 : 5
+		);
+
+		vec3 weight = dir * dir;
+
+		/*
+		 * Current mipmap level
+		*/
+
+		int mipLevel = min (int (sampleLOD), volumeMipmapLevels - 1);
+
+		vec4 sampleValue1 = vec4 (0.0);
+
+		if (mipLevel == 0) {
+			sampleValue1 = texture (voxelTexture [mipLevel], samplePos);
+		} else {
+			sampleValue1 =
+				weight.x * texture (voxelTexture [mipLevel], samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.x, 0, 0)) +
+				weight.y * texture (voxelTexture [mipLevel], samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.y, 0, 0)) +
+				weight.z * texture (voxelTexture [mipLevel], samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.z, 0, 0));
+		}
+
+		/*
+		 * Next mipmap level
+		*/
+
+		int nextMipLevel = min (mipLevel + 1, volumeMipmapLevels - 1);
+
+		vec4 sampleValue2 =
+			weight.x * texture (voxelTexture [nextMipLevel], samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.x, 0, 0)) +
+			weight.y * texture (voxelTexture [nextMipLevel], samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.y, 0, 0)) +
+			weight.z * texture (voxelTexture [nextMipLevel], samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.z, 0, 0));
+
+		/*
+		 * Mipmap filter
+		*/
+
+		vec4 sampleValue = mix (sampleValue1, sampleValue2, fract(sampleLOD));
+
 		accum = accum + (1.0 - alpha) * sampleValue.a * sampleValue.rgb;
 		alpha = alpha + (1.0 - alpha) * sampleValue.a;
 
@@ -91,8 +131,12 @@ float voxelTraceConeOcclusion(vec3 origin, vec3 dir, float coneRatio, float maxD
 		float sampleLOD = log2(sampleDiameter * minVoxelDiameterInv);
 		
 		vec3 samplePos = origin + dir * originBias + dir * dist;
-		
-		vec4 sampleValue = textureLod (volumeTexture, samplePos, min (sampleLOD, volumeMipmapLevels - 1.0));
+
+		int mipLevel = int (min (sampleLOD, volumeMipmapLevels - 1.0));
+
+		samplePos.x /= mipLevel == 0 ? 1.0 : 6.0;
+
+		vec4 sampleValue = texture (voxelTexture [mipLevel], samplePos);
 
 		occlusion += ((1.0 - alpha) * sampleValue.a) / (1.0 + 0.03 * sampleDiameter);
 

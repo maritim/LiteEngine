@@ -27,6 +27,8 @@ public:
 
 	Resource<TextureView> GetTextureView (std::size_t index) const;
 	Resource<TextureView> GetDepthTextureView () const;
+
+	std::size_t GetTextureViewCount () const;
 };
 
 #endif

@@ -1,6 +1,13 @@
 #ifndef TEXTURE_MODE
 #define TEXTURE_MODE
 
+enum TEXTURE_TYPE
+{
+	TEXTURE_1D = 0,
+	TEXTURE_2D,
+	TEXTURE_3D
+};
+
 enum TEXTURE_WRAP_MODE
 {
 	WRAP_REPEAT = 0,
@@ -71,10 +78,12 @@ struct Size
 {
 	std::size_t width;
 	std::size_t height;
+	std::size_t depth;
 
-	Size (std::size_t width, std::size_t height) :
+	Size (std::size_t width, std::size_t height, std::size_t depth = 0) :
 		width (width),
-		height (height)
+		height (height),
+		depth (depth)
 	{
 	}
 };

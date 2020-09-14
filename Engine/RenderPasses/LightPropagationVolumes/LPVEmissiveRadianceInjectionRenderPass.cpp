@@ -142,7 +142,9 @@ void LPVEmissiveRadianceInjectionRenderPass::GeometryVoxelizationPass (const Ren
 
 		for (auto& groupObject : *modelView) {
 
-			glm::vec3 emissiveColor = groupObject.materialView->emissiveColor;
+			// TODO: Fix this
+			glm::vec3 emissiveColor = groupObject.materialView == nullptr ? glm::vec3 (0) :
+				groupObject.materialView->emissiveColor;
 			if (glm::dot (emissiveColor, emissiveColor) > 0.0f) {
 				isEmissive = true;
 				break;

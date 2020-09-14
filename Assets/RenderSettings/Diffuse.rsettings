@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <RenderSettings>
-	<RenderMode mode="DirectLightingRenderModule" />
+	<RenderMode mode="LightPropagationVolumesRenderModule" />
 
 	<SSAO enabled="true" scale="1" samples="32" noiseSize="4" radius="0.6" bias="0.025" blurEnabled="true" />
 
-	<SSDO enabled="false" temporalFilterEnabled="false" scale="1" samples="400" radius="30" bias="0.025"
+	<SSDO enabled="true" temporalFilterEnabled="false" scale="1" samples="400" radius="30" bias="0.025"
 		indirectIntensity="0.5" rayShadow="false" shadowMapping="true" shadowScale="0.5" shadowStride="2"
 		interpolationEnabled="true" interpolationScale="0.5" minInterpolationDistance="1" minInterpolationAngle="30" />
 
@@ -20,11 +20,11 @@
 
 	<Gamma enabled="false" />
 
-	<RSM scale="1" samples="1" radius="0.12" intensity="0" specularIntensity="1" thickness="1" refractiveIndirectIntensity="1" interpolationScale="0.5" minInterpolationDistance="1" minInterpolationAngle="30" />
+	<RSM scale="1" samples="300" radius="0.12" intensity="30" specularIntensity="0" thickness="0" refractiveIndirectIntensity="1" interpolationScale="0.5" minInterpolationDistance="1" minInterpolationAngle="30" />
 	<TRSM temporalFilterEnabled="true" blurEnabled="false" />
 
-	<LPV volumeSize="8" iterations="10" injectionBias="0" geometryOcclusion="true" indirectDiffuseIntensity="0" indirectSpecularIntensity="1" indirectRefractiveIntensity="1" />
+	<LPV volumeSize="32" iterations="20" injectionBias="0" geometryOcclusion="true" indirectDiffuseIntensity="3" indirectSpecularIntensity="0" indirectRefractiveIntensity="1" />
 
 	<VCT voxelsSize="256" continuousVoxelization="false" bordering="false"
-		mipmapLevels="6" voxelShadowBias="0" indirectDiffuseIntensity="0" indirectSpecularIntensity="1" refractiveIndirectIntensity="1" diffuseConeDistance="0.3" specularConeRatio="0.1" specularConeDistance="0.6" refractiveConeRatio="0.1" refractiveConeDistance="0.6" shadowConeRatio="0.01" shadowConeDistance="0.365" originBias="0.0025" />
+		mipmapLevels="6" voxelShadowBias="0" indirectDiffuseIntensity="20" indirectSpecularIntensity="0" refractiveIndirectIntensity="1" diffuseConeDistance="0.3" specularConeRatio="0.1" specularConeDistance="0.6" refractiveConeRatio="0.1" refractiveConeDistance="0.6" shadowConeRatio="0.01" shadowConeDistance="0.365" originBias="0.0025" />
 </RenderSettings>

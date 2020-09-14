@@ -1,5 +1,5 @@
 #version 430
-layout (local_size_x = 4, local_size_y = 4, local_size_z = 4) in;
+layout (local_size_x = 24, local_size_y = 4, local_size_z = 4) in;
 
 // Compute-based mipmapping inspired by 
 
@@ -9,27 +9,26 @@ layout (local_size_x = 4, local_size_y = 4, local_size_z = 4) in;
 4^3   3.77 ms
 8^3   4.02 ms  */
 
-uniform int SrcMipLevel;
 uniform int DstMipRes;
 
-uniform sampler3D volumeTexture;
+uniform sampler3D srcTextureMip;
 
 layout(binding = 0, rgba8) uniform writeonly image3D dstImageMip;
 
 vec4[8] fetchTexels(ivec3 pos) {
-  return vec4[8] (texelFetch(volumeTexture, pos + ivec3(1, 1, 1), SrcMipLevel),  // 0
-                  texelFetch(volumeTexture, pos + ivec3(1, 1, 0), SrcMipLevel),  // 1
-                  texelFetch(volumeTexture, pos + ivec3(1, 0, 1), SrcMipLevel),  // 2
-                  texelFetch(volumeTexture, pos + ivec3(1, 0, 0), SrcMipLevel),  // 3
-                  texelFetch(volumeTexture, pos + ivec3(0, 1, 1), SrcMipLevel),  // 4
-                  texelFetch(volumeTexture, pos + ivec3(0, 1, 0), SrcMipLevel),  // 5
-                  texelFetch(volumeTexture, pos + ivec3(0, 0, 1), SrcMipLevel),  // 6
-                  texelFetch(volumeTexture, pos + ivec3(0, 0, 0), SrcMipLevel)); // 7
+  return vec4[8] (texelFetch(srcTextureMip, pos + ivec3(1, 1, 1), 0),  // 0
+                  texelFetch(srcTextureMip, pos + ivec3(1, 1, 0), 0),  // 1
+                  texelFetch(srcTextureMip, pos + ivec3(1, 0, 1), 0),  // 2
+                  texelFetch(srcTextureMip, pos + ivec3(1, 0, 0), 0),  // 3
+                  texelFetch(srcTextureMip, pos + ivec3(0, 1, 1), 0),  // 4
+                  texelFetch(srcTextureMip, pos + ivec3(0, 1, 0), 0),  // 5
+                  texelFetch(srcTextureMip, pos + ivec3(0, 0, 1), 0),  // 6
+                  texelFetch(srcTextureMip, pos + ivec3(0, 0, 0), 0)); // 7
 }
 
 void main() 
 {
-	if (gl_GlobalInvocationID.x < DstMipRes
+	if (gl_GlobalInvocationID.x < DstMipRes * 6
 		&& gl_GlobalInvocationID.y < DstMipRes
 		&& gl_GlobalInvocationID.z < DstMipRes) {
 
@@ -38,18 +37,17 @@ void main()
   
 		vec4 values[8] = fetchTexels(srcPos);
 
-		vec3 finalColor = vec3 (0);
+		vec4 finalColor = vec4 (0);
 		float contributionCount = 0;
-		float alpha = 0.0;
 
 		for (int i=0; i<8; i++) {
-			vec3 contribution = values [i].a == 0 ? vec3 (0) : vec3 (1);
+			float contribution = values [i].a == 0 ? 0.0 : 1.0;
 
-			finalColor += values [i].rgb * contribution;
-			contributionCount += contribution.x; 
-			alpha += values [i].a;
+			finalColor.rgb += values [i].rgb * contribution;
+			contributionCount += contribution;
+			finalColor.a += values [i].a;
 		}
 
-		imageStore(dstImageMip, dstPos, vec4(finalColor / contributionCount, alpha / 8.0));
+		imageStore(dstImageMip, dstPos, vec4(finalColor.rgb / contributionCount, finalColor.a / 8.0));
 	}
 }

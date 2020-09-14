@@ -11,6 +11,7 @@ class VoxelMipmapRenderPass : public ContainerRenderSubPassI
 	DECLARE_RENDER_PASS(VoxelMipmapRenderPass)
 
 protected:
+	Resource<ShaderView> _anisotropicShaderView;
 	Resource<ShaderView> _shaderView;
 
 public:
@@ -26,6 +27,8 @@ protected:
 	void StartVoxelMipmaping ();
 	void GenerateMipmaps (const RenderSettings&, RenderVolumeCollection*);
 	void EndVoxelMipmaping ();
+
+	std::vector<PipelineAttribute> GetCustomAttributes (RenderVolumeCollection* rvc, std::size_t mipLevel);
 };
 
 #endif

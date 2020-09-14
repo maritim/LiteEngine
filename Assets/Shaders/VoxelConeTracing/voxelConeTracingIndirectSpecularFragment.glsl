@@ -16,23 +16,11 @@ uniform mat3 inverseNormalWorldMatrix;
 uniform vec3 cameraPosition;
 
 uniform float vctIndirectIntensity;
+uniform float specularConeRatio;
 uniform float specularConeDistance;
 
 #include "deferred.glsl"
 #include "VoxelConeTracing/voxelConeTracing.glsl"
-
-/*
- * Calculate  a vector that is orthogonal to u.
-*/
-
-vec3 Orthogonal(vec3 u)
-{
-	u = normalize(u);
-
-	vec3 v = vec3(0.0, 1.0, 0.0);
-
-	return abs(dot(u, v)) > 0.99 ? cross(u, vec3(0, 0, 1)) : cross(u, v);
-}
 
 // Calculates indirect specular light using voxel cone tracing.
 vec3 CalcIndirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shininess)
@@ -46,7 +34,7 @@ vec3 CalcIndirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shini
 	vec3 eyeToFragment = normalize (worldPosition - cameraPosition);
 	vec3 reflectionDir = reflect (eyeToFragment, worldNormal);
 
-	float specularConeRatio = 1.0 / in_shininess;
+	// float specularConeRatio = 1.0 / in_shininess;
 		
 	vec3 reflectTraceOrigin = GetPositionInVolume (worldPosition);
 	specularLight = voxelTraceCone (reflectTraceOrigin, reflectionDir, specularConeRatio, specularConeDistance).xyz;
@@ -57,9 +45,9 @@ vec3 CalcIndirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shini
 void main()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_position = texture2D (gPositionMap, texCoord).xyz;
-	vec3 in_normal = texture2D (gNormalMap, texCoord).xyz;
-	float in_shininess = texture2D (gSpecularMap, texCoord).w;
+	vec3 in_position = textureLod (gPositionMap, texCoord, 0).xyz;
+	vec3 in_normal = textureLod (gNormalMap, texCoord, 0).xyz;
+	float in_shininess = textureLod (gSpecularMap, texCoord, 0).w;
 
 	in_normal = normalize(in_normal);
 

@@ -77,22 +77,27 @@ std::vector<PipelineAttribute> VCTIndirectSpecularLightRenderPass::GetCustomAttr
 	*/
 
 	PipelineAttribute vctIndirectIntensity;
+	PipelineAttribute specularConeRatio;
 	PipelineAttribute specularConeDistance;
 	PipelineAttribute originBias;
 
 	vctIndirectIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+	specularConeRatio.type = PipelineAttribute::AttrType::ATTR_1F;
 	specularConeDistance.type = PipelineAttribute::AttrType::ATTR_1F;
 	originBias.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	vctIndirectIntensity.name = "vctIndirectIntensity";
+	specularConeRatio.name = "specularConeRatio";
 	specularConeDistance.name = "specularConeDistance";
 	originBias.name = "originBias";
 
 	vctIndirectIntensity.value.x = settings.vct_indirect_specular_intensity;
+	specularConeRatio.value.x = settings.vct_specular_cone_ratio;
 	specularConeDistance.value.x = settings.vct_specular_cone_distance;
 	originBias.value.x = settings.vct_origin_bias;
 
 	attributes.push_back (vctIndirectIntensity);
+	attributes.push_back (specularConeRatio);
 	attributes.push_back (specularConeDistance);
 	attributes.push_back (originBias);
 

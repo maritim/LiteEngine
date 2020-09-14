@@ -87,144 +87,36 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 	std::map<std::string, int> renderModes;
 	renderModes ["SceneRenderModule"] = 0;
-	renderModes ["VoxelConeTracingRenderModule"] = 1;
-	renderModes ["ReflectiveShadowMappingRenderModule"] = 2;
-	renderModes ["TemporalReflectiveShadowMappingRenderModule"] = 3;
-	renderModes ["LightPropagationVolumesRenderModule"] = 4;
-	renderModes ["ScreenSpaceDirectionalOcclusionRenderModule"] = 5;
+	renderModes ["ReflectiveShadowMappingRenderModule"] = 1;
+	renderModes ["LightPropagationVolumesRenderModule"] = 2;
+	renderModes ["VoxelConeTracingRenderModule"] = 3;
+	renderModes ["ScreenSpaceDirectionalOcclusionRenderModule"] = 4;
+	renderModes ["TemporalReflectiveShadowMappingRenderModule"] = 5;
 
 	int lastRenderMode = renderModes [_settings->renderMode];
 	int renderMode = lastRenderMode;
 
 	const char* items[] = { "Direct Light",
-		"Voxel Cone Tracing",
 		"Reflective Shadow Mapping",
-		"Temporal Reflective Shadow Mapping",
 		"Light Propagation Volumes",
-		"Screen Space Global Illumination"
+		"Voxel Cone Tracing",
+		"Screen Space Global Illumination",
+		"Temporal Reflective Shadow Mapping"
 	};
 
 	ImGui::Combo("Render Module", &renderMode, items, 6);
 
 	const char* srenderModes[] = {
 		"SceneRenderModule",
-		"VoxelConeTracingRenderModule",
 		"ReflectiveShadowMappingRenderModule",
-		"TemporalReflectiveShadowMappingRenderModule",
 		"LightPropagationVolumesRenderModule",
-		"ScreenSpaceDirectionalOcclusionRenderModule"
+		"VoxelConeTracingRenderModule",
+		"ScreenSpaceDirectionalOcclusionRenderModule",
+		"TemporalReflectiveShadowMappingRenderModule"
 	};
 
 	if (lastRenderMode != renderMode) {
 		_settings->renderMode = srenderModes [renderMode];
-	}
-
-	ImGui::Spacing ();
-
-	if (ImGui::CollapsingHeader ("Voxel Cone Tracing")) {
-		if (_continuousVoxelizationReset == true) {
-			_settings->vct_continuous_voxelization = _lastContinuousVoxelization;
-			_continuousVoxelizationReset = false;
-		}
-
-		std::size_t lastVoxelVolumeSize = _settings->vct_voxels_size;
-		bool lastVoxelBordering = _settings->vct_bordering;
-		std::size_t lastVolumeMipmapLevels = _settings->vct_mipmap_levels;
-
-		ImGui::InputScalar ("Voxel Volume Size", ImGuiDataType_U32, &_settings->vct_voxels_size);
-		ImGui::Checkbox ("Continuous Voxelization", &_settings->vct_continuous_voxelization);
-		ImGui::Checkbox ("Voxel Volume Bordering", &_settings->vct_bordering);
-
-		std::size_t speed = 1;
-		ImGui::InputScalar ("Volume Mipmap Levels", ImGuiDataType_U32, &_settings->vct_mipmap_levels, &speed);
-		_settings->vct_mipmap_levels = Extensions::MathExtend::Clamp (
-			_settings->vct_mipmap_levels, (std::size_t) 1,
-			(std::size_t) std::log2 (_settings->vct_voxels_size));
-
-		ImGui::Separator ();
-
-		ImGui::InputFloat ("Indirect Diffuse Light Intensity", &_settings->vct_indirect_diffuse_intensity, 0.1f);
-		ImGui::InputFloat ("Indirect Specular Light Intensity", &_settings->vct_indirect_specular_intensity, 0.1f);
-		ImGui::InputFloat ("Refractive Indirect Light Intensity", &_settings->vct_indirect_refractive_intensity, 0.1f);
-
-        ImGui::Separator();
-
-		ImGui::SliderFloat ("Diffuse Cone Distance", &_settings->vct_diffuse_cone_distance, 0.0f, 1.0f);
-
-        ImGui::Separator();
-
-		ImGui::SliderFloat ("Specular Cone Distance", &_settings->vct_specular_cone_distance, 0.0f, 1.0f);
-
-        ImGui::Separator();
-
-		ImGui::SliderFloat ("Refractive Cone Ratio", &_settings->vct_refractive_cone_ratio, 0.0f, 1.0f, "%3f", 10.0f);
-		ImGui::SliderFloat ("Refractive Cone Distance", &_settings->vct_refractive_cone_distance, 0.0f, 1.0f);
-
-        ImGui::Separator();
-
-		ImGui::SliderFloat ("Shadow Cone Ratio", &_settings->vct_shadow_cone_ratio, 0.0f, 1.0f, "%3f", 10.0f);
-		ImGui::SliderFloat ("Shadow Cone Distance", &_settings->vct_shadow_cone_distance, 0.0f, 1.0f);
-
-        ImGui::Separator();
-
-		ImGui::SliderFloat ("Origin Bias", &_settings->vct_origin_bias, 0.0f, 1.0f, "%5f", 10.0f);
-
-		if (lastVoxelVolumeSize != _settings->vct_voxels_size ||
-			lastVoxelBordering != _settings->vct_bordering ||
-			lastVolumeMipmapLevels != _settings->vct_mipmap_levels) {
-			_lastContinuousVoxelization = _settings->vct_continuous_voxelization;
-			_continuousVoxelizationReset = true;
-
-			_settings->vct_continuous_voxelization = true;
-		}
-
-        ImGui::Separator();
-
-		if (ImGui::TreeNode ("Debug")) {
-
-			ImGui::Checkbox ("Show Voxels", &_settings->vct_debug_show_voxels);
-
-			std::size_t speed = 1;
-			ImGui::InputScalar ("Mipmap Level", ImGuiDataType_U32, &_settings->vct_debug_volume_mipmap_level, &speed);
-			_settings->vct_debug_volume_mipmap_level = Extensions::MathExtend::Clamp (
-				_settings->vct_debug_volume_mipmap_level, (std::size_t) 0,
-				(std::size_t) _settings->vct_mipmap_levels - 1);
-
-			auto vctStat = StatisticsManager::Instance ()->GetStatisticsObject <VCTStatisticsObject> ();
-
-			if (ImGui::TreeNode ("Indirect Light")) {
-
-				int windowWidth = ImGui::GetWindowWidth() * 0.95f;
-
-				FramebufferRenderVolume* vctIndirectDiffuseMapVolume = vctStat->vctIndirectDiffuseMapVolume;
-				FramebufferRenderVolume* vctIndirectSpecularMapVolume = vctStat->vctIndirectSpecularMapVolume;
-				FramebufferRenderVolume* vctAmbientOcclusionMapVolume = vctStat->vctAmbientOcclusionMapVolume;
-				FramebufferRenderVolume* vctSubsurfaceScatteringMapVolume = vctStat->vctSubsurfaceScatteringMapVolume;
-
-				if (vctIndirectDiffuseMapVolume != nullptr) {
-					auto vctMapSize = vctIndirectDiffuseMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
-
-					int vctMapWidth = windowWidth;
-					int vctMapHeight = ((float) vctMapSize.height / vctMapSize.width) * vctMapWidth;
-
-					ImGui::Text ("Indirect Diffuse Light Map");
-					ShowImage (vctIndirectDiffuseMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
-
-					ImGui::Text ("Indirect Specular Light Map");
-					ShowImage (vctIndirectSpecularMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
-
-					ImGui::Text ("Subsurface Scattering Map");
-					ShowImage (vctSubsurfaceScatteringMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
-
-					ImGui::Text ("Ambient Occlusion Map");
-					ShowImage (vctAmbientOcclusionMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
-				}
-
-				ImGui::TreePop();
-			}
-
-			ImGui::TreePop();
-		}
 	}
 
     ImGui::Spacing();
@@ -424,9 +316,10 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 		ImGui::Checkbox ("Geometry Occlusion", &_settings->lpv_geometry_occlusion);
 
-		ImGui::PushID ("LPVIndirect Light Intensity");
-		ImGui::InputFloat ("Indirect Light Intensity", &_settings->lpv_intensity, 0.1);
-		ImGui::PopID ();
+		ImGui::Separator();
+
+		ImGui::InputFloat ("Indirect Diffuse Light Intensity", &_settings->lpv_indirect_diffuse_intensity, 0.1);
+		ImGui::InputFloat ("Indirect Specular Light Intensity", &_settings->lpv_indirect_specular_intensity, 0.1);
 
 		ImGui::InputFloat ("Indirect Refractive Intensity", &_settings->lpv_indirect_refractive_intensity, 0.1);
 
@@ -469,6 +362,115 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 		}
 
 		ImGui::PopID ();
+	}
+
+	ImGui::Spacing ();
+
+	if (ImGui::CollapsingHeader ("Voxel Cone Tracing")) {
+		if (_continuousVoxelizationReset == true) {
+			_settings->vct_continuous_voxelization = _lastContinuousVoxelization;
+			_continuousVoxelizationReset = false;
+		}
+
+		std::size_t lastVoxelVolumeSize = _settings->vct_voxels_size;
+		bool lastVoxelBordering = _settings->vct_bordering;
+		std::size_t lastVolumeMipmapLevels = _settings->vct_mipmap_levels;
+
+		ImGui::InputScalar ("Voxel Volume Size", ImGuiDataType_U32, &_settings->vct_voxels_size);
+		ImGui::Checkbox ("Continuous Voxelization", &_settings->vct_continuous_voxelization);
+		ImGui::Checkbox ("Voxel Volume Bordering", &_settings->vct_bordering);
+
+		std::size_t speed = 1;
+		ImGui::InputScalar ("Volume Mipmap Levels", ImGuiDataType_U32, &_settings->vct_mipmap_levels, &speed);
+		_settings->vct_mipmap_levels = Extensions::MathExtend::Clamp (
+			_settings->vct_mipmap_levels, (std::size_t) 1,
+			(std::size_t) std::log2 (_settings->vct_voxels_size));
+
+		ImGui::Separator ();
+
+		ImGui::InputFloat ("Indirect Diffuse Light Intensity", &_settings->vct_indirect_diffuse_intensity, 0.1f);
+		ImGui::InputFloat ("Indirect Specular Light Intensity", &_settings->vct_indirect_specular_intensity, 0.1f);
+		ImGui::InputFloat ("Refractive Indirect Light Intensity", &_settings->vct_indirect_refractive_intensity, 0.1f);
+
+        ImGui::Separator();
+
+		ImGui::SliderFloat ("Diffuse Cone Distance", &_settings->vct_diffuse_cone_distance, 0.0f, 1.0f);
+
+        ImGui::Separator();
+
+		ImGui::SliderFloat ("Specular Cone Ratio", &_settings->vct_specular_cone_ratio, 0.0f, 1.0f, "%3f", 10.0f);
+		ImGui::SliderFloat ("Specular Cone Distance", &_settings->vct_specular_cone_distance, 0.0f, 1.0f);
+
+        ImGui::Separator();
+
+		ImGui::SliderFloat ("Refractive Cone Ratio", &_settings->vct_refractive_cone_ratio, 0.0f, 1.0f, "%3f", 10.0f);
+		ImGui::SliderFloat ("Refractive Cone Distance", &_settings->vct_refractive_cone_distance, 0.0f, 1.0f);
+
+        ImGui::Separator();
+
+		ImGui::SliderFloat ("Shadow Cone Ratio", &_settings->vct_shadow_cone_ratio, 0.0f, 1.0f, "%3f", 10.0f);
+		ImGui::SliderFloat ("Shadow Cone Distance", &_settings->vct_shadow_cone_distance, 0.0f, 1.0f);
+
+        ImGui::Separator();
+
+		ImGui::SliderFloat ("Origin Bias", &_settings->vct_origin_bias, 0.0f, 1.0f, "%5f", 10.0f);
+
+		if (lastVoxelVolumeSize != _settings->vct_voxels_size ||
+			lastVoxelBordering != _settings->vct_bordering ||
+			lastVolumeMipmapLevels != _settings->vct_mipmap_levels) {
+			_lastContinuousVoxelization = _settings->vct_continuous_voxelization;
+			_continuousVoxelizationReset = true;
+
+			_settings->vct_continuous_voxelization = true;
+		}
+
+        ImGui::Separator();
+
+		if (ImGui::TreeNode ("Debug")) {
+
+			ImGui::Checkbox ("Show Voxels", &_settings->vct_debug_show_voxels);
+
+			std::size_t speed = 1;
+			ImGui::InputScalar ("Mipmap Level", ImGuiDataType_U32, &_settings->vct_debug_volume_mipmap_level, &speed);
+			_settings->vct_debug_volume_mipmap_level = Extensions::MathExtend::Clamp (
+				_settings->vct_debug_volume_mipmap_level, (std::size_t) 0,
+				(std::size_t) _settings->vct_mipmap_levels - 1);
+
+			auto vctStat = StatisticsManager::Instance ()->GetStatisticsObject <VCTStatisticsObject> ();
+
+			if (ImGui::TreeNode ("Indirect Light")) {
+
+				int windowWidth = ImGui::GetWindowWidth() * 0.95f;
+
+				FramebufferRenderVolume* vctIndirectDiffuseMapVolume = vctStat->vctIndirectDiffuseMapVolume;
+				FramebufferRenderVolume* vctIndirectSpecularMapVolume = vctStat->vctIndirectSpecularMapVolume;
+				FramebufferRenderVolume* vctAmbientOcclusionMapVolume = vctStat->vctAmbientOcclusionMapVolume;
+				FramebufferRenderVolume* vctSubsurfaceScatteringMapVolume = vctStat->vctSubsurfaceScatteringMapVolume;
+
+				if (vctIndirectDiffuseMapVolume != nullptr) {
+					auto vctMapSize = vctIndirectDiffuseMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
+
+					int vctMapWidth = windowWidth;
+					int vctMapHeight = ((float) vctMapSize.height / vctMapSize.width) * vctMapWidth;
+
+					ImGui::Text ("Indirect Diffuse Light Map");
+					ShowImage (vctIndirectDiffuseMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
+
+					ImGui::Text ("Indirect Specular Light Map");
+					ShowImage (vctIndirectSpecularMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
+
+					ImGui::Text ("Subsurface Scattering Map");
+					ShowImage (vctSubsurfaceScatteringMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
+
+					ImGui::Text ("Ambient Occlusion Map");
+					ShowImage (vctAmbientOcclusionMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (vctMapWidth, vctMapHeight));
+				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop();
+		}
 	}
 
     ImGui::Spacing();
@@ -544,6 +546,20 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 			ImGui::Separator ();
 
+			ImGui::Checkbox ("Enable Interpolation", &_settings->ssdo_interpolation_enabled);
+			ImGui::Checkbox ("Shown Non Interpolated Pixels", &_settings->ssdo_debug_interpolation);
+
+			float interpolationScale = _settings->ssdo_interpolation_scale;
+			ImGui::InputFloat ("Interpolation Scale", &interpolationScale);
+			if (interpolationScale > 0) {
+				_settings->ssdo_interpolation_scale = interpolationScale;
+			}
+
+			ImGui::InputFloat ("Min Interpolation Distance", &_settings->ssdo_min_interpolation_distance, 0.1);
+			ImGui::InputFloat ("Min Interpolation Angle (deg)", &_settings->ssdo_min_interpolation_angle, 0.1);
+
+			ImGui::Separator ();
+
 			ImGui::Checkbox ("Shadow 2D Ray Cast", &_settings->ssdo_ray_shadow);
 
 			float shadowScale = _settings->ssdo_shadow_scale;
@@ -567,10 +583,15 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 					FramebufferRenderVolume* ssdoMapVolume = ssdoStat->ssdoMapVolume;
 					FramebufferRenderVolume* ssdoTemporalFilterMapVolume = ssdoStat->ssdoTemporalFilterMapVolume;
 
+					FramebufferRenderVolume* ssdoInterpolatedMapVolume = ssdoStat->ssdoInterpolatedMapVolume;
+
 					auto size = ssdoMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
 					int width = windowWidth;
 					int height = ((float) size.height / size.width) * width;
+
+					ImGui::Text ("SSDO Interpolated Map");
+					ShowImage (ssdoInterpolatedMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (width, height));
 
 					ImGui::Text ("SSDO Map");
 					ShowImage (ssdoMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (width, height));

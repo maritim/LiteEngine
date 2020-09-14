@@ -12,6 +12,8 @@ struct ENGINE_API SSDOStatisticsObject : public StatisticsObject
 	FramebufferRenderVolume* ssdoMapVolume;
 	FramebufferRenderVolume* ssdoTemporalFilterMapVolume;
 
+	FramebufferRenderVolume* ssdoInterpolatedMapVolume;
+
 	FramebufferRenderVolume* ssdoShadowVolume;
 };
 

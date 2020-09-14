@@ -82,7 +82,7 @@ std::vector<PipelineAttribute> LPVIndirectDiffuseLightRenderPass::GetCustomAttri
 
 	lpvIntensity.name = "lpvIntensity";
 
-	lpvIntensity.value.x = settings.lpv_intensity;
+	lpvIntensity.value.x = settings.lpv_indirect_diffuse_intensity;
 
 	attributes.push_back (lpvIntensity);
 

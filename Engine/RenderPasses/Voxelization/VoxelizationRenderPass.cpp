@@ -12,15 +12,10 @@
 #include "SceneNodes/SceneLayer.h"
 
 VoxelizationRenderPass::VoxelizationRenderPass () :
-	_voxelVolume (new VoxelVolume ()),
+	_voxelVolume (nullptr),
 	_firstTime (true)
 {
 
-}
-
-VoxelizationRenderPass::~VoxelizationRenderPass ()
-{
-	delete _voxelVolume;
 }
 
 void VoxelizationRenderPass::Init (const RenderSettings& settings)
@@ -101,7 +96,7 @@ void VoxelizationRenderPass::Clear ()
 	 * Clear voxel volume
 	*/
 
-	_voxelVolume->Clear ();
+	delete _voxelVolume;
 }
 
 void VoxelizationRenderPass::StartVoxelization ()
@@ -110,7 +105,12 @@ void VoxelizationRenderPass::StartVoxelization ()
 	 * Clear voxel volume
 	*/
 
-	_voxelVolume->ClearVoxels ();
+	_voxelVolume->GetFramebufferView ()->Activate ();
+
+	GL::ClearColor(0, 0, 0, 0);
+	GL::Clear(GL_COLOR_BUFFER_BIT);
+
+	GL::BindFramebuffer (GL_FRAMEBUFFER, 0);
 
 	/*
 	* Render to window but mask out all color.
@@ -140,7 +140,8 @@ void VoxelizationRenderPass::GeometryVoxelizationPass (const RenderScene* render
 	* Bind voxel volume to geometry render pass
 	*/
 
-	_voxelVolume->BindForWriting ();
+	unsigned int voxelTextureID = _voxelVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex ();
+	GL::BindImageTexture (0, voxelTextureID, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
 
 	/*
 	* Render geometry
@@ -170,7 +171,7 @@ void VoxelizationRenderPass::GeometryVoxelizationPass (const RenderScene* render
 		 * Send voxel volume attributes to pipeline
 		*/
 
-		Pipeline::SendCustomAttributes (nullptr, _voxelVolume->GetCustomAttributes ());
+		Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes ());
 
 		/*
 		 * Voxelize object
@@ -235,29 +236,50 @@ void VoxelizationRenderPass::UpdateVoxelVolumeBoundingBox (const RenderScene* re
 
 void VoxelizationRenderPass::InitVoxelVolume (const RenderSettings& settings)
 {
-	if (!_voxelVolume->Init (settings.vct_voxels_size)) {
-		Console::LogError (std::string () +
-			"Voxel texture cannot be initialized!" +
-			" It is not possible to continue the process. End now!");
-		exit (VOXEL_TEXTURE_NOT_INIT);
+	std::vector<Resource<Texture>> textures;
+
+	for (std::size_t index = 0; index < settings.vct_mipmap_levels; index++) {
+		Resource<Texture> texture = Resource<Texture> (new Texture ("voxelVolume"));
+
+		glm::ivec3 size = glm::ivec3 (settings.vct_voxels_size >> index);
+
+		if (index > 0) {
+			size.x *= 6;
+		}
+
+		texture->SetType (TEXTURE_TYPE::TEXTURE_3D);
+		texture->SetSize (Size (size.x, size.y, size.z));
+		texture->SetMipmapGeneration (false);
+		texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGBA8);
+		texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGBA);
+		texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_UNSIGNED_BYTE);
+		texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_BORDER);
+		texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+		texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+		texture->SetAnisotropicFiltering (false);
+		texture->SetBorderColor (Color::Black);
+
+		textures.push_back (texture);
 	}
 
-	/*
-	 * Set voxel volume mipmap levels
-	*/
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (textures));
 
-	_voxelVolume->SetVolumeMipmapLevels (settings.vct_mipmap_levels);
+	_voxelVolume = new VoxelVolume (framebuffer);
 }
 
 void VoxelizationRenderPass::UpdateVoxelVolume (const RenderSettings& settings)
 {
-	if (_voxelVolume->GetVolumeSize () != settings.vct_voxels_size) {
+	auto size = _voxelVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
+	std::size_t mipmap_levels = _voxelVolume->GetFramebuffer ()->GetTextureCount ();
+
+	if (size.width != settings.vct_voxels_size ||
+		mipmap_levels != settings.vct_mipmap_levels) {
 
 		/*
 		 * Clear voxel volume
 		*/
 
-		_voxelVolume->Clear ();
+		delete _voxelVolume;
 
 		/*
 		 * Initialize voxel volume
@@ -265,13 +287,36 @@ void VoxelizationRenderPass::UpdateVoxelVolume (const RenderSettings& settings)
 
 		InitVoxelVolume (settings);
 	}
+}
 
-	if (_voxelVolume->GetVolumeMipmapLevels () != settings.vct_mipmap_levels) {
+std::vector<PipelineAttribute> VoxelizationRenderPass::GetCustomAttributes ()
+{
+	std::vector<PipelineAttribute> attributes;
 
-		/*
-		 * Update voxel volume mipmap levels
-		*/
+	PipelineAttribute minVertex;
+	PipelineAttribute maxVertex;
+	PipelineAttribute volumeSizeAttribute;
+	PipelineAttribute volumeMipmapLevels;
 
-		_voxelVolume->SetVolumeMipmapLevels (settings.vct_mipmap_levels);
-	}
+	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
+	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
+	volumeSizeAttribute.type = PipelineAttribute::AttrType::ATTR_3I;
+	volumeMipmapLevels.type = PipelineAttribute::AttrType::ATTR_1I;
+
+	minVertex.name = "minVertex";
+	maxVertex.name = "maxVertex";
+	volumeSizeAttribute.name = "volumeSize";
+	volumeMipmapLevels.name = "volumeMipmapLevels";
+
+	minVertex.value = _voxelVolume->GetMinVertex ();
+	maxVertex.value = _voxelVolume->GetMaxVertex ();
+	volumeSizeAttribute.value = glm::vec3 ((float) _voxelVolume->GetFramebuffer ()->GetTexture (0)->GetSize ().width);
+	volumeMipmapLevels.value.x = _voxelVolume->GetFramebuffer ()->GetTextureCount ();
+
+	attributes.push_back (minVertex);
+	attributes.push_back (maxVertex);
+	attributes.push_back (volumeSizeAttribute);
+	attributes.push_back (volumeMipmapLevels);
+
+	return attributes;
 }

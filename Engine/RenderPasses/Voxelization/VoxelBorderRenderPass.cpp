@@ -68,14 +68,15 @@ void VoxelBorderRenderPass::BorderVoxelVolume (const RenderSettings& settings, R
 
 	VoxelVolume* voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
 
-	for (std::size_t mipLevel = 0; mipLevel < voxelVolume->GetVolumeMipmapLevels (); mipLevel++) {
+	for (std::size_t mipLevel = 0; mipLevel < voxelVolume->GetFramebuffer ()->GetTextureCount (); mipLevel++) {
 
 		Pipeline::SendCustomAttributes (_shaderView, voxelVolume->GetCustomAttributes ());
 
 		GL::Uniform1i (_shaderView->GetUniformLocation ("SrcMipLevel"), mipLevel);
 		GL::Uniform1i (_shaderView->GetUniformLocation ("DstMipRes"), dstMipRes);
 
-		voxelVolume->BindForWriting (mipLevel);
+		unsigned int voxelTextureID = voxelVolume->GetFramebufferView ()->GetTextureView (mipLevel)->GetGPUIndex ();
+		GL::BindImageTexture (0, voxelTextureID, mipLevel, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
 
 		int numWorkGroups = (int) std::ceil (dstMipRes / 4.0);
 		GL::DispatchCompute (numWorkGroups, numWorkGroups, numWorkGroups);

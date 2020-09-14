@@ -5,7 +5,7 @@ uniform int SrcMipLevel;
 uniform int DstMipRes;
 
 uniform ivec3 volumeSize;
-uniform sampler3D volumeTexture;
+uniform sampler3D voxelTexture [8];
 
 layout(binding = 0, rgba8) uniform writeonly image3D dstImageMip;
 
@@ -17,7 +17,7 @@ void main()
 
 		ivec3 dstPos = ivec3(gl_GlobalInvocationID);
   
-		vec4 voxelColor = texelFetch (volumeTexture, dstPos, SrcMipLevel);
+		vec4 voxelColor = texelFetch (voxelTexture [SrcMipLevel], dstPos, 0);
 
 		if (voxelColor.a > 0) {
 			return;
@@ -28,7 +28,7 @@ void main()
 
 		for (int x = max (0, dstPos.x - 1); x <= min (dstPos.x + 1, DstMipRes - 1); x ++) {
 			for (int z = max (0, dstPos.z - 1); z <= min (dstPos.z + 1, DstMipRes - 1); z ++) {
-				vec4 voxelColor = texelFetch (volumeTexture, ivec3 (x, dstPos.y, z), SrcMipLevel);
+				vec4 voxelColor = texelFetch (voxelTexture [SrcMipLevel], ivec3 (x, dstPos.y, z), 0);
 
 				if (voxelColor.a == 0) {
 					continue;

@@ -1,39 +1,37 @@
-#include "SSDORenderPass.h"
+#include "SSDOInterpolatedRenderPass.h"
 
 #include "Debug/Statistics/StatisticsManager.h"
 #include "SSDOStatisticsObject.h"
 
-#include "Utils/Extensions/MathExtend.h"
-
-bool SSDORenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+bool SSDOInterpolatedRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
-	 * Always execute screen space directional occlusion render pass
+	 * Always execure reflective shadow mapping indirect light render pass
 	*/
 
-	return settings.ssdo_enabled;
+	return settings.ssdo_enabled && settings.ssdo_interpolation_enabled;
 }
 
-std::string SSDORenderPass::GetPostProcessFragmentShaderPath () const
+std::string SSDOInterpolatedRenderPass::GetPostProcessFragmentShaderPath () const
 {
-	return "Assets/Shaders/ScreenSpaceDirectionalOcclusion/screenSpaceDirectionalOcclusionFragment.glsl";
+	return "Assets/Shaders/ScreenSpaceDirectionalOcclusion/screenSpaceDirectionalOcclusionInterpolatedFragment.glsl";
 }
 
-std::string SSDORenderPass::GetPostProcessVolumeName () const
+std::string SSDOInterpolatedRenderPass::GetPostProcessVolumeName () const
 {
 	return "SSDOMapVolume";
 }
 
-glm::ivec2 SSDORenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
+glm::ivec2 SSDOInterpolatedRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssdo_scale);
+	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssdo_interpolation_scale);
 }
 
-FramebufferRenderVolume* SSDORenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
+FramebufferRenderVolume* SSDOInterpolatedRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
 	/*
-	 * Create screen space directional occlusion framebuffer
+	 * Create rsm interpolated indirect diffuse light framebuffer
 	*/
 
 	Resource<Texture> texture = Resource<Texture> (new Texture ("ssdoMap"));
@@ -46,8 +44,8 @@ FramebufferRenderVolume* SSDORenderPass::CreatePostProcessVolume (const RenderSe
 	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
 	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
 	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
-	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
-	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
 	texture->SetAnisotropicFiltering (false);
 
 	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
@@ -60,12 +58,12 @@ FramebufferRenderVolume* SSDORenderPass::CreatePostProcessVolume (const RenderSe
 
 	auto ssdoStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <SSDOStatisticsObject> ();
 
-	ssdoStatisticsObject->ssdoMapVolume = renderVolume;
+	ssdoStatisticsObject->ssdoInterpolatedMapVolume = renderVolume;
 
 	return renderVolume;
 }
 
-std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const Camera* camera,
+std::vector<PipelineAttribute> SSDOInterpolatedRenderPass::GetCustomAttributes (const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -75,7 +73,7 @@ std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const Camera
 	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (camera, settings, rvc);
 
 	/*
-	 * Attach screen space directional occlusion attributes to pipeline
+	 * Attach screen space ambient occlusion attributes to pipeline
 	*/
 
 	PipelineAttribute ssdoResolution;
@@ -83,57 +81,37 @@ std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const Camera
 	PipelineAttribute ssdoBias;
 	PipelineAttribute ssdoIndirectIntensity;
 	PipelineAttribute ssdoTemporalFilter;
-	PipelineAttribute ssdoInterpolationEnabled;
 	PipelineAttribute ssdoInterpolationScale;
-	PipelineAttribute ssdoMinInterpolationDistance;
-	PipelineAttribute ssdoMinInterpolationAngle;
-	PipelineAttribute ssdoDebugInterpolation;
 
 	ssdoResolution.type = PipelineAttribute::AttrType::ATTR_2F;
 	ssdoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssdoBias.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssdoIndirectIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssdoTemporalFilter.type = PipelineAttribute::AttrType::ATTR_1I;
-	ssdoInterpolationEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
 	ssdoInterpolationScale.type = PipelineAttribute::AttrType::ATTR_1F;
-	ssdoMinInterpolationDistance.type = PipelineAttribute::AttrType::ATTR_1F;
-	ssdoMinInterpolationAngle.type = PipelineAttribute::AttrType::ATTR_1F;
-	ssdoDebugInterpolation.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	ssdoResolution.name = "ssdoResolution";
 	ssdoRadius.name = "ssdoRadius";
 	ssdoBias.name = "ssdoBias";
 	ssdoIndirectIntensity.name = "ssdoIndirectIntensity";
 	ssdoTemporalFilter.name = "ssdoTemporalFilter";
-	ssdoInterpolationEnabled.name = "ssdoInterpolationEnabled";
 	ssdoInterpolationScale.name = "ssdoInterpolationScale";
-	ssdoMinInterpolationDistance.name = "ssdoMinInterpolationDistance";
-	ssdoMinInterpolationAngle.name = "ssdoMinInterpolationAngle";
-	ssdoDebugInterpolation.name = "ssdoDebugInterpolation";
 
-	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssdo_scale);
+	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssdo_interpolation_scale);
 
 	ssdoResolution.value = glm::vec3 (resolution, 0.0f);
 	ssdoRadius.value.x = settings.ssdo_radius;
 	ssdoBias.value.x = settings.ssdo_bias;
 	ssdoIndirectIntensity.value.x = settings.ssdo_indirect_intensity;
 	ssdoTemporalFilter.value.x = settings.ssdo_temporal_filter_enabled;
-	ssdoInterpolationEnabled.value.x = settings.ssdo_interpolation_enabled;
 	ssdoInterpolationScale.value.x = settings.ssdo_interpolation_scale;
-	ssdoMinInterpolationDistance.value.x = settings.ssdo_min_interpolation_distance;
-	ssdoMinInterpolationAngle.value.x = std::cos (DEG2RAD * settings.ssdo_min_interpolation_angle);
-	ssdoDebugInterpolation.value.x = settings.ssdo_debug_interpolation;
 
 	attributes.push_back (ssdoResolution);
 	attributes.push_back (ssdoRadius);
 	attributes.push_back (ssdoBias);
 	attributes.push_back (ssdoIndirectIntensity);
 	attributes.push_back (ssdoTemporalFilter);
-	attributes.push_back (ssdoInterpolationEnabled);
 	attributes.push_back (ssdoInterpolationScale);
-	attributes.push_back (ssdoMinInterpolationDistance);
-	attributes.push_back (ssdoMinInterpolationAngle);
-	attributes.push_back (ssdoDebugInterpolation);
 
 	return attributes;
 }

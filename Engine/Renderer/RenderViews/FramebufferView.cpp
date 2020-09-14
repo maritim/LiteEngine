@@ -26,14 +26,14 @@ FramebufferView::~FramebufferView ()
 	*/
 
 	for (std::size_t index = 0; index < _textureViews.size (); index ++) {
-		GL::FramebufferTexture2D (GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, 0, 0);
+		GL::FramebufferTexture (GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, 0, 0);
 	}
 
 	/*
 	 * Detach depth texture from attachment in FBO
 	*/
 
-	GL::FramebufferTexture2D (GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+	GL::FramebufferTexture (GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, 0, 0);
 
 	/*
 	 * Delete framebuffer
@@ -103,4 +103,9 @@ Resource<TextureView> FramebufferView::GetTextureView (std::size_t index) const
 Resource<TextureView> FramebufferView::GetDepthTextureView () const
 {
 	return _depthTextureView;
+}
+
+std::size_t FramebufferView::GetTextureViewCount () const
+{
+	return _textureViews.size ();
 }

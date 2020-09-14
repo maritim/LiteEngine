@@ -25,6 +25,8 @@ public:
 	Resource<Texture> GetTexture (std::size_t index) const;
 	Resource<Texture> GetDepthTexture () const;
 
+	std::size_t GetTextureCount () const;
+
 	MULTIPLE_CONTAINER_TEMPLATE (vector)
 };
 
