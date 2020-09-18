@@ -4,7 +4,7 @@
 
 int main (int argc, char* argv[])
 {
-	if (argc < 3) {
+	if (argc < 4) {
 		std::cout << "Error\n";
 
 		return -1;
@@ -12,7 +12,7 @@ int main (int argc, char* argv[])
 
 	ProjectGenerator projectGenerator;
 
-	projectGenerator.Generate (argv [1], argv [2]);
+	projectGenerator.Generate (argv [1], argv [2], argv [3]);
 
 	return 0;
 }

@@ -5,7 +5,7 @@
 
 #include "SceneGraph/Scene.h"
 
-class SceneSaver
+class ENGINE_API SceneSaver
 {
 public:
 	static SceneSaver& Instance ();

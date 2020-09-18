@@ -8,7 +8,7 @@
 #include "Core/Resources/Resource.h"
 #include "Renderer/RenderViews/TextureView.h"
 
-class FramebufferView : public Object
+class ENGINE_API FramebufferView : public Object
 {
 protected:
 	unsigned int _gpuIndex;

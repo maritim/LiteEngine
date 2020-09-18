@@ -5,7 +5,7 @@
 
 #include <glm/vec3.hpp>
 
-class ENGINE_API FPSCameraController : public Component
+class GAME_API FPSCameraController : public Component
 {
 	DECLARE_COMPONENT(FPSCameraController)
 

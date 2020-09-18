@@ -5,7 +5,7 @@
 #include <sstream>
 #include <iostream>
 
-ClassProduct HeaderProcessor::Process (const std::string& filename)
+ClassProduct HeaderProcessor::Process (const std::string& filename, const std::string& generatedAPI)
 {
 	std::ifstream file(filename.c_str ());
 
@@ -20,7 +20,7 @@ ClassProduct HeaderProcessor::Process (const std::string& filename)
 	while ( !token.is_one_of (Token::Kind::End, Token::Kind::Unexpected)) {
 
 		if (token.is (Token::Kind::Identifier) && token.lexeme () == "class") {
-			return ProcessClass (lex);
+			return ProcessClass (lex, generatedAPI);
 		}
 
 		token = lex.next ();
@@ -29,13 +29,13 @@ ClassProduct HeaderProcessor::Process (const std::string& filename)
 	return ClassProduct ();
 }
 
-ClassProduct HeaderProcessor::ProcessClass (Lexer& lexer)
+ClassProduct HeaderProcessor::ProcessClass (Lexer& lexer, const std::string& generatedAPI)
 {
 	ClassProduct classProduct;
 
 	auto token = lexer.next ();
 
-	if (token.lexeme () == "ENGINE_API") {
+	if (token.lexeme () == generatedAPI) {
 		token = lexer.next ();
 	}
 

@@ -1,19 +1,19 @@
 #include "ProjectProcessor.h"
 
-ProjectData ProjectProcessor::Process (const std::string& path)
+ProjectData ProjectProcessor::Process (const std::string& path, const std::string& generatedAPI)
 {
 	fs::path fspath (path);
 
-	ProcessDirectory (fspath);
+	ProcessDirectory (fspath, generatedAPI);
 
 	return _project;
 }
 
-void ProjectProcessor::ProcessDirectory (const fs::path fspath)
+void ProjectProcessor::ProcessDirectory (const fs::path fspath, const std::string& generatedAPI)
 {
 	for (const auto& entry : fs::directory_iterator(fspath)) {
 		if (fs::is_directory (entry.status ())) {
-			ProcessDirectory (entry.path ());
+			ProcessDirectory (entry.path (), generatedAPI);
 
 			continue;
 		}
@@ -23,7 +23,7 @@ void ProjectProcessor::ProcessDirectory (const fs::path fspath)
 
 			HeaderProcessor headerProcessor;
 
-			auto classProduct = headerProcessor.Process (entry.path ().string ());
+			auto classProduct = headerProcessor.Process (entry.path ().string (), generatedAPI);
 
 			AttachHeader (classProduct, entry.path().string ());
 		}

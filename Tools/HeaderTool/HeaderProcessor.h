@@ -24,9 +24,9 @@ struct AttributeProduct
 class HeaderProcessor
 {
 public:
-	ClassProduct Process (const std::string& filename);
+	ClassProduct Process (const std::string& filename, const std::string& generatedAPI);
 protected:
-	ClassProduct ProcessClass (Lexer& lexer);
+	ClassProduct ProcessClass (Lexer& lexer, const std::string& generatedAPI);
 	AttributeProduct ProcessAttribute (Lexer& lexer);
 	std::string ProcessTypeName (Lexer& lexer, Token& token);
 };

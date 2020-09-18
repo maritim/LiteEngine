@@ -7,7 +7,7 @@
 
 #include "SceneGraph/SceneObject.h"
 
-class ENGINE_API WeaponComponent : public Component
+class GAME_API WeaponComponent : public Component
 {
 	DECLARE_COMPONENT(WeaponComponent)
 

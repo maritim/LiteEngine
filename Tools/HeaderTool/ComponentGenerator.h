@@ -6,7 +6,7 @@
 class ComponentGenerator
 {
 public:
-	std::string Generate (const ClassType* classType);
+	std::string Generate (const ClassType* classType, const std::string& generatedAPI);
 protected:
 	std::string GenerateLoader (const ClassType* classType);
 	std::string GenerateSaver (const ClassType* classType);

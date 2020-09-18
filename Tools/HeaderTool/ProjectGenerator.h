@@ -11,9 +11,9 @@ namespace fs = std::experimental::filesystem;
 class ProjectGenerator
 {
 public:
-	void Generate (const std::string& path, const std::string& generatedPath);
+	void Generate (const std::string& path, const std::string& generatedPath, const std::string& generatedAPI);
 protected:
-	std::string ProcessHeader (const ClassType* classType);
+	std::string ProcessHeader (const ClassType* classType, const std::string& generatedAPI);
 
 	bool IsComponent (const ClassType* classType);
 };

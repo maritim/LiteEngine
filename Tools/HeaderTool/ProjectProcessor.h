@@ -20,9 +20,9 @@ protected:
 	ProjectData _project;
 
 public:
-	ProjectData Process (const std::string& path);
+	ProjectData Process (const std::string& path, const std::string& generatedAPI);
 protected:
-	void ProcessDirectory (const fs::path fspath);
+	void ProcessDirectory (const fs::path fspath, const std::string& generatedAPI);
 	void AttachHeader (const ClassProduct& classProduct, const std::string& path);
 };
 

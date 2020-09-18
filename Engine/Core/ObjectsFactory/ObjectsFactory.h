@@ -1,11 +1,13 @@
 #ifndef OBJECTSFACTORY_H
 #define OBJECTSFACTORY_H
 
+#include "Core/Interfaces/Object.h"
+
 #include <map>
 #include <string>
 
 template <class T>
-class ENGINE_API ObjectsFactory : public Object
+class ObjectsFactory : public Object
 {
 private:
 	static ObjectsFactory* _instance;
@@ -83,6 +85,12 @@ typename std::map<std::string, T* (*) ()>::const_iterator ObjectsFactory<T>::end
 {
 	return _workers.end ();
 }
+
+//TODO: Fix this
+
+class Component;
+
+template class ENGINE_API ObjectsFactory<Component>;
 
 /*
  *

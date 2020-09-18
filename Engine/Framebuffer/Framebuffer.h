@@ -10,7 +10,7 @@
 
 #include "Core/Iteration/MultipleContainer.h"
 
-class Framebuffer : public Object
+class ENGINE_API Framebuffer : public Object
 {
 protected:
 	std::vector<Resource<Texture>> _textures;

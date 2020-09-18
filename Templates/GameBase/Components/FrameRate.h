@@ -5,7 +5,7 @@
 
 #include "Components/TextGUIComponent.h"
 
-class ENGINE_API FrameRate : public Component
+class GAME_API FrameRate : public Component
 {
 	DECLARE_COMPONENT(FrameRate)
 

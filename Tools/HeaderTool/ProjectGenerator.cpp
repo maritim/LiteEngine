@@ -5,13 +5,13 @@
 #include "ProjectProcessor.h"
 #include "ComponentGenerator.h"
 
-void ProjectGenerator::Generate (const std::string& path, const std::string& generatedPath)
+void ProjectGenerator::Generate (const std::string& path, const std::string& generatedPath, const std::string& generatedAPI)
 {
 	std::string source;
 
 	ProjectProcessor projectProcessor;
 
-	auto project = projectProcessor.Process (path);
+	auto project = projectProcessor.Process (path, generatedAPI);
 
 	source = "#include \"Systems/Components/EditorComponent.h\"\n"
 			 "#include \"Resources/Loaders/ComponentLoaders/ComponentAttributeLoader.h\"\n"
@@ -19,9 +19,9 @@ void ProjectGenerator::Generate (const std::string& path, const std::string& gen
 			 "#include \"Systems/Components/ComponentAttributeWidget.h\"\n\n";
 
 	for (auto classType : project.Data) {
-		source += ProcessHeader (classType.second);
+		source += ProcessHeader (classType.second, generatedAPI);
 	}
-
+	
 	std::ofstream f(generatedPath);
 
 	f << source;
@@ -29,7 +29,7 @@ void ProjectGenerator::Generate (const std::string& path, const std::string& gen
 	f.close ();
 }
 
-std::string ProjectGenerator::ProcessHeader (const ClassType* classType)
+std::string ProjectGenerator::ProcessHeader (const ClassType* classType, const std::string& generatedAPI)
 {
 	std::string source;
 
@@ -37,7 +37,7 @@ std::string ProjectGenerator::ProcessHeader (const ClassType* classType)
 
 		ComponentGenerator componentGenerator;
 
-		source += componentGenerator.Generate (classType);
+		source += componentGenerator.Generate (classType, generatedAPI);
 	}
 
 	return source;

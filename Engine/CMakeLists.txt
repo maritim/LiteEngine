@@ -24,7 +24,7 @@ file (GLOB_RECURSE LiteEngineSourceFiles *)
 file (GLOB_RECURSE LiteEngineComponentHeaderFiles Components/*.h)
 
 add_custom_command(
-    COMMAND LiteHeaderTool Components ${CMAKE_CURRENT_BINARY_DIR}/GeneratedComponents.cpp
+    COMMAND LiteHeaderTool Components ${CMAKE_CURRENT_BINARY_DIR}/GeneratedComponents.cpp ENGINE_API
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/GeneratedComponents.cpp
     DEPENDS ${LiteEngineComponentHeaderFiles} LiteHeaderTool
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Engine

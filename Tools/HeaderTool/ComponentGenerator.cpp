@@ -53,12 +53,12 @@ static inline std::string capitalise (std::string s) {
 	return s;
 }
 
-std::string ComponentGenerator::Generate (const ClassType* classType)
+std::string ComponentGenerator::Generate (const ClassType* classType, const std::string& generatedAPI)
 {
 	std::string text;
 
 	text = "#include \"" + classType->Path + "\"\n"
-			"class ENGINE_API HT" + classType->TypeName + " : public " + classType->TypeName + ", public EditorComponent\n"
+			"class " + generatedAPI + " HT" + classType->TypeName + " : public " + classType->TypeName + ", public EditorComponent\n"
 			"{\n";
 
 	text += GenerateLoader (classType);
