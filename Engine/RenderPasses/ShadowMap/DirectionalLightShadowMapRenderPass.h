@@ -6,7 +6,7 @@
 #include "Core/Resources/Resource.h"
 #include "Renderer/RenderViews/ShaderView.h"
 
-#include "RenderPasses/ShadowMap/CascadedShadowMapDirectionalLightVolume.h"
+#include "RenderPasses/ShadowMap/CascadedShadowMapVolume.h"
 
 #include "Systems/Camera/Camera.h"
 #include "Cameras/OrthographicCamera.h"
@@ -18,11 +18,10 @@ class ENGINE_API DirectionalLightShadowMapRenderPass : public VolumetricLightRen
 protected:
 	Resource<ShaderView> _staticShaderView;
 	Resource<ShaderView> _animationShaderView;
-	CascadedShadowMapDirectionalLightVolume* _volume;
+	CascadedShadowMapVolume* _volume;
 
 public:
 	DirectionalLightShadowMapRenderPass ();
-	~DirectionalLightShadowMapRenderPass ();
 
 	virtual void Init (const RenderSettings& settings);
 	virtual RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,

@@ -13,8 +13,8 @@ DirectionalLightExponentialShadowMapRenderPass::DirectionalLightExponentialShado
 	DirectionalLightShadowMapRenderPass (),
 	_exponential (0)
 {
-	delete _volume;
-	_volume = new ExponentialCascadedShadowMapDirectionalLightVolume ();
+	// delete _volume;
+	// _volume = new ExponentialCascadedShadowMapDirectionalLightVolume ();
 }
 
 void DirectionalLightExponentialShadowMapRenderPass::Init ()

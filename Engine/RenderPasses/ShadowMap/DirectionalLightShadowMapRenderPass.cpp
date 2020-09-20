@@ -18,14 +18,9 @@
 #include "SceneNodes/SceneLayer.h"
 
 DirectionalLightShadowMapRenderPass::DirectionalLightShadowMapRenderPass () :
-	_volume (new CascadedShadowMapDirectionalLightVolume ())
+	_volume (nullptr)
 {
 
-}
-
-DirectionalLightShadowMapRenderPass::~DirectionalLightShadowMapRenderPass ()
-{
-	delete _volume;
 }
 
 void DirectionalLightShadowMapRenderPass::Init (const RenderSettings& settings)
@@ -89,7 +84,7 @@ void DirectionalLightShadowMapRenderPass::Clear ()
 	 * Clear shadow map volume
 	*/
 
-	_volume->Clear ();
+	delete _volume;
 }
 
 bool DirectionalLightShadowMapRenderPass::IsAvailable (const RenderLightObject* renderLightObject) const
@@ -108,8 +103,24 @@ void DirectionalLightShadowMapRenderPass::ShadowMapPass (const RenderScene* rend
 
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
+	/*
+	 * Bind shadow map cascade for writing
+	*/
+
+	_volume->GetFramebufferView ()->Activate ();
+
+	GL::Clear (GL_DEPTH_BUFFER_BIT);
+
 	for (std::size_t index = 0; index < shadow.cascadesCount; index++) {
-		_volume->BindForShadowMapCatch (index);
+
+		/*
+		 * Change resolution on viewport as shadow map size
+		*/
+
+		auto size = _volume->GetFramebuffer ()->GetDepthTexture ()->GetSize ();
+		glm::ivec2 startPos = glm::ivec2 ((index % 2) * size.width / 2, (index / 2) * size.height / 2);
+
+		GL::Viewport (startPos.x, startPos.y, size.width / 2, size.height / 2);
 
 		OrthographicCamera* lightCamera = (OrthographicCamera*) _volume->GetLightCamera (index);
 
@@ -363,15 +374,16 @@ void DirectionalLightShadowMapRenderPass::UpdateShadowMapVolume (const RenderLig
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
 	//TODO: Fix this
-	if (_volume->GetCascadesCount () != shadow.cascadesCount ||
-		_volume->GetShadowMapVolume (0)->GetFramebuffer ()->GetDepthTexture ()->GetSize ().width != (std::size_t) shadow.resolution.x ||
-		_volume->GetShadowMapVolume (0)->GetFramebuffer ()->GetDepthTexture ()->GetSize ().height != (std::size_t) shadow.resolution.y) {
+	if (_volume == nullptr ||
+		_volume->GetCascadeLevels () != shadow.cascadesCount ||
+		_volume->GetFramebuffer ()->GetDepthTexture ()->GetSize ().width != (std::size_t) shadow.resolution.x ||
+		_volume->GetFramebuffer ()->GetDepthTexture ()->GetSize ().height != (std::size_t) shadow.resolution.y) {
 
 		/*
 		 * Clear shadow map volume
 		*/
 
-		_volume->Clear ();
+		delete _volume;
 
 		/*
 		 * Initialize shadow map volume
@@ -391,11 +403,22 @@ void DirectionalLightShadowMapRenderPass::InitShadowMapVolume (const RenderLight
 
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
-	if (!_volume->Init (shadow.cascadesCount, shadow.resolution)) {
-		Console::LogError (std::string () + "Shadow map cannot be initialized!" +
-			" It is not possible to continue the process. End now!");
-		exit (1);
-	}
+	Resource<Texture> texture = Resource<Texture> (new Texture ("shadowMap"));
+
+	texture->SetSize (Size (shadow.resolution.x * 2, shadow.resolution.y * 2));
+	texture->SetMipmapGeneration (false);
+	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_DEPTH16);
+	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_DEPTH);
+	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
+	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_BORDER);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+	texture->SetAnisotropicFiltering (false);
+	texture->SetBorderColor (Color (glm::vec4 (1.0)));
+
+	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (nullptr, texture));
+
+	_volume = new CascadedShadowMapVolume (framebuffer, shadow.cascadesCount);
 
 	for (std::size_t index = 0; index < shadow.cascadesCount; index ++) {
 		_volume->SetLightCamera (index, new OrthographicCamera ());
