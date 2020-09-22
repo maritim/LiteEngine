@@ -395,11 +395,13 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
         ImGui::Separator();
 
 		ImGui::SliderFloat ("Diffuse Cone Distance", &_settings->vct_diffuse_cone_distance, 0.0f, 1.0f);
+		ImGui::SliderFloat ("Diffuse Origin Bias", &_settings->vct_diffuse_origin_bias, 0.0f, 1.0f);
 
         ImGui::Separator();
 
 		ImGui::SliderFloat ("Specular Cone Ratio", &_settings->vct_specular_cone_ratio, 0.0f, 1.0f, "%3f", 10.0f);
 		ImGui::SliderFloat ("Specular Cone Distance", &_settings->vct_specular_cone_distance, 0.0f, 1.0f);
+		ImGui::SliderFloat ("Specular Origin Bias", &_settings->vct_specular_origin_bias, 0.0f, 1.0f);
 
         ImGui::Separator();
 
@@ -430,6 +432,13 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 			ImGui::Checkbox ("Show Voxels", &_settings->vct_debug_show_voxels);
 
+			if (_settings->vct_debug_show_voxels && _settings->renderMode == "VoxelConeTracingRenderModule") {
+				_settings->renderMode = "VoxelRayTracingRenderModule";
+			}
+			else if (!_settings->vct_debug_show_voxels && _settings->renderMode == "VoxelRayTracingRenderModule") {
+				_settings->renderMode = "VoxelConeTracingRenderModule";
+			}
+
 			std::size_t speed = 1;
 			ImGui::InputScalar ("Mipmap Level", ImGuiDataType_U32, &_settings->vct_debug_volume_mipmap_level, &speed);
 			_settings->vct_debug_volume_mipmap_level = Extensions::MathExtend::Clamp (
@@ -437,6 +446,8 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 				(std::size_t) _settings->vct_mipmap_levels - 1);
 
 			auto vctStat = StatisticsManager::Instance ()->GetStatisticsObject <VCTStatisticsObject> ();
+
+			ImGui::Separator ();
 
 			if (ImGui::TreeNode ("Indirect Light")) {
 

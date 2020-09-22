@@ -55,60 +55,13 @@ void main()
 			float contributionCount = 0;
 
 			for (int i=0; i<4; i++) {
-				// float contribution = values [faces[faceIndex][i]].a == 0 ? 0.0 : 1.0;
 
 				finalColor +=  values [faces [faceIndex][i]] +
 					values [backFaces [faceIndex][i]] * (1.0 - values [faces [faceIndex][i]].a);
-
-				// finalColor.rgb += voxelColor.rgb * contribution;
-				// contributionCount += contribution; 
-				// finalColor.a += voxelColor.a;
 			}
 
 			ivec3 voxelPos = ivec3 (dstPos.x + DstMipRes * faceIndex, dstPos.y, dstPos.z);
 			imageStore(dstImageMip, voxelPos, finalColor / 4.0);// vec4(finalColor.rgb / contributionCount, finalColor.a / 4.0));
 		}
-
-		// imageStore(dstImageMip, dstPos, (
-		// 	values [0] + values [4] * (1.0 - values [0].a),
-		// 	values [1] + values [5] * (1.0 - values [1].a),
-		// 	values [2] + values [6] * (1.0 - values [2].a),
-		// 	values [3] + values [7] * (1.0 - values [3].a)
-		// ) / 4.0);
-
-		// imageStore(dstImageMip, dstPos + ivec3 (DstMipRes, 0, 0), (
-		// 	values [4] + values [0] * (1.0 - values [4].a),
-		// 	values [5] + values [1] * (1.0 - values [5].a),
-		// 	values [6] + values [2] * (1.0 - values [6].a),
-		// 	values [7] + values [3] * (1.0 - values [7].a)
-		// ) / 4.0);
-
-		// imageStore(dstImageMip, dstPos + ivec3 (DstMipRes * 2, 0, 0), (
-		// 	values [0] + values [2] * (1.0 - values [0].a),
-		// 	values [1] + values [3] * (1.0 - values [1].a),
-		// 	values [4] + values [6] * (1.0 - values [4].a),
-		// 	values [5] + values [7] * (1.0 - values [5].a)
-		// ) / 4.0);
-
-		// imageStore(dstImageMip, dstPos + ivec3 (DstMipRes * 3, 0, 0), (
-		// 	values [2] + values [0] * (1.0 - values [2].a),
-		// 	values [3] + values [1] * (1.0 - values [3].a),
-		// 	values [6] + values [4] * (1.0 - values [6].a),
-		// 	values [7] + values [5] * (1.0 - values [7].a)
-		// ) / 4.0);
-
-		// imageStore(dstImageMip, dstPos + ivec3 (DstMipRes * 4, 0, 0), (
-		// 	values [0] + values [1] * (1.0 - values [0].a),
-		// 	values [2] + values [3] * (1.0 - values [2].a),
-		// 	values [4] + values [5] * (1.0 - values [4].a),
-		// 	values [6] + values [7] * (1.0 - values [6].a)
-		// ) / 4.0);
-
-		// imageStore(dstImageMip, dstPos + ivec3 (DstMipRes * 5, 0, 0), (
-		// 	values [1] + values [0] * (1.0 - values [1].a),
-		// 	values [3] + values [2] * (1.0 - values [3].a),
-		// 	values [5] + values [4] * (1.0 - values [5].a),
-		// 	values [7] + values [6] * (1.0 - values [7].a)
-		// ) / 4.0);
 	}
 }

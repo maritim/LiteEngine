@@ -17,6 +17,7 @@ uniform vec3 cameraPosition;
 
 uniform float vctIndirectIntensity;
 uniform float diffuseConeDistance;
+uniform float diffuseOriginBias;
 
 #include "deferred.glsl"
 #include "VoxelConeTracing/voxelConeTracing.glsl"
@@ -41,7 +42,7 @@ vec3 CalcIndirectDiffuseLight(vec3 in_position, vec3 in_normal)
 	vec3 worldPosition = vec3 (inverseViewMatrix * vec4 (in_position, 1.0));
 	vec3 worldNormal = normalMatrix * inverseNormalWorldMatrix * in_normal;
 
-	vec3 voxelPos = GetPositionInVolume (worldPosition);
+	vec3 voxelPos = GetPositionInVolume (worldPosition) + worldNormal * diffuseOriginBias;
 
 	vec3 tangent = normalize (vec3 (1, 0, 0) - worldNormal * dot (vec3 (1, 0, 0), worldNormal)); //normalize(Orthogonal(worldNormal));
 	vec3 bitangent = normalize(cross(tangent, worldNormal));

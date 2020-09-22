@@ -1,12 +1,12 @@
 #include "VoxelConeTracingRenderModule.h"
 
 #include "RenderPasses/ResultFrameBufferGenerationRenderPass.h"
+#include "RenderPasses/Voxelization/VoxelGenerationRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelizationRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelRadianceInjectionRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelMipmapRenderPass.h"
 #include "RenderPasses/Voxelization/VoxelBorderRenderPass.h"
-#include "RenderPasses/VoxelRayTracing/VRTRenderPass.h"
 #include "RenderPasses/DeferredGeometryRenderPass.h"
 #include "RenderPasses/DeferredSkyboxRenderPass.h"
 #include "RenderPasses/DeferredBlitRenderPass.h"
@@ -53,11 +53,19 @@ void VoxelConeTracingRenderModule::Init ()
 	*/
 
 	_renderPasses.push_back (new ResultFrameBufferGenerationRenderPass ());
-	_renderPasses.push_back (new VoxelizationRenderPass ());
-	_renderPasses.push_back (new VRTRenderPass ());
+	_renderPasses.push_back (new VoxelGenerationRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
-		.Volume (new VCTDebugCheckRenderVolumeCollection ())
-		.Attach (new DeferredGeometryRenderPass ())
+		.Volume (new VCTVoxelizationCheckRenderVolumeCollection ())
+		.Attach (new VoxelizationRenderPass ())
+		.Attach (ContainerRenderPass::Builder ()
+			.Volume (new DirectionalLightContainerRenderVolumeCollection ())
+			.Attach (new RSMDirectionalLightAccumulationRenderPass ())
+			.Attach (new VoxelRadianceInjectionRenderPass ())
+			.Build ())
+		.Attach (new VoxelMipmapRenderPass ())
+		// .Attach (new VoxelBorderRenderPass ())
+		.Build ());
+	_renderPasses.push_back (new DeferredGeometryRenderPass ());
 		// .Attach (ContainerRenderPass::Builder ()
 		// 	.Volume (new IterateOverRenderVolumeCollection (1))
 		// 	.Attach (new SSAOSamplesGenerationRenderPass ())
@@ -65,55 +73,44 @@ void VoxelConeTracingRenderModule::Init ()
 		// 	.Attach (new SSAORenderPass ())
 		// 	.Attach (new SSAOBlurRenderPass ())
 		// 	.Build ())
-		.Attach (new AmbientLightRenderPass ())
-		.Attach (ContainerRenderPass::Builder ()
-			.Volume (new VCTVoxelizationCheckRenderVolumeCollection ())
-			.Attach (ContainerRenderPass::Builder ()
-				.Volume (new DirectionalLightContainerRenderVolumeCollection ())
-				.Attach (new RSMDirectionalLightAccumulationRenderPass ())
-				.Attach (new VoxelRadianceInjectionRenderPass ())
-				.Build ())
-			.Attach (new VoxelMipmapRenderPass ())
-			// .Attach (new VoxelBorderRenderPass ())
-			.Build ())
-		.Attach (ContainerRenderPass::Builder ()
-			.Volume (new DirectionalLightContainerRenderVolumeCollection ())
-			.Attach (new VCTIndirectDiffuseLightRenderPass ())
-			.Attach (new VCTIndirectSpecularLightRenderPass ())
-			.Attach (new VCTAmbientOcclusionRenderPass ())
-			.Attach (new VCTSubsurfaceScatteringRenderPass ())
-			.Attach (new VCTDirectionalLightRenderPass ())
-			.Build ())
-		.Attach (new DeferredSkyboxRenderPass ())
+	_renderPasses.push_back (new AmbientLightRenderPass ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
+		.Attach (new VCTIndirectDiffuseLightRenderPass ())
+		.Attach (new VCTIndirectSpecularLightRenderPass ())
+		.Attach (new VCTAmbientOcclusionRenderPass ())
+		.Attach (new VCTSubsurfaceScatteringRenderPass ())
+		.Attach (new VCTDirectionalLightRenderPass ())
+		.Build ());
+	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new IterateOverRenderVolumeCollection (1))
+		.Attach (new IdleRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
-			.Attach (new IdleRenderPass ())
-			.Attach (ContainerRenderPass::Builder ()
-				.Volume (new IterateOverRenderVolumeCollection (1))
-				.Attach (new SSRRenderPass ())
-				.Attach (new SSRAccumulationRenderPass ())
-				.Build ())
-			.Attach (ContainerRenderPass::Builder ()
-				.Volume (new IterateOverRenderVolumeCollection (1))
-				.Attach	(new TAARenderPass ())
-				.Attach (new TAASwapRenderPass ())
-				.Build ())
-			.Attach (ContainerRenderPass::Builder ()
-				.Volume (new IterateOverRenderVolumeCollection (1))
-				.Attach (new BrightExtractionRenderPass ())
-				.Attach (ContainerRenderPass::Builder ()
-					.Volume (new IterateOverRenderVolumeCollection (5))
-					.Attach (new BloomHorizontalBlurRenderPass ())
-					.Attach (new BloomVerticalBlurRenderPass ())
-					.Build ())
-				.Attach (new BloomAccumulationRenderPass ())
-				.Build ())
-			.Attach (new HDRRenderPass ())
-			.Attach (new TextureLUTRenderPass ())
-			.Attach (new GammaCorrectionRenderPass ())
-			.Attach (new DeferredBlitRenderPass ())
+			.Attach (new SSRRenderPass ())
+			.Attach (new SSRAccumulationRenderPass ())
 			.Build ())
-		.Attach (new ForwardRenderPass ())
-		.Attach (new GUIGizmosRenderPass ())
+		.Attach (ContainerRenderPass::Builder ()
+			.Volume (new IterateOverRenderVolumeCollection (1))
+			.Attach	(new TAARenderPass ())
+			.Attach (new TAASwapRenderPass ())
+			.Build ())
+		.Attach (ContainerRenderPass::Builder ()
+			.Volume (new IterateOverRenderVolumeCollection (1))
+			.Attach (new BrightExtractionRenderPass ())
+			.Attach (ContainerRenderPass::Builder ()
+				.Volume (new IterateOverRenderVolumeCollection (5))
+				.Attach (new BloomHorizontalBlurRenderPass ())
+				.Attach (new BloomVerticalBlurRenderPass ())
+				.Build ())
+			.Attach (new BloomAccumulationRenderPass ())
+			.Build ())
+		.Attach (new HDRRenderPass ())
+		.Attach (new TextureLUTRenderPass ())
+		.Attach (new GammaCorrectionRenderPass ())
+		.Attach (new DeferredBlitRenderPass ())
 		.Build ());
+	_renderPasses.push_back (new ForwardRenderPass ());
+	_renderPasses.push_back (new GUIGizmosRenderPass ());
 }

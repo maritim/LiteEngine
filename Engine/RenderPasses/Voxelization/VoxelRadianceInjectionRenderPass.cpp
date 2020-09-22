@@ -140,39 +140,19 @@ std::vector<PipelineAttribute> VoxelRadianceInjectionRenderPass::GetCustomAttrib
 {
 	auto voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
 
-	std::vector<PipelineAttribute> attributes;
+	std::vector<PipelineAttribute> attributes = voxelVolume->GetCustomAttributes ();
 
 	PipelineAttribute rsmResolution;
-	PipelineAttribute minVertex;
-	PipelineAttribute maxVertex;
-	PipelineAttribute volumeSizeAttribute;
-	PipelineAttribute volumeMipmapLevels;
 
 	rsmResolution.type = PipelineAttribute::AttrType::ATTR_2F;
-	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
-	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
-	volumeSizeAttribute.type = PipelineAttribute::AttrType::ATTR_3I;
-	volumeMipmapLevels.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	rsmResolution.name = "rsmResolution";
-	minVertex.name = "minVertex";
-	maxVertex.name = "maxVertex";
-	volumeSizeAttribute.name = "volumeSize";
-	volumeMipmapLevels.name = "volumeMipmapLevels";
 
 	RenderLightObject::Shadow shadow = renderLightObject->GetShadow ();
 
 	rsmResolution.value = glm::vec3 (shadow.resolution, 0.0f);
-	minVertex.value = voxelVolume->GetMinVertex ();
-	maxVertex.value = voxelVolume->GetMaxVertex ();
-	volumeSizeAttribute.value = glm::vec3 ((float) voxelVolume->GetFramebuffer ()->GetTexture (0)->GetSize ().width);
-	volumeMipmapLevels.value.x = voxelVolume->GetFramebuffer ()->GetTextureCount ();
 
 	attributes.push_back (rsmResolution);
-	attributes.push_back (minVertex);
-	attributes.push_back (maxVertex);
-	attributes.push_back (volumeSizeAttribute);
-	attributes.push_back (volumeMipmapLevels);
 
 	return attributes;
 }

@@ -26,5 +26,5 @@
 	<LPV volumeSize="8" iterations="10" injectionBias="0" geometryOcclusion="true" indirectDiffuseIntensity="0" indirectSpecularIntensity="1" indirectRefractiveIntensity="1" />
 
 	<VCT voxelsSize="256" continuousVoxelization="false" bordering="false"
-		mipmapLevels="6" voxelShadowBias="0" indirectDiffuseIntensity="0" indirectSpecularIntensity="1" refractiveIndirectIntensity="1" diffuseConeDistance="0.3" specularConeRatio="0.1" specularConeDistance="0.6" refractiveConeRatio="0.1" refractiveConeDistance="0.6" shadowConeRatio="0.01" shadowConeDistance="0.365" originBias="0.0025" />
+		mipmapLevels="6" voxelShadowBias="0" indirectDiffuseIntensity="0" indirectSpecularIntensity="1" refractiveIndirectIntensity="1" diffuseConeDistance="0.3" diffuseOriginBias="0.007" specularConeRatio="0.1" specularConeDistance="0.6" specularOriginBias="0.007" refractiveConeRatio="0.1" refractiveConeDistance="0.6" shadowConeRatio="0.01" shadowConeDistance="0.365" originBias="0.0025" />
 </RenderSettings>

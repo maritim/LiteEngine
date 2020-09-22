@@ -4,7 +4,8 @@ in vec2 geom_RayCoordinates;
 
 uniform vec3 cameraPosition;
 
-uniform sampler3D voxelTexture[8];
+uniform sampler3D voxelTexture;
+uniform sampler3D voxelMipmapTexture;
 
 uniform vec3 minVertex;
 uniform vec3 maxVertex;
@@ -137,12 +138,9 @@ void main ()
 		// Sample 3D texture at current position.
 		vec3 texCoords = voxelPos / mipmapVolumeSize;
 
-		if (volumeMipmapLevel > 0) {
-			texCoords.x /= 6.0;
-			texCoords.x += 1.0 / 6.0 * face;
-		}
-
-		vec4 color = texture (voxelTexture[volumeMipmapLevel], texCoords);
+		vec4 color = volumeMipmapLevel == 0 ?
+			texture (voxelTexture, texCoords) :
+			texture (voxelMipmapTexture, vec3 (texCoords.x / 6 + 1.0 / 6.0 * face, texCoords.y, texCoords.z));
 
 
 		// Exit loop if a single sample has an alpha value greater than 0.

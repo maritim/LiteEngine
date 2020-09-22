@@ -37,7 +37,7 @@ float CalcOcclusion (vec3 in_position, vec3 in_normal)
 	vec3 worldPosition = vec3 (inverseViewMatrix * vec4 (in_position, 1.0));
 	vec3 worldNormal = normalMatrix * inverseNormalWorldMatrix * in_normal;
 
-	vec3 voxelPos = GetPositionInVolume (worldPosition);
+	vec3 voxelPos = GetPositionInVolume (worldPosition) + worldNormal * originBias;
 
 	vec3 tangent = normalize(Orthogonal(worldNormal));
 	vec3 bitangent = normalize(cross(worldNormal, tangent));

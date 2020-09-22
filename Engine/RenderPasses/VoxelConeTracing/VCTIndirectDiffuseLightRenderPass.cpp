@@ -78,23 +78,23 @@ std::vector<PipelineAttribute> VCTIndirectDiffuseLightRenderPass::GetCustomAttri
 
 	PipelineAttribute vctIndirectIntensity;
 	PipelineAttribute diffuseConeDistance;
-	PipelineAttribute originBias;
+	PipelineAttribute diffuseOriginBias;
 
 	vctIndirectIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 	diffuseConeDistance.type = PipelineAttribute::AttrType::ATTR_1F;
-	originBias.type = PipelineAttribute::AttrType::ATTR_1F;
+	diffuseOriginBias.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	vctIndirectIntensity.name = "vctIndirectIntensity";
 	diffuseConeDistance.name = "diffuseConeDistance";
-	originBias.name = "originBias";
+	diffuseOriginBias.name = "diffuseOriginBias";
 
 	vctIndirectIntensity.value.x = settings.vct_indirect_diffuse_intensity;
 	diffuseConeDistance.value.x = settings.vct_diffuse_cone_distance;
-	originBias.value.x = settings.vct_origin_bias;
+	diffuseOriginBias.value.x = settings.vct_diffuse_origin_bias;
 
 	attributes.push_back (vctIndirectIntensity);
 	attributes.push_back (diffuseConeDistance);
-	attributes.push_back (originBias);
+	attributes.push_back (diffuseOriginBias);
 
 	return attributes;
 }

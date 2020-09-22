@@ -11,19 +11,20 @@ layout (local_size_x = 24, local_size_y = 4, local_size_z = 4) in;
 
 uniform int DstMipRes;
 
+uniform int srcMipLevel;
 uniform sampler3D srcTextureMip;
 
 layout(binding = 0, rgba8) uniform writeonly image3D dstImageMip;
 
 vec4[8] fetchTexels(ivec3 pos) {
-  return vec4[8] (texelFetch(srcTextureMip, pos + ivec3(1, 1, 1), 0),  // 0
-                  texelFetch(srcTextureMip, pos + ivec3(1, 1, 0), 0),  // 1
-                  texelFetch(srcTextureMip, pos + ivec3(1, 0, 1), 0),  // 2
-                  texelFetch(srcTextureMip, pos + ivec3(1, 0, 0), 0),  // 3
-                  texelFetch(srcTextureMip, pos + ivec3(0, 1, 1), 0),  // 4
-                  texelFetch(srcTextureMip, pos + ivec3(0, 1, 0), 0),  // 5
-                  texelFetch(srcTextureMip, pos + ivec3(0, 0, 1), 0),  // 6
-                  texelFetch(srcTextureMip, pos + ivec3(0, 0, 0), 0)); // 7
+  return vec4[8] (texelFetch(srcTextureMip, pos + ivec3(1, 1, 1), srcMipLevel),  // 0
+                  texelFetch(srcTextureMip, pos + ivec3(1, 1, 0), srcMipLevel),  // 1
+                  texelFetch(srcTextureMip, pos + ivec3(1, 0, 1), srcMipLevel),  // 2
+                  texelFetch(srcTextureMip, pos + ivec3(1, 0, 0), srcMipLevel),  // 3
+                  texelFetch(srcTextureMip, pos + ivec3(0, 1, 1), srcMipLevel),  // 4
+                  texelFetch(srcTextureMip, pos + ivec3(0, 1, 0), srcMipLevel),  // 5
+                  texelFetch(srcTextureMip, pos + ivec3(0, 0, 1), srcMipLevel),  // 6
+                  texelFetch(srcTextureMip, pos + ivec3(0, 0, 0), srcMipLevel)); // 7
 }
 
 void main() 

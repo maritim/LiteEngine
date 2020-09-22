@@ -55,7 +55,7 @@ RenderVolumeCollection* RSMAccumulationRenderPass::Execute (const RenderScene* r
 
 	EndShadowMapPass ();
 
-	return rvc->Insert ("ReflectiveShadowMapVolume", _rsmVolume);
+	return rvc->Insert ("ReflectiveShadowMapVolume", _rsmVolume, false);
 }
 
 bool RSMAccumulationRenderPass::IsAvailable (const RenderLightObject* renderLightObject) const

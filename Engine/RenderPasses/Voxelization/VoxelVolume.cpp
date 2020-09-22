@@ -8,14 +8,12 @@
 
 #include "Debug/Logger/Logger.h"
 
-VoxelVolume::VoxelVolume (const Resource<Framebuffer>& framebuffer) :
+VoxelVolume::VoxelVolume (const Resource<Framebuffer>& framebuffer, std::size_t mipmapLevels) :
 	FramebufferRenderVolume (framebuffer)
 {
 	/*
 	 * Create attributes
 	*/
-
-	_attributes.clear ();
 
 	PipelineAttribute minVertex;
 	PipelineAttribute maxVertex;
@@ -33,26 +31,12 @@ VoxelVolume::VoxelVolume (const Resource<Framebuffer>& framebuffer) :
 	volumeMipmapLevels.name = "volumeMipmapLevels";
 
 	volumeSizeAttribute.value = glm::vec3 ((float) _framebuffer->GetTexture (0)->GetSize ().width);
-	volumeMipmapLevels.value.x = _framebuffer->GetTextureCount ();
+	volumeMipmapLevels.value.x = mipmapLevels;
 
 	_attributes.push_back (minVertex);
 	_attributes.push_back (maxVertex);
 	_attributes.push_back (volumeSizeAttribute);
 	_attributes.push_back (volumeMipmapLevels);
-
-	for (std::size_t index = 0; index < 8; index ++) {
-
-		PipelineAttribute textureAttribute;
-
-		textureAttribute.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
-
-		textureAttribute.name = "voxelTexture[" + std::to_string (index) + "]";
-
-		textureAttribute.value.x = index >= _framebufferView->GetTextureViewCount () ? -1 :
-			_framebufferView->GetTextureView (index)->GetGPUIndex ();
-
-		_attributes.push_back (textureAttribute);
-	}
 }
 
 void VoxelVolume::UpdateBoundingBox(const glm::vec3& minVertex, const glm::vec3& maxVertex)
@@ -81,16 +65,21 @@ void VoxelVolume::UpdateBoundingBox(const glm::vec3& minVertex, const glm::vec3&
 	 * Update attributes
 	*/
 
-	_attributes [0].value = minVertex - glm::vec3(difX / 2.0f, difY / 2.0f, difZ / 2.0f);
-	_attributes [1].value = maxVertex + glm::vec3(difX / 2.0f, difY / 2.0f, difZ / 2.0f);
+	_attributes [2].value = minVertex - glm::vec3(difX / 2.0f, difY / 2.0f, difZ / 2.0f);
+	_attributes [3].value = maxVertex + glm::vec3(difX / 2.0f, difY / 2.0f, difZ / 2.0f);
 }
 
 const glm::vec3& VoxelVolume::GetMinVertex () const
 {
-	return _attributes [0].value;
+	return _attributes [2].value;
 }
 
 const glm::vec3& VoxelVolume::GetMaxVertex () const
 {
-	return _attributes [1].value;
+	return _attributes [3].value;
+}
+
+std::size_t VoxelVolume::GetMipmapLevels () const
+{
+	return (std::size_t) _attributes [5].value.x;
 }

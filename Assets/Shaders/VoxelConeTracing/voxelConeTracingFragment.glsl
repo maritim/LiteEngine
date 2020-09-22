@@ -64,9 +64,9 @@ vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shinine
 	return specularColor;
 }
 
-float CalcShadow (vec3 in_position)
+float CalcShadow (vec3 in_position, vec3 in_normal)
 {
-	vec3 voxelPos = GetPositionInVolume (in_position);
+	vec3 voxelPos = GetPositionInVolume (in_position) + in_normal * originBias;
 
 	vec3 lightDir = vec3 (inverseViewMatrix * vec4 (-lightDirection, 0.0));
 
@@ -86,7 +86,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse,
 	vec3 directDiffuseColor = CalcDirectDiffuseLight (in_position, in_normal);
 	vec3 directSpecularColor = CalcDirectSpecularLight (in_position, in_normal, in_shininess);
 
-	float shadow = CalcShadow (worldPosition);
+	float shadow = CalcShadow (worldPosition, worldNormal);
 
 	directDiffuseColor = shadow * directDiffuseColor;
 	directSpecularColor = shadow * directSpecularColor;

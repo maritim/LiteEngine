@@ -18,6 +18,7 @@ uniform vec3 cameraPosition;
 uniform float vctIndirectIntensity;
 uniform float specularConeRatio;
 uniform float specularConeDistance;
+uniform float specularOriginBias;
 
 #include "deferred.glsl"
 #include "VoxelConeTracing/voxelConeTracing.glsl"
@@ -35,8 +36,8 @@ vec3 CalcIndirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shini
 	vec3 reflectionDir = reflect (eyeToFragment, worldNormal);
 
 	// float specularConeRatio = 1.0 / in_shininess;
-		
-	vec3 reflectTraceOrigin = GetPositionInVolume (worldPosition);
+
+	vec3 reflectTraceOrigin = GetPositionInVolume (worldPosition) + worldNormal * specularOriginBias;
 	specularLight = voxelTraceCone (reflectTraceOrigin, reflectionDir, specularConeRatio, specularConeDistance).xyz;
 
 	return specularLight * vctIndirectIntensity;

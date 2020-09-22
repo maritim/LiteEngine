@@ -21,7 +21,9 @@ FramebufferRenderVolume::FramebufferRenderVolume (const Resource<Framebuffer>& f
 
 		PipelineAttribute textureAttribute;
 
-		textureAttribute.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
+		textureAttribute.type = texture->GetType () == TEXTURE_TYPE::TEXTURE_2D ?
+			PipelineAttribute::AttrType::ATTR_TEXTURE_2D :
+			PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
 
 		textureAttribute.name = texture->GetName ();
 
@@ -36,7 +38,9 @@ FramebufferRenderVolume::FramebufferRenderVolume (const Resource<Framebuffer>& f
 
 		PipelineAttribute textureAttribute;
 
-		textureAttribute.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
+		textureAttribute.type = _framebuffer->GetDepthTexture ()->GetType () == TEXTURE_TYPE::TEXTURE_2D ?
+			PipelineAttribute::AttrType::ATTR_TEXTURE_2D :
+			PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
 
 		textureAttribute.name = _framebuffer->GetDepthTexture ()->GetName ();
 

@@ -91,8 +91,10 @@ struct RenderSettings : public Object
 	float vct_indirect_specular_intensity;
 	float vct_indirect_refractive_intensity;
 	float vct_diffuse_cone_distance;
+	float vct_diffuse_origin_bias;
 	float vct_specular_cone_ratio;
 	float vct_specular_cone_distance;
+	float vct_specular_origin_bias;
 	float vct_refractive_cone_ratio;
 	float vct_refractive_cone_distance;
 	float vct_shadow_cone_ratio;

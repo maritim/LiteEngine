@@ -80,24 +80,26 @@ void VoxelMipmapRenderPass::GenerateMipmaps (const RenderSettings& settings, Ren
 
 	VoxelVolume* voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
 
-	for (std::size_t mipLevel = 0; mipLevel < voxelVolume->GetFramebuffer ()->GetTextureCount () - 1; mipLevel++) {
+	for (std::size_t mipLevel = 0; mipLevel < voxelVolume->GetMipmapLevels () - 1; mipLevel++) {
 
 		if (mipLevel == 0) {
 			Pipeline::SetShader (_anisotropicShaderView);
 
-			Pipeline::SendCustomAttributes (_anisotropicShaderView, GetCustomAttributes (rvc, mipLevel));
+			Pipeline::SendCustomAttributes (_anisotropicShaderView, GetCustomAttributes (rvc, 0));
 
 			GL::Uniform1i (_anisotropicShaderView->GetUniformLocation ("DstMipRes"), dstMipRes);
 		} else {
 			Pipeline::SetShader (_shaderView);
 
-			Pipeline::SendCustomAttributes (_shaderView, GetCustomAttributes (rvc, mipLevel));
+			Pipeline::SendCustomAttributes (_shaderView, GetCustomAttributes (rvc, 1));
 
 			GL::Uniform1i (_shaderView->GetUniformLocation ("DstMipRes"), dstMipRes);
 		}
 
-		unsigned int voxelTextureID = voxelVolume->GetFramebufferView ()->GetTextureView (mipLevel + 1)->GetGPUIndex ();
-		GL::BindImageTexture (0, voxelTextureID, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+		GL::Uniform1i (_shaderView->GetUniformLocation ("srcMipLevel"), mipLevel == 0 ? 0 : mipLevel - 1);
+
+		unsigned int voxelTextureID = voxelVolume->GetFramebufferView ()->GetTextureView (1)->GetGPUIndex ();
+		GL::BindImageTexture (0, voxelTextureID, mipLevel, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
 
 		int numWorkGroups = (int) std::ceil (dstMipRes / 4.0);
 
@@ -130,34 +132,14 @@ std::vector<PipelineAttribute> VoxelMipmapRenderPass::GetCustomAttributes (Rende
 	std::vector<PipelineAttribute> attributes;
 
 	PipelineAttribute srcTextureMip;
-	PipelineAttribute minVertex;
-	PipelineAttribute maxVertex;
-	PipelineAttribute volumeSizeAttribute;
-	PipelineAttribute volumeMipmapLevels;
 
 	srcTextureMip.type = PipelineAttribute::AttrType::ATTR_TEXTURE_3D;
-	minVertex.type = PipelineAttribute::AttrType::ATTR_3F;
-	maxVertex.type = PipelineAttribute::AttrType::ATTR_3F;
-	volumeSizeAttribute.type = PipelineAttribute::AttrType::ATTR_3I;
-	volumeMipmapLevels.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	srcTextureMip.name = "srcTextureMip";
-	minVertex.name = "minVertex";
-	maxVertex.name = "maxVertex";
-	volumeSizeAttribute.name = "volumeSize";
-	volumeMipmapLevels.name = "volumeMipmapLevels";
 
 	srcTextureMip.value.x = voxelVolume->GetFramebufferView ()->GetTextureView (mipLevel)->GetGPUIndex ();
-	minVertex.value = voxelVolume->GetMinVertex ();
-	maxVertex.value = voxelVolume->GetMaxVertex ();
-	volumeSizeAttribute.value = glm::vec3 ((float) voxelVolume->GetFramebuffer ()->GetTexture (0)->GetSize ().width);
-	volumeMipmapLevels.value.x = voxelVolume->GetFramebuffer ()->GetTextureCount ();
 
 	attributes.push_back (srcTextureMip);
-	attributes.push_back (minVertex);
-	attributes.push_back (maxVertex);
-	attributes.push_back (volumeSizeAttribute);
-	attributes.push_back (volumeMipmapLevels);
 
 	return attributes;
 }

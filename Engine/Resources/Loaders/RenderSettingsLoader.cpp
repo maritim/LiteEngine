@@ -263,8 +263,10 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	std::string indirectSpecularIntensity = xmlElem->Attribute ("indirectSpecularIntensity");
 	std::string refractiveIndirectIntensity = xmlElem->Attribute ("refractiveIndirectIntensity");
 	std::string diffuseConeDistance = xmlElem->Attribute ("diffuseConeDistance");
+	std::string diffuseOriginBias = xmlElem->Attribute ("diffuseOriginBias");
 	std::string specularConeRatio = xmlElem->Attribute ("specularConeRatio");
 	std::string specularConeDistance = xmlElem->Attribute ("specularConeDistance");
+	std::string specularOriginBias = xmlElem->Attribute ("specularOriginBias");
 	std::string refractiveConeRatio = xmlElem->Attribute ("refractiveConeRatio");
 	std::string refractiveConeDistance = xmlElem->Attribute ("refractiveConeDistance");
 	std::string shadowConeRatio = xmlElem->Attribute ("shadowConeRatio");
@@ -279,8 +281,10 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	settings->vct_indirect_specular_intensity = std::stof (indirectSpecularIntensity);
 	settings->vct_indirect_refractive_intensity = std::stof (refractiveIndirectIntensity);
 	settings->vct_diffuse_cone_distance = std::stof (diffuseConeDistance);
+	settings->vct_diffuse_origin_bias = std::stof (diffuseOriginBias);
 	settings->vct_specular_cone_ratio = std::stof (specularConeRatio);
 	settings->vct_specular_cone_distance = std::stof (specularConeDistance);
+	settings->vct_specular_origin_bias = std::stof (specularOriginBias);
 	settings->vct_refractive_cone_distance = std::stof (refractiveConeDistance);
 	settings->vct_refractive_cone_ratio = std::stof (refractiveConeRatio);
 	settings->vct_shadow_cone_ratio = std::stof (shadowConeRatio);

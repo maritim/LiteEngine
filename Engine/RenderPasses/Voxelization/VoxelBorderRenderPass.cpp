@@ -68,7 +68,7 @@ void VoxelBorderRenderPass::BorderVoxelVolume (const RenderSettings& settings, R
 
 	VoxelVolume* voxelVolume = (VoxelVolume*) rvc->GetRenderVolume ("VoxelVolume");
 
-	for (std::size_t mipLevel = 0; mipLevel < voxelVolume->GetFramebuffer ()->GetTextureCount (); mipLevel++) {
+	for (std::size_t mipLevel = 0; mipLevel < voxelVolume->GetMipmapLevels (); mipLevel++) {
 
 		Pipeline::SendCustomAttributes (_shaderView, voxelVolume->GetCustomAttributes ());
 
