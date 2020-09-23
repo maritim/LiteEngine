@@ -12,6 +12,8 @@
 #include "RenderPasses/DeferredBlitRenderPass.h"
 #include "RenderPasses/ForwardRenderPass.h"
 #include "RenderPasses/GUI/GUIGizmosRenderPass.h"
+#include "RenderPasses/GUI/GUIRenderPass.h"
+#include "RenderPasses/WindowBlitRenderPass.h"
 
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
@@ -54,6 +56,7 @@ void VoxelConeTracingRenderModule::Init ()
 
 	_renderPasses.push_back (new ResultFrameBufferGenerationRenderPass ());
 	_renderPasses.push_back (new VoxelGenerationRenderPass ());
+	_renderPasses.push_back (new DeferredGeometryRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new VCTVoxelizationCheckRenderVolumeCollection ())
 		.Attach (new VoxelizationRenderPass ())
@@ -65,7 +68,6 @@ void VoxelConeTracingRenderModule::Init ()
 		.Attach (new VoxelMipmapRenderPass ())
 		// .Attach (new VoxelBorderRenderPass ())
 		.Build ());
-	_renderPasses.push_back (new DeferredGeometryRenderPass ());
 		// .Attach (ContainerRenderPass::Builder ()
 		// 	.Volume (new IterateOverRenderVolumeCollection (1))
 		// 	.Attach (new SSAOSamplesGenerationRenderPass ())
@@ -112,5 +114,7 @@ void VoxelConeTracingRenderModule::Init ()
 		.Attach (new DeferredBlitRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new ForwardRenderPass ());
-	_renderPasses.push_back (new GUIGizmosRenderPass ());
+	_renderPasses.push_back (new WindowBlitRenderPass());
+	_renderPasses.push_back (new GUIGizmosRenderPass());
+	_renderPasses.push_back (new GUIRenderPass());
 }

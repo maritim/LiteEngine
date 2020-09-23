@@ -121,4 +121,5 @@ void LightPropagationVolumesRenderModule::Init ()
 	_renderPasses.push_back (new ForwardRenderPass ());
 	_renderPasses.push_back (new WindowBlitRenderPass());
 	_renderPasses.push_back (new GUIGizmosRenderPass ());
+	_renderPasses.push_back(new GUIRenderPass());
 }
