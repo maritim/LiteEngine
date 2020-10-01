@@ -87,6 +87,8 @@ vec4 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
 
 			sampleValue = mix (sampleValue1, sampleValue2, pow ( fract(sampleLOD), 2));
 		} else {
+			sampleLOD -= 1.0;
+
 			sampleValue =
 				weight.x * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.x, 0, 0), min (sampleLOD, volumeMipmapLevels - 1)) +
 				weight.y * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.y, 0, 0), min (sampleLOD, volumeMipmapLevels - 1)) +
@@ -157,6 +159,8 @@ float voxelTraceConeOcclusion(vec3 origin, vec3 dir, float coneRatio, float maxD
 
 			sampleValue = mix (sampleValue1, sampleValue2, fract(sampleLOD));
 		} else {
+			sampleLOD -= 1.0;
+
 			sampleValue =
 				weight.x * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.x, 0, 0), min (sampleLOD, volumeMipmapLevels - 1)) +
 				weight.y * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.y, 0, 0), min (sampleLOD, volumeMipmapLevels - 1)) +
