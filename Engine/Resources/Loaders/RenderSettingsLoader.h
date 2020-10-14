@@ -26,6 +26,7 @@ protected:
 	void ProcessTRSM (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessLPV (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings);
+	void ProcessHGI (TiXmlElement* xmlElem, RenderSettings* settings);
 };
 
 #endif

@@ -118,6 +118,20 @@ struct RenderSettings : public Object
 	float ssdo_min_interpolation_distance;
 	float ssdo_min_interpolation_angle;
 	bool ssdo_debug_interpolation;
+
+	std::size_t hgi_rsm_samples;
+	float hgi_rsm_radius;
+	std::size_t hgi_ssdo_samples;
+	float hgi_ssdo_radius;
+	float hgi_rsm_indirect_diffuse_intensity;
+	float hgi_ssdo_indirect_diffuse_intensity;
+	float hgi_interpolation_scale;
+	float hgi_min_interpolation_distance;
+	float hgi_min_interpolation_angle;
+	bool hgi_debug_interpolation;
+	float hgi_rsm_thickness;
+	float hgi_rsm_indirect_specular_intensity;
+	float hgi_ssr_indirect_specular_intensity;
 };
 
 #endif

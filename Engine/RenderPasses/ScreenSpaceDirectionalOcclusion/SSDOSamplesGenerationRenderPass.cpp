@@ -1,7 +1,5 @@
 #include "SSDOSamplesGenerationRenderPass.h"
 
-#include "Core/Console/Console.h"
-
 SSDOSamplesGenerationRenderPass::SSDOSamplesGenerationRenderPass () :
 	_ssdoSamplesVolume (nullptr)
 {

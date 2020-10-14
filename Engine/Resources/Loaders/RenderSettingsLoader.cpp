@@ -64,6 +64,9 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 		else if (name == "VCT") {
 			ProcessVCT (content, settings);
 		}
+		else if (name == "HGI") {
+			ProcessHGI (content, settings);
+		}
 
 		content = content->NextSiblingElement ();
 	}
@@ -290,4 +293,33 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	settings->vct_shadow_cone_ratio = std::stof (shadowConeRatio);
 	settings->vct_shadow_cone_distance = std::stof (shadowConeDistance);
 	settings->vct_origin_bias = std::stof (originBias);
+}
+
+void RenderSettingsLoader::ProcessHGI (TiXmlElement* xmlElem, RenderSettings* settings)
+{
+	std::string rsmSamples = xmlElem->Attribute ("rsmSamples");
+	std::string rsmRadius = xmlElem->Attribute ("rsmRadius");
+	std::string ssdoSamples = xmlElem->Attribute ("ssdoSamples");
+	std::string ssdoRadius = xmlElem->Attribute ("ssdoRadius");
+	std::string ssdoIndirectDiffuseIntensity = xmlElem->Attribute ("ssdoIndirectDiffuseIntensity");
+	std::string rsmIndirectDiffuseIntensity = xmlElem->Attribute ("rsmIndirectDiffuseIntensity");
+	std::string interpolationScale = xmlElem->Attribute ("interpolationScale");
+	std::string minInterpolationDistance = xmlElem->Attribute ("minInterpolationDistance");
+	std::string minInterpolationAngle = xmlElem->Attribute ("minInterpolationAngle");
+	std::string rsmThickness = xmlElem->Attribute ("rsmThickness");
+	std::string rsmIndirectSpecularIntensity = xmlElem->Attribute ("rsmIndirectSpecularIntensity");
+	std::string ssrIndirectSpecularIntensity = xmlElem->Attribute ("ssrIndirectSpecularIntensity");
+
+	settings->hgi_rsm_samples = std::stoi (rsmSamples);
+	settings->hgi_rsm_radius = std::stof (rsmRadius);
+	settings->hgi_ssdo_samples = std::stoi (ssdoSamples);
+	settings->hgi_ssdo_radius = std::stof (ssdoRadius);
+	settings->hgi_rsm_indirect_diffuse_intensity = std::stof (rsmIndirectDiffuseIntensity);
+	settings->hgi_ssdo_indirect_diffuse_intensity = std::stof (ssdoIndirectDiffuseIntensity);
+	settings->hgi_interpolation_scale = std::stof (interpolationScale);
+	settings->hgi_min_interpolation_distance = std::stof (minInterpolationDistance);
+	settings->hgi_min_interpolation_angle = std::stof (minInterpolationAngle);
+	settings->hgi_rsm_thickness = std::stof (rsmThickness);
+	settings->hgi_rsm_indirect_specular_intensity = std::stof (rsmIndirectSpecularIntensity);
+	settings->hgi_ssr_indirect_specular_intensity = std::stof (ssrIndirectSpecularIntensity);
 }

@@ -255,6 +255,12 @@ void RSMAccumulationRenderPass::UpdateRSMVolume (const RenderLightObject* render
 	}
 
 	/*
+	 * Update shadow bias
+	*/
+
+	_rsmVolume->SetShadowBias (shadow.bias);
+
+	/*
 	 * Update statistics object
 	*/
 

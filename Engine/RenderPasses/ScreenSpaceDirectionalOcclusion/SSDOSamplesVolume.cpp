@@ -51,7 +51,7 @@ SSDOSamplesVolume::SSDOSamplesVolume (std::size_t samplesCount) :
 	GL::BindBuffer (GL_UNIFORM_BUFFER, 0);
 
 	/*
-	 * Update attributes
+	 * Create attributes
 	*/
 
 	PipelineAttribute ssdoSamples;
