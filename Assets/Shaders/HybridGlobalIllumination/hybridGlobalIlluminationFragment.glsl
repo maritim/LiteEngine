@@ -9,6 +9,7 @@ uniform sampler2D directLightMap;
 uniform sampler2D rsmIndirectDiffuseMap;
 uniform sampler2D ssdoIndirectDiffuseMap;
 uniform sampler2D indirectSpecularMap;
+uniform sampler2D ambientOcclusionMap;
 
 vec3 CalcIndirectLight (vec3 in_diffuse, vec3 in_direct, vec3 in_specular)
 {
@@ -17,9 +18,10 @@ vec3 CalcIndirectLight (vec3 in_diffuse, vec3 in_direct, vec3 in_specular)
 	vec3 rsmIndirectDiffuseLight = texture (rsmIndirectDiffuseMap, texCoord).xyz;
 	vec3 ssdoIndirectDiffuseLight = texture (ssdoIndirectDiffuseMap, texCoord).xyz;
 	vec3 indirectSpecularLight = texture (indirectSpecularMap, texCoord).xyz;
+	float ambientOcclusion = texture (ambientOcclusionMap, texCoord).x;
 
-	return in_direct + in_diffuse * (rsmIndirectDiffuseLight + ssdoIndirectDiffuseLight)
-		+ in_specular * indirectSpecularLight;
+	return in_direct + (in_diffuse * (rsmIndirectDiffuseLight + ssdoIndirectDiffuseLight)
+		+ in_specular * indirectSpecularLight) * ambientOcclusion;
 }
 
 void main()

@@ -21,7 +21,6 @@ uniform float rsmIntensity;
 uniform float ssrIntensity;
 uniform sampler2D ssrPositionMap;
 
-#include "deferred.glsl"
 #include "HybridGlobalIllumination/hybridGlobalIllumination.glsl"
 #include "ScreenSpace/screenSpaceRayTracing.glsl"
 

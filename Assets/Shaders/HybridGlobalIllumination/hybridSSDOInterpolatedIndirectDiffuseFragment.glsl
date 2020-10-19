@@ -19,7 +19,6 @@ uniform vec2 hgiResolution;
 uniform float hgiIntensity;
 uniform float hgiInterpolationScale;
 
-#include "deferred.glsl"
 #include "HybridGlobalIllumination/hybridGlobalIllumination.glsl"
 
 vec2 CalcTexCoordHGI ()

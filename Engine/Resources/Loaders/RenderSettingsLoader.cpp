@@ -309,6 +309,10 @@ void RenderSettingsLoader::ProcessHGI (TiXmlElement* xmlElem, RenderSettings* se
 	std::string rsmThickness = xmlElem->Attribute ("rsmThickness");
 	std::string rsmIndirectSpecularIntensity = xmlElem->Attribute ("rsmIndirectSpecularIntensity");
 	std::string ssrIndirectSpecularIntensity = xmlElem->Attribute ("ssrIndirectSpecularIntensity");
+	std::string aoSamples = xmlElem->Attribute ("aoSamples");
+	std::string aoRadius = xmlElem->Attribute ("aoRadius");
+	std::string aoBias = xmlElem->Attribute ("aoBias");
+	std::string aoBlend = xmlElem->Attribute ("aoBlend");
 
 	settings->hgi_rsm_samples = std::stoi (rsmSamples);
 	settings->hgi_rsm_radius = std::stof (rsmRadius);
@@ -322,4 +326,8 @@ void RenderSettingsLoader::ProcessHGI (TiXmlElement* xmlElem, RenderSettings* se
 	settings->hgi_rsm_thickness = std::stof (rsmThickness);
 	settings->hgi_rsm_indirect_specular_intensity = std::stof (rsmIndirectSpecularIntensity);
 	settings->hgi_ssr_indirect_specular_intensity = std::stof (ssrIndirectSpecularIntensity);
+	settings->hgi_ao_samples = std::stoi (aoSamples);
+	settings->hgi_ao_radius = std::stof (aoRadius);
+	settings->hgi_ao_bias = std::stof (aoBias);
+	settings->hgi_ao_blend = std::stof (aoBlend);
 }

@@ -132,6 +132,10 @@ struct RenderSettings : public Object
 	float hgi_rsm_thickness;
 	float hgi_rsm_indirect_specular_intensity;
 	float hgi_ssr_indirect_specular_intensity;
+	std::size_t hgi_ao_samples;
+	float hgi_ao_radius;
+	float hgi_ao_bias;
+	float hgi_ao_blend;
 };
 
 #endif

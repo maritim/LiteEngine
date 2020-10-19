@@ -22,7 +22,6 @@ uniform float hgiMinInterpolationAngle;
 uniform int hgiDebugInterpolation;
 uniform sampler2D rsmIndirectDiffuseMap;
 
-#include "deferred.glsl"
 #include "HybridGlobalIllumination/hybridGlobalIllumination.glsl"
 
 vec3 CalcInterpolatedIndirectDiffuseLight (vec3 in_position, vec3 in_normal, vec2 texCoord)

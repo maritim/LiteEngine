@@ -535,6 +535,15 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 		ImGui::Separator();
 
+		limit1 = 0, limit2 = 200;
+		ImGui::SliderScalar ("AO Samples Size", ImGuiDataType_U32, &_settings->hgi_ao_samples, &limit1, &limit2);
+
+		ImGui::InputFloat ("AO Radius", &_settings->hgi_ao_radius, 0.1f);
+		ImGui::InputFloat ("AO Bias", &_settings->hgi_ao_bias, 0.1f);
+		ImGui::SliderFloat ("AO Blend", &_settings->hgi_ao_blend, 0.0f, 1.0f);
+
+		ImGui::Separator();
+
 		ImGui::PushID ("HGIDebug");
 		if (ImGui::TreeNode ("Debug")) {
 
@@ -576,6 +585,8 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 					FramebufferRenderVolume* hgiSSDOIndirectDiffuseMapVolume = hgiStat->hgiSSDOIndirectDiffuseMapVolume;
 					FramebufferRenderVolume* hgiSSRPositionMapVolume = hgiStat->hgiSSRPositionMapVolume;
 					FramebufferRenderVolume* hgiIndirectSpecularMapVolume = hgiStat->hgiIndirectSpecularMapVolume;
+					FramebufferRenderVolume* hgiRSMAmbientOcclusionMapVolume = hgiStat->hgiRSMAmbientOcclusionMapVolume;
+					FramebufferRenderVolume* hgiAmbientOcclusionMapVolume = hgiStat->hgiAmbientOcclusionMapVolume;
 					// FramebufferRenderVolume* rsmIndirectSpecularMapVolume = rsmStat->rsmIndirectSpecularMapVolume;
 					// FramebufferRenderVolume* rsmSubsurfaceScatteringMapVolume = rsmStat->rsmSubsurfaceScatteringMapVolume;
 					// FramebufferRenderVolume* rsmAmbientOcclusionMapVolume = rsmStat->rsmAmbientOcclusionMapVolume;
@@ -605,6 +616,12 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 					ImGui::Text ("Indirect Specular Light Map");
 					ShowImage (hgiIndirectSpecularMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (hgiMapWidth, hgiMapHeight));
+
+					ImGui::Text ("RSM Ambient Occlusion Map");
+					ShowImage (hgiRSMAmbientOcclusionMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (hgiMapWidth, hgiMapHeight));
+
+					ImGui::Text ("Ambient Occlusion Map");
+					ShowImage (hgiAmbientOcclusionMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (hgiMapWidth, hgiMapHeight));
 
 					// ImGui::Text ("Indirect Specular Light Map");
 					// ShowImage (rsmIndirectSpecularMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (trsmMapWidth, trsmMapHeight));

@@ -24,7 +24,7 @@ public:
 
 	void Clear ();
 protected:
-	void UpdateSamplesVolume (const RenderSettings& settings);
+	virtual void UpdateSamplesVolume (const RenderSettings& settings);
 };
 
 #endif

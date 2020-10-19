@@ -16,6 +16,9 @@ struct ENGINE_API HGIStatisticsObject : public StatisticsObject
 	FramebufferRenderVolume* hgiSSRPositionMapVolume;
 	FramebufferRenderVolume* hgiIndirectSpecularMapVolume;
 
+	FramebufferRenderVolume* hgiRSMAmbientOcclusionMapVolume;
+	FramebufferRenderVolume* hgiAmbientOcclusionMapVolume;
+
 	// FramebufferRenderVolume* hgiIndirectSpecularMapVolume;
 	// FramebufferRenderVolume* hgiSubsurfaceScatteringMapVolume;
 	// FramebufferRenderVolume* hgiAmbientOcclusionMapVolume;

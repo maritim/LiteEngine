@@ -100,9 +100,7 @@ vec3 CalcScreenSpaceDirectionalOcclusion (vec3 in_position, vec3 in_normal)
 
 	occlusion = 1.0 - (occlusion / samplesCount);
 
-	if (samplesCount > 0) {
-		occlusionColor /= samplesCount;
-	}
+	occlusionColor /= samplesCount;
 
 	return max (occlusionColor, vec3 (0.0));
 }

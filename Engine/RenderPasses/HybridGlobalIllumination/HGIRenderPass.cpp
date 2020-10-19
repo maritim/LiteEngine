@@ -88,6 +88,7 @@ RenderVolumeCollection* HGIRenderPass::Execute (const RenderScene* renderScene, 
 	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("HybridRSMIndirectDiffuseMap")->GetCustomAttributes ());
 	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("HybridSSDOIndirectDiffuseMap")->GetCustomAttributes ());
 	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("indirectSpecularMap")->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("ambientOcclusionMap")->GetCustomAttributes ());
 
 	/*
 	 * Draw a screen covering triangle

@@ -1,7 +1,5 @@
 #include "SSAOSamplesGenerationRenderPass.h"
 
-#include "Core/Console/Console.h"
-
 SSAOSamplesGenerationRenderPass::SSAOSamplesGenerationRenderPass () :
 	_ssaoSamplesVolume (nullptr)
 {

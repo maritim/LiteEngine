@@ -1,3 +1,4 @@
+#include "deferred.glsl"
 #include "ReflectiveShadowMapping/reflectiveShadowMapping.glsl"
 
 layout(std140) uniform hgiSamples

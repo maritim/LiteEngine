@@ -12,10 +12,7 @@
 #include "RenderPasses/Container/ContainerRenderPass.h"
 #include "RenderPasses/IterateOverRenderVolumeCollection.h"
 
-#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAOSamplesGenerationRenderPass.h"
 #include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAONoiseGenerationRenderPass.h"
-#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAORenderPass.h"
-#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAOBlurRenderPass.h"
 
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
@@ -32,6 +29,10 @@
 #include "RenderPasses/HybridGlobalIllumination/HybridSSDOIndirectDiffuseLightRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridSSRGenerationRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HGIIndirectSpecularLightRenderPass.h"
+#include "RenderPasses/HybridGlobalIllumination/HybridAOSamplesGenerationRenderPass.h"
+#include "RenderPasses/HybridGlobalIllumination/HybridRSMAmbientOcclusionRenderPass.h"
+#include "RenderPasses/HybridGlobalIllumination/HybridAmbientOcclusionRenderPass.h"
+#include "RenderPasses/HybridGlobalIllumination/HybridAmbientOcclusionBlurRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HGIRenderPass.h"
 // #include "RenderPasses/ReflectiveShadowMapping/RSMSamplesGenerationRenderPass.h"
 // #include "RenderPasses/ReflectiveShadowMapping/RSMInterpolatedIndirectDiffuseLightRenderPass.h"
@@ -68,18 +69,14 @@ void HybridGlobalIlluminationRenderModule::Init ()
 
 	_renderPasses.push_back (new ResultFrameBufferGenerationRenderPass ());
 	_renderPasses.push_back (new DeferredGeometryRenderPass ());
-	// _renderPasses.push_back (ContainerRenderPass::Builder ()
-	// 	.Volume (new IterateOverRenderVolumeCollection (1))
-	// 	.Attach (new SSAOSamplesGenerationRenderPass ())
-	// 	.Attach (new SSAONoiseGenerationRenderPass ())
-	// 	.Attach (new SSAORenderPass ())
-	// 	.Attach (new SSAOBlurRenderPass ())
-	// 	.Build ());
 	_renderPasses.push_back (new AmbientLightRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
 		.Attach (new FramebufferGenerationRenderPass ("directLightMap"))
 		.Attach (new FramebufferGenerationRenderPass ("indirectSpecularMap"))
+		.Attach (new FramebufferGenerationRenderPass ("ambientOcclusionMap"))
+		.Attach (new HybridAOSamplesGenerationRenderPass ())
+		.Attach (new SSAONoiseGenerationRenderPass ())
 		.Attach (new HybridSSRGenerationRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new DirectionalLightContainerRenderVolumeCollection ())
@@ -89,22 +86,18 @@ void HybridGlobalIlluminationRenderModule::Init ()
 			.Attach (new HybridRSMIndirectDiffuseLightRenderPass ())
 			.Attach (new HGIDirectLightDirectionalRenderPass ())
 			.Attach (new HGIIndirectSpecularLightRenderPass ())
+			.Attach (new HybridRSMAmbientOcclusionRenderPass ())
 			.Build ())
 		.Attach (new HybridSSDOInterpolatedIndirectDiffuseLightRenderPass ())
 		.Attach (new HybridSSDOIndirectDiffuseLightRenderPass ())
+		.Attach (new HybridAmbientOcclusionRenderPass ())
+		.Attach (new HybridAmbientOcclusionBlurRenderPass ())
 		.Attach (new HGIRenderPass ())
 		.Build ());
 		// .Attach (new RSMInterpolatedIndirectDiffuseLightRenderPass ())
 		// .Attach (new RSMIndirectDiffuseLightRenderPass ())
 		// .Attach (new RSMIndirectSpecularLightRenderPass ())
 		// .Attach (new RSMSubsurfaceScatteringRenderPass ())
-		// .Attach (ContainerRenderPass::Builder ()
-		// 	.Volume (new IterateOverRenderVolumeCollection (1))
-		// 	.Attach (new SSAOSamplesGenerationRenderPass ())
-		// 	.Attach (new SSAONoiseGenerationRenderPass ())
-		// 	.Attach (new RSMAmbientOcclusionRenderPass ())
-		// 	.Attach (new SSAOBlurRenderPass ())
-		// 	.Build ())
 	// _renderPasses.push_back (ContainerRenderPass::Builder ()
 	// 	.Volume (new SpotLightContainerRenderVolumeCollection ())
 	// 	.Attach (new RSMSpotLightAccumulationRenderPass ())

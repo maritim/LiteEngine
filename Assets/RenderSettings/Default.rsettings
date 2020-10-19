@@ -28,6 +28,6 @@
 	<VCT voxelsSize="256" continuousVoxelization="false" bordering="false"
 		mipmapLevels="6" voxelShadowBias="0" indirectDiffuseIntensity="20" indirectSpecularIntensity="0" refractiveIndirectIntensity="1" diffuseConeDistance="0.3" diffuseOriginBias="0.007" specularConeRatio="0.1" specularConeDistance="0.6" specularOriginBias="0.007" refractiveConeRatio="0.1" refractiveConeDistance="0.6" shadowConeRatio="0.01" shadowConeDistance="0.365" originBias="0.0025" />
 
-	<HGI rsmSamples="200" rsmRadius="10" ssdoSamples="20" ssdoRadius="3" rsmIndirectDiffuseIntensity="1" ssdoIndirectDiffuseIntensity="20" interpolationScale="0.5" minInterpolationDistance="1" minInterpolationAngle="30" rsmThickness="1" rsmIndirectSpecularIntensity="1" ssrIndirectSpecularIntensity="20" />
+	<HGI rsmSamples="200" rsmRadius="10" ssdoSamples="20" ssdoRadius="3" rsmIndirectDiffuseIntensity="1" ssdoIndirectDiffuseIntensity="20" interpolationScale="0.5" minInterpolationDistance="1" minInterpolationAngle="30" rsmThickness="1" rsmIndirectSpecularIntensity="1" ssrIndirectSpecularIntensity="20" aoSamples="32" aoRadius="1" aoBias="0.025" aoBlend="0.5" />
 
 </RenderSettings>
