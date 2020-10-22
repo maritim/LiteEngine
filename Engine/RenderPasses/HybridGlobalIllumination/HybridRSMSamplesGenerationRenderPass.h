@@ -1,19 +1,19 @@
-#ifndef HGISAMPLESGENERATIONRENDERPASS_H
-#define HGISAMPLESGENERATIONRENDERPASS_H
+#ifndef HYBRIDRSMSAMPLESGENERATIONRENDERPASS_H
+#define HYBRIDRSMSAMPLESGENERATIONRENDERPASS_H
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
 #include "HGISamplesVolume.h"
 
-class ENGINE_API HGISamplesGenerationRenderPass : public ContainerRenderSubPassI
+class ENGINE_API HybridRSMSamplesGenerationRenderPass : public ContainerRenderSubPassI
 {
-	DECLARE_RENDER_PASS(HGISamplesGenerationRenderPass)
+	DECLARE_RENDER_PASS(HybridRSMSamplesGenerationRenderPass)
 
 protected:
 	HGISamplesVolume* _hgiSamplesVolume;
 
 public:
-	HGISamplesGenerationRenderPass ();
+	HybridRSMSamplesGenerationRenderPass ();
 
 	virtual void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,

@@ -78,7 +78,6 @@ std::vector<PipelineAttribute> HybridSSDOIndirectDiffuseLightRenderPass::GetCust
 	 * Attach screen space ambient occlusion attributes to pipeline
 	*/
 
-	PipelineAttribute ssdoSampleCount;
 	PipelineAttribute ssdoRadius;
 	PipelineAttribute hgiIntensity;
 	PipelineAttribute hgiInterpolationScale;
@@ -86,7 +85,6 @@ std::vector<PipelineAttribute> HybridSSDOIndirectDiffuseLightRenderPass::GetCust
 	PipelineAttribute hgiMinInterpolationAngle;
 	PipelineAttribute hgiDebugInterpolation;
 
-	ssdoSampleCount.type = PipelineAttribute::AttrType::ATTR_1I;
 	ssdoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiInterpolationScale.type = PipelineAttribute::AttrType::ATTR_1F;
@@ -94,7 +92,6 @@ std::vector<PipelineAttribute> HybridSSDOIndirectDiffuseLightRenderPass::GetCust
 	hgiMinInterpolationAngle.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiDebugInterpolation.type = PipelineAttribute::AttrType::ATTR_1I;
 
-	ssdoSampleCount.name = "ssdoSampleCount";
 	ssdoRadius.name = "ssdoRadius";
 	hgiIntensity.name = "hgiIntensity";
 	hgiInterpolationScale.name = "hgiInterpolationScale";
@@ -102,7 +99,6 @@ std::vector<PipelineAttribute> HybridSSDOIndirectDiffuseLightRenderPass::GetCust
 	hgiMinInterpolationAngle.name = "hgiMinInterpolationAngle";
 	hgiDebugInterpolation.name = "hgiDebugInterpolation";
 
-	ssdoSampleCount.value.x = settings.hgi_ssdo_samples;
 	ssdoRadius.value.x = settings.hgi_ssdo_radius;
 	hgiIntensity.value.x = settings.hgi_ssdo_indirect_diffuse_intensity;
 	hgiInterpolationScale.value.x = settings.hgi_interpolation_scale;
@@ -110,7 +106,6 @@ std::vector<PipelineAttribute> HybridSSDOIndirectDiffuseLightRenderPass::GetCust
 	hgiMinInterpolationAngle.value.x = std::cos (DEG2RAD * settings.hgi_min_interpolation_angle);
 	hgiDebugInterpolation.value.x = settings.hgi_debug_interpolation;
 
-	attributes.push_back (ssdoSampleCount);
 	attributes.push_back (ssdoRadius);
 	attributes.push_back (hgiIntensity);
 	attributes.push_back (hgiInterpolationScale);

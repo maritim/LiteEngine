@@ -77,31 +77,26 @@ std::vector<PipelineAttribute> HybridSSDOInterpolatedIndirectDiffuseLightRenderP
 	*/
 
 	PipelineAttribute hgiResolution;
-	PipelineAttribute ssdoSampleCount;
 	PipelineAttribute ssdoRadius;
 	PipelineAttribute hgiIntensity;
 	PipelineAttribute hgiInterpolationScale;
 
 	hgiResolution.type = PipelineAttribute::AttrType::ATTR_2F;
-	ssdoSampleCount.type = PipelineAttribute::AttrType::ATTR_1I;
 	ssdoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiInterpolationScale.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	hgiResolution.name = "hgiResolution";
-	ssdoSampleCount.name = "ssdoSampleCount";
 	ssdoRadius.name = "ssdoRadius";
 	hgiIntensity.name = "hgiIntensity";
 	hgiInterpolationScale.name = "hgiInterpolationScale";
 
 	hgiResolution.value = glm::vec3 (GetPostProcessVolumeResolution (settings), 0.0);
-	ssdoSampleCount.value.x = settings.hgi_ssdo_samples;
 	ssdoRadius.value.x = settings.hgi_ssdo_radius;
 	hgiIntensity.value.x = settings.hgi_ssdo_indirect_diffuse_intensity;
 	hgiInterpolationScale.value.x = settings.hgi_interpolation_scale;
 
 	attributes.push_back (hgiResolution);
-	attributes.push_back (ssdoSampleCount);
 	attributes.push_back (ssdoRadius);
 	attributes.push_back (hgiIntensity);
 	attributes.push_back (hgiInterpolationScale);

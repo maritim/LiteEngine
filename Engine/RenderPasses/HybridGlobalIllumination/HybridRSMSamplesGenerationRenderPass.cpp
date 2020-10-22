@@ -1,14 +1,14 @@
-#include "HGISamplesGenerationRenderPass.h"
+#include "HybridRSMSamplesGenerationRenderPass.h"
 
 #include "Core/Console/Console.h"
 
-HGISamplesGenerationRenderPass::HGISamplesGenerationRenderPass () :
+HybridRSMSamplesGenerationRenderPass::HybridRSMSamplesGenerationRenderPass () :
 	_hgiSamplesVolume (nullptr)
 {
 
 }
 
-void HGISamplesGenerationRenderPass::Init (const RenderSettings& settings)
+void HybridRSMSamplesGenerationRenderPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Create screen space directional occlusion samples volume
@@ -17,7 +17,7 @@ void HGISamplesGenerationRenderPass::Init (const RenderSettings& settings)
 	_hgiSamplesVolume = new HGISamplesVolume (settings.hgi_rsm_samples);
 }
 
-RenderVolumeCollection* HGISamplesGenerationRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
+RenderVolumeCollection* HybridRSMSamplesGenerationRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -26,10 +26,10 @@ RenderVolumeCollection* HGISamplesGenerationRenderPass::Execute (const RenderSce
 
 	UpdateSamplesVolume (settings);
 
-	return rvc->Insert ("HGISamplesVolume", _hgiSamplesVolume);
+	return rvc->Insert ("HybridRSMSamplesVolume", _hgiSamplesVolume);
 }
 
-bool HGISamplesGenerationRenderPass::IsAvailable (const RenderScene* renderScenee, const Camera* camera,
+bool HybridRSMSamplesGenerationRenderPass::IsAvailable (const RenderScene* renderScenee, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
@@ -39,7 +39,7 @@ bool HGISamplesGenerationRenderPass::IsAvailable (const RenderScene* renderScene
 	return true;
 }
 
-void HGISamplesGenerationRenderPass::Clear ()
+void HybridRSMSamplesGenerationRenderPass::Clear ()
 {
 	/*
 	 * Clear screen space directional occlusion samples volume
@@ -48,7 +48,7 @@ void HGISamplesGenerationRenderPass::Clear ()
 	delete _hgiSamplesVolume;
 }
 
-void HGISamplesGenerationRenderPass::UpdateSamplesVolume (const RenderSettings& settings)
+void HybridRSMSamplesGenerationRenderPass::UpdateSamplesVolume (const RenderSettings& settings)
 {
 	if (_hgiSamplesVolume->GetSamplesCount () != settings.hgi_rsm_samples) {
 

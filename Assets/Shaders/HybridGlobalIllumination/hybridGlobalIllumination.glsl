@@ -8,7 +8,6 @@ layout(std140) uniform hgiSamples
 };
 
 uniform sampler2D directLightMap;
-uniform int ssdoSampleCount;
 uniform float ssdoRadius;
 
 /*
@@ -59,18 +58,18 @@ vec3 CalcViewHGIIndirectDiffuseLight (in vec3 viewPosition, in vec3 viewNormal)
 		vec3 result = rsmFlux *
 			((max (0.0, dot (rsmLightViewSpaceNormal, lightViewSpacePos - rsmLightViewSpacePos))
 				* max (0.0, dot (lightViewSpaceNormal, rsmLightViewSpacePos - lightViewSpacePos)))
-			/ pow (length (lightViewSpacePos - rsmLightViewSpacePos), 4.0));
+			/ max (pow (length (lightViewSpacePos - rsmLightViewSpacePos), 2.0), 1.0));
 
-		if (dot (result, result) > 0) {
+		//if (dot (result, result) > 0) {
 			++ samplesCount;
-		}
+		//}
 
 		indirectColor += result;
 	}
 
 	samplesCount = max (samplesCount, 1);
 
-	return indirectColor;// / samplesCount;
+	return indirectColor / samplesCount;
 }
 
 vec3 CalcHGIIndirectDiffuseLight (in vec3 in_position, in vec3 in_normal)
@@ -83,9 +82,7 @@ vec3 CalcHGIIndirectDiffuseLight (in vec3 in_position, in vec3 in_normal)
 
 	int samplesCount = 0;
 
-	int step = hgiSamplesCount / ssdoSampleCount;
-
-	for (int sampleIndex = 0; sampleIndex < hgiSamplesCount; sampleIndex += step) {
+	for (int sampleIndex = 0; sampleIndex < hgiSamplesCount; sampleIndex ++) {
 		vec3 sample = tangentMatrix * hgiSample [sampleIndex];
 
 		sample = in_position + sample * (ssdoRadius + 2);
@@ -119,18 +116,14 @@ vec3 CalcHGIIndirectDiffuseLight (in vec3 in_position, in vec3 in_normal)
 
 		occlusionColor += sampleColor;
 
-		if (dot (sampleColor, sampleColor) > 0) {
+		//if (dot (sampleColor, sampleColor) > 0) {
 			++ samplesCount;
-		}
+		//}
 	}
 
 	samplesCount = max (samplesCount, 1);
 
 	occlusionColor /= samplesCount;
-
-	if (samplesCount < ssdoSampleCount / 20) {
-		return vec3 (0);
-	}
 
 	return occlusionColor;
 }

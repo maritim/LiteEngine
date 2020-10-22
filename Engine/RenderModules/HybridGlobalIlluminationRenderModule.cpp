@@ -21,10 +21,11 @@
 #include "RenderPasses/FramebufferGenerationRenderPass.h"
 
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightViewAccumulationRenderPass.h"
-#include "RenderPasses/HybridGlobalIllumination/HGISamplesGenerationRenderPass.h"
+#include "RenderPasses/HybridGlobalIllumination/HybridRSMSamplesGenerationRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridRSMInterpolatedIndirectDiffuseLightRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridRSMIndirectDiffuseLightRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HGIDirectLightDirectionalRenderPass.h"
+#include "RenderPasses/HybridGlobalIllumination/HybridSSDOSamplesGenerationRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridSSDOInterpolatedIndirectDiffuseLightRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridSSDOIndirectDiffuseLightRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridSSRGenerationRenderPass.h"
@@ -81,13 +82,14 @@ void HybridGlobalIlluminationRenderModule::Init ()
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 			.Attach (new RSMDirectionalLightViewAccumulationRenderPass ())
-			.Attach (new HGISamplesGenerationRenderPass ())
+			.Attach (new HybridRSMSamplesGenerationRenderPass ())
 			.Attach (new HybridRSMInterpolatedIndirectDiffuseLightRenderPass ())
 			.Attach (new HybridRSMIndirectDiffuseLightRenderPass ())
 			.Attach (new HGIDirectLightDirectionalRenderPass ())
 			.Attach (new HGIIndirectSpecularLightRenderPass ())
 			.Attach (new HybridRSMAmbientOcclusionRenderPass ())
 			.Build ())
+		.Attach (new HybridSSDOSamplesGenerationRenderPass ())
 		.Attach (new HybridSSDOInterpolatedIndirectDiffuseLightRenderPass ())
 		.Attach (new HybridSSDOIndirectDiffuseLightRenderPass ())
 		.Attach (new HybridAmbientOcclusionRenderPass ())
