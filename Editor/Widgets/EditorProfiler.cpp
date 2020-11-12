@@ -240,6 +240,7 @@ void EditorProfiler::UpdateProfilerStatistics (const std::vector<ProfilerEntry*>
     if (profilerEntries.size () != profilerStats.size ()) {
         profilerEvents.clear ();
         profilerStats.clear ();
+        profilerFrameTimes.clear ();
 
         totalTime = 0;
     }
