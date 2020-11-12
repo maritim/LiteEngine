@@ -1,9 +1,9 @@
 #ifndef TRSMTEMPORALFILTERRENDERPASS_H
 #define TRSMTEMPORALFILTERRENDERPASS_H
 
-#include "RenderPasses/PostProcess/PostProcessRenderPass.h"
+#include "RenderPasses/TemporalFiltering/TemporalFilterRenderPass.h"
 
-class ENGINE_API TRSMTemporalFilterRenderPass : public PostProcessRenderPass
+class ENGINE_API TRSMTemporalFilterRenderPass : public TemporalFilterRenderPass
 {
 	DECLARE_RENDER_PASS(TRSMTemporalFilterRenderPass)
 

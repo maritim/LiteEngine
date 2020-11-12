@@ -1,7 +1,5 @@
 #include "TRSMTemporalFilterRenderPass.h"
 
-#include "TRSMIndirectDiffuseLightMapVolume.h"
-
 #include "Debug/Statistics/StatisticsManager.h"
 #include "TRSMStatisticsObject.h"
 
@@ -33,10 +31,10 @@ glm::ivec2 TRSMTemporalFilterRenderPass::GetPostProcessVolumeResolution (const R
 FramebufferRenderVolume* TRSMTemporalFilterRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
 	/*
-	 * Create temporal reflective shadow mapping 
+	 * Create temporal reflective shadow mapping
 	*/
 
-	Resource<Texture> texture = Resource<Texture> (new Texture (""));
+	Resource<Texture> texture = Resource<Texture> (new Texture ("indirectDiffuseMap"));
 
 	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
 
@@ -52,7 +50,7 @@ FramebufferRenderVolume* TRSMTemporalFilterRenderPass::CreatePostProcessVolume (
 
 	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
 
-	FramebufferRenderVolume* renderVolume = new TRSMIndirectDiffuseLightMapVolume (framebuffer);
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
 
 	/*
 	 * Update statistics object
@@ -72,37 +70,23 @@ std::vector<PipelineAttribute> TRSMTemporalFilterRenderPass::GetCustomAttributes
 	 * Attach post process volume attributes to pipeline
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (camera, settings, rvc);
+	std::vector<PipelineAttribute> attributes = TemporalFilterRenderPass::GetCustomAttributes (camera, settings, rvc);
 
 	/*
 	 * Attach screen space ambient occlusion attributes to pipeline
 	*/
 
-	auto rsmLastIndirectDiffuseMapVolume = (TRSMIndirectDiffuseLightMapVolume*) rvc->GetRenderVolume ("LastIndirectDiffuseMap");
-
 	PipelineAttribute rsmResolution;
-	PipelineAttribute reprojectionMatrix;
 
 	rsmResolution.type = PipelineAttribute::AttrType::ATTR_2F;
-	reprojectionMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
 
 	rsmResolution.name = "rsmResolution";
-	reprojectionMatrix.name = "reprojectionMatrix";
 
 	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.rsm_scale);
 
 	rsmResolution.value = glm::vec3 (resolution, 0.0f);
 
-	glm::mat4 viewMatrix = glm::translate (glm::mat4_cast (camera->GetRotation ()), camera->GetPosition () * -1.0f);
-	glm::mat4 lastViewProjectionMatrix = rsmLastIndirectDiffuseMapVolume->GetViewProjectionMatrix ();
-	glm::mat4 screenMatrix = glm::scale (glm::translate (glm::mat4 (1), glm::vec3 (0.5f)), glm::vec3 (0.5f));
-
-	glm::mat4 reprojectionMat = screenMatrix * lastViewProjectionMatrix * glm::inverse (viewMatrix);
-
-	reprojectionMatrix.matrix = reprojectionMat;
-
 	attributes.push_back (rsmResolution);
-	attributes.push_back (reprojectionMatrix);
 
 	return attributes;
 }

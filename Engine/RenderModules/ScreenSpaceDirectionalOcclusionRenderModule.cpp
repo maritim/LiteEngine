@@ -17,7 +17,6 @@
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDORenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOShadowRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOTemporalFilterRenderPass.h"
-#include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOTemporalFilterSwapRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOAccumulationRenderPass.h"
 
 #include "RenderPasses/ShadowMap/DirectionalLightShadowMapRenderPass.h"
@@ -41,7 +40,6 @@
 #include "RenderPasses/ScreenSpaceReflections/SSRAccumulationRenderPass.h"
 #include "RenderPasses/ScreenSpaceSubsurfaceScattering/SSSubsurfaceScatteringRenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAARenderPass.h"
-#include "RenderPasses/TemporalAntialiasing/TAASwapRenderPass.h"
 #include "RenderPasses/Bloom/BrightExtractionRenderPass.h"
 #include "RenderPasses/Bloom/BloomHorizontalBlurRenderPass.h"
 #include "RenderPasses/Bloom/BloomVerticalBlurRenderPass.h"
@@ -79,11 +77,7 @@ void ScreenSpaceDirectionalOcclusionRenderModule::Init ()
 			.Attach (new SSDOSamplesGenerationRenderPass ())
 			.Attach (new SSDOInterpolatedRenderPass ())
 			.Attach (new SSDORenderPass ())
-			.Attach (ContainerRenderPass::Builder ()
-				.Volume (new IterateOverRenderVolumeCollection (1))
-				.Attach (new SSDOTemporalFilterRenderPass ())
-				.Attach (new SSDOTemporalFilterSwapRenderPass ())
-				.Build ())
+			.Attach (new SSDOTemporalFilterRenderPass ())
 			.Attach (new SSDOAccumulationRenderPass ())
 			.Build ())
 		.Attach (ContainerRenderPass::Builder ()
@@ -93,11 +87,7 @@ void ScreenSpaceDirectionalOcclusionRenderModule::Init ()
 			.Attach (new SSRAccumulationRenderPass ())
 			.Build ())
 		.Attach (new SSSubsurfaceScatteringRenderPass ())
-		.Attach (ContainerRenderPass::Builder ()
-			.Volume (new IterateOverRenderVolumeCollection (1))
-			.Attach	(new TAARenderPass ())
-			.Attach (new TAASwapRenderPass ())
-			.Build ())
+		.Attach	(new TAARenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new BrightExtractionRenderPass ())

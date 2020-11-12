@@ -32,7 +32,6 @@
 #include "RenderPasses/TemporalReflectiveShadowMapping/TRSMTemporalFilterRenderPass.h"
 #include "RenderPasses/TemporalReflectiveShadowMapping/TRSMMedianFilterRenderPass.h"
 #include "RenderPasses/TemporalReflectiveShadowMapping/TRSMBlurRenderPass.h"
-#include "RenderPasses/TemporalReflectiveShadowMapping/TRSMIndirectSwapRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/ReflectiveShadowMapping/RSMSpotLightAccumulationRenderPass.h"
@@ -44,7 +43,6 @@
 #include "RenderPasses/ScreenSpaceReflections/SSRRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflections/SSRAccumulationRenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAARenderPass.h"
-#include "RenderPasses/TemporalAntialiasing/TAASwapRenderPass.h"
 #include "RenderPasses/Bloom/BrightExtractionRenderPass.h"
 #include "RenderPasses/Bloom/BloomHorizontalBlurRenderPass.h"
 #include "RenderPasses/Bloom/BloomVerticalBlurRenderPass.h"
@@ -78,7 +76,6 @@ void TemporalReflectiveShadowMappingRenderModule::Init ()
 		.Attach (new TRSMTemporalFilterRenderPass ())
 		.Attach (new TRSMMedianFilterRenderPass ())
 		.Attach (new TRSMBlurRenderPass ())
-		.Attach (new TRSMIndirectSwapRenderPass ())
 		.Attach (new RSMIndirectSpecularLightRenderPass ())
 		.Attach (new RSMSubsurfaceScatteringRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
@@ -98,7 +95,6 @@ void TemporalReflectiveShadowMappingRenderModule::Init ()
 		.Attach (new TRSMTemporalFilterRenderPass ())
 		.Attach (new TRSMMedianFilterRenderPass ())
 		.Attach (new TRSMBlurRenderPass ())
-		.Attach (new TRSMIndirectSwapRenderPass ())
 		.Attach (new RSMIndirectSpecularLightRenderPass ())
 		.Attach (new DeferredSpotLightRenderPass ())
 		.Attach (new RSMRenderPass ())
@@ -112,11 +108,7 @@ void TemporalReflectiveShadowMappingRenderModule::Init ()
 			.Attach (new SSRRenderPass ())
 			.Attach (new SSRAccumulationRenderPass ())
 			.Build ())
-		.Attach (ContainerRenderPass::Builder ()
-			.Volume (new IterateOverRenderVolumeCollection (1))
-			.Attach	(new TAARenderPass ())
-			.Attach (new TAASwapRenderPass ())
-			.Build ())
+		.Attach	(new TAARenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new BrightExtractionRenderPass ())

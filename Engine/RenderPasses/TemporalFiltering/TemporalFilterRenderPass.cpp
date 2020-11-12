@@ -1,13 +1,12 @@
 #include "TemporalFilterRenderPass.h"
 
-#include "TemporalFilterMapVolume.h"
-
 #include "RenderPasses/GBuffer.h"
 
-#include "Core/Console/Console.h"
+#include "Renderer/Pipeline.h"
 
 TemporalFilterRenderPass::TemporalFilterRenderPass () :
-	_temporalFilterMapVolume (nullptr)
+	_postProcessMapVolume2 (nullptr),
+	_frameCount (0)
 {
 
 }
@@ -24,22 +23,14 @@ void TemporalFilterRenderPass::Init (const RenderSettings& settings)
 	 * Initialize last post process map volume
 	*/
 
-	_temporalFilterMapVolume = CreatePostProcessVolume (settings);
-
-	/*
-	 * Initialize ping-pong buffers
-	*/
-
-	auto currentTemporalFilterMapVolume = (TemporalFilterMapVolume*) _postProcessMapVolume;
-	auto temporalFilterMapVolume = (TemporalFilterMapVolume*) _temporalFilterMapVolume;
-
-	currentTemporalFilterMapVolume->SetCurrent(true);
-	temporalFilterMapVolume->SetCurrent(false);
+	_postProcessMapVolume2 = CreatePostProcessVolume (settings);
 }
 
 RenderVolumeCollection* TemporalFilterRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
+	_frameCount = (_frameCount + 1) & 1;
+
 	/*
 	 * Update temporal anti-aliasing map volume
 	*/
@@ -47,18 +38,39 @@ RenderVolumeCollection* TemporalFilterRenderPass::Execute (const RenderScene* re
 	UpdateLastPostProcessMapVolume (settings);
 
 	/*
+	 * Update settings
+	*/
+
+	UpdatePostProcessSettings (settings);
+
+	/*
+	 * Start screen space ambient occlusion generation pass
+	*/
+
+	StartPostProcessPass ();
+
+	/*
+	 * Screen space ambient occlusion generation pass
+	*/
+
+	PostProcessPass (renderScene, camera, settings, rvc);
+
+	/*
+	 * End screen space ambient occlusion generation pass
+	*/
+
+	EndPostProcessPass ();
+
+	/*
 	 * Keep current camera view projection matrix
 	*/
 
-	rvc->Insert ("TemporalFilterMapVolume", _temporalFilterMapVolume);
+	glm::mat4 projectionMatrix = camera->GetProjectionMatrix ();
+	glm::mat4 viewMatrix = glm::translate (glm::mat4_cast (camera->GetRotation ()), camera->GetPosition () * -1.0f);
 
-	/*
-	 * Execute post process render pass
-	*/
+	_lastViewProjectionMatrix = projectionMatrix * viewMatrix;
 
-	rvc = PostProcessRenderPass::Execute (renderScene, camera, settings, rvc);
-
-	return rvc;
+	return rvc->Insert (GetPostProcessVolumeName (), GetCurrentPostProcessMapVolume ());
 }
 
 void TemporalFilterRenderPass::Clear ()
@@ -67,13 +79,25 @@ void TemporalFilterRenderPass::Clear ()
 	 * Clear last post processing volume
 	*/
 
-	delete _temporalFilterMapVolume;
+	delete _postProcessMapVolume2;
 
 	/*
 	 * Clear post process render pass
 	*/
 
 	PostProcessRenderPass::Clear ();
+}
+
+void TemporalFilterRenderPass::StartPostProcessPass ()
+{
+	/*
+	 * Bind screen space ambient occlusion volume for writing
+	*/
+
+	GetCurrentPostProcessMapVolume ()->GetFramebufferView ()->Activate ();
+
+	GL::ClearColor (0, 0, 0, 0);
+	GL::Clear (GL_COLOR_BUFFER_BIT);
 }
 
 std::string TemporalFilterRenderPass::GetPostProcessFragmentShaderPath () const
@@ -93,7 +117,7 @@ glm::ivec2 TemporalFilterRenderPass::GetPostProcessVolumeResolution (const Rende
 
 FramebufferRenderVolume* TemporalFilterRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	Resource<Texture> texture = Resource<Texture> (new Texture (""));
+	Resource<Texture> texture = Resource<Texture> (new Texture ("postProcessMap"));
 
 	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
 
@@ -109,7 +133,7 @@ FramebufferRenderVolume* TemporalFilterRenderPass::CreatePostProcessVolume (cons
 
 	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
 
-	return new TemporalFilterMapVolume (framebuffer);
+	return new FramebufferRenderVolume (framebuffer);
 }
 
 std::vector<PipelineAttribute> TemporalFilterRenderPass::GetCustomAttributes (const Camera* camera,
@@ -126,26 +150,30 @@ std::vector<PipelineAttribute> TemporalFilterRenderPass::GetCustomAttributes (co
 	*/
 
 	auto gBuffer = (GBuffer*) rvc->GetRenderVolume ("GBuffer");
-	auto temporalFilterMapVolume = (TemporalFilterMapVolume*) _temporalFilterMapVolume;
 
+	PipelineAttribute temporalFilterMap;
 	PipelineAttribute frustumJitter;
 	PipelineAttribute reprojectionMatrix;
 
+	temporalFilterMap.type = PipelineAttribute::AttrType::ATTR_TEXTURE_2D;
 	frustumJitter.type = PipelineAttribute::AttrType::ATTR_2F;
 	reprojectionMatrix.type = PipelineAttribute::AttrType::ATTR_MATRIX_4X4F;
 
+	temporalFilterMap.name = "temporalFilterMap";
 	frustumJitter.name = "frustumJitter";
 	reprojectionMatrix.name = "reprojectionMatrix";
 
+	temporalFilterMap.value.x = GetLastPostProcessMapVolume ()->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex ();
 	frustumJitter.value = glm::vec3 (gBuffer->GetFrustumJitter (), 0.0f);
 
 	glm::mat4 viewMatrix = glm::translate (glm::mat4_cast (camera->GetRotation ()), camera->GetPosition () * -1.0f);
 	glm::mat4 screenMatrix = glm::scale (glm::translate (glm::mat4 (1), glm::vec3 (0.5f)), glm::vec3 (0.5f));
 
-	glm::mat4 reprojectionMat = screenMatrix * temporalFilterMapVolume->GetViewProjectionMatrix () * glm::inverse (viewMatrix);
+	glm::mat4 reprojectionMat = screenMatrix * _lastViewProjectionMatrix * glm::inverse (viewMatrix);
 
 	reprojectionMatrix.matrix = reprojectionMat;
 
+	attributes.push_back (temporalFilterMap);
 	attributes.push_back (frustumJitter);
 	attributes.push_back (reprojectionMatrix);
 
@@ -156,7 +184,7 @@ void TemporalFilterRenderPass::UpdateLastPostProcessMapVolume (const RenderSetti
 {
 	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution (settings);
 
-	auto framebufferSize = _temporalFilterMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
+	auto framebufferSize = _postProcessMapVolume2->GetFramebuffer ()->GetTexture (0)->GetSize ();
 
 	if (framebufferSize.width != (std::size_t) volumeResolution.x ||
 		framebufferSize.height != (std::size_t) volumeResolution.y) {
@@ -165,12 +193,38 @@ void TemporalFilterRenderPass::UpdateLastPostProcessMapVolume (const RenderSetti
 		 * Clear temporal filtering map volume
 		*/
 
-		delete _temporalFilterMapVolume;
+		delete _postProcessMapVolume2;
 
 		/*
 		 * Initialize temporal filtering map volume
 		*/
 
-		_temporalFilterMapVolume = CreatePostProcessVolume (settings);
+		_postProcessMapVolume2 = CreatePostProcessVolume (settings);
 	}
+}
+
+FramebufferRenderVolume* TemporalFilterRenderPass::GetCurrentPostProcessMapVolume () const
+{
+	if (_frameCount == 0) {
+		return _postProcessMapVolume;
+	}
+
+	if (_frameCount == 1) {
+		return _postProcessMapVolume2;
+	}
+
+	return nullptr;
+}
+
+FramebufferRenderVolume* TemporalFilterRenderPass::GetLastPostProcessMapVolume () const
+{
+	if (_frameCount == 0) {
+		return _postProcessMapVolume2;
+	}
+
+	if (_frameCount == 1) {
+		return _postProcessMapVolume;
+	}
+
+	return nullptr;
 }

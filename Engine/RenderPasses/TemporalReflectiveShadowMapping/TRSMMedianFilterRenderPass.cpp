@@ -1,7 +1,5 @@
 #include "TRSMMedianFilterRenderPass.h"
 
-#include "TRSMIndirectDiffuseLightMapVolume.h"
-
 #include "Debug/Statistics/StatisticsManager.h"
 #include "TRSMStatisticsObject.h"
 
@@ -52,7 +50,7 @@ FramebufferRenderVolume* TRSMMedianFilterRenderPass::CreatePostProcessVolume (co
 
 	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
 
-	FramebufferRenderVolume* renderVolume = new TRSMIndirectDiffuseLightMapVolume (framebuffer);
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
 
 	/*
 	 * Update statistics object

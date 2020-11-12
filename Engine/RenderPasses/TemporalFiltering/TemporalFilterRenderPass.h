@@ -6,7 +6,9 @@
 class ENGINE_API TemporalFilterRenderPass : public PostProcessRenderPass
 {
 protected:
-	FramebufferRenderVolume* _temporalFilterMapVolume;
+	FramebufferRenderVolume* _postProcessMapVolume2;
+	glm::mat4 _lastViewProjectionMatrix;
+	std::size_t _frameCount;
 
 public:
 	TemporalFilterRenderPass ();
@@ -17,6 +19,8 @@ public:
 
 	void Clear ();
 protected:
+	void StartPostProcessPass ();
+
 	std::string GetPostProcessFragmentShaderPath () const;
 	std::string GetPostProcessVolumeName () const;
 	glm::ivec2 GetPostProcessVolumeResolution (const RenderSettings& settings) const;
@@ -26,6 +30,9 @@ protected:
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void UpdateLastPostProcessMapVolume (const RenderSettings& settings);
+
+	FramebufferRenderVolume* GetCurrentPostProcessMapVolume () const;
+	FramebufferRenderVolume* GetLastPostProcessMapVolume () const;
 };
 
 #endif

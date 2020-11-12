@@ -15,7 +15,7 @@ uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
 
-uniform sampler2D lastIndirectDiffuseMap;
+uniform sampler2D temporalFilterMap;
 uniform sampler2D indirectDiffuseMap;
 
 uniform vec2 rsmResolution;
@@ -32,7 +32,7 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_indirect, vec2 texCoord
 {
 	vec2 lastTexCoord = CalcReprojectedTexCoord (in_position, texCoord);
 
-	vec3 lastIndirect = texture2D (lastIndirectDiffuseMap, lastTexCoord).xyz;
+	vec3 lastIndirect = texture2D (temporalFilterMap, lastTexCoord).xyz;
 
 	vec3 clampedLastIndirect = CalcClipNeighbourhood (indirectDiffuseMap, rsmResolution, lastIndirect, texCoord);
 

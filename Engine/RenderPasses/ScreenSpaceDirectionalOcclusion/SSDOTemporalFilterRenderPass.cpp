@@ -1,7 +1,5 @@
 #include "SSDOTemporalFilterRenderPass.h"
 
-#include "SSDOTemporalFilterMapVolume.h"
-
 #include "Debug/Statistics/StatisticsManager.h"
 #include "SSDOStatisticsObject.h"
 
@@ -32,7 +30,7 @@ glm::ivec2 SSDOTemporalFilterRenderPass::GetPostProcessVolumeResolution (const R
 
 FramebufferRenderVolume* SSDOTemporalFilterRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
 {
-	Resource<Texture> texture = Resource<Texture> (new Texture ("ssdoTemporalMap"));
+	Resource<Texture> texture = Resource<Texture> (new Texture ("ssdoMap"));
 
 	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
 
@@ -48,7 +46,7 @@ FramebufferRenderVolume* SSDOTemporalFilterRenderPass::CreatePostProcessVolume (
 
 	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
 
-	FramebufferRenderVolume* renderVolume = new SSDOTemporalFilterMapVolume (framebuffer);
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
 
 	/*
 	 * Update statistics object

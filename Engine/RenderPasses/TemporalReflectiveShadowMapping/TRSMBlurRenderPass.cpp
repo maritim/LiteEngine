@@ -1,7 +1,5 @@
 #include "TRSMBlurRenderPass.h"
 
-#include "TRSMIndirectDiffuseLightMapVolume.h"
-
 #include "Debug/Statistics/StatisticsManager.h"
 #include "TRSMStatisticsObject.h"
 
@@ -55,7 +53,7 @@ FramebufferRenderVolume* TRSMBlurRenderPass::CreatePostProcessVolume (const Rend
 
 	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
 
-	FramebufferRenderVolume* renderVolume = new TRSMIndirectDiffuseLightMapVolume (framebuffer);
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
 
 	/*
 	 * Update statistics object

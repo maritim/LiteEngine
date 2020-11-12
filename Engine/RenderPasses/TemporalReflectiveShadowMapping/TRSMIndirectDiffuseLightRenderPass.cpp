@@ -1,89 +1,7 @@
 #include "TRSMIndirectDiffuseLightRenderPass.h"
 
-#include "TRSMIndirectDiffuseLightMapVolume.h"
-
 #include "Debug/Statistics/StatisticsManager.h"
 #include "TRSMStatisticsObject.h"
-
-#include "Core/Console/Console.h"
-
-TRSMIndirectDiffuseLightRenderPass::TRSMIndirectDiffuseLightRenderPass () :
-	_lastPostProcessMapVolume (nullptr)
-{
-
-}
-
-void TRSMIndirectDiffuseLightRenderPass::Init (const RenderSettings& settings)
-{
-	/*
-	 * Initialize post process render pass
-	*/
-
-	PostProcessRenderPass::Init (settings);
-
-	/*
-	 * Initialize last post process map volume
-	*/
-
-	_lastPostProcessMapVolume = CreatePostProcessVolume (settings);
-
-	/*
-	 * Initialize ping-pong buffers
-	*/
-
-	auto trsmIndirectDiffuseMapVolume = (TRSMIndirectDiffuseLightMapVolume*) _postProcessMapVolume;
-	auto trsmLastIndirectDiffuseMapVolume = (TRSMIndirectDiffuseLightMapVolume*) _lastPostProcessMapVolume;
-
-	trsmIndirectDiffuseMapVolume->SetCurrent(true);
-	trsmLastIndirectDiffuseMapVolume->SetCurrent(false);
-}
-
-RenderVolumeCollection* TRSMIndirectDiffuseLightRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
-	const RenderSettings& settings, RenderVolumeCollection* rvc)
-{
-	/*
-	 * Update temporal anti-aliasing map volume
-	*/
-
-	UpdateTRSMIndirectDiffuseMapVolume (settings);
-
-	/*
-	 * Execute post process render pass
-	*/
-
-	rvc = PostProcessRenderPass::Execute (renderScene, camera, settings, rvc);
-
-	/*
-	 * Keep current camera view projection matrix
-	*/
-
-	return rvc->Insert ("LastIndirectDiffuseMap", _lastPostProcessMapVolume);
-}
-
-void TRSMIndirectDiffuseLightRenderPass::Clear ()
-{
-	/*
-	 * Clear last post processing volume
-	*/
-
-	delete _lastPostProcessMapVolume;
-
-	/*
-	 * Clear post process render pass
-	*/
-
-	PostProcessRenderPass::Clear ();
-}
-
-bool TRSMIndirectDiffuseLightRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
-	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
-{
-	/*
-	 * Always execure reflective shadow mapping indirect light render pass
-	*/
-
-	return true;
-}
 
 std::string TRSMIndirectDiffuseLightRenderPass::GetPostProcessFragmentShaderPath () const
 {
@@ -96,7 +14,7 @@ FramebufferRenderVolume* TRSMIndirectDiffuseLightRenderPass::CreatePostProcessVo
 	 * Create temporal reflective indirect diffuse light framebuffer
 	*/
 
-	Resource<Texture> texture = Resource<Texture> (new Texture ("trsmIndirectDiffuseMap"));
+	Resource<Texture> texture = Resource<Texture> (new Texture ("indirectDiffuseMap"));
 
 	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
 
@@ -112,7 +30,7 @@ FramebufferRenderVolume* TRSMIndirectDiffuseLightRenderPass::CreatePostProcessVo
 
 	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
 
-	FramebufferRenderVolume* renderVolume = new TRSMIndirectDiffuseLightMapVolume (framebuffer);
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
 
 	/*
 	 * Update statistics object
@@ -123,27 +41,4 @@ FramebufferRenderVolume* TRSMIndirectDiffuseLightRenderPass::CreatePostProcessVo
 	trsmStatisticsObject->trsmIndirectDiffuseMapVolume = renderVolume;
 
 	return renderVolume;
-}
-
-void TRSMIndirectDiffuseLightRenderPass::UpdateTRSMIndirectDiffuseMapVolume (const RenderSettings& settings)
-{
-	glm::ivec2 volumeResolution = GetPostProcessVolumeResolution (settings);
-
-	auto framebufferSize = _lastPostProcessMapVolume->GetFramebuffer ()->GetTexture (0)->GetSize ();
-
-	if ((std::size_t) volumeResolution.x != framebufferSize.width ||
-		(std::size_t) volumeResolution.y != framebufferSize.height) {
-
-		/*
-		 * Clear temporal anti-aliasing map volume
-		*/
-
-		delete _lastPostProcessMapVolume;
-
-		/*
-		 * Initialize temporal anti-aliasing map volume
-		*/
-
-		_lastPostProcessMapVolume = CreatePostProcessVolume (settings);
-	}
 }

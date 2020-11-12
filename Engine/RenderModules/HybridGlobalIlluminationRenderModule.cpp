@@ -52,7 +52,6 @@
 
 #include "RenderPasses/IdleRenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAARenderPass.h"
-#include "RenderPasses/TemporalAntialiasing/TAASwapRenderPass.h"
 #include "RenderPasses/Bloom/BrightExtractionRenderPass.h"
 #include "RenderPasses/Bloom/BloomHorizontalBlurRenderPass.h"
 #include "RenderPasses/Bloom/BloomVerticalBlurRenderPass.h"
@@ -113,11 +112,7 @@ void HybridGlobalIlluminationRenderModule::Init ()
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
 		.Attach (new IdleRenderPass ())
-		.Attach (ContainerRenderPass::Builder ()
-			.Volume (new IterateOverRenderVolumeCollection (1))
-			.Attach	(new TAARenderPass ())
-			.Attach (new TAASwapRenderPass ())
-			.Build ())
+		.Attach	(new TAARenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new BrightExtractionRenderPass ())
