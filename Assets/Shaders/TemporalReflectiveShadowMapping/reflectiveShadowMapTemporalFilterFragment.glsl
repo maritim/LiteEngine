@@ -28,22 +28,11 @@ vec2 CalcTexCoordRSM ()
 	return gl_FragCoord.xy / rsmResolution;
 }
 
-vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_indirect, vec2 texCoord)
-{
-	vec2 lastTexCoord = CalcReprojectedTexCoord (in_position, texCoord);
-
-	vec3 lastIndirect = texture2D (temporalFilterMap, lastTexCoord).xyz;
-
-	vec3 clampedLastIndirect = CalcClipNeighbourhood (indirectDiffuseMap, rsmResolution, lastIndirect, texCoord);
-
-	return mix (in_indirect, clampedLastIndirect, 0.99);
-}
-
 void main()
 {
 	vec2 texCoord = CalcTexCoordRSM();
 	vec3 in_position = textureLod (gPositionMap, texCoord, 0).xyz;
-	vec3 in_indirect = texture2D (indirectDiffuseMap, texCoord).xyz;
 
-	out_color = CalcIndirectDiffuseLight(in_position, in_indirect, texCoord);
+	out_color = CalcTemporalFiltering (temporalFilterMap, indirectDiffuseMap, rsmResolution,
+		in_position, texCoord, false);
 }

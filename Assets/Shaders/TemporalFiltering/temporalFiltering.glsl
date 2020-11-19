@@ -17,13 +17,6 @@ vec2 CalcReprojectedTexCoord (const in vec3 in_position, const in vec2 texCoord)
 	vec4 lastProjected = reprojectionMatrix * vec4 (in_position, 1.0);
 	vec2 lastTexCoord = lastProjected.xy / lastProjected.w;
 
-	bvec2 a = greaterThan(lastTexCoord, vec2(1.0, 1.0));
-	bvec2 b = lessThan(lastTexCoord, vec2(0.0, 0.0));
-
-	if (any(bvec2(any(a), any(b)))) {
-		return texCoord;
-	}
-
 	return lastTexCoord;
 }
 
@@ -101,4 +94,28 @@ float CalcBlendFactor (const in vec3 currentColor, const in vec3 historyColor)
 	float weight = mix (0.8, 0.95, unbiased_weight_sqr);
 
 	return weight;
+}
+
+vec3 CalcTemporalFiltering (const in sampler2D temporalFilterMap, const in sampler2D postProcessMap,
+	const in vec2 resolution, const in vec3 in_position, const in vec2 texCoord, bool unjitter)
+{
+	vec3 currentFrameColor = texture2D (postProcessMap, unjitter ? CalcUnjitterTexCoord (texCoord) : texCoord).xyz;
+
+	vec2 lastFrameTexCoord = CalcReprojectedTexCoord (in_position, texCoord);
+
+	bvec2 a = greaterThan(lastFrameTexCoord, vec2(1.0, 1.0));
+	bvec2 b = lessThan(lastFrameTexCoord, vec2(0.0, 0.0));
+
+	if (any(bvec2(any(a), any(b)))) {
+		return currentFrameColor;
+	}
+
+	vec4 temporalFilterColor = texture2D (temporalFilterMap, lastFrameTexCoord);
+
+	vec3 clampedTemporalFilterColor = CalcClipNeighbourhood (postProcessMap,
+		resolution, temporalFilterColor.xyz, texCoord);
+
+	float weight = CalcBlendFactor (currentFrameColor, clampedTemporalFilterColor);
+
+	return mix (currentFrameColor, clampedTemporalFilterColor, weight);
 }

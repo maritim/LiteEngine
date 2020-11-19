@@ -12,6 +12,8 @@ class ENGINE_API TAARenderPass : public TemporalFilterRenderPass
 public:
 	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
+
+	std::string GetPostProcessFragmentShaderPath () const;
 };
 
 #endif

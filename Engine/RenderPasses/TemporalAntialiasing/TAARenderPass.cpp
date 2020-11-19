@@ -9,3 +9,8 @@ bool TAARenderPass::IsAvailable (const RenderScene* renderScene, const Camera* c
 
 	return settings.taa_enabled;
 }
+
+std::string TAARenderPass::GetPostProcessFragmentShaderPath () const
+{
+	return "Assets/Shaders/TemporalAntialiasing/temporalAntialiasingFragment.glsl";
+}

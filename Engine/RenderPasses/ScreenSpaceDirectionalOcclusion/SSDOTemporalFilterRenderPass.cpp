@@ -40,8 +40,8 @@ FramebufferRenderVolume* SSDOTemporalFilterRenderPass::CreatePostProcessVolume (
 	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
 	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
 	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
-	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
-	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
+	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
+	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
 	texture->SetAnisotropicFiltering (false);
 
 	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));

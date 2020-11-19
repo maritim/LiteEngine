@@ -100,11 +100,6 @@ void TemporalFilterRenderPass::StartPostProcessPass ()
 	GL::Clear (GL_COLOR_BUFFER_BIT);
 }
 
-std::string TemporalFilterRenderPass::GetPostProcessFragmentShaderPath () const
-{
-	return "Assets/Shaders/TemporalFiltering/temporalFilteringFragment.glsl";
-}
-
 std::string TemporalFilterRenderPass::GetPostProcessVolumeName () const
 {
 	return "PostProcessMapVolume";

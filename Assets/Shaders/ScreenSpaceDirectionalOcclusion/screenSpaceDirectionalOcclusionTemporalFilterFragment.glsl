@@ -28,24 +28,11 @@ vec2 CalcTexCoordSSDO()
 	return gl_FragCoord.xy / ssdoResolution;
 }
 
-vec3 CalcTemporalFiltering (vec3 in_position, vec3 in_light, vec2 texCoord)
-{
-	vec2 lastTexCoord = CalcReprojectedTexCoord (in_position, texCoord);
-
-	vec3 lastColor = texture2D (temporalFilterMap, lastTexCoord).xyz;
-
-	vec3 clampedLastColor = CalcClipNeighbourhood (ssdoMap, screenSize, lastColor, texCoord);
-
-	float weight = CalcBlendFactor (in_light, clampedLastColor);
-
-	return mix (in_light, clampedLastColor, weight);
-}
-
 void main()
 {
 	vec2 texCoord = CalcTexCoordSSDO();
 	vec3 in_position = textureLod (gPositionMap, texCoord, 0).xyz;
-	vec3 in_light = texture2D (ssdoMap, texCoord).xyz;
 
-	out_color = CalcTemporalFiltering(in_position, in_light, texCoord);
+	out_color = CalcTemporalFiltering(temporalFilterMap, ssdoMap,
+		ssdoResolution, in_position, texCoord, false);
 }
