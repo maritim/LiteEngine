@@ -102,5 +102,7 @@ void main()
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcRSMIndirectSpecular (in_position, in_normal);
+	if (in_position.z >= -cameraZLimits.y) {
+		out_color = CalcRSMIndirectSpecular (in_position, in_normal);
+	}
 } 

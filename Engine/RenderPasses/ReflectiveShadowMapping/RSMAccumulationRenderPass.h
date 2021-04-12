@@ -20,7 +20,7 @@ public:
 
 	void Clear ();
 protected:
-	void StartShadowMapPass ();
+	virtual void StartShadowMapPass (const Camera* lightCamera);
 	void ShadowMapGeometryPass (const RenderScene* renderScene, const Camera* lightCamera,
 		const RenderSettings& settings, const RenderLightObject* renderLightObject);
 	void EndShadowMapPass ();

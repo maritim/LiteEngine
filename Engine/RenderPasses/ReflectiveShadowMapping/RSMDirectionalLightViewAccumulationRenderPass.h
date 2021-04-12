@@ -12,6 +12,8 @@ class RSMDirectionalLightViewAccumulationRenderPass : public RSMDirectionalLight
 
 public:
 	void Init (const RenderSettings& settings);
+protected:
+	void StartShadowMapPass (const Camera* lightCamera);
 };
 
 #endif

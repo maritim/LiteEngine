@@ -110,7 +110,7 @@ RenderVolumeCollection* DeferredGeometryRenderPass::Execute (const RenderScene* 
 	* Deferred Rendering: Prepare for rendering
 	*/
 
-	PrepareDrawing ();
+	PrepareDrawing (camera);
 
 	/*
 	* Deferred Rendering: Geometry Pass
@@ -154,25 +154,42 @@ void DeferredGeometryRenderPass::Clear ()
 	delete _framebuffer;
 }
 
-void DeferredGeometryRenderPass::PrepareDrawing ()
+void DeferredGeometryRenderPass::PrepareDrawing (const Camera* camera)
 {
+	GL::DepthMask (GL_TRUE);
+
 	/*
 	 * Clear framebuffer
 	*/
 
-	GL::DepthMask (GL_TRUE);
-
-	_framebuffer->GetFramebufferView ()->Activate ();
-
-	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	ClearGBuffer (_framebuffer, camera);
 
 	/*
 	 * Clear translucency framebuffer
 	*/
 
-	_translucencyFramebuffer->GetFramebufferView ()->Activate ();
+	ClearGBuffer (_translucencyFramebuffer, camera);
+}
 
+void DeferredGeometryRenderPass::ClearGBuffer (GBuffer* framebuffer, const Camera* camera)
+{
+	/*
+	 * Clear all buffers
+	*/
+
+	_framebuffer->GetFramebufferView ()->Activate ();
+
+	GL::ClearColor (0, 0, 0, 0);
 	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	/*
+	 * Clear position buffer
+	*/
+
+	GL::DrawBuffer (GL_COLOR_ATTACHMENT0);
+
+	GL::ClearColor (0, 0, -camera->GetZFar (), 0);
+	GL::Clear (GL_COLOR_BUFFER_BIT);
 }
 
 void DeferredGeometryRenderPass::GeometryPass (const RenderScene* renderScene, const Camera* camera, const RenderSettings& settings)

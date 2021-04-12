@@ -14,6 +14,7 @@ uniform mat4 inverseViewMatrix;
 uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
+uniform vec2 cameraZLimits;
 
 uniform sampler2D temporalFilterMap;
 uniform sampler2D indirectDiffuseMap;

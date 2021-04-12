@@ -37,7 +37,7 @@ public:
 protected:
 	void UpdateCamera (const Camera* camera, const RenderSettings& settings);
 
-	void PrepareDrawing ();
+	void PrepareDrawing (const Camera* camera);
 	void GeometryPass (const RenderScene* renderScene, const Camera* camera, const RenderSettings& settings);
 	void EndDrawing ();
 
@@ -49,6 +49,8 @@ protected:
 	void UpdateVolumes (const RenderSettings& settings, RenderVolumeCollection* rvc);
 
 	void InitGBufferVolume (const RenderSettings& settings);
+
+	void ClearGBuffer (GBuffer* framebuffer, const Camera* camera);
 };
 
 #endif

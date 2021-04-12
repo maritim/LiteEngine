@@ -31,17 +31,17 @@ RenderVolumeCollection* RSMAccumulationRenderPass::Execute (const RenderScene* r
 	UpdateRSMVolume (renderLightObject);
 
 	/*
-	* Start shadow map drawing process
-	*/
-
-	StartShadowMapPass ();
-
-	/*
 	* Calculate light camera for shadow map
 	*/
 
 	Camera* lightCamera = GetLightCamera (renderScene, renderLightObject);
 	_rsmVolume->SetLightCamera (lightCamera);
+
+	/*
+	* Start shadow map drawing process
+	*/
+
+	StartShadowMapPass (lightCamera);
 
 	/*
 	* Render geometry on shadow map
@@ -72,13 +72,20 @@ void RSMAccumulationRenderPass::Clear ()
 	delete _rsmVolume;
 }
 
-void RSMAccumulationRenderPass::StartShadowMapPass ()
+void RSMAccumulationRenderPass::StartShadowMapPass (const Camera* lightCamera)
 {
 	/*
 	* Bind shadow map volume for writing
 	*/
 
 	_rsmVolume->GetFramebufferView ()->Activate ();
+
+	/*
+	 * Clear framebuffer
+	*/
+
+	GL::ClearColor (0, 0, 0, 0);
+	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void RSMAccumulationRenderPass::ShadowMapGeometryPass (const RenderScene* renderScene, const Camera* lightCamera,
@@ -90,12 +97,6 @@ void RSMAccumulationRenderPass::ShadowMapGeometryPass (const RenderScene* render
 
 	Pipeline::CreateProjection (lightCamera->GetProjectionMatrix ());
 	Pipeline::SendCamera (lightCamera);
-
-	/*
-	 * Clear framebuffer
-	*/
-
-	GL::Clear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	/*
 	 * Set viewport

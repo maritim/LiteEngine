@@ -71,6 +71,14 @@ vec3 CalcScreenSpaceReflection (vec3 in_position, vec3 in_normal, vec2 texCoord)
 		return vec3 (0.0);
 	}
 
+	/*
+	 * Discard reflections beyond camera z
+	*/
+
+	if (reflectionViewPos.z <= -cameraZLimits.y) {
+		return vec3 (0.0);
+	}
+
 	reflectionPos /= screenSize.xy;
 
 	return vec3 (reflectionPos, 0.0);
@@ -89,7 +97,7 @@ void main()
 
 	vec3 reflectionPos = vec3 (0.0f);
 
-	if (length (in_specular) > 0.0f) {
+	if (length (in_specular) > 0.0f && in_position.z >= -cameraZLimits.y) {
 		reflectionPos = CalcScreenSpaceReflection (in_position, in_normal, texCoord);
 	}
 

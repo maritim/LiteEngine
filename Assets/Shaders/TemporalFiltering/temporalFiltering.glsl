@@ -10,7 +10,7 @@ vec2 CalcUnjitterTexCoord (vec2 texCoord)
 
 vec2 CalcReprojectedTexCoord (const in vec3 in_position, const in vec2 texCoord)
 {
-	if (length (in_position) == 0.0) {
+	if (in_position.z <= -cameraZLimits.y) {
 		return texCoord;
 	}
 
