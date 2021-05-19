@@ -1,71 +1,70 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<Scene name="VXGI Test" >
-	<!-- <Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" /> -->
-
-	<SceneObject InstanceID="0" name="Lucy" isActive="true" >
-		<Transform>
-			<Position />
-			<Rotation y="30" />
-			<Scale x ="0.06" y="0.06" z="0.06"/>
-		</Transform>
-		<Components>
-			<Component name="FlyCameraController" />
-			<Component name="StatsView" />
-			<Component name="RenderObjectComponent" renderStage="1" layer="8">
-				<model path="Assets/Models/Lucy/Winged_Victory.obj" />
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="0" name="Wall" isActive="true" >
-		<Transform>
-			<Position />
-			<Rotation />
-			<Scale x="10" y="10" z="10" />
-		</Transform>
-		<Components>
-			<Component name="RenderObjectComponent" renderStage="1" layer="1">
-				<model path="Assets/Models/CornellBox/CornellBox_Empty_3sides.obj" />
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="41" name="Directional" isActive="false">
-		<Transform>
-			<Rotation x="-45" y="45" z="0" />
-		</Transform>
-		<Components>
-			<Component name="DirectionalLightComponent" intensity="1" castShadows="true" >
-				<color r="255" g="255" b="255" />
-
-				<shadowInformation cascadesCount="4" bias="0.003" >
-					<Resolution width="512" height="512" />
-				</shadowInformation>
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="40" name="Spot" isActive="true">
-		<Transform>
-			<Position x="15" y="33" z="12" />
-			<Rotation x="-45" y="45" z="0" />
-		</Transform>
-		<Components>
-			<Component name="SpotLightComponent" intensity="1" range="120" cutoff="0" outerCutoff="30"  castShadows="true" >
-				<color r="255" g="255" b="255" />
-				<shadowInformation casting="true" bias="0.0001">
-					<Resolution width="512" height="512" />
-				</shadowInformation>
-			</Component>
-		</Components>
-	</SceneObject>
-
-	<SceneObject InstanceID="41" name="Ambient" isActive="false">
-		<Components>
-			<Component name="AmbientLightComponent" intensity="0.25" >
-				<color r="255" g="255" b="255" />
-			</Component>
-		</Components>
-	</SceneObject>
+<?xml version="1.0" encoding="UTF-8" ?>
+<Scene name="VXGI Test">
+    <!-- <Skybox path="Assets/Skyboxes/Snowlake/Snowlake.sky" /> -->
+    <SceneObject instanceID="0" name="Lucy" isActive="true">
+        <Transform>
+            <Position x="0.000000" y="0.000000" z="0.000000" />
+            <Rotation x="0.000000" y="30.000011" z="0.000000" />
+            <Scale x="0.060000" y="0.060000" z="0.060000" />
+        </Transform>
+        <Components>
+            <Component name="RenderObjectComponent" renderStage="1" layer="8">
+                <model path="Assets/Models/Lucy/Winged_Victory.obj" />
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="41" name="Directional" isActive="true">
+        <Transform>
+            <Position x="0.000000" y="0.000000" z="0.000000" />
+            <Rotation x="-45.000023" y="44.999996" z="-0.000021" />
+            <Scale x="1.000000" y="1.000000" z="0.999999" />
+        </Transform>
+        <Components>
+            <Component name="DirectionalLightComponent" intensity="1.000000" castShadows="true">
+                <color r="255" g="255" b="255" a="255" />
+                <shadowInformation cascadesCount="4" bias="0.003000">
+                    <Resolution width="512" height="512" />
+                </shadowInformation>
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="0" name="Wall" isActive="true">
+        <Transform>
+            <Position x="0.000000" y="0.000000" z="0.000000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="10.000000" y="10.000000" z="10.000000" />
+        </Transform>
+        <Components>
+            <Component name="RenderObjectComponent" renderStage="1" layer="1">
+                <model path="Assets/Models/CornellBox/CornellBox_Empty_3sides.obj" />
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="41" name="Ambient" isActive="false">
+        <Transform>
+            <Position x="0.000000" y="0.000000" z="0.000000" />
+            <Rotation x="0.000000" y="-0.000000" z="0.000000" />
+            <Scale x="1.000000" y="1.000000" z="1.000000" />
+        </Transform>
+        <Components>
+            <Component name="AmbientLightComponent" intensity="0.250000">
+                <color r="255" g="255" b="255" a="255" />
+            </Component>
+        </Components>
+    </SceneObject>
+    <SceneObject instanceID="40" name="Spot" isActive="false">
+        <Transform>
+            <Position x="14.999998" y="32.999992" z="11.999998" />
+            <Rotation x="-45.000019" y="44.999996" z="-0.000013" />
+            <Scale x="120.000015" y="120.000000" z="120.000023" />
+        </Transform>
+        <Components>
+            <Component name="SpotLightComponent" intensity="1.000000" castShadows="true" range="120.000000" cutoff="0.000000" outerCutoff="30.000000">
+                <color r="255" g="255" b="255" a="255" />
+                <shadowInformation cascadesCount="1" bias="0.000100">
+                    <Resolution width="512" height="512" />
+                </shadowInformation>
+            </Component>
+        </Components>
+    </SceneObject>
 </Scene>

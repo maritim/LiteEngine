@@ -14,6 +14,7 @@ uniform mat4 inverseViewMatrix;
 uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
+uniform vec2 cameraZLimits;
 
 #include "deferred.glsl"
 #include "ReflectiveShadowMapping/reflectiveShadowMapping.glsl"
@@ -34,9 +35,30 @@ uniform float ssaoBias;
 
 uniform float hgiAOBlend;
 
+uniform int temporalFilterEnabled;
+
+float rand(vec2 co){
+  return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
+vec3 rand3(vec3 p)
+{
+	vec3 q = vec3(
+		dot(p, vec3(127.1, 311.7, 74.7)),
+		dot(p, vec3(269.5, 183.3, 246.1)),
+		dot(p, vec3(113.5, 271.9, 124.6))
+		);
+
+	return fract(sin(q) * 43758.5453123);
+}
+
 float CalcRSMAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 texCoord, out float dist)
 {
-	if (in_position == vec3 (0.0)) {
+	/*
+	 * Check geometry
+	*/
+
+	if (in_position.z <= -cameraZLimits.y) {
 		return 0.0;
 	}
 
@@ -53,7 +75,9 @@ float CalcRSMAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 texCoord, 
 
 	vec2 noiseScale = rsmSize / noiseMapSize;
 
-	vec3 randomVec = texture (noiseMap, texCoord * noiseScale).xyz;
+	vec3 randomVec = temporalFilterEnabled == 0 ?
+		texture (noiseMap, texCoord * noiseScale).xyz :
+		rand3 (in_position) - rand3 (2 * in_position);
 
 	vec3 tangent = normalize (randomVec - lightViewSpaceNormal * dot (randomVec, lightViewSpaceNormal));
 	vec3 bitangent = cross (lightViewSpaceNormal, tangent);
@@ -69,7 +93,14 @@ float CalcRSMAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 texCoord, 
 		offset.xyz /= offset.w;
 		offset.xyz = offset.xyz * 0.5 + 0.5;
 
-		if (offset.x < 0 || offset.x > 1 || offset.y < 0 || offset.y > 1) {
+		/*
+		 * Check sample texcoord limits
+		*/
+
+		bvec2 a = greaterThan(offset.xy, vec2(1.0, 1.0));
+		bvec2 b = lessThan(offset.xy, vec2(0.0, 0.0));
+
+		if (any(bvec2(any(a), any(b)))) {
 			continue;
 		}
 

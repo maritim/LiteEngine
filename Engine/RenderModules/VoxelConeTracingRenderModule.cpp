@@ -33,7 +33,10 @@
 #include "RenderPasses/VoxelConeTracing/VCTIndirectSpecularLightRenderPass.h"
 #include "RenderPasses/VoxelConeTracing/VCTAmbientOcclusionRenderPass.h"
 #include "RenderPasses/VoxelConeTracing/VCTSubsurfaceScatteringRenderPass.h"
+#include "RenderPasses/VoxelConeTracing/VCTDirectionalLightShadowRenderPass.h"
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
+
+#include "RenderPasses/FramebufferGenerationRenderPass.h"
 
 #include "RenderPasses/IdleRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflections/SSRRenderPass.h"
@@ -56,7 +59,7 @@ void VoxelConeTracingRenderModule::Init ()
 	_renderPasses.push_back (new ResultFrameBufferGenerationRenderPass ());
 	_renderPasses.push_back (new DeferredGeometryRenderPass ());
 	_renderPasses.push_back (new VoxelGenerationRenderPass ());
-	_renderPasses.push_back (new DeferredGeometryRenderPass ());
+	_renderPasses.push_back	(new FramebufferGenerationRenderPass ("vctShadowMap"));
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new VCTVoxelizationCheckRenderVolumeCollection ())
 		.Attach (new VoxelizationRenderPass ())
@@ -64,9 +67,18 @@ void VoxelConeTracingRenderModule::Init ()
 			.Volume (new DirectionalLightContainerRenderVolumeCollection ())
 			.Attach (new RSMDirectionalLightAccumulationRenderPass ())
 			.Attach (new VoxelRadianceInjectionRenderPass ())
+			.Attach (new VCTDirectionalLightShadowRenderPass ())
 			.Build ())
 		.Attach (new VoxelMipmapRenderPass ())
 		// .Attach (new VoxelBorderRenderPass ())
+		.Build ());
+	_renderPasses.push_back (ContainerRenderPass::Builder ()
+		.Volume (new VCTVoxelizationCheckRenderVolumeCollection (false))
+		.Attach (ContainerRenderPass::Builder ()
+			.Volume (new DirectionalLightContainerRenderVolumeCollection ())
+			.Attach (new RSMDirectionalLightAccumulationRenderPass ())
+			.Attach (new VCTDirectionalLightShadowRenderPass ())
+			.Build ())
 		.Build ());
 		// .Attach (ContainerRenderPass::Builder ()
 		// 	.Volume (new IterateOverRenderVolumeCollection (1))

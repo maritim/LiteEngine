@@ -13,6 +13,7 @@ public:
 	Object* Load(const std::string& fileName);
 protected:
 	void ProcessRenderMode (TiXmlElement* xmlElem, RenderSettings* settings);
+	void ProcessGeneral (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessSSAO (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessSSDO (TiXmlElement* xmlElem, RenderSettings* settings);
 	void ProcessSSR (TiXmlElement* xmlElem, RenderSettings* settings);

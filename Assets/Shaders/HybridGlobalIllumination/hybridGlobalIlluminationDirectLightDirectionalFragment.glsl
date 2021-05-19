@@ -14,6 +14,7 @@ uniform mat4 inverseViewMatrix;
 uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
+uniform vec2 cameraZLimits;
 
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
@@ -67,12 +68,17 @@ void main()
 {
 	vec2 texCoord = CalcTexCoord();
 	vec3 in_position = textureLod (gPositionMap, texCoord, 0).xyz;
-	vec3 in_diffuse = textureLod (gDiffuseMap, texCoord, 0).xyz;
-	vec3 in_normal = textureLod (gNormalMap, texCoord, 0).xyz;
-	vec3 in_specular = textureLod (gSpecularMap, texCoord, 0).xyz;
-	float in_shininess = textureLod (gSpecularMap, texCoord, 0).w;
 
-	in_normal = normalize(in_normal);
+	out_color = vec3 (0.0);
 
-	out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
+	if (in_position.z > -cameraZLimits.y) {
+		vec3 in_diffuse = textureLod (gDiffuseMap, texCoord, 0).xyz;
+		vec3 in_normal = textureLod (gNormalMap, texCoord, 0).xyz;
+		vec3 in_specular = textureLod (gSpecularMap, texCoord, 0).xyz;
+		float in_shininess = textureLod (gSpecularMap, texCoord, 0).w;
+
+		in_normal = normalize(in_normal);
+
+		out_color = CalcDirectionalLight(in_position, in_normal, in_diffuse, in_specular, in_shininess);
+	}
 } 

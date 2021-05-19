@@ -27,10 +27,6 @@ std::string SSDOShadowRenderPass::GetPostProcessVolumeName () const
 
 glm::ivec2 SSDOShadowRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	if (_postProcessMapVolume != nullptr) {
-
-	}
-
 	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssdo_shadow_scale);
 }
 

@@ -13,11 +13,16 @@ struct ENGINE_API HGIStatisticsObject : public StatisticsObject
 	FramebufferRenderVolume* hgiRSMIndirectDiffuseMapVolume;
 	FramebufferRenderVolume* hgiSSDOIndirectDiffuseMapVolume;
 
+	FramebufferRenderVolume* hgiIndirectDiffuseMapVolume;
+	FramebufferRenderVolume* hgiTemporalFilterMapVolume;
+
 	FramebufferRenderVolume* hgiSSRPositionMapVolume;
 	FramebufferRenderVolume* hgiIndirectSpecularMapVolume;
 
 	FramebufferRenderVolume* hgiRSMAmbientOcclusionMapVolume;
 	FramebufferRenderVolume* hgiAmbientOcclusionMapVolume;
+	FramebufferRenderVolume* hgiAOBlurMapVolume;
+	FramebufferRenderVolume* hgiAOTemporalFilterMapVolume;
 
 	// FramebufferRenderVolume* hgiIndirectSpecularMapVolume;
 	// FramebufferRenderVolume* hgiSubsurfaceScatteringMapVolume;

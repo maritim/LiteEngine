@@ -81,6 +81,8 @@ std::vector<PipelineAttribute> HybridRSMIndirectDiffuseLightRenderPass::GetCusto
 	PipelineAttribute rsmRadius;
 	PipelineAttribute ssdoRadius;
 	PipelineAttribute hgiIntensity;
+	PipelineAttribute temporalFilterEnabled;
+	PipelineAttribute hgiInterpolationEnabled;
 	PipelineAttribute hgiInterpolationScale;
 	PipelineAttribute hgiMinInterpolationDistance;
 	PipelineAttribute hgiMinInterpolationAngle;
@@ -89,6 +91,8 @@ std::vector<PipelineAttribute> HybridRSMIndirectDiffuseLightRenderPass::GetCusto
 	rsmRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssdoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+	temporalFilterEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
+	hgiInterpolationEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
 	hgiInterpolationScale.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiMinInterpolationDistance.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiMinInterpolationAngle.type = PipelineAttribute::AttrType::ATTR_1F;
@@ -97,6 +101,8 @@ std::vector<PipelineAttribute> HybridRSMIndirectDiffuseLightRenderPass::GetCusto
 	rsmRadius.name = "rsmRadius";
 	ssdoRadius.name = "ssdoRadius";
 	hgiIntensity.name = "hgiIntensity";
+	temporalFilterEnabled.name = "temporalFilterEnabled";
+	hgiInterpolationEnabled.name = "hgiInterpolationEnabled";
 	hgiInterpolationScale.name = "hgiInterpolationScale";
 	hgiMinInterpolationDistance.name = "hgiMinInterpolationDistance";
 	hgiMinInterpolationAngle.name = "hgiMinInterpolationAngle";
@@ -105,6 +111,8 @@ std::vector<PipelineAttribute> HybridRSMIndirectDiffuseLightRenderPass::GetCusto
 	rsmRadius.value.x = settings.hgi_rsm_radius;
 	ssdoRadius.value.x = settings.hgi_ssdo_radius;
 	hgiIntensity.value.x = settings.hgi_rsm_indirect_diffuse_intensity;
+	temporalFilterEnabled.value.x = settings.hgi_temporal_filter_enabled;
+	hgiInterpolationEnabled.value.x = settings.hgi_interpolation_enabled;
 	hgiInterpolationScale.value.x = settings.hgi_interpolation_scale;
 	hgiMinInterpolationDistance.value.x = settings.hgi_min_interpolation_distance;
 	hgiMinInterpolationAngle.value.x = std::cos (DEG2RAD * settings.hgi_min_interpolation_angle);
@@ -113,6 +121,8 @@ std::vector<PipelineAttribute> HybridRSMIndirectDiffuseLightRenderPass::GetCusto
 	attributes.push_back (rsmRadius);
 	attributes.push_back (ssdoRadius);
 	attributes.push_back (hgiIntensity);
+	attributes.push_back (temporalFilterEnabled);
+	attributes.push_back (hgiInterpolationEnabled);
 	attributes.push_back (hgiInterpolationScale);
 	attributes.push_back (hgiMinInterpolationDistance);
 	attributes.push_back (hgiMinInterpolationAngle);

@@ -8,14 +8,14 @@ void TRSMSamplesGenerationRenderPass::Init (const RenderSettings& settings)
 	 * Initialize reflective shadow map samples volume
 	*/
 
-	_rsmSamplesVolume = new TRSMSamplesVolume (settings.rsm_samples);
+	_rsmSamplesVolume = new TRSMSamplesVolume (settings.trsm_samples);
 }
 
 void TRSMSamplesGenerationRenderPass::UpdateRSMSamplesVolume (const RenderSettings& settings)
 {
 	std::size_t rsmSamplesSize = _rsmSamplesVolume->GetSize ();
 
-	if (rsmSamplesSize != settings.rsm_samples) {
+	if (rsmSamplesSize != settings.trsm_samples) {
 
 		/*
 		 * Clear reflective shadow map samples
@@ -27,6 +27,6 @@ void TRSMSamplesGenerationRenderPass::UpdateRSMSamplesVolume (const RenderSettin
 		 * Initialize reflective shadow map samples
 		*/
 
-		_rsmSamplesVolume = new TRSMSamplesVolume (settings.rsm_samples);
+		_rsmSamplesVolume = new TRSMSamplesVolume (settings.trsm_samples);
 	}
 }

@@ -10,7 +10,7 @@ bool HybridAmbientOcclusionBlurRenderPass::IsAvailable (const RenderScene* rende
 	 * Check if screen space ambient occlusion blur is enabled
 	*/
 
-	return true;
+	return settings.hgi_ao_enabled && settings.hgi_temporal_filter_enabled == false;
 }
 
 std::string HybridAmbientOcclusionBlurRenderPass::GetPostProcessVolumeName () const
@@ -53,7 +53,7 @@ FramebufferRenderVolume* HybridAmbientOcclusionBlurRenderPass::CreatePostProcess
 
 	auto hgiStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <HGIStatisticsObject> ();
 
-	hgiStatisticsObject->hgiAmbientOcclusionMapVolume = renderVolume;
+	hgiStatisticsObject->hgiAOBlurMapVolume = renderVolume;
 
 	return renderVolume;
 }

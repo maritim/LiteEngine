@@ -95,7 +95,7 @@ void VoxelGenerationRenderPass::InitVoxelVolume (const RenderSettings& settings)
 	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
 	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
 	texture->SetAnisotropicFiltering (false);
-	texture->SetBorderColor (Color::Black);
+	texture->SetBorderColor (glm::vec4 (0.0));
 
 	textures.push_back (texture);
 
@@ -117,7 +117,7 @@ void VoxelGenerationRenderPass::InitVoxelVolume (const RenderSettings& settings)
 	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR_MIPMAP_LINEAR);
 	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_LINEAR);
 	texture->SetAnisotropicFiltering (false);
-	texture->SetBorderColor (Color::Black);
+	texture->SetBorderColor (glm::vec4 (0.0));
 
 	textures.push_back (texture);
 

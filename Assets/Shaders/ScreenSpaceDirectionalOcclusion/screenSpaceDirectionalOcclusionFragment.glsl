@@ -48,7 +48,7 @@ vec3 CalcInterpolatedIndirectDiffuseLight (vec3 in_position, vec3 in_normal, vec
 		if (ssdoDebugInterpolation == 1) {
 			indirectDiffuseLight = vec3 (1, 0, 0);
 		} else {
-			indirectDiffuseLight = CalcScreenSpaceDirectionalOcclusion(in_position, in_normal) * ssdoIndirectIntensity;
+			indirectDiffuseLight = CalcScreenSpaceDirectionalOcclusion(in_position, in_normal, texCoord) * ssdoIndirectIntensity;
 		}
 	}
 
@@ -70,8 +70,10 @@ void main()
 	}
 
 	if (ssdoInterpolationEnabled == 0) {
-		indirectLight = CalcScreenSpaceDirectionalOcclusion(in_position, in_normal) * ssdoIndirectIntensity;
+		indirectLight = CalcScreenSpaceDirectionalOcclusion(in_position, in_normal, texCoord) * ssdoIndirectIntensity;
 	}
+
+	// out_color = textureLod (gPositionMap, texCoord, log2 (1.0 / ssdoSamplingScale)).xyz;
 
 	out_color = indirectLight;
 }

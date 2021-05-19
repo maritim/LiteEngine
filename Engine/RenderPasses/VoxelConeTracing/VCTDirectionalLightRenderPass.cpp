@@ -43,24 +43,24 @@ std::vector<PipelineAttribute> VCTDirectionalLightRenderPass::GetCustomAttribute
 {
 	std::vector<PipelineAttribute> attributes;
 
-	PipelineAttribute shadowConeRatio;
-	PipelineAttribute shadowConeDistance;
+	PipelineAttribute indirectSpecularEnabled;
+	PipelineAttribute subsurfaceScatteringEnabled;
 	PipelineAttribute originBias;
 
-	shadowConeRatio.type = PipelineAttribute::AttrType::ATTR_1F;
-	shadowConeDistance.type = PipelineAttribute::AttrType::ATTR_1F;
+	indirectSpecularEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
+	subsurfaceScatteringEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
 	originBias.type = PipelineAttribute::AttrType::ATTR_1F;
 
-	shadowConeRatio.name = "shadowConeRatio";
-	shadowConeDistance.name = "shadowConeDistance";
+	indirectSpecularEnabled.name = "indirectSpecularEnabled";
+	subsurfaceScatteringEnabled.name = "subsurfaceScatteringEnabled";
 	originBias.name = "originBias";
 
-	shadowConeRatio.value.x = settings.vct_shadow_cone_ratio;
-	shadowConeDistance.value.x = settings.vct_shadow_cone_distance;
+	indirectSpecularEnabled.value.x = settings.indirect_specular_enabled;
+	subsurfaceScatteringEnabled.value.x = settings.subsurface_scattering_enabled;
 	originBias.value.x = settings.vct_origin_bias;
 
-	attributes.push_back (shadowConeRatio);
-	attributes.push_back (shadowConeDistance);
+	attributes.push_back (indirectSpecularEnabled);
+	attributes.push_back (subsurfaceScatteringEnabled);
 	attributes.push_back (originBias);
 
 	return attributes;

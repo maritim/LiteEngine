@@ -3,8 +3,6 @@
 
 #include "RenderPasses/TemporalFiltering/TemporalFilterRenderPass.h"
 
-#define TEMPORAL_ANTI_ALIASING_MAP_VOLUME_NOT_INIT 354
-
 class ENGINE_API TAARenderPass : public TemporalFilterRenderPass
 {
 	DECLARE_RENDER_PASS(TAARenderPass)
@@ -14,6 +12,7 @@ public:
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 
 	std::string GetPostProcessFragmentShaderPath () const;
+	FramebufferRenderVolume* CreatePostProcessVolume (const RenderSettings& settings) const;
 };
 
 #endif

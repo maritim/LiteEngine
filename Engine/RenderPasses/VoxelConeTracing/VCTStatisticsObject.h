@@ -13,6 +13,7 @@ struct ENGINE_API VCTStatisticsObject : public StatisticsObject
 	FramebufferRenderVolume* vctIndirectSpecularMapVolume;
 	FramebufferRenderVolume* vctAmbientOcclusionMapVolume;
 	FramebufferRenderVolume* vctSubsurfaceScatteringMapVolume;
+	FramebufferRenderVolume* vctShadowVolume;
 };
 
 #endif

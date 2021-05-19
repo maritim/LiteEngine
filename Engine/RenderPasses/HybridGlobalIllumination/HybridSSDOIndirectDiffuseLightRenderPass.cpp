@@ -79,35 +79,50 @@ std::vector<PipelineAttribute> HybridSSDOIndirectDiffuseLightRenderPass::GetCust
 	*/
 
 	PipelineAttribute ssdoRadius;
+	PipelineAttribute ssdoSamplingScale;
 	PipelineAttribute hgiIntensity;
+	PipelineAttribute temporalFilterEnabled;
+	PipelineAttribute hgiInterpolationEnabled;
 	PipelineAttribute hgiInterpolationScale;
 	PipelineAttribute hgiMinInterpolationDistance;
 	PipelineAttribute hgiMinInterpolationAngle;
 	PipelineAttribute hgiDebugInterpolation;
 
 	ssdoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
+	ssdoSamplingScale.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+	temporalFilterEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
+	hgiInterpolationEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
 	hgiInterpolationScale.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiMinInterpolationDistance.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiMinInterpolationAngle.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiDebugInterpolation.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	ssdoRadius.name = "ssdoRadius";
+	ssdoSamplingScale.name = "ssdoSamplingScale";
 	hgiIntensity.name = "hgiIntensity";
+	temporalFilterEnabled.name = "temporalFilterEnabled";
+	hgiInterpolationEnabled.name = "hgiInterpolationEnabled";
 	hgiInterpolationScale.name = "hgiInterpolationScale";
 	hgiMinInterpolationDistance.name = "hgiMinInterpolationDistance";
 	hgiMinInterpolationAngle.name = "hgiMinInterpolationAngle";
 	hgiDebugInterpolation.name = "hgiDebugInterpolation";
 
 	ssdoRadius.value.x = settings.hgi_ssdo_radius;
+	ssdoSamplingScale.value.x = settings.hgi_ssdo_sampling_scale;
 	hgiIntensity.value.x = settings.hgi_ssdo_indirect_diffuse_intensity;
+	temporalFilterEnabled.value.x = settings.hgi_temporal_filter_enabled;
+	hgiInterpolationEnabled.value.x = settings.hgi_interpolation_enabled;
 	hgiInterpolationScale.value.x = settings.hgi_interpolation_scale;
 	hgiMinInterpolationDistance.value.x = settings.hgi_min_interpolation_distance;
 	hgiMinInterpolationAngle.value.x = std::cos (DEG2RAD * settings.hgi_min_interpolation_angle);
 	hgiDebugInterpolation.value.x = settings.hgi_debug_interpolation;
 
 	attributes.push_back (ssdoRadius);
+	attributes.push_back (ssdoSamplingScale);
 	attributes.push_back (hgiIntensity);
+	attributes.push_back (temporalFilterEnabled);
+	attributes.push_back (hgiInterpolationEnabled);
 	attributes.push_back (hgiInterpolationScale);
 	attributes.push_back (hgiMinInterpolationDistance);
 	attributes.push_back (hgiMinInterpolationAngle);

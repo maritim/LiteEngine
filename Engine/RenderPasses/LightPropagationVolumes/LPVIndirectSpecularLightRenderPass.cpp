@@ -76,15 +76,20 @@ std::vector<PipelineAttribute> LPVIndirectSpecularLightRenderPass::GetCustomAttr
 	 * Attach screen space ambient occlusion attributes to pipeline
 	*/
 
-	PipelineAttribute lpvIntensity;
+	PipelineAttribute lpvSpecularIntensity;
+	PipelineAttribute lpvSpecularIterations;
 
-	lpvIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+	lpvSpecularIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+	lpvSpecularIterations.type = PipelineAttribute::AttrType::ATTR_1I;
 
-	lpvIntensity.name = "lpvIntensity";
+	lpvSpecularIntensity.name = "lpvSpecularIntensity";
+	lpvSpecularIterations.name = "lpvSpecularIterations";
 
-	lpvIntensity.value.x = settings.lpv_indirect_specular_intensity;
+	lpvSpecularIntensity.value.x = settings.lpv_indirect_specular_intensity;
+	lpvSpecularIterations.value.x = settings.lpv_specular_iterations;
 
-	attributes.push_back (lpvIntensity);
+	attributes.push_back (lpvSpecularIntensity);
+	attributes.push_back (lpvSpecularIterations);
 
 	return attributes;
 }

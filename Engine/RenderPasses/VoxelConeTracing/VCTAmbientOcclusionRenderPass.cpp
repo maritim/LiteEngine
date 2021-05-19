@@ -10,7 +10,7 @@ bool VCTAmbientOcclusionRenderPass::IsAvailable (const RenderScene* renderScene,
 	 * Always execure reflective shadow mapping indirect light render pass
 	*/
 
-	return true;
+	return settings.vct_ao_enabled;
 }
 
 std::string VCTAmbientOcclusionRenderPass::GetPostProcessFragmentShaderPath () const
@@ -77,14 +77,29 @@ std::vector<PipelineAttribute> VCTAmbientOcclusionRenderPass::GetCustomAttribute
 	*/
 
 	PipelineAttribute originBias;
+	PipelineAttribute aoConeRatio;
+	PipelineAttribute aoConeDistance;
+	PipelineAttribute temporalFilterEnabled;
 
 	originBias.type = PipelineAttribute::AttrType::ATTR_1F;
+	aoConeRatio.type = PipelineAttribute::AttrType::ATTR_1F;
+	aoConeDistance.type = PipelineAttribute::AttrType::ATTR_1F;
+	temporalFilterEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	originBias.name = "originBias";
+	aoConeRatio.name = "aoConeRatio";
+	aoConeDistance.name = "aoConeDistance";
+	temporalFilterEnabled.name = "temporalFilterEnabled";
 
 	originBias.value.x = settings.vct_origin_bias;
+	aoConeRatio.value.x = settings.vct_ao_cone_ratio;
+	aoConeDistance.value.x = settings.vct_ao_cone_distance;
+	temporalFilterEnabled.value.x = settings.vct_temporal_filter_enabled;
 
 	attributes.push_back (originBias);
+	attributes.push_back (aoConeRatio);
+	attributes.push_back (aoConeDistance);
+	attributes.push_back (temporalFilterEnabled);
 
 	return attributes;
 }

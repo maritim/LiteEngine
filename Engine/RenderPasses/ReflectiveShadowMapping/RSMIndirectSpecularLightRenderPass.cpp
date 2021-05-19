@@ -7,10 +7,10 @@ bool RSMIndirectSpecularLightRenderPass::IsAvailable (const RenderScene* renderS
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
-	 * Always execure reflective shadow mapping indirect light render pass
+	 * Check reflective shadow mapping indirect specular is enabled
 	*/
 
-	return true;
+	return settings.indirect_specular_enabled;
 }
 
 std::string RSMIndirectSpecularLightRenderPass::GetPostProcessFragmentShaderPath () const
@@ -77,24 +77,29 @@ std::vector<PipelineAttribute> RSMIndirectSpecularLightRenderPass::GetCustomAttr
 	*/
 
 	PipelineAttribute rsmResolution;
+	PipelineAttribute rsmIterations;
 	PipelineAttribute rsmThickness;
 	PipelineAttribute rsmSpecularIntensity;
 
 	rsmResolution.type = PipelineAttribute::AttrType::ATTR_2F;
+	rsmIterations.type = PipelineAttribute::AttrType::ATTR_1I;
 	rsmThickness.type = PipelineAttribute::AttrType::ATTR_1F;
 	rsmSpecularIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	rsmResolution.name = "rsmResolution";
+	rsmIterations.name = "rsmIterations";
 	rsmThickness.name = "rsmThickness";
 	rsmSpecularIntensity.name = "rsmSpecularIntensity";
 
 	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.rsm_scale);
 
 	rsmResolution.value = glm::vec3 (resolution, 0.0f);
+	rsmIterations.value.x = settings.rsm_iterations;
 	rsmThickness.value.x = settings.rsm_thickness;
-	rsmSpecularIntensity.value.x = settings.rsm_specular_intensity;
+	rsmSpecularIntensity.value.x = settings.rsm_indirect_specular_intensity;
 
 	attributes.push_back (rsmResolution);
+	attributes.push_back (rsmIterations);
 	attributes.push_back (rsmThickness);
 	attributes.push_back (rsmSpecularIntensity);
 

@@ -15,6 +15,7 @@
 
 #include "Debug/Profiler/Profiler.h"
 #include "Debug/Statistics/StatisticsManager.h"
+#include "DeferredStatisticsObject.h"
 #include "RenderStatisticsObject.h"
 
 #include "Core/Console/Console.h"
@@ -509,6 +510,10 @@ void DeferredGeometryRenderPass::InitGBufferVolume (const RenderSettings& settin
 
 	_framebuffer = new GBuffer (framebuffer);
 
+	auto deferredStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <DeferredStatisticsObject> ();
+
+	deferredStatisticsObject->geometryBuffer = _framebuffer;
+
 	/*
 	 * Initialize translucency gbuffer
 	*/
@@ -526,4 +531,6 @@ void DeferredGeometryRenderPass::InitGBufferVolume (const RenderSettings& settin
 	framebuffer = Resource<Framebuffer> (new Framebuffer (textures, depthTexture));
 
 	_translucencyFramebuffer = new GBuffer (framebuffer);
+
+	deferredStatisticsObject->translucencyGeometryBuffer = _translucencyFramebuffer;
 }

@@ -85,10 +85,10 @@ RenderVolumeCollection* HGIRenderPass::Execute (const RenderScene* renderScene, 
 
 	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("GBuffer")->GetCustomAttributes ());
 	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("directLightMap")->GetCustomAttributes ());
-	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("HybridRSMIndirectDiffuseMap")->GetCustomAttributes ());
-	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("HybridSSDOIndirectDiffuseMap")->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("HybridIndirectDiffuseMap")->GetCustomAttributes ());
 	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("indirectSpecularMap")->GetCustomAttributes ());
 	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("ambientOcclusionMap")->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes (camera, settings, rvc));
 
 	/*
 	 * Draw a screen covering triangle
@@ -103,4 +103,31 @@ RenderVolumeCollection* HGIRenderPass::Execute (const RenderScene* renderScene, 
 	Pipeline::UnlockShader ();
 
 	return rvc;
+}
+
+std::vector<PipelineAttribute> HGIRenderPass::GetCustomAttributes (const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
+{
+	std::vector<PipelineAttribute> attributes;
+
+	/*
+	 * Attach screen space ambient occlusion attributes to pipeline
+	*/
+
+	PipelineAttribute indirectSpecularEnabled;
+	PipelineAttribute aoEnabled;
+
+	indirectSpecularEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
+	aoEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
+
+	indirectSpecularEnabled.name = "indirectSpecularEnabled";
+	aoEnabled.name = "aoEnabled";
+
+	indirectSpecularEnabled.value.x = settings.indirect_specular_enabled;
+	aoEnabled.value.x = settings.hgi_ao_enabled;
+
+	attributes.push_back (indirectSpecularEnabled);
+	attributes.push_back (aoEnabled);
+
+	return attributes;
 }

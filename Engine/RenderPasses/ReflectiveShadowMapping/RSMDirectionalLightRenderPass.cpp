@@ -43,5 +43,20 @@ std::vector<PipelineAttribute> RSMDirectionalLightRenderPass::GetCustomAttribute
 {
 	std::vector<PipelineAttribute> attributes;
 
+	PipelineAttribute indirectSpecularEnabled;
+	PipelineAttribute subsurfaceScatteringEnabled;
+
+	indirectSpecularEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
+	subsurfaceScatteringEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
+
+	indirectSpecularEnabled.name = "indirectSpecularEnabled";
+	subsurfaceScatteringEnabled.name = "subsurfaceScatteringEnabled";
+
+	indirectSpecularEnabled.value.x = settings.indirect_specular_enabled;
+	subsurfaceScatteringEnabled.value.x = settings.subsurface_scattering_enabled;
+
+	attributes.push_back (indirectSpecularEnabled);
+	attributes.push_back (subsurfaceScatteringEnabled);
+
 	return attributes;
 }

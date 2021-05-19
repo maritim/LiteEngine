@@ -12,6 +12,8 @@
 #include "Texture/Texture.h"
 #include "Renderer/RenderViews/TextureView.h"
 
+#include "RenderPasses/FramebufferRenderVolume.h"
+
 class EditorRenderingSettings : public EditorWidget
 {
 protected:
@@ -35,7 +37,9 @@ public:
 protected:
 	void ShowRenderingSettingsWindow ();
 
+	void ShowImage (const std::string& name, unsigned int textureID, const glm::ivec2& size);
 	void ShowImage (unsigned int textureID, const glm::ivec2& size);
+	void ShowImage (const std::string&, FramebufferRenderVolume*);
 };
 
 REGISTER_EDITOR_WIDGET(EditorRenderingSettings)

@@ -42,3 +42,29 @@ FramebufferRenderVolume* TRSMIndirectDiffuseLightRenderPass::CreatePostProcessVo
 
 	return renderVolume;
 }
+
+std::vector<PipelineAttribute> TRSMIndirectDiffuseLightRenderPass::GetCustomAttributes (const Camera* camera,
+	const RenderSettings& settings, RenderVolumeCollection* rvc)
+{
+	/*
+	 * Attach post process volume attributes to pipeline
+	*/
+
+	std::vector<PipelineAttribute> attributes = RSMIndirectDiffuseLightRenderPass::GetCustomAttributes (camera, settings, rvc);
+
+	/*
+	 * Attach screen space ambient occlusion attributes to pipeline
+	*/
+
+	PipelineAttribute trsmIntensity;
+
+	trsmIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+
+	trsmIntensity.name = "trsmIntensity";
+
+	trsmIntensity.value.x = settings.trsm_indirect_diffuse_intensity;
+
+	attributes.push_back (trsmIntensity);
+
+	return attributes;
+}

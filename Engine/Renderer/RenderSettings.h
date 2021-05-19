@@ -28,6 +28,10 @@ struct RenderSettings : public Object
 	Resolution resolution;
 	Viewport viewport;
 
+	bool indirect_diffuse_enabled;
+	bool indirect_specular_enabled;
+	bool subsurface_scattering_enabled;
+
 	bool ssao_enabled;
 	float ssao_scale;
 	std::size_t ssao_samples;
@@ -35,6 +39,7 @@ struct RenderSettings : public Object
 	float ssao_radius;
 	float ssao_bias;
 	bool ssao_blur_enabled;
+	bool ssao_temporal_filter_enabled;
 
 	bool ssr_enabled;
 	float ssr_scale;
@@ -63,15 +68,19 @@ struct RenderSettings : public Object
 	float rsm_scale;
 	std::size_t rsm_samples;
 	float rsm_radius;
-	float rsm_intensity;
-	float rsm_specular_intensity;
+	bool rsm_ao_enabled;
+	float rsm_indirect_diffuse_intensity;
+	float rsm_indirect_specular_intensity;
 	float rsm_indirect_refractive_intensity;
+	std::size_t rsm_iterations;
 	float rsm_thickness;
 	float rsm_interpolation_scale;
 	float rsm_min_interpolation_distance;
 	float rsm_min_interpolation_angle;
 	bool rsm_debug_interpolation;
 
+	std::size_t trsm_samples;
+	float trsm_indirect_diffuse_intensity;
 	bool trsm_temporal_filter_enabled;
 	bool trsm_blur_enabled;
 
@@ -82,6 +91,7 @@ struct RenderSettings : public Object
 	float lpv_indirect_diffuse_intensity;
 	float lpv_indirect_specular_intensity;
 	float lpv_indirect_refractive_intensity;
+	std::size_t lpv_specular_iterations;
 
 	std::size_t vct_voxels_size;
 	bool vct_continuous_voxelization;
@@ -97,11 +107,16 @@ struct RenderSettings : public Object
 	float vct_specular_origin_bias;
 	float vct_refractive_cone_ratio;
 	float vct_refractive_cone_distance;
+	bool vct_ao_enabled;
+	float vct_ao_cone_ratio;
+	float vct_ao_cone_distance;
+	bool vct_shadow_cone_enabled;
 	float vct_shadow_cone_ratio;
 	float vct_shadow_cone_distance;
+	float vct_origin_bias;
+	bool vct_temporal_filter_enabled;
 	bool vct_debug_show_voxels;
 	std::size_t vct_debug_volume_mipmap_level;
-	float vct_origin_bias;
 
 	bool ssdo_enabled;
 	bool ssdo_temporal_filter_enabled;
@@ -109,6 +124,7 @@ struct RenderSettings : public Object
 	std::size_t ssdo_samples;
 	float ssdo_radius;
 	float ssdo_bias;
+	float ssdo_sampling_scale;
 	std::size_t ssdo_shadow_stride;
 	float ssdo_indirect_intensity;
 	bool ssdo_ray_shadow;
@@ -119,12 +135,15 @@ struct RenderSettings : public Object
 	float ssdo_min_interpolation_angle;
 	bool ssdo_debug_interpolation;
 
+	bool hgi_temporal_filter_enabled;
 	std::size_t hgi_rsm_samples;
 	float hgi_rsm_radius;
 	std::size_t hgi_ssdo_samples;
 	float hgi_ssdo_radius;
 	float hgi_rsm_indirect_diffuse_intensity;
 	float hgi_ssdo_indirect_diffuse_intensity;
+	float hgi_ssdo_sampling_scale;
+	bool hgi_interpolation_enabled;
 	float hgi_interpolation_scale;
 	float hgi_min_interpolation_distance;
 	float hgi_min_interpolation_angle;
@@ -132,6 +151,7 @@ struct RenderSettings : public Object
 	float hgi_rsm_thickness;
 	float hgi_rsm_indirect_specular_intensity;
 	float hgi_ssr_indirect_specular_intensity;
+	bool hgi_ao_enabled;
 	std::size_t hgi_ao_samples;
 	float hgi_ao_radius;
 	float hgi_ao_bias;

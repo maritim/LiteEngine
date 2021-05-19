@@ -14,8 +14,10 @@ uniform mat4 inverseViewMatrix;
 uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
+uniform vec2 cameraZLimits;
 
 uniform float hgiIntensity;
+uniform int hgiInterpolationEnabled;
 uniform float hgiInterpolationScale;
 uniform float hgiMinInterpolationDistance;
 uniform float hgiMinInterpolationAngle;
@@ -26,7 +28,7 @@ uniform sampler2D ssdoIndirectDiffuseMap;
 
 vec3 CalcInterpolatedIndirectDiffuseLight (vec3 in_position, vec3 in_normal, vec2 texCoord)
 {
-	if (dot (in_position, in_position) == 0) {
+	if (in_position.z <= -cameraZLimits.y) {
 		return vec3 (0);
 	}
 
@@ -57,5 +59,15 @@ void main()
 
 	in_normal = normalize(in_normal);
 
-	out_color = CalcInterpolatedIndirectDiffuseLight(in_position, in_normal, texCoord);
+	vec3 indirectLight = vec3 (0);
+
+	if (hgiInterpolationEnabled == 1) {
+		indirectLight = CalcInterpolatedIndirectDiffuseLight (in_position, in_normal, texCoord);
+	}
+
+	if (hgiInterpolationEnabled == 0) {
+		indirectLight = CalcHGIIndirectDiffuseLight(in_position, in_normal) * hgiIntensity;
+	}
+
+	out_color = indirectLight;
 }

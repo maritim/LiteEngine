@@ -10,7 +10,7 @@ bool HybridRSMInterpolatedIndirectDiffuseLightRenderPass::IsAvailable (const Ren
 	 * Always execure reflective shadow mapping indirect light render pass
 	*/
 
-	return true;
+	return settings.hgi_interpolation_enabled;
 }
 
 std::string HybridRSMInterpolatedIndirectDiffuseLightRenderPass::GetPostProcessFragmentShaderPath () const
@@ -80,30 +80,35 @@ std::vector<PipelineAttribute> HybridRSMInterpolatedIndirectDiffuseLightRenderPa
 	PipelineAttribute rsmRadius;
 	PipelineAttribute ssdoRadius;
 	PipelineAttribute hgiIntensity;
+	PipelineAttribute temporalFilterEnabled;
 	PipelineAttribute hgiInterpolationScale;
 
 	hgiResolution.type = PipelineAttribute::AttrType::ATTR_2F;
 	rsmRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssdoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+	temporalFilterEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
 	hgiInterpolationScale.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	hgiResolution.name = "hgiResolution";
 	rsmRadius.name = "rsmRadius";
 	ssdoRadius.name = "ssdoRadius";
 	hgiIntensity.name = "hgiIntensity";
+	temporalFilterEnabled.name = "temporalFilterEnabled";
 	hgiInterpolationScale.name = "hgiInterpolationScale";
 
 	hgiResolution.value = glm::vec3 (GetPostProcessVolumeResolution (settings), 0.0);
 	rsmRadius.value.x = settings.hgi_rsm_radius;
 	ssdoRadius.value.x = settings.hgi_ssdo_radius;
 	hgiIntensity.value.x = settings.hgi_rsm_indirect_diffuse_intensity;
+	temporalFilterEnabled.value.x = settings.hgi_temporal_filter_enabled;
 	hgiInterpolationScale.value.x = settings.hgi_interpolation_scale;
 
 	attributes.push_back (hgiResolution);
 	attributes.push_back (rsmRadius);
 	attributes.push_back (ssdoRadius);
 	attributes.push_back (hgiIntensity);
+	attributes.push_back (temporalFilterEnabled);
 	attributes.push_back (hgiInterpolationScale);
 
 	return attributes;

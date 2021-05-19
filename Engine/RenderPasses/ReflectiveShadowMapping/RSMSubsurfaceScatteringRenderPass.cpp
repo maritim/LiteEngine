@@ -7,10 +7,10 @@ bool RSMSubsurfaceScatteringRenderPass::IsAvailable (const RenderScene* renderSc
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
-	 * Always execure light propagation volumes indirect light render pass
+	 * Check reflective shadow mapping subsurface scattering enabled
 	*/
 
-	return true;
+	return settings.subsurface_scattering_enabled;
 }
 
 std::string RSMSubsurfaceScatteringRenderPass::GetPostProcessFragmentShaderPath () const
@@ -77,24 +77,29 @@ std::vector<PipelineAttribute> RSMSubsurfaceScatteringRenderPass::GetCustomAttri
 	*/
 
 	PipelineAttribute rsmResolution;
+	PipelineAttribute rsmIterations;
 	PipelineAttribute rsmThickness;
 	PipelineAttribute rsmIndirectRefractiveIntensity;
 
 	rsmResolution.type = PipelineAttribute::AttrType::ATTR_2F;
+	rsmIterations.type = PipelineAttribute::AttrType::ATTR_1I;
 	rsmThickness.type = PipelineAttribute::AttrType::ATTR_1F;
 	rsmIndirectRefractiveIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 
 	rsmResolution.name = "rsmResolution";
+	rsmIterations.name = "rsmIterations";
 	rsmThickness.name = "rsmThickness";
 	rsmIndirectRefractiveIntensity.name = "rsmIndirectRefractiveIntensity";
 
 	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.rsm_scale);
 
 	rsmResolution.value = glm::vec3 (resolution, 0.0f);
+	rsmIterations.value.x = settings.rsm_iterations;
 	rsmThickness.value.x = settings.rsm_thickness;
 	rsmIndirectRefractiveIntensity.value.x = settings.rsm_indirect_refractive_intensity;
 
 	attributes.push_back (rsmResolution);
+	attributes.push_back (rsmIterations);
 	attributes.push_back (rsmThickness);
 	attributes.push_back (rsmIndirectRefractiveIntensity);
 

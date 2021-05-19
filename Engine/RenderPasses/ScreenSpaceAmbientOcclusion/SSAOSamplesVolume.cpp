@@ -6,6 +6,8 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
+#include "Utils/Sequences/HaltonGenerator.h"
+
 SSAOSamplesVolume::SSAOSamplesVolume (std::size_t samplesCount) :
 	_samplesUBO (0)
 {
@@ -17,11 +19,12 @@ SSAOSamplesVolume::SSAOSamplesVolume (std::size_t samplesCount) :
 
 	_samples.samplesCount = samplesCount;
 
+	HaltonGenerator haltonGenerator (2, 3);
+
 	for (std::size_t index = 0; index < samplesCount; index++) {
-		glm::vec3 sample (
-			Random::Instance ()->RangeF (-1.0f, 1.0f),
-			Random::Instance ()->RangeF (-1.0f, 1.0f),
-			Random::Instance ()->RangeF (0.0f, 1.0f)
+		glm::vec3 sample = glm::vec3 (
+			haltonGenerator.Next () * 2.0f - 1.0f,
+			haltonGenerator.Next ().x
 		);
 
 		/*
@@ -30,7 +33,7 @@ SSAOSamplesVolume::SSAOSamplesVolume (std::size_t samplesCount) :
 		*/
 
 		sample = glm::normalize (sample);
-		sample *= Random::Instance ()->RangeF (0.0f, 1.0f);
+		sample *= haltonGenerator.Next ().x;
 
 		// float scale = (float) index / samplesCount;
 		// scale = 0.1f + 0.9f * scale * scale;

@@ -22,7 +22,8 @@ uniform vec3 minVertex;
 uniform vec3 maxVertex;
 uniform ivec3 volumeSize;
 
-uniform float lpvIntensity;
+uniform int lpvSpecularIterations;
+uniform float lpvSpecularIntensity;
 
 #include "deferred.glsl"
 
@@ -71,7 +72,7 @@ vec3 CalcIndirectSpecularLight (vec3 in_position, vec3 in_normal)
 
 	vec3 indirectSpecularColor = vec3 (0.0f);
 
-	for(float reflectionIndex = 0; reflectionIndex < 5; reflectionIndex++) {
+	for(float reflectionIndex = 0; reflectionIndex < lpvSpecularIterations; reflectionIndex++) {
 
 		vec3 indirectColor = vec3( 
 			dot( SHintensity, texture( volumeTextureR, volumePos) ),
@@ -79,12 +80,12 @@ vec3 CalcIndirectSpecularLight (vec3 in_position, vec3 in_normal)
 			dot( SHintensity, texture( volumeTextureB, volumePos ) )
 		);
 
-		indirectSpecularColor += max (indirectColor, 0.0) / PI / 5;
+		indirectSpecularColor += max (indirectColor, 0.0) / PI / lpvSpecularIterations;
 
 		volumePos += reflectionStep;
 	}
 
-	return clamp (indirectSpecularColor * lpvIntensity, 0.0, 1.0);
+	return clamp (indirectSpecularColor * lpvSpecularIntensity, 0.0, 1.0);
 }
 
 void main()

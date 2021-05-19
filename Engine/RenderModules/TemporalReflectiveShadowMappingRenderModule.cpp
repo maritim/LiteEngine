@@ -16,6 +16,7 @@
 #include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAONoiseGenerationRenderPass.h"
 #include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAORenderPass.h"
 #include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAOBlurRenderPass.h"
+#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAOTemporalFilterRenderPass.h"
 
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
@@ -26,6 +27,7 @@
 #include "RenderPasses/ReflectiveShadowMapping/RSMAmbientOcclusionRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightRenderPass.h"
 #include "RenderPasses/ReflectiveShadowMapping/RSMRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMAmbientOcclusionCheckRenderVolumeCollection.h"
 
 #include "RenderPasses/TemporalReflectiveShadowMapping/TRSMSamplesGenerationRenderPass.h"
 #include "RenderPasses/TemporalReflectiveShadowMapping/TRSMIndirectDiffuseLightRenderPass.h"
@@ -66,6 +68,7 @@ void TemporalReflectiveShadowMappingRenderModule::Init ()
 		.Attach (new SSAONoiseGenerationRenderPass ())
 		.Attach (new SSAORenderPass ())
 		.Attach (new SSAOBlurRenderPass ())
+		.Attach (new SSAOTemporalFilterRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new AmbientLightRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
@@ -79,7 +82,7 @@ void TemporalReflectiveShadowMappingRenderModule::Init ()
 		.Attach (new RSMIndirectSpecularLightRenderPass ())
 		.Attach (new RSMSubsurfaceScatteringRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
-			.Volume (new IterateOverRenderVolumeCollection (1))
+			.Volume (new RSMAmbientOcclusionCheckRenderVolumeCollection ())
 			.Attach (new SSAOSamplesGenerationRenderPass ())
 			.Attach (new SSAONoiseGenerationRenderPass ())
 			.Attach (new RSMAmbientOcclusionRenderPass ())
@@ -87,18 +90,18 @@ void TemporalReflectiveShadowMappingRenderModule::Init ()
 			.Build ())
 		.Attach (new RSMDirectionalLightRenderPass ())
 		.Build ());
-	_renderPasses.push_back (ContainerRenderPass::Builder ()
-		.Volume (new SpotLightContainerRenderVolumeCollection ())
-		.Attach (new RSMSpotLightAccumulationRenderPass ())
-		.Attach (new TRSMSamplesGenerationRenderPass ())
-		.Attach (new TRSMIndirectDiffuseLightRenderPass ())
-		.Attach (new TRSMTemporalFilterRenderPass ())
-		.Attach (new TRSMMedianFilterRenderPass ())
-		.Attach (new TRSMBlurRenderPass ())
-		.Attach (new RSMIndirectSpecularLightRenderPass ())
-		.Attach (new DeferredSpotLightRenderPass ())
-		.Attach (new RSMRenderPass ())
-		.Build ());
+	// _renderPasses.push_back (ContainerRenderPass::Builder ()
+	// 	.Volume (new SpotLightContainerRenderVolumeCollection ())
+	// 	.Attach (new RSMSpotLightAccumulationRenderPass ())
+	// 	.Attach (new TRSMSamplesGenerationRenderPass ())
+	// 	.Attach (new TRSMIndirectDiffuseLightRenderPass ())
+	// 	.Attach (new TRSMTemporalFilterRenderPass ())
+	// 	.Attach (new TRSMMedianFilterRenderPass ())
+	// 	.Attach (new TRSMBlurRenderPass ())
+	// 	.Attach (new RSMIndirectSpecularLightRenderPass ())
+	// 	.Attach (new DeferredSpotLightRenderPass ())
+	// 	.Attach (new RSMRenderPass ())
+	// 	.Build ());
 	_renderPasses.push_back (new DeferredSkyboxRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))

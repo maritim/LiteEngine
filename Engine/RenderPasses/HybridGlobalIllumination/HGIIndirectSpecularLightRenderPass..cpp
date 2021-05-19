@@ -13,7 +13,7 @@
 bool HGIIndirectSpecularLightRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
-	return true;
+	return settings.indirect_specular_enabled;
 }
 
 void HGIIndirectSpecularLightRenderPass::Init (const RenderSettings& settings)

@@ -58,7 +58,7 @@ FramebufferRenderVolume* SSAOBlurRenderPass::CreatePostProcessVolume (const Rend
 
 	auto ssaoStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <SSAOStatisticsObject> ();
 
-	ssaoStatisticsObject->ssaoMapVolume = renderVolume;
+	ssaoStatisticsObject->ssaoBlurMapVolume = renderVolume;
 
 	return renderVolume;
 }

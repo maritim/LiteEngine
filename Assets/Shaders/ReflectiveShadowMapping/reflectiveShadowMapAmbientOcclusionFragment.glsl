@@ -14,6 +14,7 @@ uniform mat4 inverseViewMatrix;
 uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
+uniform vec2 cameraZLimits;
 
 layout(std140) uniform ssaoSamples
 {
@@ -37,7 +38,11 @@ float CalcRSMAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 texCoord)
 
 	float occlusion = 0.0;
 
-	if (in_position == vec3 (0.0)) {
+	/*
+	 * Check geometry
+	*/
+
+	if (in_position.z <= -cameraZLimits.y) {
 		return 0.0;
 	}
 
@@ -61,15 +66,22 @@ float CalcRSMAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 texCoord)
 		vec3 sample = tangentMatrix * ssaoSample [sampleIndex];
 		sample = lightViewSpacePos + sample * ssaoRadius;
 
-		vec4 offset = lightProjectionMatrix * vec4 (sample, 1.0);
-		offset.xyz /= offset.w;
-		offset.xyz = offset.xyz * 0.5 + 0.5;
+		vec4 sampleTexcoord = lightProjectionMatrix * vec4 (sample, 1.0);
+		sampleTexcoord.xyz /= sampleTexcoord.w;
+		sampleTexcoord.xyz = sampleTexcoord.xyz * 0.5 + 0.5;
 
-		if (offset.x < 0 || offset.x > 1 || offset.y < 0 || offset.y > 1) {
+		/*
+		 * Check sample texcoord limits
+		*/
+
+		bvec2 a = greaterThan(sampleTexcoord.xy, vec2(1.0, 1.0));
+		bvec2 b = lessThan(sampleTexcoord.xy, vec2(0.0, 0.0));
+
+		if (any(bvec2(any(a), any(b)))) {
 			continue;
 		}
 
-		vec3 samplePos = texture2D (rsmPositionMap, offset.xy).xyz;
+		vec3 samplePos = texture2D (rsmPositionMap, sampleTexcoord.xy).xyz;
 
 		float rangeCheck = smoothstep (0.0, 1.0, ssaoRadius / abs (lightViewSpacePos.z - samplePos.z));
 

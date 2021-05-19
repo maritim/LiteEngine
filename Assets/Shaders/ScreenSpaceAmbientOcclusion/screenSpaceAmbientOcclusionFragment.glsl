@@ -16,6 +16,7 @@ uniform mat3 normalMatrix;
 uniform mat3 normalWorldMatrix;
 
 uniform vec3 cameraPosition;
+uniform vec2 cameraZLimits;
 
 uniform vec2 screenSize;
 
@@ -31,17 +32,37 @@ uniform ivec2 noiseMapSize;
 uniform vec2 ssaoResolution;
 uniform float ssaoRadius;
 uniform float ssaoBias;
+uniform int ssaoTemporalFilter;
 
 vec2 CalcTexCoord()
 {
 	return gl_FragCoord.xy / ssaoResolution;
 }
 
+float rand(vec2 co){
+  return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
+vec3 rand3(vec3 p)
+{
+	vec3 q = vec3(
+		dot(p, vec3(127.1, 311.7, 74.7)),
+		dot(p, vec3(269.5, 183.3, 246.1)),
+		dot(p, vec3(113.5, 271.9, 124.6))
+		);
+
+	return fract(sin(q) * 43758.5453123);
+}
+
 float CalcScreenSpaceAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 texCoord)
 {
 	float occlusion = 0.0;
 
-	if (in_position == vec3 (0.0)) {
+	/*
+	 * Check geometry
+	*/
+
+	if (in_position.z <= -cameraZLimits.y) {
 		return 0.0;
 	}
 
@@ -51,7 +72,9 @@ float CalcScreenSpaceAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 te
 
 	vec2 noiseScale = ssaoResolution / noiseMapSize;
 
-	vec3 randomVec = texture (noiseMap, texCoord * noiseScale).xyz;
+	vec3 randomVec = ssaoTemporalFilter <= 0 ?
+		texture (noiseMap, texCoord * noiseScale).xyz :
+		rand3 (in_position) - rand3 (2 * in_position);
 
 	vec3 tangent = normalize (randomVec - in_normal * dot (randomVec, in_normal));
 	vec3 bitangent = cross (in_normal, tangent);
@@ -63,15 +86,22 @@ float CalcScreenSpaceAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 te
 		vec3 sample = tangentMatrix * ssaoSample [sampleIndex];
 		sample = in_position + sample * ssaoRadius;
 
-		vec4 offset = projectionMatrix * vec4 (sample, 1.0);
-		offset.xyz /= offset.w;
-		offset.xyz = offset.xyz * 0.5 + 0.5;
+		vec4 sampleTexcoord = projectionMatrix * vec4 (sample, 1.0);
+		sampleTexcoord.xyz /= sampleTexcoord.w;
+		sampleTexcoord.xyz = sampleTexcoord.xyz * 0.5 + 0.5;
 
-		if (offset.x < 0 || offset.x > 1 || offset.y < 0 || offset.y > 1) {
+		/*
+		 * Check sample texcoord limits
+		*/
+
+		bvec2 a = greaterThan(sampleTexcoord.xy, vec2(1.0, 1.0));
+		bvec2 b = lessThan(sampleTexcoord.xy, vec2(0.0, 0.0));
+
+		if (any(bvec2(any(a), any(b)))) {
 			continue;
 		}
 
-		vec3 samplePos = textureLod (gPositionMap, offset.xy, 0).xyz;
+		vec3 samplePos = textureLod (gPositionMap, sampleTexcoord.xy, 0).xyz;
 
 		float rangeCheck = smoothstep (0.0, 1.0, ssaoRadius / abs (in_position.z - samplePos.z));
 

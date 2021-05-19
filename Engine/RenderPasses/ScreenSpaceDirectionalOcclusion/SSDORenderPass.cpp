@@ -1,5 +1,7 @@
 #include "SSDORenderPass.h"
 
+#include "Wrappers/OpenGL/GL.h"
+
 #include "Debug/Statistics/StatisticsManager.h"
 #include "SSDOStatisticsObject.h"
 
@@ -81,6 +83,7 @@ std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const Camera
 	PipelineAttribute ssdoResolution;
 	PipelineAttribute ssdoRadius;
 	PipelineAttribute ssdoBias;
+	PipelineAttribute ssdoSamplingScale;
 	PipelineAttribute ssdoIndirectIntensity;
 	PipelineAttribute ssdoTemporalFilter;
 	PipelineAttribute ssdoInterpolationEnabled;
@@ -92,6 +95,7 @@ std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const Camera
 	ssdoResolution.type = PipelineAttribute::AttrType::ATTR_2F;
 	ssdoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssdoBias.type = PipelineAttribute::AttrType::ATTR_1F;
+	ssdoSamplingScale.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssdoIndirectIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssdoTemporalFilter.type = PipelineAttribute::AttrType::ATTR_1I;
 	ssdoInterpolationEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
@@ -103,6 +107,7 @@ std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const Camera
 	ssdoResolution.name = "ssdoResolution";
 	ssdoRadius.name = "ssdoRadius";
 	ssdoBias.name = "ssdoBias";
+	ssdoSamplingScale.name = "ssdoSamplingScale";
 	ssdoIndirectIntensity.name = "ssdoIndirectIntensity";
 	ssdoTemporalFilter.name = "ssdoTemporalFilter";
 	ssdoInterpolationEnabled.name = "ssdoInterpolationEnabled";
@@ -116,6 +121,7 @@ std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const Camera
 	ssdoResolution.value = glm::vec3 (resolution, 0.0f);
 	ssdoRadius.value.x = settings.ssdo_radius;
 	ssdoBias.value.x = settings.ssdo_bias;
+	ssdoSamplingScale.value.x = settings.ssdo_sampling_scale;
 	ssdoIndirectIntensity.value.x = settings.ssdo_indirect_intensity;
 	ssdoTemporalFilter.value.x = settings.ssdo_temporal_filter_enabled;
 	ssdoInterpolationEnabled.value.x = settings.ssdo_interpolation_enabled;
@@ -127,6 +133,7 @@ std::vector<PipelineAttribute> SSDORenderPass::GetCustomAttributes (const Camera
 	attributes.push_back (ssdoResolution);
 	attributes.push_back (ssdoRadius);
 	attributes.push_back (ssdoBias);
+	attributes.push_back (ssdoSamplingScale);
 	attributes.push_back (ssdoIndirectIntensity);
 	attributes.push_back (ssdoTemporalFilter);
 	attributes.push_back (ssdoInterpolationEnabled);

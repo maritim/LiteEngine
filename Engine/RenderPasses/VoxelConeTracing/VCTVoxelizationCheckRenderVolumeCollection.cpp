@@ -1,7 +1,8 @@
 #include "VCTVoxelizationCheckRenderVolumeCollection.h"
 
-VCTVoxelizationCheckRenderVolumeCollection::VCTVoxelizationCheckRenderVolumeCollection () :
+VCTVoxelizationCheckRenderVolumeCollection::VCTVoxelizationCheckRenderVolumeCollection (bool check) :
 	IterateOverRenderVolumeCollection (1),
+	_check (check),
 	_firstTime (true)
 {
 
@@ -9,7 +10,7 @@ VCTVoxelizationCheckRenderVolumeCollection::VCTVoxelizationCheckRenderVolumeColl
 
 RenderVolumeI* VCTVoxelizationCheckRenderVolumeCollection::GetNextVolume (const RenderScene* renderScene, const RenderSettings& settings)
 {
-	if (settings.vct_continuous_voxelization == false && _firstTime == false) {
+	if (settings.vct_continuous_voxelization == !_check && _firstTime == false) {
 		return nullptr;
 	}
 

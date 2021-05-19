@@ -139,8 +139,10 @@ void main ()
 		vec3 texCoords = voxelPos / mipmapVolumeSize;
 
 		vec4 color = volumeMipmapLevel == 0 ?
-			texture (voxelTexture, texCoords) :
-			texture (voxelMipmapTexture, vec3 (texCoords.x / 6 + 1.0 / 6.0 * face, texCoords.y, texCoords.z));
+			texelFetch(voxelTexture, ivec3 (voxelPos), 0) :
+			texelFetch(voxelMipmapTexture, ivec3 (voxelPos.x + mipmapVolumeSize.x * face, voxelPos.y, voxelPos.z), volumeMipmapLevel - 1);
+			// texture (voxelTexture, texCoords) :
+			// textureLod (voxelMipmapTexture, vec3 (texCoords.x / 6 + 1.0 / 6.0 * face, texCoords.y, texCoords.z), volumeMipmapLevel - 1);
 
 
 		// Exit loop if a single sample has an alpha value greater than 0.

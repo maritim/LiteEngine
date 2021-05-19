@@ -10,7 +10,7 @@ bool VCTSubsurfaceScatteringRenderPass::IsAvailable (const RenderScene* renderSc
 	 * Always execure reflective shadow mapping indirect light render pass
 	*/
 
-	return true;
+	return settings.subsurface_scattering_enabled;
 }
 
 std::string VCTSubsurfaceScatteringRenderPass::GetPostProcessFragmentShaderPath () const

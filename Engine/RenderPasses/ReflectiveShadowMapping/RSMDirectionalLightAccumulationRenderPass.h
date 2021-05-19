@@ -20,7 +20,7 @@ protected:
 	void LockShader (int sceneLayers);
 	Camera* GetLightCamera (const RenderScene* renderScene, const RenderLightObject* renderLightObject);
 
-	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings) const;
+	// std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings) const;
 };
 
 #endif

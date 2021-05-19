@@ -16,11 +16,13 @@
 
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
+#include "RenderPasses/FramebufferMipmapsGenerationRenderPass.h"
+
 #include "RenderPasses/DeferredDirectionalLightRenderPass.h"
 
 #include "RenderPasses/FramebufferGenerationRenderPass.h"
 
-#include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightViewAccumulationRenderPass.h"
+// #include "RenderPasses/HybridGlobalIllumination/HybridRSMDirectionalLightViewAccumulationRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridRSMSamplesGenerationRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridRSMInterpolatedIndirectDiffuseLightRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridRSMIndirectDiffuseLightRenderPass.h"
@@ -28,13 +30,17 @@
 #include "RenderPasses/HybridGlobalIllumination/HybridSSDOSamplesGenerationRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridSSDOInterpolatedIndirectDiffuseLightRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridSSDOIndirectDiffuseLightRenderPass.h"
+#include "RenderPasses/HybridGlobalIllumination/HybridIndirectDiffuseLightRenderPass.h"
+#include "RenderPasses/HybridGlobalIllumination/HGITemporalFilterRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridSSRGenerationRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HGIIndirectSpecularLightRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridAOSamplesGenerationRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridRSMAmbientOcclusionRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridAmbientOcclusionRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HybridAmbientOcclusionBlurRenderPass.h"
+#include "RenderPasses/HybridGlobalIllumination/HybridAOTemporalFilterRenderPass.h"
 #include "RenderPasses/HybridGlobalIllumination/HGIRenderPass.h"
+#include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightViewAccumulationRenderPass.h"
 // #include "RenderPasses/ReflectiveShadowMapping/RSMSamplesGenerationRenderPass.h"
 // #include "RenderPasses/ReflectiveShadowMapping/RSMInterpolatedIndirectDiffuseLightRenderPass.h"
 // #include "RenderPasses/ReflectiveShadowMapping/RSMIndirectDiffuseLightRenderPass.h"
@@ -89,10 +95,14 @@ void HybridGlobalIlluminationRenderModule::Init ()
 			.Attach (new HybridRSMAmbientOcclusionRenderPass ())
 			.Build ())
 		.Attach (new HybridSSDOSamplesGenerationRenderPass ())
+		.Attach (new FramebufferMipmapsGenerationRenderPass ("directLightMap"))
 		.Attach (new HybridSSDOInterpolatedIndirectDiffuseLightRenderPass ())
 		.Attach (new HybridSSDOIndirectDiffuseLightRenderPass ())
+		.Attach (new HybridIndirectDiffuseLightRenderPass ())
+		.Attach (new HGITemporalFilterRenderPass ())
 		.Attach (new HybridAmbientOcclusionRenderPass ())
 		.Attach (new HybridAmbientOcclusionBlurRenderPass ())
+		.Attach (new HybridAOTemporalFilterRenderPass ())
 		.Attach (new HGIRenderPass ())
 		.Build ());
 		// .Attach (new RSMInterpolatedIndirectDiffuseLightRenderPass ())

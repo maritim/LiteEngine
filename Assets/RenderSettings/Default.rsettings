@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <RenderSettings>
+	<!-- <RenderMode mode="VoxelConeTracingRenderModule" /> -->
 	<RenderMode mode="HybridGlobalIlluminationRenderModule" />
+	<!-- <RenderMode mode="TemporalReflectiveShadowMappingRenderModule" /> -->
 
-	<SSAO enabled="true" scale="1" samples="32" noiseSize="4" radius="0.6" bias="0.025" blurEnabled="true" />
+	<General indirectDiffuseEnabled="true" indirectSpecularEnabled="false" subsurfaceScatteringEnabled="false" ambientOcclusionEnabled="true" />
 
-	<SSDO enabled="false" temporalFilterEnabled="false" scale="1" samples="400" radius="30" bias="0.025"
+	<SSAO enabled="true" scale="1" samples="32" noiseSize="4" radius="0.6" bias="0.025" blurEnabled="true" temporalFilterEnabled="false" />
+
+	<SSDO enabled="false" temporalFilterEnabled="false" scale="1" samples="30" radius="30" bias="0.025" samplingScale="0.2"
 		indirectIntensity="0.5" rayShadow="false" shadowMapping="true" shadowScale="0.5" shadowStride="2"
 		interpolationEnabled="true" interpolationScale="0.5" minInterpolationDistance="1" minInterpolationAngle="30" />
 
@@ -20,14 +24,14 @@
 
 	<Gamma enabled="false" />
 
-	<RSM scale="1" samples="200" radius="0.12" intensity="100" specularIntensity="1" thickness="1" refractiveIndirectIntensity="1" interpolationScale="0.5" minInterpolationDistance="1" minInterpolationAngle="30" />
-	<TRSM temporalFilterEnabled="true" blurEnabled="false" />
+	<RSM scale="1" samples="200" radius="0.05" indirectDiffuseIntensity="1700" aoEnabled="false" indirectSpecularIntensity="1" iterations="2000" thickness="1" indirectRefractiveIntensity="1" interpolationScale="0.5" minInterpolationDistance="1" minInterpolationAngle="30" />
+	<TRSM samples="16" indirectDiffuseIntensity="1700" temporalFilterEnabled="true" blurEnabled="false" />
 
-	<LPV volumeSize="32" iterations="10" injectionBias="0" geometryOcclusion="true" indirectDiffuseIntensity="0" indirectSpecularIntensity="10" indirectRefractiveIntensity="1" />
+	<LPV volumeSize="32" iterations="10" injectionBias="0" geometryOcclusion="true" indirectDiffuseIntensity="0" indirectSpecularIntensity="10" indirectRefractiveIntensity="1" specularIterations="10" />
 
 	<VCT voxelsSize="256" continuousVoxelization="false" bordering="false"
-		mipmapLevels="6" voxelShadowBias="0" indirectDiffuseIntensity="20" indirectSpecularIntensity="0" refractiveIndirectIntensity="1" diffuseConeDistance="0.3" diffuseOriginBias="0.007" specularConeRatio="0.1" specularConeDistance="0.6" specularOriginBias="0.007" refractiveConeRatio="0.1" refractiveConeDistance="0.6" shadowConeRatio="0.01" shadowConeDistance="0.365" originBias="0.0025" />
+		mipmapLevels="6" voxelShadowBias="0" indirectDiffuseIntensity="20" indirectSpecularIntensity="0" refractiveIndirectIntensity="1" diffuseConeDistance="0.3" diffuseOriginBias="0.007" aoEnabled="false" aoConeRatio="1" aoConeDistance="0.1" shadowConeEnabled="false" specularConeRatio="0.1" specularConeDistance="0.6" specularOriginBias="0.007" refractiveConeRatio="0.1" refractiveConeDistance="0.6" shadowConeRatio="0.01" shadowConeDistance="0.365" originBias="0.0025" temporalFilterEnabled="true" />
 
-	<HGI rsmSamples="200" rsmRadius="10" ssdoSamples="20" ssdoRadius="3" rsmIndirectDiffuseIntensity="1" ssdoIndirectDiffuseIntensity="20" interpolationScale="0.5" minInterpolationDistance="1" minInterpolationAngle="30" rsmThickness="1" rsmIndirectSpecularIntensity="1" ssrIndirectSpecularIntensity="20" aoSamples="32" aoRadius="1" aoBias="0.025" aoBlend="0.5" />
+	<HGI temporalFilterEnabled="true" rsmSamples="16" rsmRadius="50" ssdoSamples="8" ssdoRadius="1" rsmIndirectDiffuseIntensity="1" ssdoIndirectDiffuseIntensity="20" ssdoSamplingScale="0.2" interpolationEnabled="false" interpolationScale="0.5" minInterpolationDistance="1" minInterpolationAngle="30" rsmThickness="1" rsmIndirectSpecularIntensity="1" ssrIndirectSpecularIntensity="20" aoEnabled="true" aoSamples="8" aoRadius="1" aoBias="0.025" aoBlend="0.5" />
 
 </RenderSettings>

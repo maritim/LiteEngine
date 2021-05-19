@@ -43,7 +43,9 @@ FramebufferRenderVolume* SSRAccumulationRenderPass::CreatePostProcessVolume (con
 
 	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
 
-	return new FramebufferRenderVolume (framebuffer);
+	FramebufferRenderVolume* renderVolume = new FramebufferRenderVolume (framebuffer);
+
+	return renderVolume;
 }
 
 std::vector<PipelineAttribute> SSRAccumulationRenderPass::GetCustomAttributes (const Camera* camera,

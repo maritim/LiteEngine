@@ -21,6 +21,9 @@ public:
 
 	bool IsAvailable (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
+
+	std::vector<PipelineAttribute> GetCustomAttributes (const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 };
 
 #endif

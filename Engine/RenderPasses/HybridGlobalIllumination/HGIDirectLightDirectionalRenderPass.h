@@ -6,8 +6,6 @@
 #include "Core/Resources/Resource.h"
 #include "Renderer/RenderViews/ShaderView.h"
 
-#include "RenderPasses/FramebufferRenderVolume.h"
-
 class ENGINE_API HGIDirectLightDirectionalRenderPass : public DirectionalVolumetricLightRenderPass
 {
 	DECLARE_RENDER_PASS(HGIDirectLightDirectionalRenderPass)

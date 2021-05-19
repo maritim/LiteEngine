@@ -12,7 +12,7 @@ bool HybridSSRGenerationRenderPass::IsAvailable (const RenderScene* renderScene,
 	 * Always execure reflective shadow mapping indirect light render pass
 	*/
 
-	return true;
+	return settings.indirect_specular_enabled;
 }
 
 std::string HybridSSRGenerationRenderPass::GetPostProcessFragmentShaderPath () const

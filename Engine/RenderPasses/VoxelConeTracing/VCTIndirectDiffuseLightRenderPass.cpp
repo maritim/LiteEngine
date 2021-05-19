@@ -25,7 +25,7 @@ std::string VCTIndirectDiffuseLightRenderPass::GetPostProcessVolumeName () const
 
 glm::ivec2 VCTIndirectDiffuseLightRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.rsm_scale);
+	return glm::ivec2 (settings.resolution.width, settings.resolution.height);
 }
 
 FramebufferRenderVolume* VCTIndirectDiffuseLightRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
@@ -79,22 +79,27 @@ std::vector<PipelineAttribute> VCTIndirectDiffuseLightRenderPass::GetCustomAttri
 	PipelineAttribute vctIndirectIntensity;
 	PipelineAttribute diffuseConeDistance;
 	PipelineAttribute diffuseOriginBias;
+	PipelineAttribute temporalFilterEnabled;
 
 	vctIndirectIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 	diffuseConeDistance.type = PipelineAttribute::AttrType::ATTR_1F;
 	diffuseOriginBias.type = PipelineAttribute::AttrType::ATTR_1F;
+	temporalFilterEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	vctIndirectIntensity.name = "vctIndirectIntensity";
 	diffuseConeDistance.name = "diffuseConeDistance";
 	diffuseOriginBias.name = "diffuseOriginBias";
+	temporalFilterEnabled.name = "temporalFilterEnabled";
 
 	vctIndirectIntensity.value.x = settings.vct_indirect_diffuse_intensity;
 	diffuseConeDistance.value.x = settings.vct_diffuse_cone_distance;
 	diffuseOriginBias.value.x = settings.vct_diffuse_origin_bias;
+	temporalFilterEnabled.value.x = settings.vct_temporal_filter_enabled;
 
 	attributes.push_back (vctIndirectIntensity);
 	attributes.push_back (diffuseConeDistance);
 	attributes.push_back (diffuseOriginBias);
+	attributes.push_back (temporalFilterEnabled);
 
 	return attributes;
 }

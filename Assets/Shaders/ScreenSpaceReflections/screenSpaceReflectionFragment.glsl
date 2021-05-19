@@ -48,7 +48,7 @@ vec3 hash (vec3 a)
 
 vec3 CalcScreenSpaceReflection (vec3 in_position, vec3 in_normal, vec2 texCoord)
 {
-	vec3 jitter = mix (vec3 (0.0f), hash (in_position), ssrRoughness);
+	vec3 jitter = mix (vec3 (0.0f), hash (in_position) * 2.0 - 1.0, ssrRoughness);
 
 	vec3 viewDirection = normalize (in_position);
 

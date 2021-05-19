@@ -10,6 +10,9 @@ class ENGINE_API TRSMIndirectDiffuseLightRenderPass : public RSMIndirectDiffuseL
 protected:
 	std::string GetPostProcessFragmentShaderPath () const;
 	FramebufferRenderVolume* CreatePostProcessVolume (const RenderSettings& settings) const;
+
+	std::vector<PipelineAttribute> GetCustomAttributes (const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 };
 
 #endif

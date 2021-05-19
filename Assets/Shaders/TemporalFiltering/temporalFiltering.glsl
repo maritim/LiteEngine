@@ -115,6 +115,10 @@ vec3 CalcTemporalFiltering (const in sampler2D temporalFilterMap, const in sampl
 	vec3 clampedTemporalFilterColor = CalcClipNeighbourhood (postProcessMap,
 		resolution, temporalFilterColor.xyz, texCoord);
 
+	if (isnan (clampedTemporalFilterColor.x)) {
+		return currentFrameColor;
+	}
+
 	float weight = CalcBlendFactor (currentFrameColor, clampedTemporalFilterColor);
 
 	return mix (currentFrameColor, clampedTemporalFilterColor, weight);

@@ -53,5 +53,7 @@ vec3 CalcViewIndirectDiffuseLight (in vec3 viewPosition, in vec3 viewNormal)
 		indirectColor += result;
 	}
 
+	indirectColor /= rsmSamplesCount;
+
 	return indirectColor;
 }

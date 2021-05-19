@@ -79,6 +79,7 @@ std::vector<PipelineAttribute> SSDOInterpolatedRenderPass::GetCustomAttributes (
 	PipelineAttribute ssdoResolution;
 	PipelineAttribute ssdoRadius;
 	PipelineAttribute ssdoBias;
+	PipelineAttribute ssdoSamplingScale;
 	PipelineAttribute ssdoIndirectIntensity;
 	PipelineAttribute ssdoTemporalFilter;
 	PipelineAttribute ssdoInterpolationScale;
@@ -86,6 +87,7 @@ std::vector<PipelineAttribute> SSDOInterpolatedRenderPass::GetCustomAttributes (
 	ssdoResolution.type = PipelineAttribute::AttrType::ATTR_2F;
 	ssdoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssdoBias.type = PipelineAttribute::AttrType::ATTR_1F;
+	ssdoSamplingScale.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssdoIndirectIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssdoTemporalFilter.type = PipelineAttribute::AttrType::ATTR_1I;
 	ssdoInterpolationScale.type = PipelineAttribute::AttrType::ATTR_1F;
@@ -93,6 +95,7 @@ std::vector<PipelineAttribute> SSDOInterpolatedRenderPass::GetCustomAttributes (
 	ssdoResolution.name = "ssdoResolution";
 	ssdoRadius.name = "ssdoRadius";
 	ssdoBias.name = "ssdoBias";
+	ssdoSamplingScale.name = "ssdoSamplingScale";
 	ssdoIndirectIntensity.name = "ssdoIndirectIntensity";
 	ssdoTemporalFilter.name = "ssdoTemporalFilter";
 	ssdoInterpolationScale.name = "ssdoInterpolationScale";
@@ -102,6 +105,7 @@ std::vector<PipelineAttribute> SSDOInterpolatedRenderPass::GetCustomAttributes (
 	ssdoResolution.value = glm::vec3 (resolution, 0.0f);
 	ssdoRadius.value.x = settings.ssdo_radius;
 	ssdoBias.value.x = settings.ssdo_bias;
+	ssdoSamplingScale.value.x = settings.ssdo_sampling_scale;
 	ssdoIndirectIntensity.value.x = settings.ssdo_indirect_intensity;
 	ssdoTemporalFilter.value.x = settings.ssdo_temporal_filter_enabled;
 	ssdoInterpolationScale.value.x = settings.ssdo_interpolation_scale;
@@ -109,6 +113,7 @@ std::vector<PipelineAttribute> SSDOInterpolatedRenderPass::GetCustomAttributes (
 	attributes.push_back (ssdoResolution);
 	attributes.push_back (ssdoRadius);
 	attributes.push_back (ssdoBias);
+	attributes.push_back (ssdoSamplingScale);
 	attributes.push_back (ssdoIndirectIntensity);
 	attributes.push_back (ssdoTemporalFilter);
 	attributes.push_back (ssdoInterpolationScale);

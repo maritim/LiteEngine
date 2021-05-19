@@ -79,24 +79,29 @@ std::vector<PipelineAttribute> SSAORenderPass::GetCustomAttributes (const Camera
 	PipelineAttribute ssaoResolution;
 	PipelineAttribute ssaoRadius;
 	PipelineAttribute ssaoBias;
+	PipelineAttribute ssaoTemporalFilter;
 
 	ssaoResolution.type = PipelineAttribute::AttrType::ATTR_2F;
 	ssaoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssaoBias.type = PipelineAttribute::AttrType::ATTR_1F;
+	ssaoTemporalFilter.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	ssaoResolution.name = "ssaoResolution";
 	ssaoRadius.name = "ssaoRadius";
 	ssaoBias.name = "ssaoBias";
+	ssaoTemporalFilter.name = "ssaoTemporalFilter";
 
 	glm::ivec2 resolution = glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.ssao_scale);
 
 	ssaoResolution.value = glm::vec3 (resolution, 0.0f);
 	ssaoRadius.value.x = settings.ssao_radius;
 	ssaoBias.value.x = settings.ssao_bias;
+	ssaoTemporalFilter.value.x = settings.ssao_temporal_filter_enabled;
 
 	attributes.push_back (ssaoResolution);
 	attributes.push_back (ssaoRadius);
 	attributes.push_back (ssaoBias);
+	attributes.push_back (ssaoTemporalFilter);
 
 	return attributes;
 }

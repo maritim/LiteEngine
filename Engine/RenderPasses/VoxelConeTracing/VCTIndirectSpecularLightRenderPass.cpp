@@ -10,7 +10,7 @@ bool VCTIndirectSpecularLightRenderPass::IsAvailable (const RenderScene* renderS
 	 * Always execure reflective shadow mapping indirect light render pass
 	*/
 
-	return true;
+	return settings.indirect_specular_enabled;
 }
 
 std::string VCTIndirectSpecularLightRenderPass::GetPostProcessFragmentShaderPath () const
@@ -25,7 +25,7 @@ std::string VCTIndirectSpecularLightRenderPass::GetPostProcessVolumeName () cons
 
 glm::ivec2 VCTIndirectSpecularLightRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
 {
-	return glm::ivec2 (glm::vec2 (settings.resolution.width, settings.resolution.height) * settings.rsm_scale);
+	return glm::ivec2 (settings.resolution.width, settings.resolution.height);
 }
 
 FramebufferRenderVolume* VCTIndirectSpecularLightRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const

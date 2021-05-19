@@ -17,6 +17,7 @@ uniform vec3 cameraPosition;
 uniform vec2 cameraZLimits;
 
 uniform vec2 rsmResolution;
+uniform int rsmIterations;
 uniform float rsmThickness;
 uniform float rsmIndirectRefractiveIntensity;
 
@@ -50,7 +51,7 @@ vec2 CalcRSMSubsurfaceScattering (vec3 worldPosition, vec3 worldNormal, float in
 	rayPosition += refractiveDirection * 0.1;
 
 	bool intersect = traceScreenSpaceRay (rayPosition, refractiveDirection, pixelProjectionMatrix,
-		rsmPositionMap, rsmSize, rsmThickness, -cameraZLimits.x, 1, 1, 1000,
+		rsmPositionMap, rsmSize, rsmThickness, -cameraZLimits.x, 1, 1, rsmIterations,
 		1000.0f, reflectionPos, reflectionViewPos);
 
 	if (intersect == false) {

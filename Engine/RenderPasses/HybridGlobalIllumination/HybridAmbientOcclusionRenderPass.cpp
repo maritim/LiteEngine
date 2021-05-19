@@ -10,7 +10,7 @@ bool HybridAmbientOcclusionRenderPass::IsAvailable (const RenderScene* renderSce
 	 * Check if screen space ambient occlusion is enabled
 	*/
 
-	return settings.ssao_enabled;
+	return settings.hgi_ao_enabled;
 }
 
 std::string HybridAmbientOcclusionRenderPass::GetPostProcessFragmentShaderPath () const
@@ -79,22 +79,27 @@ std::vector<PipelineAttribute> HybridAmbientOcclusionRenderPass::GetCustomAttrib
 	PipelineAttribute ssaoRadius;
 	PipelineAttribute ssaoBias;
 	PipelineAttribute hgiAOBlend;
+	PipelineAttribute temporalFilterEnabled;
 
 	ssaoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssaoBias.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiAOBlend.type = PipelineAttribute::AttrType::ATTR_1F;
+	temporalFilterEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	ssaoRadius.name = "ssaoRadius";
 	ssaoBias.name = "ssaoBias";
 	hgiAOBlend.name = "hgiAOBlend";
+	temporalFilterEnabled.name = "temporalFilterEnabled";
 
 	ssaoRadius.value.x = settings.hgi_ao_radius;
 	ssaoBias.value.x = settings.hgi_ao_bias;
 	hgiAOBlend.value.x = settings.hgi_ao_blend;
+	temporalFilterEnabled.value.x = settings.hgi_temporal_filter_enabled;
 
 	attributes.push_back (ssaoRadius);
 	attributes.push_back (ssaoBias);
 	attributes.push_back (hgiAOBlend);
+	attributes.push_back (temporalFilterEnabled);
 
 	return attributes;
 }

@@ -19,8 +19,7 @@ uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform float lightIntensity;
 
-uniform float shadowConeRatio;
-uniform float shadowConeDistance;
+uniform sampler2D vctShadowMap;
 
 #include "deferred.glsl"
 #include "IndirectLight/indirectLight.glsl"
@@ -64,20 +63,9 @@ vec3 CalcDirectSpecularLight (vec3 in_position, vec3 in_normal, float in_shinine
 	return specularColor;
 }
 
-float CalcShadow (vec3 in_position, vec3 in_normal)
-{
-	vec3 voxelPos = GetPositionInVolume (in_position) + in_normal * originBias;
-
-	vec3 lightDir = vec3 (inverseViewMatrix * vec4 (-lightDirection, 0.0));
-
-	float occlusion = voxelTraceConeOcclusion (voxelPos, lightDir, shadowConeRatio, shadowConeDistance);
-
-	return 1.0 - occlusion;
-}
-
 vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse,
 	vec3 in_specular, vec3 in_emissive, float in_shininess,
-	float in_transparency)
+	float in_transparency, vec2 texCoord)
 {
 	// Compute fragment world position and world normal
 	vec3 worldPosition = vec3 (inverseViewMatrix * vec4 (in_position, 1.0));
@@ -86,13 +74,13 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse,
 	vec3 directDiffuseColor = CalcDirectDiffuseLight (in_position, in_normal);
 	vec3 directSpecularColor = CalcDirectSpecularLight (in_position, in_normal, in_shininess);
 
-	float shadow = CalcShadow (worldPosition, worldNormal);
+	float shadow = texture (vctShadowMap, texCoord).r;
 
 	directDiffuseColor = shadow * directDiffuseColor;
 	directSpecularColor = shadow * directSpecularColor;
 
 	vec3 indirectDiffuseColor = CalcIndirectDiffuseLight ();
-	vec3 indirectSpecularColor = CalcIndirectSpecularLight ();
+	vec3 indirectSpecularColor = CalcIndirectSpecularLight (in_position, in_normal);
 
 	vec3 indirectSubsurfaceScatteringLight = CalcSubsurfaceScatteringLight ();
 
@@ -127,5 +115,5 @@ void main()
 	in_normal = normalize(in_normal);
 
 	out_color = CalcDirectionalLight (in_position, in_normal, in_diffuse,
-		in_specular, in_emissive, in_shininess, in_transparency);
+		in_specular, in_emissive, in_shininess, in_transparency, texCoord);
 } 

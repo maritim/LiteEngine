@@ -16,8 +16,11 @@
 #include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAONoiseGenerationRenderPass.h"
 #include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAORenderPass.h"
 #include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAOBlurRenderPass.h"
+#include "RenderPasses/ScreenSpaceAmbientOcclusion/SSAOTemporalFilterRenderPass.h"
 
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
+
+#include "RenderPasses/FramebufferMipmapsGenerationRenderPass.h"
 
 #include "RenderPasses/ShadowMap/DirectionalLightShadowMapRenderPass.h"
 // #include "RenderPasses/ShadowMap/DirectionalLightExponentialShadowMapRenderPass.h"
@@ -39,6 +42,7 @@
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOTemporalFilterRenderPass.h"
 #include "RenderPasses/ScreenSpaceDirectionalOcclusion/SSDOAccumulationRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflections/SSRRenderPass.h"
+#include "RenderPasses/ScreenSpaceReflections/SSRSpecularRenderPass.h"
 #include "RenderPasses/ScreenSpaceReflections/SSRAccumulationRenderPass.h"
 #include "RenderPasses/ScreenSpaceSubsurfaceScattering/SSSubsurfaceScatteringRenderPass.h"
 #include "RenderPasses/TemporalAntialiasing/TAARenderPass.h"
@@ -60,6 +64,7 @@ void DirectLightingRenderModule::Init ()
 		.Attach (new SSAONoiseGenerationRenderPass ())
 		.Attach (new SSAORenderPass ())
 		.Attach (new SSAOBlurRenderPass ())
+		.Attach (new SSAOTemporalFilterRenderPass ())
 		.Build ());
 	_renderPasses.push_back (new AmbientLightRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
@@ -84,6 +89,7 @@ void DirectLightingRenderModule::Init ()
 		.Attach (new IdleRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
+			.Attach (new FramebufferMipmapsGenerationRenderPass ("PostProcessMapVolume"))
 			.Attach (new SSDOSamplesGenerationRenderPass ())
 			.Attach (new SSDOInterpolatedRenderPass ())
 			.Attach (new SSDORenderPass ())
@@ -93,6 +99,7 @@ void DirectLightingRenderModule::Init ()
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new SSRRenderPass ())
+			.Attach (new SSRSpecularRenderPass ())
 			.Attach (new SSRAccumulationRenderPass ())
 			.Build ())
 		.Attach (new SSSubsurfaceScatteringRenderPass ())

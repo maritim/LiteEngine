@@ -26,6 +26,8 @@ vec3 GetPositionInVolume (vec3 origin)
 
 float minVoxelDiameter = 1.0 / volumeSize.x;
 float minVoxelDiameterInv = volumeSize.x;
+const float faceCount = 6.0;
+const float faceCountInv = 1.0 / faceCount;
 
 // origin, dir, and maxDist are in texture space
 // dir should be normalized
@@ -59,6 +61,17 @@ vec4 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
 		
 		vec3 samplePos = origin + dir * dist;
 
+		/*
+		 * Check sampling position limits
+		*/
+
+		bvec3 a = greaterThan(samplePos, vec3(1.0));
+		bvec3 b = lessThan(samplePos, vec3(0.0));
+
+		if (any(bvec2(any(a), any(b)))) {
+			break;
+		}
+
 		ivec3 face = ivec3 (
 			dir.x > 0 ? 0 : 1,
 			dir.y > 0 ? 2 : 3,
@@ -73,6 +86,12 @@ vec4 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
 
 		vec4 sampleValue = vec4 (0.0);
 
+		vec3 mipmapSamplePos = vec3 (
+			samplePos.x * faceCountInv + faceCountInv * face.x,
+			samplePos.x * faceCountInv + faceCountInv * face.y,
+			samplePos.x * faceCountInv + faceCountInv * face.z
+		);
+
 		if (sampleLOD < 1) {
 			vec4 sampleValue1 = texture (voxelTexture, samplePos);
 
@@ -81,18 +100,18 @@ vec4 voxelTraceCone(vec3 origin, vec3 dir, float coneRatio, float maxDist)
 			*/
 
 			vec4 sampleValue2 =
-				weight.x * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.x, 0, 0), 0) +
-				weight.y * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.y, 0, 0), 0) +
-				weight.z * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.z, 0, 0), 0);
+				weight.x * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.x, samplePos.yz), 0) +
+				weight.y * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.y, samplePos.yz), 0) +
+				weight.z * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.z, samplePos.yz), 0);
 
-			sampleValue = mix (sampleValue1, sampleValue2, pow ( fract(sampleLOD), 2));
+			sampleValue = mix (sampleValue1, sampleValue2, fract(sampleLOD));
 		} else {
 			sampleLOD -= 1.0;
 
 			sampleValue =
-				weight.x * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.x, 0, 0), min (sampleLOD, volumeMipmapLevels - 1)) +
-				weight.y * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.y, 0, 0), min (sampleLOD, volumeMipmapLevels - 1)) +
-				weight.z * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.z, 0, 0), min (sampleLOD, volumeMipmapLevels - 1));
+				weight.x * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.x, samplePos.yz), min (sampleLOD, volumeMipmapLevels - 1)) +
+				weight.y * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.y, samplePos.yz), min (sampleLOD, volumeMipmapLevels - 1)) +
+				weight.z * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.z, samplePos.yz), min (sampleLOD, volumeMipmapLevels - 1));
 		}
 
 		/*
@@ -131,6 +150,17 @@ float voxelTraceConeOcclusion(vec3 origin, vec3 dir, float coneRatio, float maxD
 		
 		vec3 samplePos = origin + dir * dist;
 
+		/*
+		 * Check sampling position limits
+		*/
+
+		bvec3 a = greaterThan(samplePos, vec3(1.0));
+		bvec3 b = lessThan(samplePos, vec3(0.0));
+
+		if (any(bvec2(any(a), any(b)))) {
+			break;
+		}
+
 		ivec3 face = ivec3 (
 			dir.x > 0 ? 0 : 1,
 			dir.y > 0 ? 2 : 3,
@@ -143,40 +173,48 @@ float voxelTraceConeOcclusion(vec3 origin, vec3 dir, float coneRatio, float maxD
 		 * Current mipmap level
 		*/
 
-		vec4 sampleValue = vec4 (0.0);
+		float sampleValue = 0.0;
+
+		vec3 mipmapSamplePos = vec3 (
+			samplePos.x * faceCountInv + faceCountInv * face.x,
+			samplePos.x * faceCountInv + faceCountInv * face.y,
+			samplePos.x * faceCountInv + faceCountInv * face.z
+		);
 
 		if (sampleLOD < 1) {
-			vec4 sampleValue1 = texture (voxelTexture, samplePos);
+			float sampleValue1 = texture (voxelTexture, samplePos).a;
 
 			/*
 			 * Next mipmap level
 			*/
 
-			vec4 sampleValue2 =
-				weight.x * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.x, 0, 0), 0) +
-				weight.y * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.y, 0, 0), 0) +
-				weight.z * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.z, 0, 0), 0);
+			// float sampleValue2 =
+			// 	weight.x * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.x, samplePos.yz), 0).a +
+			// 	weight.y * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.y, samplePos.yz), 0).a +
+			// 	weight.z * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.z, samplePos.yz), 0).a;
+			float sampleValue2 = textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.x, samplePos.yz), 0).a;
 
 			sampleValue = mix (sampleValue1, sampleValue2, fract(sampleLOD));
 		} else {
 			sampleLOD -= 1.0;
 
-			sampleValue =
-				weight.x * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.x, 0, 0), min (sampleLOD, volumeMipmapLevels - 1)) +
-				weight.y * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.y, 0, 0), min (sampleLOD, volumeMipmapLevels - 1)) +
-				weight.z * textureLod (voxelMipmapTexture, samplePos / vec3 (6, 1, 1) + vec3 (1.0 / 6.0 * face.z, 0, 0), min (sampleLOD, volumeMipmapLevels - 1));
+			// sampleValue =
+			// 	weight.x * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.x, samplePos.yz), min (sampleLOD, volumeMipmapLevels - 1)).a +
+			// 	weight.y * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.y, samplePos.yz), min (sampleLOD, volumeMipmapLevels - 1)).a +
+			// 	weight.z * textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.z, samplePos.yz), min (sampleLOD, volumeMipmapLevels - 1)).a;
+			sampleValue = textureLod (voxelMipmapTexture, vec3 (mipmapSamplePos.x, samplePos.yz), min (sampleLOD, volumeMipmapLevels - 1)).a;
 		}
 
 		/*
 		 * Mipmap filter
 		*/
 
-		occlusion += ((1.0 - alpha) * sampleValue.a) / (1.0 + 0.03 * sampleDiameter);
+		occlusion += ((1.0 - alpha) * sampleValue) / (1.0 + 0.03 * sampleDiameter);
 
-		alpha = alpha + (1.0 - alpha) * sampleValue.a;
+		alpha = alpha + (1.0 - alpha) * sampleValue;
 
 		dist += sampleDiameter;
 	}
 	
-	return occlusion;
+	return min (occlusion, 1.0);
 }

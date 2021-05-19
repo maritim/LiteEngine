@@ -17,6 +17,7 @@ uniform vec3 cameraPosition;
 uniform vec2 cameraZLimits;
 
 uniform vec2 rsmResolution;
+uniform int rsmIterations;
 uniform float rsmThickness;
 uniform float rsmSpecularIntensity;
 
@@ -51,10 +52,18 @@ vec2 CalcRSMReflection (vec3 worldPosition, vec3 worldNormal)
 	rayPosition += reflectionDirection * 0.1;
 
 	bool intersect = traceScreenSpaceRay (rayPosition, reflectionDirection, pixelProjectionMatrix,
-		rsmPositionMap, rsmSize, rsmThickness, -cameraZLimits.x, 1, 0, 1000,
+		rsmPositionMap, rsmSize, rsmThickness, -cameraZLimits.x, 1, 0, rsmIterations,
 		1000.0f, reflectionPos, reflectionViewPos);
 
 	if (intersect == false) {
+		return vec2 (0.0);
+	}
+
+	/*
+	 * Discard reflections beyond camera z
+	*/
+
+	if (reflectionViewPos.z <= -cameraZLimits.y) {
 		return vec2 (0.0);
 	}
 

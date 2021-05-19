@@ -16,7 +16,7 @@ uniform mat3 inverseNormalWorldMatrix;
 uniform vec3 cameraPosition;
 
 uniform vec2 rsmResolution;
-uniform float rsmIntensity;
+uniform float trsmIntensity;
 
 #include "deferred.glsl"
 #include "ReflectiveShadowMapping/reflectiveShadowMapping.glsl"
@@ -74,7 +74,9 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
 		indirectColor += result;
 	}
 
-	return clamp (indirectColor * rsmIntensity, 0.0, 1.0);
+	indirectColor /= rsmSamplesCount;
+
+	return indirectColor * trsmIntensity;
 }
 
 void main()

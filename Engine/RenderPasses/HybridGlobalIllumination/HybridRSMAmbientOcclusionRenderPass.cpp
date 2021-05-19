@@ -33,6 +33,12 @@ void HybridRSMAmbientOcclusionRenderPass::Clear ()
 	*/
 }
 
+bool HybridRSMAmbientOcclusionRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
+{
+	return settings.hgi_ao_enabled && VolumetricLightRenderPassI::IsAvailable (renderScene, camera, settings, rvc);
+}
+
 bool HybridRSMAmbientOcclusionRenderPass::IsAvailable (const RenderLightObject*) const
 {
 	return true;
@@ -143,16 +149,19 @@ std::vector<PipelineAttribute> HybridRSMAmbientOcclusionRenderPass::GetCustomAtt
 	PipelineAttribute ssaoBias;
 	PipelineAttribute hgiAOBlend;
 	PipelineAttribute lightDirection;
+	PipelineAttribute temporalFilterEnabled;
 
 	ssaoRadius.type = PipelineAttribute::AttrType::ATTR_1F;
 	ssaoBias.type = PipelineAttribute::AttrType::ATTR_1F;
 	hgiAOBlend.type = PipelineAttribute::AttrType::ATTR_1F;
 	lightDirection.type = PipelineAttribute::AttrType::ATTR_3F;
+	temporalFilterEnabled.type = PipelineAttribute::AttrType::ATTR_1I;
 
 	ssaoRadius.name = "ssaoRadius";
 	ssaoBias.name = "ssaoBias";
 	hgiAOBlend.name = "hgiAOBlend";
 	lightDirection.name = "lightDirection";
+	temporalFilterEnabled.name = "temporalFilterEnabled";
 
 	glm::vec3 lightDir = renderLightObject->GetTransform ()->GetRotation () * glm::vec3 (0, 0, -1);
 	glm::mat3 viewMatrix = glm::mat3_cast (camera->GetRotation ());
@@ -162,11 +171,13 @@ std::vector<PipelineAttribute> HybridRSMAmbientOcclusionRenderPass::GetCustomAtt
 	ssaoBias.value.x = settings.hgi_ao_bias;
 	hgiAOBlend.value.x = settings.hgi_ao_blend;
 	lightDirection.value = lightDir;
+	temporalFilterEnabled.value.x = settings.hgi_temporal_filter_enabled;
 
 	attributes.push_back (ssaoRadius);
 	attributes.push_back (ssaoBias);
 	attributes.push_back (hgiAOBlend);
 	attributes.push_back (lightDirection);
+	attributes.push_back (temporalFilterEnabled);
 
 	return attributes;
 }

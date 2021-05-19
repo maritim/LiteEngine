@@ -12,7 +12,7 @@ public:
 protected:
 	bool IsAvailable (const RenderLightObject*) const;
 
-	void StartDirectionalLightPass (RenderVolumeCollection*);
+	virtual void StartDirectionalLightPass (RenderVolumeCollection*);
 	void DirectionalLightPass (const RenderScene*, const Camera*, const RenderSettings&, RenderVolumeCollection*);
 	void EndDirectionalLightPass ();
 

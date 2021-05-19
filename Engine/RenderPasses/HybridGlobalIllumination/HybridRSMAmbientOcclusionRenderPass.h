@@ -16,6 +16,8 @@ protected:
 	Resource<ShaderView> _shaderView;
 
 public:
+	bool IsAvailable (const RenderScene*, const Camera*,
+		const RenderSettings& settings, const RenderVolumeCollection*) const;
 	void Init (const RenderSettings&);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);

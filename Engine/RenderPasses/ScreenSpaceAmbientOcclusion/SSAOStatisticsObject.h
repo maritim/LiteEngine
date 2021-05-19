@@ -10,8 +10,11 @@ struct ENGINE_API SSAOStatisticsObject : public StatisticsObject
 {
 	DECLARE_STATISTICS_OBJECT(SSAOStatisticsObject)
 
-	FramebufferRenderVolume* ssaoMapVolume;
 	TextureRenderVolume* ssaoNoiseMapVolume;
+
+	FramebufferRenderVolume* ssaoMapVolume;
+	FramebufferRenderVolume* ssaoBlurMapVolume;
+	FramebufferRenderVolume* ssaoTemporalFilterMapVolume;
 };
 
 #endif

@@ -14,6 +14,7 @@ uniform mat4 inverseViewMatrix;
 uniform mat3 inverseNormalWorldMatrix;
 
 uniform vec3 cameraPosition;
+uniform vec2 cameraZLimits;
 
 uniform vec2 ssdoResolution;
 uniform float ssdoIndirectIntensity;
@@ -35,7 +36,7 @@ void main()
 
 	in_normal = normalize(in_normal);
 
-	vec3 indirectLight = CalcScreenSpaceDirectionalOcclusion(in_position, in_normal);
+	vec3 indirectLight = CalcScreenSpaceDirectionalOcclusion(in_position, in_normal, texCoord);
 
 	out_color = indirectLight * ssdoIndirectIntensity;
 	// out_color = vec3 (1, 0, 0);

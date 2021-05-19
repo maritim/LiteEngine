@@ -29,6 +29,8 @@
 
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
+#include "RenderPasses/FramebufferMipmapsGenerationRenderPass.h"
+
 #include "RenderPasses/DirectionalLightContainerRenderVolumeCollection.h"
 
 #include "RenderPasses/DeferredPointLightRenderPass.h"
@@ -74,6 +76,7 @@ void ScreenSpaceDirectionalOcclusionRenderModule::Init ()
 		.Attach (new IdleRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
+			.Attach (new FramebufferMipmapsGenerationRenderPass ("PostProcessMapVolume"))
 			.Attach (new SSDOSamplesGenerationRenderPass ())
 			.Attach (new SSDOInterpolatedRenderPass ())
 			.Attach (new SSDORenderPass ())

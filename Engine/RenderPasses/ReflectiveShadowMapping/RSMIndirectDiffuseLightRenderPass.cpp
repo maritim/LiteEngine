@@ -106,7 +106,7 @@ std::vector<PipelineAttribute> RSMIndirectDiffuseLightRenderPass::GetCustomAttri
 
 	rsmResolution.value = glm::vec3 (resolution, 0.0f);
 	rsmRadius.value.x = settings.rsm_radius;
-	rsmIntensity.value.x = settings.rsm_intensity;
+	rsmIntensity.value.x = settings.rsm_indirect_diffuse_intensity;
 	rsmInterpolationScale.value.x = settings.rsm_interpolation_scale;
 	rsmMinInterpolationDistance.value.x = settings.rsm_min_interpolation_distance;
 	rsmMinInterpolationAngle.value.x = std::cos (DEG2RAD * settings.rsm_min_interpolation_angle);
