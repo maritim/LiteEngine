@@ -33,6 +33,7 @@
 #include "RenderPasses/ScreenSpaceSubsurfaceScattering/SSSubsurfaceScatteringStatisticsObject.h"
 #include "RenderPasses/HybridGlobalIllumination/HGIStatisticsObject.h"
 #include "RenderPasses/TemporalAntialiasing/TAAStatisticsObject.h"
+#include "RenderPasses/VolumetricLighting/VolLightingStatisticsObject.h"
 
 namespace fs = std::experimental::filesystem;
 
@@ -984,6 +985,31 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 					ImGui::Text ("TAA Map");
 					ShowImage (taaMapVolume->GetFramebufferView ()->GetTextureView (0)->GetGPUIndex (), glm::ivec2 (taaMapWidth, taaMapHeight));
 				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode ("Volumetric Lighting")) {
+
+			ImGui::Checkbox ("Enabled", &_settings->vol_lighting_enabled);
+
+			ImGui::Separator ();
+
+			std::size_t step = 1;
+			ImGui::InputScalar ("Iterations", ImGuiDataType_U32, &_settings->vol_lighting_iterations, &step);
+
+			ImGui::SliderFloat ("Scattering", &_settings->vol_lighting_scattering, 0.0f, 1.0f);
+			ImGui::InputFloat ("Intensity", &_settings->vol_lighting_intensity, 0.1f);
+
+			ImGui::Separator ();			
+
+			if (ImGui::TreeNode ("Debug")) {
+				auto volLightingStat = StatisticsManager::Instance ()->GetStatisticsObject <VolLightingStatisticsObject> ();
+
+				ShowImage ("Volumetric Lighting Map",volLightingStat->volumetricLightMapVolume);
 
 				ImGui::TreePop();
 			}

@@ -43,6 +43,12 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 		else if (name == "TAA") {
 			ProcessTAA (content, settings);
 		}
+		else if (name == "VolLighting") {
+			ProcessVolLighting (content, settings);
+		}
+		else if (name == "LightShafts") {
+			ProcessLightShafts (content, settings);
+		}
 		else if (name == "Bloom") {
 			ProcessBloom (content, settings);
 		}
@@ -179,6 +185,26 @@ void RenderSettingsLoader::ProcessTAA (TiXmlElement* xmlElem, RenderSettings* se
 	std::string enabled = xmlElem->Attribute ("enabled");
 
 	settings->taa_enabled = Extensions::StringExtend::ToBool (enabled);
+}
+
+void RenderSettingsLoader::ProcessVolLighting (TiXmlElement* xmlElem, RenderSettings* settings)
+{
+	std::string enabled = xmlElem->Attribute ("enabled");
+	std::string iterations = xmlElem->Attribute ("iterations");
+	std::string scattering = xmlElem->Attribute ("scattering");
+	std::string intensity = xmlElem->Attribute ("intensity");
+
+	settings->vol_lighting_enabled = Extensions::StringExtend::ToBool (enabled);
+	settings->vol_lighting_iterations = std::stoi (iterations);
+	settings->vol_lighting_scattering = std::stof (scattering);
+	settings->vol_lighting_intensity = std::stof (intensity);
+}
+
+void RenderSettingsLoader::ProcessLightShafts (TiXmlElement* xmlElem, RenderSettings* settings)
+{
+	std::string enabled = xmlElem->Attribute ("enabled");
+
+	settings->light_shafts_enabled = Extensions::StringExtend::ToBool (enabled);
 }
 
 void RenderSettingsLoader::ProcessBloom (TiXmlElement* xmlElem, RenderSettings* settings)

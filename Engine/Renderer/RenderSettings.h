@@ -51,6 +51,13 @@ struct RenderSettings : public Object
 
 	bool taa_enabled;
 
+	bool vol_lighting_enabled;
+	std::size_t vol_lighting_iterations;
+	float vol_lighting_scattering;
+	float vol_lighting_intensity;
+
+	bool light_shafts_enabled;
+
 	bool bloom_enabled;
 	float bloom_scale;
 	float bloom_threshold;

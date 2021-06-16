@@ -2,8 +2,9 @@
 
 <RenderSettings>
 	<!-- <RenderMode mode="VoxelConeTracingRenderModule" /> -->
-	<RenderMode mode="HybridGlobalIlluminationRenderModule" />
+	<!-- <RenderMode mode="HybridGlobalIlluminationRenderModule" /> -->
 	<!-- <RenderMode mode="TemporalReflectiveShadowMappingRenderModule" /> -->
+	<RenderMode mode="DirectLightingRenderModule" />
 
 	<General indirectDiffuseEnabled="true" indirectSpecularEnabled="false" subsurfaceScatteringEnabled="false" ambientOcclusionEnabled="true" />
 
@@ -16,6 +17,10 @@
 	<SSR enabled="false" scale="1" iterations="1000" roughness="0.035" thickness="0.1" stride="2" intensity="5" />
 
 	<TAA enabled="true" />
+
+	<VolLighting enabled="true" iterations="32" scattering="0.3" intensity="1.0" />
+
+	<LightShafts enabled="true" />
 
 	<Bloom enabled="false" scale="0.5" threshold="0.5" intensity="0.4" />
 

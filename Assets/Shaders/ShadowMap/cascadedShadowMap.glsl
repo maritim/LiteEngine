@@ -57,3 +57,20 @@ float CalcDirectionalShadowContribution (vec3 viewPosition)
 
 	return shadow;
 }
+
+float CalcDirectionalShadowContributionDirect (vec3 viewPosition)
+{
+	// Calculate shadow level
+	vec4 clipPos = (projectionMatrix * vec4 (viewPosition, 1.0));
+	float depth = clipPos.z / clipPos.w;
+	int shadowCascadeLevel = GetShadowCascadeLevel (depth);
+
+	// Calculate shadow
+	vec4 lightSpacePos = lightSpaceMatrices [shadowCascadeLevel] * inverseViewMatrix * vec4 (viewPosition, 1.0f);
+
+	vec3 samplePos = vec3 (lightSpacePos.xy, lightSpacePos.z - shadowBias);
+	float shadow = texture (shadowMap, samplePos, shadowBias);
+
+	return shadow;
+}
+
