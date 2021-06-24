@@ -34,6 +34,7 @@
 #include "RenderPasses/HybridGlobalIllumination/HGIStatisticsObject.h"
 #include "RenderPasses/TemporalAntialiasing/TAAStatisticsObject.h"
 #include "RenderPasses/VolumetricLighting/VolLightingStatisticsObject.h"
+#include "RenderPasses/LightShafts/LightShaftsStatisticsObject.h"
 
 namespace fs = std::experimental::filesystem;
 
@@ -1010,6 +1011,33 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 				auto volLightingStat = StatisticsManager::Instance ()->GetStatisticsObject <VolLightingStatisticsObject> ();
 
 				ShowImage ("Volumetric Lighting Map",volLightingStat->volumetricLightMapVolume);
+
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode ("Light Shafts")) {
+
+			ImGui::Checkbox ("Enabled", &_settings->light_shafts_enabled);
+
+			ImGui::Separator ();
+
+			std::size_t step = 1;
+			ImGui::InputScalar ("Iterations", ImGuiDataType_U32, &_settings->light_shafts_iterations, &step);
+
+			ImGui::SliderFloat ("Density", &_settings->light_shafts_density, 0.0f, 1.0f);
+			ImGui::SliderFloat ("Weight", &_settings->light_shafts_weight, 0.0f, 1.0f);
+			ImGui::SliderFloat ("Decay", &_settings->light_shafts_decay, 0.0f, 1.0f);
+			ImGui::InputFloat ("Intensity", &_settings->light_shafts_intensity, 0.1f);
+
+			ImGui::Separator ();
+
+			if (ImGui::TreeNode ("Debug")) {
+				auto lightShaftsStat = StatisticsManager::Instance ()->GetStatisticsObject <LightShaftsStatisticsObject> ();
+
+				ShowImage ("Light Shafts Map",lightShaftsStat->lightShaftsMapVolume);
 
 				ImGui::TreePop();
 			}

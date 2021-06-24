@@ -18,9 +18,9 @@
 
 	<TAA enabled="true" />
 
-	<VolLighting enabled="true" iterations="32" scattering="0.3" intensity="1.0" />
+	<VolLighting enabled="false" iterations="32" scattering="0.3" intensity="1.0" />
 
-	<LightShafts enabled="true" />
+	<LightShafts enabled="true" iterations="100" density="1.0" weight="1.0" decay="0.9" intensity="1.0" />
 
 	<Bloom enabled="false" scale="0.5" threshold="0.5" intensity="0.4" />
 

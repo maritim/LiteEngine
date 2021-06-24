@@ -57,6 +57,11 @@ struct RenderSettings : public Object
 	float vol_lighting_intensity;
 
 	bool light_shafts_enabled;
+	std::size_t light_shafts_iterations;
+	float light_shafts_density;
+	float light_shafts_weight;
+	float light_shafts_decay;
+	float light_shafts_intensity;
 
 	bool bloom_enabled;
 	float bloom_scale;

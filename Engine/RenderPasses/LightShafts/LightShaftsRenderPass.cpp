@@ -1,77 +1,127 @@
 #include "LightShaftsRenderPass.h"
 
-bool LightShaftsRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
-	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
+#include "Resources/Resources.h"
+#include "Renderer/RenderSystem.h"
+
+#include "Renderer/Pipeline.h"
+
+#include "RenderPasses/FramebufferRenderVolume.h"
+
+#include "Debug/Statistics/StatisticsManager.h"
+#include "LightShaftsStatisticsObject.h"
+
+void LightShaftsRenderPass::Init (const RenderSettings& settings)
 {
 	/*
-	 * Check if bloom is enabled
+	 * Shader for general directional light with no shadow casting
 	*/
 
-	return settings.light_shafts_enabled;
+	Resource<Shader> shader = Resources::LoadShader ({
+		"Assets/Shaders/deferredDirVolLightVertex.glsl",
+		"Assets/Shaders/LightShafts/lightShaftsFragment.glsl"
+	});
+
+	_shadowShaderView = RenderSystem::LoadShader (shader);
 }
 
-std::string LightShaftsRenderPass::GetPostProcessFragmentShaderPath () const
-{
-	return "Assets/Shaders/LightShafts/bloomAccumulationFragment.glsl";
-}
-
-std::string LightShaftsRenderPass::GetPostProcessVolumeName () const
-{
-	return "PostProcessMapVolume";
-}
-
-glm::ivec2 LightShaftsRenderPass::GetPostProcessVolumeResolution (const RenderSettings& settings) const
-{
-	return glm::ivec2 (settings.resolution.width, settings.resolution.height);
-}
-
-FramebufferRenderVolume* LightShaftsRenderPass::CreatePostProcessVolume (const RenderSettings& settings) const
-{
-	/*
-	 * Create bloom accumulation framebuffer
-	*/
-
-	Resource<Texture> texture = Resource<Texture> (new Texture ("postProcessMap"));
-
-	glm::ivec2 size = GetPostProcessVolumeResolution (settings);
-
-	texture->SetSize (Size (size.x, size.y));
-	texture->SetMipmapGeneration (false);
-	texture->SetSizedInternalFormat (TEXTURE_SIZED_INTERNAL_FORMAT::FORMAT_RGB16);
-	texture->SetInternalFormat (TEXTURE_INTERNAL_FORMAT::FORMAT_RGB);
-	texture->SetChannelType (TEXTURE_CHANNEL_TYPE::CHANNEL_FLOAT);
-	texture->SetWrapMode (TEXTURE_WRAP_MODE::WRAP_CLAMP_EDGE);
-	texture->SetMinFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
-	texture->SetMagFilter (TEXTURE_FILTER_MODE::FILTER_NEAREST);
-	texture->SetAnisotropicFiltering (false);
-
-	Resource<Framebuffer> framebuffer = Resource<Framebuffer> (new Framebuffer (texture));
-
-	return new FramebufferRenderVolume (framebuffer);
-}
-
-std::vector<PipelineAttribute> LightShaftsRenderPass::GetCustomAttributes (const Camera* camera,
+RenderVolumeCollection* LightShaftsRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
-	 * Attach post process volume attributes to pipeline
+	 * Bind light accumulation volume
 	*/
 
-	std::vector<PipelineAttribute> attributes = PostProcessRenderPass::GetCustomAttributes (camera, settings, rvc);
+	auto resultVolume = (FramebufferRenderVolume*) rvc->GetRenderVolume ("lightShaftsMap");
+
+	resultVolume->GetFramebufferView ()->Activate ();
+
+	GL::ClearColor (0, 0, 0, 0);
+	GL::Clear (GL_COLOR_BUFFER_BIT);
+
+	/*
+	 * Update statistics object
+	*/
+
+	auto lightShaftsStatisticsObject = StatisticsManager::Instance ()->GetStatisticsObject <LightShaftsStatisticsObject> ();
+
+	lightShaftsStatisticsObject->lightShaftsMapVolume = resultVolume;
+
+	/*
+	 * Draw volumetric lights
+	*/
+
+	DirectionalLightPass (renderScene, camera, settings, rvc);
+
+	/*
+	 * End directional light pass
+	*/
+
+	EndDirectionalLightPass ();
+
+	return rvc;
+}
+
+void LightShaftsRenderPass::Clear ()
+{
+	/*
+	 * Nothing
+	*/
+}
+
+void LightShaftsRenderPass::LockShader (const RenderLightObject* renderLightObject)
+{
+	/*
+	 * Unlock last shader
+	*/
+
+	Pipeline::UnlockShader ();
+
+	/*
+	 * Lock shader for shadow directional light
+	*/
+
+	if (renderLightObject->IsCastingShadows () == true) {
+		Pipeline::LockShader (_shadowShaderView);
+	}
+}
+
+std::vector<PipelineAttribute> LightShaftsRenderPass::GetCustomAttributes (const RenderSettings& settings) const
+{
+	std::vector<PipelineAttribute> attributes;
 
 	/*
 	 * Attach bloom attributes to pipeline
 	*/
 
-	// PipelineAttribute bloomIntensity;
+	PipelineAttribute lightShaftsIterations;
+	PipelineAttribute lightShaftsDensity;
+	PipelineAttribute lightShaftsWeight;
+	PipelineAttribute lightShaftsDecay;
+	PipelineAttribute lightShaftsIntensity;
 
-	// bloomIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
+	lightShaftsIterations.type = PipelineAttribute::AttrType::ATTR_1I;
+	lightShaftsDensity.type = PipelineAttribute::AttrType::ATTR_1F;
+	lightShaftsWeight.type = PipelineAttribute::AttrType::ATTR_1F;
+	lightShaftsDecay.type = PipelineAttribute::AttrType::ATTR_1F;
+	lightShaftsIntensity.type = PipelineAttribute::AttrType::ATTR_1F;
 
-	// bloomIntensity.name = "bloomIntensity";
+	lightShaftsIterations.name = "lightShaftsIterations";
+	lightShaftsDensity.name = "lightShaftsDensity";
+	lightShaftsWeight.name = "lightShaftsWeight";
+	lightShaftsDecay.name = "lightShaftsDecay";
+	lightShaftsIntensity.name = "lightShaftsIntensity";
 
-	// bloomIntensity.value.x = settings.bloom_intensity;
+	lightShaftsIterations.value.x = settings.light_shafts_iterations;
+	lightShaftsDensity.value.x = settings.light_shafts_density;
+	lightShaftsWeight.value.x = settings.light_shafts_weight;
+	lightShaftsDecay.value.x = settings.light_shafts_decay;
+	lightShaftsIntensity.value.x = settings.light_shafts_intensity;
 
-	// attributes.push_back (bloomIntensity);
+	attributes.push_back (lightShaftsIterations);
+	attributes.push_back (lightShaftsDensity);
+	attributes.push_back (lightShaftsWeight);
+	attributes.push_back (lightShaftsDecay);
+	attributes.push_back (lightShaftsIntensity);
 
 	return attributes;
 }

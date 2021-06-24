@@ -203,8 +203,18 @@ void RenderSettingsLoader::ProcessVolLighting (TiXmlElement* xmlElem, RenderSett
 void RenderSettingsLoader::ProcessLightShafts (TiXmlElement* xmlElem, RenderSettings* settings)
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
+	std::string iterations = xmlElem->Attribute ("iterations");
+	std::string density = xmlElem->Attribute ("density");
+	std::string weight = xmlElem->Attribute ("weight");
+	std::string decay = xmlElem->Attribute ("decay");
+	std::string intensity = xmlElem->Attribute ("intensity");
 
 	settings->light_shafts_enabled = Extensions::StringExtend::ToBool (enabled);
+	settings->light_shafts_iterations = std::stoi (iterations);
+	settings->light_shafts_density = std::stof (density);
+	settings->light_shafts_weight = std::stof (weight);
+	settings->light_shafts_decay = std::stof (decay);
+	settings->light_shafts_intensity = std::stof (intensity);
 }
 
 void RenderSettingsLoader::ProcessBloom (TiXmlElement* xmlElem, RenderSettings* settings)

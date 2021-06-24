@@ -1,14 +1,14 @@
-#ifndef LIGHTSHAFTSRENDERPASS_H
-#define LIGHTSHAFTSRENDERPASS_H
+#ifndef DIRECTIONALLIGHTSOURCERENDERPASS_H
+#define DIRECTIONALLIGHTSOURCERENDERPASS_H
 
 #include "RenderPasses/DirectionalVolumetricLightRenderPass.h"
 
 #include "Core/Resources/Resource.h"
 #include "Renderer/RenderViews/ShaderView.h"
 
-class ENGINE_API LightShaftsRenderPass : public DirectionalVolumetricLightRenderPass
+class ENGINE_API DirectionalLightSourceRenderPass : public DirectionalVolumetricLightRenderPass
 {
-	DECLARE_RENDER_PASS(LightShaftsRenderPass)
+	DECLARE_RENDER_PASS(DirectionalLightSourceRenderPass)
 
 protected:
 	Resource<ShaderView> _shadowShaderView;

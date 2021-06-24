@@ -50,6 +50,9 @@
 #include "RenderPasses/TemporalAntialiasing/TAARenderPass.h"
 #include "RenderPasses/VolumetricLighting/VolumetricLightingDirectionalRenderPass.h"
 #include "RenderPasses/VolumetricLighting/VolumetricLightingRenderPass.h"
+#include "RenderPasses/LightShafts/DirectionalLightSourceRenderPass.h"
+#include "RenderPasses/LightShafts/LightShaftsRenderPass.h"
+#include "RenderPasses/LightShafts/LightShaftsAccumulationRenderPass.h"
 #include "RenderPasses/Bloom/BrightExtractionRenderPass.h"
 #include "RenderPasses/Bloom/BloomHorizontalBlurRenderPass.h"
 #include "RenderPasses/Bloom/BloomVerticalBlurRenderPass.h"
@@ -63,6 +66,8 @@ void DirectLightingRenderModule::Init ()
 	_renderPasses.push_back (new ResultFrameBufferGenerationRenderPass ());
 	_renderPasses.push_back (new DeferredGeometryRenderPass ());
 	_renderPasses.push_back (new FramebufferGenerationRenderPass ("volumetricLightMap"));
+	_renderPasses.push_back (new FramebufferGenerationRenderPass ("lightSourceMap"));
+	_renderPasses.push_back (new FramebufferGenerationRenderPass ("lightShaftsMap"));
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new IterateOverRenderVolumeCollection (1))
 		.Attach (new SSAOSamplesGenerationRenderPass ())
@@ -79,6 +84,11 @@ void DirectLightingRenderModule::Init ()
 		// .Attach (new ExponentialShadowMapBlurRenderPass ())
 		.Attach (new DeferredDirectionalLightRenderPass ())
 		.Attach (new VolumetricLightingDirectionalRenderPass ())
+		// .Attach (ContainerRenderPass::Builder ()
+			// .Volume (new IterateOverRenderVolumeCollection (1))
+			.Attach (new DirectionalLightSourceRenderPass ())
+			.Attach (new LightShaftsRenderPass ())
+			// .Build ())
 		.Build ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new PointLightContainerRenderVolumeCollection ())
@@ -111,6 +121,7 @@ void DirectLightingRenderModule::Init ()
 		.Attach (new SSSubsurfaceScatteringRenderPass ())
 		.Attach	(new TAARenderPass ())
 		.Attach (new VolumetricLightingRenderPass ())
+		.Attach (new LightShaftsAccumulationRenderPass ())
 		.Attach (ContainerRenderPass::Builder ()
 			.Volume (new IterateOverRenderVolumeCollection (1))
 			.Attach (new BrightExtractionRenderPass ())
