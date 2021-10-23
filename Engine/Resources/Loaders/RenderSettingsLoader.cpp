@@ -309,6 +309,10 @@ void RenderSettingsLoader::ProcessLPV (TiXmlElement* xmlElem, RenderSettings* se
 	std::string indirectSpecularIntensity = xmlElem->Attribute ("indirectSpecularIntensity");
 	std::string indirectRefractiveIntensity = xmlElem->Attribute ("indirectRefractiveIntensity");
 	std::string specularIterations = xmlElem->Attribute ("specularIterations");
+	std::string emissiveVoxelization = xmlElem->Attribute ("emissiveVoxelization");
+	std::string emissiveNormalAngleStep = xmlElem->Attribute ("emissiveNormalAngleStep");
+	std::string emissiveCache = xmlElem->Attribute ("emissiveCache");
+	std::string emissiveVPLs = xmlElem->Attribute ("emissiveVPLs");
 
 	settings->lpv_volume_size = std::stoi (volumeSize);
 	settings->lpv_iterations = std::stoi (iterations);
@@ -318,6 +322,10 @@ void RenderSettingsLoader::ProcessLPV (TiXmlElement* xmlElem, RenderSettings* se
 	settings->lpv_indirect_specular_intensity = std::stof (indirectSpecularIntensity);
 	settings->lpv_indirect_refractive_intensity = std::stof (indirectRefractiveIntensity);
 	settings->lpv_specular_iterations = std::stoi (specularIterations);
+	settings->lpv_emissive_voxelization = Extensions::StringExtend::ToBool (emissiveVoxelization);
+	settings->lpv_emissive_normal_angle_step = std::stof (emissiveNormalAngleStep);
+	settings->lpv_emissive_cache = Extensions::StringExtend::ToBool (emissiveCache);
+	settings->lpv_emissive_vpls = std::stoi (emissiveVPLs);
 }
 
 void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings)

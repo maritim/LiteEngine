@@ -320,6 +320,16 @@ void EditorRenderingSettings::ShowRenderingSettingsWindow ()
 
 		ImGui::Separator();
 
+		ImGui::Checkbox ("Emissive Voxelization", &_settings->lpv_emissive_voxelization);
+		ImGui::SliderFloat ("Emissive Normal Angle Step", &_settings->lpv_emissive_normal_angle_step, 1.0f, 90.0f);
+
+		ImGui::Checkbox ("Emissive Cache", &_settings->lpv_emissive_cache);
+		ImGui::InputScalar ("VPL Count", ImGuiDataType_U32, &_settings->lpv_emissive_vpls);
+
+		ImGui::Checkbox ("Textured Area Lights", &_settings->lpv_emissive_textured);
+
+		ImGui::Separator();
+
 		ImGui::PushID ("LPVDebug");
 
 		if (ImGui::TreeNode ("Debug")) {

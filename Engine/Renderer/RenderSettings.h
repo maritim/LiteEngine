@@ -104,6 +104,11 @@ struct RenderSettings : public Object
 	float lpv_indirect_specular_intensity;
 	float lpv_indirect_refractive_intensity;
 	std::size_t lpv_specular_iterations;
+	bool lpv_emissive_voxelization;
+	float lpv_emissive_normal_angle_step;
+	std::size_t lpv_emissive_vpls;
+	bool lpv_emissive_cache;
+	bool lpv_emissive_textured;
 
 	std::size_t vct_voxels_size;
 	bool vct_continuous_voxelization;

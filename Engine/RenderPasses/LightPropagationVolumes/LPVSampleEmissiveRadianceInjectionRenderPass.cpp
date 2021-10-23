@@ -1,4 +1,4 @@
-#include "LPVEmissiveRadianceInjectionRenderPass.h"
+#include "LPVSampleEmissiveRadianceInjectionRenderPass.h"
 
 #include "LPVVolume.h"
 #include "LPVGeometryVolume.h"
@@ -11,20 +11,18 @@
 
 #include "Wrappers/OpenGL/GL.h"
 
-#include "Core/Console/Console.h"
-
 #include "SceneNodes/SceneLayer.h"
 
-void LPVEmissiveRadianceInjectionRenderPass::Init (const RenderSettings& settings)
+void LPVSampleEmissiveRadianceInjectionRenderPass::Init (const RenderSettings& settings)
 {
 	/*
 	 * Shader for static objects
 	*/
 
 	Resource<Shader> staticShader = Resources::LoadShader ({
-		"Assets/Shaders/Voxelize/voxelizeVertex.glsl",
-		"Assets/Shaders/LightPropagationVolumes/lightPropagationVolumesEmissiveRadianceInjectionFragment.glsl",
-		"Assets/Shaders/LightPropagationVolumes/lightPropagationVolumesEmissiveRadianceInjectionGeometry.glsl"
+		"Assets/Shaders/LightPropagationVolumes/lightPropagationVolumesCacheEmissiveRadianceVertex.glsl",
+		"Assets/Shaders/LightPropagationVolumes/lightPropagationVolumesCacheEmissiveRadianceInjectionFragment.glsl",
+		"Assets/Shaders/LightPropagationVolumes/lightPropagationVolumesCacheEmissiveRadianceInjectionGeometry.glsl"
 	});
 
 	_staticShaderView = RenderSystem::LoadShader (staticShader);
@@ -35,14 +33,14 @@ void LPVEmissiveRadianceInjectionRenderPass::Init (const RenderSettings& setting
 
 	Resource<Shader> animationShader = Resources::LoadShader ({
 		"Assets/Shaders/Voxelize/voxelizeAnimationVertex.glsl",
-		"Assets/Shaders/LightPropagationVolumes/lightPropagationVolumesEmissiveRadianceInjectionFragment.glsl",
-		"Assets/Shaders/LightPropagationVolumes/lightPropagationVolumesEmissiveRadianceInjectionGeometry.glsl"
+		"Assets/Shaders/LightPropagationVolumes/lightPropagationVolumesCacheEmissiveRadianceInjectionFragment.glsl",
+		"Assets/Shaders/LightPropagationVolumes/lightPropagationVolumesCacheEmissiveRadianceInjectionGeometry.glsl"
 	});
 
 	_animationShaderView = RenderSystem::LoadShader (animationShader);
 }
 
-RenderVolumeCollection* LPVEmissiveRadianceInjectionRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
+RenderVolumeCollection* LPVSampleEmissiveRadianceInjectionRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	/*
@@ -66,24 +64,24 @@ RenderVolumeCollection* LPVEmissiveRadianceInjectionRenderPass::Execute (const R
 	return rvc;
 }
 
-void LPVEmissiveRadianceInjectionRenderPass::Clear ()
+void LPVSampleEmissiveRadianceInjectionRenderPass::Clear ()
 {
 	/*
 	 * Nothing
 	*/
 }
 
-bool LPVEmissiveRadianceInjectionRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
+bool LPVSampleEmissiveRadianceInjectionRenderPass::IsAvailable (const RenderScene* renderScene, const Camera* camera,
 	const RenderSettings& settings, const RenderVolumeCollection* rvc) const
 {
 	/*
 	 * Always execute light propagation volumes emissive radiance injection render pass
 	*/
 
-	return settings.lpv_emissive_voxelization;
+	return !settings.lpv_emissive_voxelization && !settings.lpv_emissive_cache;
 }
 
-void LPVEmissiveRadianceInjectionRenderPass::StartVoxelization ()
+void LPVSampleEmissiveRadianceInjectionRenderPass::StartVoxelization ()
 {
 	/*
 	* Render to window but mask out all color.
@@ -95,7 +93,7 @@ void LPVEmissiveRadianceInjectionRenderPass::StartVoxelization ()
 	GL::DepthMask (GL_FALSE);
 }
 
-void LPVEmissiveRadianceInjectionRenderPass::GeometryVoxelizationPass (const RenderScene* renderScene,
+void LPVSampleEmissiveRadianceInjectionRenderPass::GeometryVoxelizationPass (const RenderScene* renderScene,
 	const RenderSettings& settings, RenderVolumeCollection* rvc)
 {
 	auto lpvVolume = (LPVVolume*) rvc->GetRenderVolume ("LightPropagationVolume");
@@ -103,20 +101,18 @@ void LPVEmissiveRadianceInjectionRenderPass::GeometryVoxelizationPass (const Ren
 	auto lpvSampleCountVolume = (LPVSampleCountVolume*) rvc->GetRenderVolume ("LPVSampleCountVolume");
 
 	/*
-	 * Set viewport
-	*/
-
-	std::size_t volumeSize = ((LPVVolume*) lpvVolume)->GetVolumeSize ();
-
-	GL::Viewport (0, 0, volumeSize, volumeSize);
-
-	/*
-	* Bind voxel volume to geometry render pass
+	 * Bind voxel volume to geometry render pass
 	*/
 
 	lpvVolume->BindForWriting ();
 	lpvGeometryVolume->BindForWriting ();
 	lpvSampleCountVolume->BindForWriting ();
+
+	/*
+	 * Set viewport
+	*/
+
+	GL::Viewport (0, 0, 1, 1);
 
 	/*
 	* Render geometry
@@ -163,10 +159,10 @@ void LPVEmissiveRadianceInjectionRenderPass::GeometryVoxelizationPass (const Ren
 		 * Lock voxelization shader for geomtry rendering
 		*/
 
-		LockShader (renderObject->GetSceneLayers ());
+		LockShader (renderObject->GetSceneLayers());
 
 		/*
-		 * Send voxel volume attributes to pipeline
+		 * Send lpv volume attributes to pipeline
 		*/
 
 		Pipeline::SendCustomAttributes (nullptr, lpvVolume->GetCustomAttributes ());
@@ -185,7 +181,7 @@ void LPVEmissiveRadianceInjectionRenderPass::GeometryVoxelizationPass (const Ren
 	}
 }
 
-void LPVEmissiveRadianceInjectionRenderPass::EndVoxelization ()
+void LPVSampleEmissiveRadianceInjectionRenderPass::EndVoxelization ()
 {
 	GL::MemoryBarrier(GL_ALL_BARRIER_BITS);
 
@@ -203,7 +199,7 @@ void LPVEmissiveRadianceInjectionRenderPass::EndVoxelization ()
 	Pipeline::UnlockShader ();
 }
 
-void LPVEmissiveRadianceInjectionRenderPass::LockShader (int sceneLayers)
+void LPVSampleEmissiveRadianceInjectionRenderPass::LockShader (int sceneLayers)
 {
 	/*
 	 * Unlock last shader
@@ -212,7 +208,7 @@ void LPVEmissiveRadianceInjectionRenderPass::LockShader (int sceneLayers)
 	Pipeline::UnlockShader ();
 
 	/*
-	 * Lock the shader for animations
+	 * Lock the shader
 	*/
 
 	if (sceneLayers & SceneLayer::ANIMATION) {
@@ -228,7 +224,7 @@ void LPVEmissiveRadianceInjectionRenderPass::LockShader (int sceneLayers)
 	}
 }
 
-std::vector<PipelineAttribute> LPVEmissiveRadianceInjectionRenderPass::GetCustomAttributes (const RenderSettings& settings)
+std::vector<PipelineAttribute> LPVSampleEmissiveRadianceInjectionRenderPass::GetCustomAttributes (const RenderSettings& settings)
 {
 	std::vector<PipelineAttribute> attributes;
 
@@ -236,19 +232,19 @@ std::vector<PipelineAttribute> LPVEmissiveRadianceInjectionRenderPass::GetCustom
 	 * Attach bloom attributes to pipeline
 	*/
 
-	PipelineAttribute normalAngleStep;
+	PipelineAttribute vplsCount;
 	PipelineAttribute emissiveTextured;
 
-	normalAngleStep.type = PipelineAttribute::AttrType::ATTR_1F;
+	vplsCount.type = PipelineAttribute::AttrType::ATTR_1I;
 	emissiveTextured.type = PipelineAttribute::AttrType::ATTR_1I;
 
-	normalAngleStep.name = "normalAngleStep";
+	vplsCount.name = "vplsCount";
 	emissiveTextured.name = "emissiveTextured";
 
-	normalAngleStep.value.x = settings.lpv_emissive_normal_angle_step;
+	vplsCount.value.x = settings.lpv_emissive_vpls;
 	emissiveTextured.value.x = settings.lpv_emissive_textured;
 
-	attributes.push_back (normalAngleStep);
+	attributes.push_back (vplsCount);
 	attributes.push_back (emissiveTextured);
 
 	return attributes;

@@ -1,17 +1,22 @@
-#ifndef LPVEMISSIVERADIANCEINJECTIONRENDERPASS_H
-#define LPVEMISSIVERADIANCEINJECTIONRENDERPASS_H
+#ifndef LPVCACHEEMISSIVERADIANCERENDERPASS_H
+#define LPVCACHEEMISSIVERADIANCERENDERPASS_H
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
-class LPVEmissiveRadianceInjectionRenderPass : public ContainerRenderSubPassI
+#include "VPLCacheVolume.h"
+
+class LPVCacheEmissiveRadianceRenderPass : public ContainerRenderSubPassI
 {
-	DECLARE_RENDER_PASS(LPVEmissiveRadianceInjectionRenderPass)
+	DECLARE_RENDER_PASS(LPVCacheEmissiveRadianceRenderPass)
 
 protected:
-	Resource<ShaderView> _staticShaderView;
-	Resource<ShaderView> _animationShaderView;
+	Resource<ShaderView> _shaderView;
+	VPLCachesVolume* _vplCachesVolume;
 
 public:
+	LPVCacheEmissiveRadianceRenderPass ();
+	~LPVCacheEmissiveRadianceRenderPass ();
+
 	void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
@@ -26,7 +31,7 @@ protected:
 		RenderVolumeCollection* rvc);
 	void EndVoxelization ();
 
-	void LockShader (int sceneLayers);
+	void LockShader ();
 
 	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings);
 };

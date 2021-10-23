@@ -6,22 +6,14 @@
 #include "Core/Resources/Resource.h"
 #include "Renderer/RenderViews/ShaderView.h"
 
-#include "LPVVolume.h"
-#include "LPVGeometryVolume.h"
-
 class ENGINE_API LPVRadianceInjectionRenderPass : public VolumetricLightRenderPassI
 {
 	DECLARE_RENDER_PASS(LPVRadianceInjectionRenderPass)
 
 protected:
 	Resource<ShaderView> _shaderView;
-	LPVVolume* _lpvVolume;
-	LPVGeometryVolume* _lpvGeometryVolume;
 
 public:
-	LPVRadianceInjectionRenderPass ();
-	~LPVRadianceInjectionRenderPass ();
-
 	void Init (const RenderSettings& settings);
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera,
 		const RenderSettings& settings, RenderVolumeCollection* rvc);
@@ -38,10 +30,6 @@ protected:
 
 	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings,
 		const RenderLightObject* renderLightObject) const;
-
-	void UpdateLPVVolumeBoundingBox (const RenderScene* renderScene);
-	void InitLPVVolume (const RenderSettings& settings);
-	void UpdateLPVVolume (const RenderSettings& settings);
 };
 
 #endif

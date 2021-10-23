@@ -3,22 +3,10 @@
 #include "Resources/Resources.h"
 #include "Renderer/RenderSystem.h"
 
+#include "LPVVolume.h"
+#include "LPVGeometryVolume.h"
+
 #include "Renderer/Pipeline.h"
-
-#include "Core/Console/Console.h"
-
-LPVRadianceInjectionRenderPass::LPVRadianceInjectionRenderPass () :
-	_lpvVolume (new LPVVolume ()),
-	_lpvGeometryVolume (new LPVGeometryVolume ())
-{
-
-}
-
-LPVRadianceInjectionRenderPass::~LPVRadianceInjectionRenderPass ()
-{
-	delete _lpvGeometryVolume;
-	delete _lpvVolume;
-}
 
 void LPVRadianceInjectionRenderPass::Init (const RenderSettings& settings)
 {
@@ -32,22 +20,13 @@ void LPVRadianceInjectionRenderPass::Init (const RenderSettings& settings)
 	});
 
 	_shaderView = RenderSystem::LoadShader (shader);
-
-	/*
-	 * Initialize light propagation volume
-	*/
-
-	InitLPVVolume (settings);
 }
 
 void LPVRadianceInjectionRenderPass::Clear ()
 {
 	/*
-	 * Clear post processing volume
+	 * Nothing
 	*/
-
-	_lpvGeometryVolume->Clear ();
-	_lpvVolume->Clear ();
 }
 
 RenderVolumeCollection* LPVRadianceInjectionRenderPass::Execute (const RenderScene* renderScene, const Camera* camera,
@@ -58,12 +37,6 @@ RenderVolumeCollection* LPVRadianceInjectionRenderPass::Execute (const RenderSce
 	*/
 
 	RenderLightObject* renderLightObject = GetRenderLightObject (rvc);
-
-	/*
-	 *
-	*/
-
-	UpdateLPVVolume (settings);
 
 	/*
 	 * Start screen space ambient occlusion generation pass
@@ -83,8 +56,7 @@ RenderVolumeCollection* LPVRadianceInjectionRenderPass::Execute (const RenderSce
 
 	EndPostProcessPass ();
 
-	return rvc->Insert ("LightPropagationVolume", _lpvVolume)
-		->Insert ("LPVGeometryVolume", _lpvGeometryVolume);
+	return rvc;
 }
 
 bool LPVRadianceInjectionRenderPass::IsAvailable (const RenderLightObject*) const
@@ -98,26 +70,20 @@ bool LPVRadianceInjectionRenderPass::IsAvailable (const RenderLightObject*) cons
 
 void LPVRadianceInjectionRenderPass::StartPostProcessPass ()
 {
-	_lpvGeometryVolume->ClearVolume ();
-	_lpvVolume->ClearVolume ();
-
 	/*
 	 * Bind screen space ambient occlusion volume for writing
 	*/
-
-	_lpvVolume->BindForWriting ();
-	_lpvGeometryVolume->BindForWriting ();
 }
 
 void LPVRadianceInjectionRenderPass::PostProcessPass (const RenderScene* renderScene,
 	const Camera* camera, const RenderSettings& settings,
 	const RenderLightObject* renderLightObject, RenderVolumeCollection* rvc)
 {
-	/*
-	 * Update voxel volume based on scene bounding box
-	*/
+	auto lpvVolume = (LPVVolume*) rvc->GetRenderVolume ("LightPropagationVolume");
+	auto lpvGeometryVolume = (LPVGeometryVolume*) rvc->GetRenderVolume ("LPVGeometryVolume");
 
-	UpdateLPVVolumeBoundingBox (renderScene);
+	lpvVolume->BindForWriting ();
+	lpvGeometryVolume->BindForWriting ();
 
 	/*
 	 * Set viewport
@@ -157,7 +123,7 @@ void LPVRadianceInjectionRenderPass::PostProcessPass (const RenderScene* renderS
 	*/
 
 	Pipeline::SendCustomAttributes (nullptr, rvc->GetRenderVolume ("ReflectiveShadowMapVolume")->GetCustomAttributes ());
-	Pipeline::SendCustomAttributes (nullptr, _lpvVolume->GetCustomAttributes ());
+	Pipeline::SendCustomAttributes (nullptr, lpvVolume->GetCustomAttributes ());
 	Pipeline::SendCustomAttributes (nullptr, GetCustomAttributes (settings, renderLightObject));
 
 	/*
@@ -207,51 +173,4 @@ std::vector<PipelineAttribute> LPVRadianceInjectionRenderPass::GetCustomAttribut
 	attributes.push_back (injectionBias);
 
 	return attributes;
-}
-
-void LPVRadianceInjectionRenderPass::UpdateLPVVolumeBoundingBox (const RenderScene* renderScene)
-{
-	auto& volume = renderScene->GetBoundingBox ();
-
-	glm::vec3 minVertex = volume.minVertex;
-	glm::vec3 maxVertex = volume.maxVertex;
-
-	_lpvVolume->UpdateBoundingBox (minVertex, maxVertex);
-	_lpvGeometryVolume->UpdateBoundingBox (minVertex, maxVertex);
-}
-
-void LPVRadianceInjectionRenderPass::InitLPVVolume (const RenderSettings& settings)
-{
-	if (!_lpvVolume->Init (settings.lpv_volume_size)) {
-		Console::LogError (std::string () +
-			"Light propagation volume texture cannot be initialized!" +
-			" It is not possible to continue the process. End now!");
-		exit (LIGHT_PROPAGATION_VOLUME_TEXTURE_NOT_INIT);
-	}
-
-	if (!_lpvGeometryVolume->Init (settings.lpv_volume_size)) {
-		Console::LogError (std::string () +
-			"Light propagation volume texture cannot be initialized!" +
-			" It is not possible to continue the process. End now!");
-		exit (LIGHT_PROPAGATION_VOLUME_TEXTURE_NOT_INIT);
-	}
-}
-
-void LPVRadianceInjectionRenderPass::UpdateLPVVolume (const RenderSettings& settings)
-{
-	if (_lpvVolume->GetVolumeSize () != settings.lpv_volume_size) {
-
-		/*
-		 * Clear voxel volume
-		*/
-
-		_lpvGeometryVolume->Clear ();
-		_lpvVolume->Clear ();
-
-		/*
-		 * Initialize voxel volume
-		*/
-
-		InitLPVVolume (settings);
-	}
 }

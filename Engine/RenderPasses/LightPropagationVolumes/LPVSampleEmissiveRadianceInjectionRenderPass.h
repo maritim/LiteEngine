@@ -1,11 +1,11 @@
-#ifndef LPVEMISSIVERADIANCEINJECTIONRENDERPASS_H
-#define LPVEMISSIVERADIANCEINJECTIONRENDERPASS_H
+#ifndef LPVSAMPLEEMISSIVERADIANCEINJECTIONRENDERPASS_H
+#define LPVSAMPLEEMISSIVERADIANCEINJECTIONRENDERPASS_H
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
-class LPVEmissiveRadianceInjectionRenderPass : public ContainerRenderSubPassI
+class LPVSampleEmissiveRadianceInjectionRenderPass : public ContainerRenderSubPassI
 {
-	DECLARE_RENDER_PASS(LPVEmissiveRadianceInjectionRenderPass)
+	DECLARE_RENDER_PASS(LPVSampleEmissiveRadianceInjectionRenderPass)
 
 protected:
 	Resource<ShaderView> _staticShaderView;
@@ -29,6 +29,8 @@ protected:
 	void LockShader (int sceneLayers);
 
 	std::vector<PipelineAttribute> GetCustomAttributes (const RenderSettings& settings);
+
+	//virtual void UpdateVPLCacheVolume (const RenderSettings& settings);
 };
 
 #endif

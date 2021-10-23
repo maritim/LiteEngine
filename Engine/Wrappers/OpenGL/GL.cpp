@@ -195,6 +195,13 @@ void GL::BufferSubData (GLenum target, GLintptr offset, GLsizeiptr size, const G
 	ErrorCheck ("glBufferSubData");
 }
 
+void GL::GetBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, void * data)
+{
+	glGetBufferSubData( target, offset, size,data);
+
+	ErrorCheck ("glGetBufferSubData");
+}
+
 /*
  * Vertex Attributes
 */
@@ -313,6 +320,13 @@ void GL::UniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint un
 	glUniformBlockBinding (program, uniformBlockIndex, uniformBlockBinding);
 
 	ErrorCheck ("glUniformBlockBinding");
+}
+
+void GL::ShaderStorageBlockBinding(GLuint program,GLuint storageBlockIndex,GLuint storageBlockBinding)
+{
+	glShaderStorageBlockBinding( program, storageBlockIndex, storageBlockBinding);
+
+	ErrorCheck ("glShaderStorageBlockBinding");
 }
 
 /*
@@ -994,6 +1008,15 @@ GLuint GL::GetUniformBlockIndex(GLuint program, const GLchar *uniformBlockName)
 	ErrorCheck ("glGetUniformBlockIndex");
 
 	return uniformBlockIndex;
+}
+
+GLuint GL::GetProgramResourceIndex(GLuint program,GLenum programInterface,const char * name)
+{
+	GLuint resIndex = glGetProgramResourceIndex( program, programInterface,name);
+
+	ErrorCheck ("glGetProgramResourceIndex");
+
+	return resIndex;
 }
 
 void GL::DispatchCompute(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z)

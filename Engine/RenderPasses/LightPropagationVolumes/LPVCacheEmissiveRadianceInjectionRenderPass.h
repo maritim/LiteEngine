@@ -1,11 +1,11 @@
-#ifndef LPVEMISSIVERADIANCEINJECTIONRENDERPASS_H
-#define LPVEMISSIVERADIANCEINJECTIONRENDERPASS_H
+#ifndef LPVCACHEEMISSIVERADIANCEINJECTIONRENDERPASS_H
+#define LPVCACHEEMISSIVERADIANCEINJECTIONRENDERPASS_H
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 
-class LPVEmissiveRadianceInjectionRenderPass : public ContainerRenderSubPassI
+class LPVCacheEmissiveRadianceInjectionRenderPass : public ContainerRenderSubPassI
 {
-	DECLARE_RENDER_PASS(LPVEmissiveRadianceInjectionRenderPass)
+	DECLARE_RENDER_PASS(LPVCacheEmissiveRadianceInjectionRenderPass)
 
 protected:
 	Resource<ShaderView> _staticShaderView;
@@ -22,8 +22,8 @@ public:
 		const RenderSettings& settings, const RenderVolumeCollection* rvc) const;
 protected:
 	void StartVoxelization ();
-	void GeometryVoxelizationPass (const RenderScene* renderScene, const RenderSettings& settings,
-		RenderVolumeCollection* rvc);
+	void GeometryVoxelizationPass (const RenderScene* renderScene, const Camera* camera,
+		const RenderSettings& settings, RenderVolumeCollection* rvc);
 	void EndVoxelization ();
 
 	void LockShader (int sceneLayers);

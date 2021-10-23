@@ -20,8 +20,13 @@
 #include "RenderPasses/AmbientLight/AmbientLightRenderPass.h"
 
 #include "RenderPasses/ReflectiveShadowMapping/RSMDirectionalLightAccumulationRenderPass.h"
+#include "RenderPasses/LightPropagationVolumes/LPVVolumeGenerationRenderPass.h"
 #include "RenderPasses/LightPropagationVolumes/LPVRadianceInjectionRenderPass.h"
 #include "RenderPasses/LightPropagationVolumes/LPVEmissiveRadianceInjectionRenderPass.h"
+#include "RenderPasses/LightPropagationVolumes/LPVCacheEmissiveRadianceRenderPass.h"
+#include "RenderPasses/LightPropagationVolumes/LPVCacheEmissiveRadianceInjectionRenderPass.h"
+#include "RenderPasses/LightPropagationVolumes/LPVSampleEmissiveRadianceInjectionRenderPass.h"
+#include "RenderPasses/LightPropagationVolumes/LPVSampleWeightRenderPass.h"
 #include "RenderPasses/LightPropagationVolumes/LPVGeometryInjectionRenderPass.h"
 #include "RenderPasses/LightPropagationVolumes/LPVBlitRenderPass.h"
 #include "RenderPasses/LightPropagationVolumes/LPVPropagationRenderPass.h"
@@ -69,9 +74,14 @@ void LightPropagationVolumesRenderModule::Init ()
 	_renderPasses.push_back (new AmbientLightRenderPass ());
 	_renderPasses.push_back (ContainerRenderPass::Builder ()
 		.Volume (new DirectionalLightContainerRenderVolumeCollection ())
+		.Attach (new LPVVolumeGenerationRenderPass ())
+		.Attach (new LPVCacheEmissiveRadianceRenderPass ())
+		.Attach (new LPVCacheEmissiveRadianceInjectionRenderPass ())
+		.Attach (new LPVSampleEmissiveRadianceInjectionRenderPass ())
+		.Attach (new LPVEmissiveRadianceInjectionRenderPass ())
+		.Attach (new LPVSampleWeightRenderPass ())
 		.Attach (new RSMDirectionalLightAccumulationRenderPass ())
 		.Attach (new LPVRadianceInjectionRenderPass ())
-		.Attach (new LPVEmissiveRadianceInjectionRenderPass ())
 		.Attach (new LPVGeometryInjectionRenderPass ())
 		.Attach (new LPVBlitRenderPass ())
 		.Attach (new LPVPropagationRenderPass ())

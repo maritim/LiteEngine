@@ -365,6 +365,17 @@ void Pipeline::SendCustomAttributes (const Resource<ShaderView>& shaderView, con
 					GL::BindBufferBase (GL_UNIFORM_BUFFER, 0, (unsigned int) attr [i].value.x);
 				}
 				break;
+			case PipelineAttribute::ATTR_SSBO_BLOCK : {
+					unsigned int ssboBlockIndex = currentShaderView->GetShaderStorageBlockIndex (attr [i].name.c_str ());
+
+					if (ssboBlockIndex == GL_INVALID_INDEX) {
+						break;
+					}
+
+					GL::ShaderStorageBlockBinding (currentShaderView->GetProgram (), ssboBlockIndex, 0);
+					GL::BindBufferBase (GL_SHADER_STORAGE_BUFFER, 0, (unsigned int) attr [i].value.x);
+				}
+				break;
 		}
 	}
 }

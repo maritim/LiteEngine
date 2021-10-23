@@ -20,6 +20,7 @@ public:
 
 	int GetUniformLocation (const std::string& name);
 	unsigned int GetUniformBlockIndex (const std::string& name);
+	unsigned int GetShaderStorageBlockIndex (const std::string& name);
 };
 
 #endif

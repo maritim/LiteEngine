@@ -44,3 +44,10 @@ unsigned int ShaderView::GetUniformBlockIndex (const std::string& name)
 
 	return uniformBlockIndex;
 }
+
+unsigned int ShaderView::GetShaderStorageBlockIndex (const std::string& name)
+{
+	unsigned int ssboBlockIndex = GL::GetProgramResourceIndex (_program, GL_SHADER_STORAGE_BLOCK, name.c_str ());
+
+	return ssboBlockIndex;
+}

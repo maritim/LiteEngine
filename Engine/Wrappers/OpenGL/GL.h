@@ -73,6 +73,7 @@ public:
 	// Buffers
 	static void BufferData (GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage);
 	static void BufferSubData (GLenum target, GLintptr offset, GLsizeiptr size, const GLvoid *data);
+	static void GetBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, void * data);
 
 	/*
 	 * Vertex Attributes
@@ -96,6 +97,7 @@ public:
 	static void BindBuffer (GLenum target, GLuint buffer);
 	static void BindBufferBase(GLenum target, GLuint index, GLuint buffer);
 	static void UniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
+	static void ShaderStorageBlockBinding(GLuint program, GLuint storageBlockIndex, GLuint storageBlockBinding);
 
 	/*
 	 * Depth Buffer
@@ -181,6 +183,7 @@ public:
 	static void DetachShader(GLuint program, GLuint shader);
 	static GLint GetUniformLocation(GLuint program, const GLchar *name);
 	static GLuint GetUniformBlockIndex(GLuint program, const GLchar *uniformBlockName);
+	static GLuint GetProgramResourceIndex(GLuint program, GLenum programInterface, const char * name);
 
 	static void DispatchCompute(GLuint num_groups_x,GLuint num_groups_y,GLuint num_groups_z);
 

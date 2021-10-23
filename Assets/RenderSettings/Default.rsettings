@@ -4,7 +4,8 @@
 	<!-- <RenderMode mode="VoxelConeTracingRenderModule" /> -->
 	<!-- <RenderMode mode="HybridGlobalIlluminationRenderModule" /> -->
 	<!-- <RenderMode mode="TemporalReflectiveShadowMappingRenderModule" /> -->
-	<RenderMode mode="DirectLightingRenderModule" />
+	<!-- <RenderMode mode="DirectLightingRenderModule" /> -->
+	<RenderMode mode="LightPropagationVolumesRenderModule" />
 
 	<General indirectDiffuseEnabled="true" indirectSpecularEnabled="false" subsurfaceScatteringEnabled="false" ambientOcclusionEnabled="true" />
 
@@ -32,7 +33,7 @@
 	<RSM scale="1" samples="200" radius="0.05" indirectDiffuseIntensity="1700" aoEnabled="false" indirectSpecularIntensity="1" iterations="2000" thickness="1" indirectRefractiveIntensity="1" interpolationScale="0.5" minInterpolationDistance="1" minInterpolationAngle="30" />
 	<TRSM samples="16" indirectDiffuseIntensity="1700" temporalFilterEnabled="true" blurEnabled="false" />
 
-	<LPV volumeSize="32" iterations="10" injectionBias="0" geometryOcclusion="true" indirectDiffuseIntensity="0" indirectSpecularIntensity="10" indirectRefractiveIntensity="1" specularIterations="10" />
+	<LPV volumeSize="64" iterations="30" injectionBias="0" geometryOcclusion="true" indirectDiffuseIntensity="50" indirectSpecularIntensity="10" indirectRefractiveIntensity="1" specularIterations="10" emissiveVoxelization="false" emissiveNormalAngleStep="15" emissiveCache="false" emissiveVPLs="1000" />
 
 	<VCT voxelsSize="256" continuousVoxelization="false" bordering="false"
 		mipmapLevels="6" voxelShadowBias="0" indirectDiffuseIntensity="20" indirectSpecularIntensity="0" refractiveIndirectIntensity="1" diffuseConeDistance="0.3" diffuseOriginBias="0.007" aoEnabled="false" aoConeRatio="1" aoConeDistance="0.1" shadowConeEnabled="false" specularConeRatio="0.1" specularConeDistance="0.6" specularOriginBias="0.007" refractiveConeRatio="0.1" refractiveConeDistance="0.6" shadowConeRatio="0.01" shadowConeDistance="0.365" originBias="0.0025" temporalFilterEnabled="true" />
