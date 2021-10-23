@@ -1,14 +1,14 @@
 #include "EditorProject.h"
 
 #include <algorithm>
-#include <experimental/filesystem>
+#include <filesystem>
 #include "Systems/GUI/ImGui/imgui.h"
 
 #include "Systems/Settings/SettingsManager.h"
 
 #include "Utils/Files/FileSystem.h"
 
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 EditorProject::EditorProject () :
 	_selectedPath ("Assets")

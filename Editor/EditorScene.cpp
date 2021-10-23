@@ -1,7 +1,7 @@
 #include "EditorScene.h"
 
 #include <ctime>
-#include <experimental/filesystem>
+#include <filesystem>
 #include "Systems/GUI/ImGui/imgui.h"
 #include "Systems/GUI/imguifilesystem/imguifilesystem.h"
 
@@ -24,7 +24,7 @@
 
 #include "Utils/Extensions/StringExtend.h"
 
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 EditorScene::EditorScene () :
 	_sceneCamera (new PerspectiveCamera ()),

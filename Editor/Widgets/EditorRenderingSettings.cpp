@@ -1,6 +1,6 @@
 #include "EditorRenderingSettings.h"
 
-#include <experimental/filesystem>
+#include <filesystem>
 #include <glm/vec2.hpp>
 #include "Systems/GUI/ImGui/imgui.h"
 
@@ -36,7 +36,7 @@
 #include "RenderPasses/VolumetricLighting/VolLightingStatisticsObject.h"
 #include "RenderPasses/LightShafts/LightShaftsStatisticsObject.h"
 
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 EditorRenderingSettings::EditorRenderingSettings () :
 	_lutTexture (nullptr),

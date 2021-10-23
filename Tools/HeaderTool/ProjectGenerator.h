@@ -2,11 +2,11 @@
 #define PROJECTGENERATOR_H
 
 #include <string>
-#include <experimental/filesystem>
+#include <filesystem>
 
 #include "HeaderData.h"
 
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 class ProjectGenerator
 {
