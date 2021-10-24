@@ -8,8 +8,8 @@
 
 #include "Utils/Files/FileSystem.h"
 
-#include "Mesh/Polygon.h"
-#include "Material/MaterialLibrary.h"
+#include "Renderer/Render/Mesh/Polygon.h"
+#include "Renderer/Render/Material/MaterialLibrary.h"
 
 #include "Utils/Extensions/StringExtend.h"
 

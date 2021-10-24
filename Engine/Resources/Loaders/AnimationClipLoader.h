@@ -8,7 +8,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
-#include "Mesh/AnimationContainer.h"
+#include "Renderer/Render/Mesh/AnimationContainer.h"
 
 class AnimationClipLoader : public ResourceLoader
 {

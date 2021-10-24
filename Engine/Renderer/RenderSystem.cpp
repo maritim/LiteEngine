@@ -2,13 +2,13 @@
 
 #include "Renderer/Pipeline.h"
 
-#include "Mesh/AnimationModel.h"
-#include "Mesh/LightMapModel.h"
+#include "Renderer/Render/Mesh/AnimationModel.h"
+#include "Renderer/Render/Mesh/LightMapModel.h"
 
-#include "Texture/CubeMap.h"
+#include "Renderer/Render/Texture/CubeMap.h"
 
-#include "Shader/DrawingShader.h"
-#include "Shader/ComputeShader.h"
+#include "Renderer/Render/Shader/DrawingShader.h"
+#include "Renderer/Render/Shader/ComputeShader.h"
 
 #include "Renderer/RenderViews/CubeMapView.h"
 #include "RenderViews/TextureLUTView.h"
@@ -1157,6 +1157,9 @@ unsigned int RenderSystem::LoadTextureGPU (const Resource<Texture>& texture)
 			break;
 		case FORMAT_RGBA8:
 			sizedInternalFormat = GL_RGBA8;
+			break;
+		case FORMAT_RGBA16:
+			sizedInternalFormat = GL_RGBA16F;
 			break;
 		case FORMAT_RGBA32:
 			sizedInternalFormat = GL_RGBA32F;

@@ -12,8 +12,8 @@
 #include <vector>
 
 #include "Core/Resources/Resource.h"
-#include "Texture/Texture.h"
-#include "Shader/Shader.h"
+#include "Renderer/Render/Texture/Texture.h"
+#include "Renderer/Render/Shader/Shader.h"
 
 class Material : public Object
 {

@@ -10,7 +10,7 @@ bool LPVIndirectSpecularLightRenderPass::IsAvailable (const RenderScene* renderS
 	 * Always execure light propagation volumes indirect light render pass
 	*/
 
-	return true;
+	return settings.indirect_specular_enabled;
 }
 
 std::string LPVIndirectSpecularLightRenderPass::GetPostProcessFragmentShaderPath () const

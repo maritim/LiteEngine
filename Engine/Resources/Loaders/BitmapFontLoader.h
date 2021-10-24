@@ -7,11 +7,11 @@
 
 #include "Core/Interfaces/Object.h"
 
-#include "Fonts/BitmapFont.h"
-#include "Fonts/BitmapFontInfo.h"
-#include "Fonts/BitmapFontCommon.h"
-#include "Fonts/BitmapFontCharset.h"
-#include "Fonts/BitmapFontChar.h"
+#include "Renderer/Render/Fonts/BitmapFont.h"
+#include "Renderer/Render/Fonts/BitmapFontInfo.h"
+#include "Renderer/Render/Fonts/BitmapFontCommon.h"
+#include "Renderer/Render/Fonts/BitmapFontCharset.h"
+#include "Renderer/Render/Fonts/BitmapFontChar.h"
 
 class BitmapFontLoader : public ResourceLoader
 {

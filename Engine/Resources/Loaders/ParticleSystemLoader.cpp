@@ -6,7 +6,7 @@
 #include "VisualEffects/ParticleSystem/Emiter.h"
 #include "VisualEffects/ParticleSystem/Particle.h"
 
-#include "Mesh/Model.h"
+#include "Renderer/Render/Mesh/Model.h"
 
 #include "VisualEffects/ParticleSystem/PointEmiter.h"
 #include "VisualEffects/ParticleSystem/QuadEmiter.h"

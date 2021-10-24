@@ -13,8 +13,6 @@ uniform mat3 normalWorldMatrix;
 uniform mat4 inverseViewMatrix;
 uniform mat3 inverseNormalWorldMatrix;
 
-uniform vec3 cameraPosition;
-
 uniform sampler3D volumeTextureR;
 uniform sampler3D volumeTextureG;
 uniform sampler3D volumeTextureB;

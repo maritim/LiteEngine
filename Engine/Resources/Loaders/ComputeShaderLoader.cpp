@@ -1,6 +1,6 @@
 #include "ComputeShaderLoader.h"
 
-#include "Shader/ComputeShader.h"
+#include "Renderer/Render/Shader/ComputeShader.h"
 
 #include "Resources/Resources.h"
 

@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include "Texture/TextureAtlas.h"
+#include "Renderer/Render/Texture/TextureAtlas.h"
 
 class TextureAtlasLoader : public ResourceLoader
 {

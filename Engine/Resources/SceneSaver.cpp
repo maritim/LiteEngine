@@ -41,6 +41,10 @@ void SceneSaver::Save (const Scene* scene, const std::string& filename)
 
 void SceneSaver::SaveSkybox (TiXmlElement* xmlRoot, const Skybox* skybox)
 {
+	if (skybox == nullptr) {
+		return;
+	}
+
 	TiXmlElement* xmlElem = new TiXmlElement ("Skybox");
 
 	xmlElem->SetAttribute ("path", skybox->GetName ().c_str ());

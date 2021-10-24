@@ -1,7 +1,5 @@
 #include "Material.h"
 
-#include "Core/Console/Console.h"
-
 Material::Material(void) :
 	name(""),
 	ambientColor(0.2, 0.2, 0.2),

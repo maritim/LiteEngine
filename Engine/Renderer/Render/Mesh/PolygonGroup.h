@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "Core/Resources/Resource.h"
-#include "Material/Material.h"
+#include "Renderer/Render/Material/Material.h"
 
 class PolygonGroup
 {

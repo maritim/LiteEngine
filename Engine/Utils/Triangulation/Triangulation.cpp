@@ -1,6 +1,6 @@
 #include "Triangulation.h"
 
-#include "Mesh/ObjectModel.h"
+#include "Renderer/Render/Mesh/ObjectModel.h"
 
 void Triangulation::ConvexTriangulation (Model* model) 
 {

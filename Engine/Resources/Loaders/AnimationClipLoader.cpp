@@ -1,11 +1,11 @@
 #include "AnimationClipLoader.h"
 
-#include "Mesh/AnimationNode.h"
+#include "Renderer/Render/Mesh/AnimationNode.h"
 
 #include "Core/Console/Console.h"
 
-#include "Mesh/VertexBoneInfo.h"
-#include "Mesh/BoneTree.h"
+#include "Renderer/Render/Mesh/VertexBoneInfo.h"
+#include "Renderer/Render/Mesh/BoneTree.h"
 
 #include "Utils/Conversions/Matrices.h"
 #include "Utils/Conversions/Quaternions.h"

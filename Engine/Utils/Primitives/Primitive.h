@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "Core/Resources/Resource.h"
-#include "Mesh/Model.h"
+#include "Renderer/Render/Mesh/Model.h"
 
 class Primitive : public Singleton<Primitive>
 {

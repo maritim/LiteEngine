@@ -5,7 +5,7 @@
 #include <limits>
 #include <fstream>
 
-#include "Mesh/Model.h"
+#include "Renderer/Render/Mesh/Model.h"
 
 // Deprecated
 Object* StanfordObjectLoader::Load(const std::string& filename)

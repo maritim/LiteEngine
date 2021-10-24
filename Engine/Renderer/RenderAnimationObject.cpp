@@ -2,9 +2,9 @@
 
 #include "Renderer/Pipeline.h"
 
-#include "Mesh/VertexBoneInfo.h"
-#include "Mesh/AnimationsController.h"
-#include "Mesh/BoneTree.h"
+#include "Renderer/Render/Mesh/VertexBoneInfo.h"
+#include "Renderer/Render/Mesh/AnimationsController.h"
+#include "Renderer/Render/Mesh/BoneTree.h"
 
 #include "Systems/Time/Time.h"
 

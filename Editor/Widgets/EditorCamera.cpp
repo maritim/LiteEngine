@@ -1,8 +1,8 @@
 #include "EditorCamera.h"
 
-#include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 
+#include "Systems/Window/Window.h"
 #include "Systems/Cursor/Cursor.h"
 #include "Systems/Input/Input.h"
 #include "Systems/Time/Time.h"
@@ -61,9 +61,6 @@ void EditorCamera::Show ()
 	glm::vec3 camPos = camera->GetPosition () + velocity;
 	camera->SetPosition (camPos);
 
-	static int iLastMouseMoveX = 0;
-	static int iLastMouseMoveY = 0;
-
 	glm::ivec2 mousePosition = Input::GetMousePosition ();
 
 	if (Input::GetMouseButtonUp (MOUSE_BUTTON_RIGHT)) {
@@ -72,8 +69,7 @@ void EditorCamera::Show ()
 		Cursor::Show ();
 	}
 	else if (Input::GetMouseButtonDown (MOUSE_BUTTON_RIGHT)) {
-		iLastMouseMoveX = mousePosition.x;
-		iLastMouseMoveY = mousePosition.y;
+		_startMousePosition = mousePosition;
 
 		rightButtonDown = true;
 
@@ -81,8 +77,8 @@ void EditorCamera::Show ()
 	}
 
 	if (rightButtonDown) {
-		int iMoveDistanceX = mousePosition.x - iLastMouseMoveX;
-		int iMoveDistanceY = mousePosition.y - iLastMouseMoveY;
+		int iMoveDistanceX = mousePosition.x - _startMousePosition.x;
+		int iMoveDistanceY = mousePosition.y - _startMousePosition.y;
 
 		float mouseSensitivity = 0.005f;
 
@@ -93,8 +89,7 @@ void EditorCamera::Show ()
 		camera->Rotate (_pitch, glm::vec3 (0.0f, 1.0f, 0.0f));
 		camera->Rotate (_yaw, glm::vec3(1.0f, 0.0f, 0.0f));
 
-		iLastMouseMoveX = mousePosition.x;
-		iLastMouseMoveY = mousePosition.y;
+		Window::SetMousePosition (_startMousePosition);
 	}
 
 	if (Input::GetJoystickButton (0) || Input::GetJoystickButton (1) || 

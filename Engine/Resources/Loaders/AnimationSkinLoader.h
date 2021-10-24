@@ -3,9 +3,9 @@
 
 #include "GenericObjectModelLoader.h"
 
-#include "Mesh/AnimationModel.h"
+#include "Renderer/Render/Mesh/AnimationModel.h"
 
-#include "Mesh/BoneNode.h"
+#include "Renderer/Render/Mesh/BoneNode.h"
 
 class AnimationSkinLoader : public GenericObjectModelLoader
 {

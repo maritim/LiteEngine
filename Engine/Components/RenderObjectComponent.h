@@ -3,7 +3,7 @@
 
 #include "Systems/Components/Component.h"
 
-#include "Mesh/Model.h"
+#include "Renderer/Render/Mesh/Model.h"
 
 #include "Renderer/RenderObject.h"
 

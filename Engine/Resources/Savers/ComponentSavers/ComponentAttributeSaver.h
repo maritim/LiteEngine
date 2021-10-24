@@ -7,7 +7,7 @@
 
 #include "Core/Resources/Resource.h"
 
-#include "Mesh/Model.h"
+#include "Renderer/Render/Mesh/Model.h"
 
 #include "Resources/Resources.h"
 

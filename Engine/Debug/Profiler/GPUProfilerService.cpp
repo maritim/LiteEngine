@@ -57,7 +57,7 @@ void GPUProfilerService::StartFrame ()
 		_currentFrameQueue.begin(), _currentFrameQueue.end());
 	_currentFrameQueue.clear ();
 
-	GLuint64 currentStartFrameTime;
+	GLuint64 currentStartFrameTime = _lastStartFrameQuery;
 	GL::GetQueryObjectui64v(_lastStartFrameQuery, GL_QUERY_RESULT, &currentStartFrameTime);
 
 	_lastFrameTime = (currentStartFrameTime - _lastStartFrameTime) / 1000000.0f;

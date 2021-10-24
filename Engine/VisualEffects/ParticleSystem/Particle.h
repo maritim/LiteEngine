@@ -6,7 +6,7 @@
 #include <glm/vec3.hpp>
 
 #include "Core/Resources/Resource.h"
-#include "Mesh/Model.h"
+#include "Renderer/Render/Mesh/Model.h"
 #include "SceneGraph/Transform.h"
 
 #include "Utils/Curves/AnimationCurve.h"

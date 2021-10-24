@@ -4,7 +4,7 @@
 #include "Renderer/RenderVolumeI.h"
 
 #include "Core/Resources/Resource.h"
-#include "Framebuffer/Framebuffer.h"
+#include "Renderer/Render/Framebuffer/Framebuffer.h"
 #include "Renderer/RenderViews/FramebufferView.h"
 
 class ENGINE_API FramebufferRenderVolume : public RenderVolumeI

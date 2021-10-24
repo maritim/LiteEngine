@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include "Mesh/Model.h"
+#include "Renderer/Render/Mesh/Model.h"
 #include "Utils/Curves/AnimationCurve.h"
 
 #include "Particle.h"

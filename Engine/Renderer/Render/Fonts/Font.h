@@ -6,7 +6,7 @@
 #include <string>
 
 #include "Core/Resources/Resource.h"
-#include "Texture/Texture.h"
+#include "Renderer/Render/Texture/Texture.h"
 
 #include "FontChar.h"
 

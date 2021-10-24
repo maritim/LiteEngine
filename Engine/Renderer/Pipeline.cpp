@@ -4,12 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Texture/Texture.h"
+#include "Renderer/Render/Texture/Texture.h"
 #include "SceneGraph/Transform.h"
-#include "Material/Material.h"
+#include "Renderer/Render/Material/Material.h"
 #include "Systems/Settings/SettingsManager.h"
-
-#include "Texture/Texture.h"
 
 #include "Resources/Resources.h"
 

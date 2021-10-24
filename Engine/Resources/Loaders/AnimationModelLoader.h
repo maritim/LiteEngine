@@ -5,9 +5,9 @@
 
 #include "Core/Parsers/XML/TinyXml/tinyxml.h"
 
-#include "Mesh/AnimationModel.h"
-#include "Mesh/AnimationsController.h"
-#include "Mesh/AnimationContainer.h"
+#include "Renderer/Render/Mesh/AnimationModel.h"
+#include "Renderer/Render/Mesh/AnimationsController.h"
+#include "Renderer/Render/Mesh/AnimationContainer.h"
 
 class AnimationModelLoader : public ResourceLoader
 {

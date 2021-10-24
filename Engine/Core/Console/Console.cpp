@@ -25,6 +25,7 @@ void Console::Init ()
 
 	spdlog::set_pattern ("[%H:%M:%S] [%l] %v");
 	spdlog::set_level (spdlog::level::trace);
+	spdlog::flush_on(spdlog::level::trace);
 }
 
 void Console::Quit ()

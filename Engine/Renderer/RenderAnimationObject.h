@@ -10,7 +10,7 @@
 
 //TODO: Fix this
 #include "Core/Resources/Resource.h"
-#include "Mesh/AnimationModel.h"
+#include "Renderer/Render/Mesh/AnimationModel.h"
 
 class RenderAnimationObject : public RenderObject
 {

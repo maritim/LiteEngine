@@ -6,7 +6,7 @@
 #include "BitmapFontCharset.h"
 
 #include "Core/Resources/Resource.h"
-#include "Texture/Texture.h"
+#include "Renderer/Render/Texture/Texture.h"
 #include "Renderer/RenderViews/TextureView.h"
 
 class BitmapFontPage : public Object

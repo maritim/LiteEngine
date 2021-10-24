@@ -3,9 +3,9 @@
 
 #include <vector>
 
-#include "Mesh/Model.h"
-#include "Mesh/Polygon.h"
-#include "Mesh/PolygonGroup.h"
+#include "Renderer/Render/Mesh/Model.h"
+#include "Renderer/Render/Mesh/Polygon.h"
+#include "Renderer/Render/Mesh/PolygonGroup.h"
 
 class Triangulation
 {

@@ -4,12 +4,12 @@
 #include "Core/Singleton/Singleton.h"
 
 #include "Core/Resources/Resource.h"
-#include "Mesh/Model.h"
-#include "Material/Material.h"
-#include "Texture/Texture.h"
-#include "Shader/Shader.h"
-#include "Shader/ShaderContent.h"
-#include "Framebuffer/Framebuffer.h"
+#include "Render/Mesh/Model.h"
+#include "Render/Material/Material.h"
+#include "Render/Texture/Texture.h"
+#include "Render/Shader/Shader.h"
+#include "Render/Shader/ShaderContent.h"
+#include "Render/Framebuffer/Framebuffer.h"
 
 #include "RenderViews/ModelView.h"
 #include "RenderViews/MaterialView.h"
@@ -17,7 +17,7 @@
 #include "RenderViews/ShaderView.h"
 #include "RenderViews/FramebufferView.h"
 
-#include "Fonts/Font.h"
+#include "Render/Fonts/Font.h"
 
 #include "Renderer/BufferAttribute.h"
 

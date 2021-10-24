@@ -8,7 +8,7 @@
 #include "RayPrimitive.h"
 
 #include "Core/Resources/Resource.h"
-#include "Mesh/Model.h"
+#include "Renderer/Render/Mesh/Model.h"
 
 class ENGINE_API Intersection : public Singleton<Intersection>
 {

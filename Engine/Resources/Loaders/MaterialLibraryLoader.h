@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include "Material/MaterialLibrary.h"
+#include "Renderer/Render/Material/MaterialLibrary.h"
 
 class MaterialLibraryLoader : public ResourceLoader
 {

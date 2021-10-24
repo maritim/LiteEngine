@@ -5,7 +5,7 @@
 
 #include "Renderer/RenderSkyboxObject.h"
 
-#include "Texture/Texture.h"
+#include "Renderer/Render/Texture/Texture.h"
 
 // TODO: Extend this
 // TODO: Refactor shader management for this (maybe GameSettings.xml?)

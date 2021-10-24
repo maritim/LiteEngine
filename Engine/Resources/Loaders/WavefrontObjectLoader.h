@@ -5,13 +5,13 @@
 
 #include <string>
 
-#include "Mesh/Model.h"
-#include "Mesh/PolygonGroup.h"
-#include "Mesh/ObjectModel.h"
+#include "Renderer/Render/Mesh/Model.h"
+#include "Renderer/Render/Mesh/PolygonGroup.h"
+#include "Renderer/Render/Mesh/ObjectModel.h"
 
 #include "Core/Resources/Resource.h"
-#include "Material/MaterialLibrary.h"
-#include "Material/Material.h"
+#include "Renderer/Render/Material/MaterialLibrary.h"
+#include "Renderer/Render/Material/Material.h"
 
 class WavefrontObjectLoader : public ResourceLoader
 {

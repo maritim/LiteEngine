@@ -1,8 +1,8 @@
 #include "CubeMapLoader.h"
 
-#include "Texture/CubeMap.h"
+#include "Renderer/Render/Texture/CubeMap.h"
 
-#include "Texture/CubeMapFace.h"
+#include "Renderer/Render/Texture/CubeMapFace.h"
 
 #include "Resources/Resources.h"
 

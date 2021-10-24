@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "Texture/CubeMapFace.h"
+#include "Renderer/Render/Texture/CubeMapFace.h"
 
 #include "Utils/Color/Color.h"
 #include "Utils/Files/FileSystem.h"

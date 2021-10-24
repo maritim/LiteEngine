@@ -6,9 +6,9 @@
 
 #include "Utils/Files/FileSystem.h"
 
-#include "Material/MaterialLibrary.h"
-#include "Texture/Texture.h"
-#include "Texture/CubeMap.h"
+#include "Renderer/Render/Material/MaterialLibrary.h"
+#include "Renderer/Render/Texture/Texture.h"
+#include "Renderer/Render/Texture/CubeMap.h"
 
 #include "Resources/Resources.h"
 

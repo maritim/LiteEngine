@@ -7,7 +7,7 @@
 
 #include "Renderer/PipelineAttribute.h"
 
-#include "Fonts/Font.h"
+#include "Renderer/Render/Fonts/Font.h"
 
 class RenderTextGUIObject : public RenderObject
 {

@@ -10,7 +10,7 @@ bool LPVSubsurfaceScatteringRenderPass::IsAvailable (const RenderScene* renderSc
 	 * Always execure light propagation volumes indirect light render pass
 	*/
 
-	return true;
+	return settings.subsurface_scattering_enabled;
 }
 
 std::string LPVSubsurfaceScatteringRenderPass::GetPostProcessFragmentShaderPath () const

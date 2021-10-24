@@ -2,7 +2,7 @@
 
 #include "Particle.h"
 
-#include "Texture/TextureAtlas.h"
+#include "Renderer/Render/Texture/TextureAtlas.h"
 
 #include "Renderer/RenderSystem.h"
 

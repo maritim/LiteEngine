@@ -109,6 +109,7 @@ struct RenderSettings : public Object
 	std::size_t lpv_emissive_vpls;
 	bool lpv_emissive_cache;
 	bool lpv_emissive_textured;
+	bool lpv_debug_cells;
 
 	std::size_t vct_voxels_size;
 	bool vct_continuous_voxelization;

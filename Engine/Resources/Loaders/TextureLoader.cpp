@@ -3,7 +3,7 @@
 #include <SDL2/SDL_image.h>
 #include <string>
 
-#include "Texture/Texture.h"
+#include "Renderer/Render/Texture/Texture.h"
 
 #include "Core/Console/Console.h"
 

@@ -29,6 +29,8 @@ public:
 
 	static std::string GetTitle ();
 
+	static void SetMousePosition (const glm::ivec2&);
+
 	static void Clear ();
 	static void Close ();
 private:

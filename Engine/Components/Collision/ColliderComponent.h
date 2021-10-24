@@ -8,7 +8,7 @@
 #include <glm/vec3.hpp>
 
 #include "Core/Resources/Resource.h"
-#include "Mesh/Model.h"
+#include "Renderer/Render/Mesh/Model.h"
 
 class ENGINE_API ColliderComponent : public Component
 {

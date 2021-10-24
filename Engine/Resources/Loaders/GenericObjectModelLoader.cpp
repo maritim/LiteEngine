@@ -1,11 +1,11 @@
 #include "GenericObjectModelLoader.h"
 
-#include "Mesh/ObjectModel.h"
-#include "Mesh/PolygonGroup.h"
-#include "Mesh/Polygon.h"
+#include "Renderer/Render/Mesh/ObjectModel.h"
+#include "Renderer/Render/Mesh/PolygonGroup.h"
+#include "Renderer/Render/Mesh/Polygon.h"
 
-#include "Material/Material.h"
-#include "Texture/Texture.h"
+#include "Renderer/Render/Material/Material.h"
+#include "Renderer/Render/Texture/Texture.h"
 
 #include "Resources/Resources.h"
 

@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "Core/Resources/Resource.h"
-#include "Texture/Texture.h"
+#include "Renderer/Render/Texture/Texture.h"
 
 #include "Core/Iteration/MultipleContainer.h"
 

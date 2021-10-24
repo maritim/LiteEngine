@@ -10,10 +10,10 @@
 
 #include "Core/Interfaces/Object.h"
 
-#include "Mesh/Model.h"
-#include "Mesh/ObjectModel.h"
-#include "Mesh/PolygonGroup.h"
-#include "Mesh/Polygon.h"
+#include "Renderer/Render/Mesh/Model.h"
+#include "Renderer/Render/Mesh/ObjectModel.h"
+#include "Renderer/Render/Mesh/PolygonGroup.h"
+#include "Renderer/Render/Mesh/Polygon.h"
 
 class GenericObjectModelLoader : public ResourceLoader
 {

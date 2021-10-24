@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "SceneGraph/Transform.h"
-#include "Material/Material.h"
+#include "Renderer/Render/Material/Material.h"
 #include "Systems/Camera/Camera.h"
 
 #include "PipelineAttribute.h"

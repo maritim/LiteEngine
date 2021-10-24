@@ -5,7 +5,7 @@
 #include <glm/vec2.hpp>
 #include "Systems/GUI/ImGui/imgui.h"
 
-#include "Mesh/AnimationModel.h"
+#include "Renderer/Render/Mesh/AnimationModel.h"
 
 // #include "SceneNodes/AnimationGameObject.h"
 

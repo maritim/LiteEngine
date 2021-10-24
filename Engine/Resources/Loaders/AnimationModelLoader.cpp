@@ -1,6 +1,6 @@
 #include "AnimationModelLoader.h"
 
-#include "Mesh/AnimationNode.h"
+#include "Renderer/Render/Mesh/AnimationNode.h"
 
 #include "Core/Console/Console.h"
 
