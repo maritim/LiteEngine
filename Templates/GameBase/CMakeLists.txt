@@ -2,7 +2,7 @@
 # Thanks to Alexandru Naiman for optimization ideas
 ###################################################
 
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.6)
 
 if (NOT CMAKE_BUILD_TYPE)
 	set (CMAKE_BUILD_TYPE, DEBUG)
@@ -38,19 +38,21 @@ set_property (TARGET GameBase PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/Templates/GameBase)
 target_include_directories (GameBase PRIVATE ${PROJECT_SOURCE_DIR}/Engine)
-target_include_directories (GameBase PRIVATE ${PROJECT_SOURCE_DIR}/Render)
-target_include_directories (GameBase PRIVATE ${PROJECT_SOURCE_DIR}/3rdparty/include/glm)
+target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/ImGui)
+target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/glm)
+
+target_link_libraries (GameBase ImGui)
 
 if(NOT MSVC)
 	find_package (Bullet REQUIRED)
 	
-	include_directories (${BULLET_INCLUDE_DIRS})
+	target_include_directories (GameBase PUBLIC ${BULLET_INCLUDE_DIRS})
 else(NOT MSVC)
-	include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include/bullet)
+	target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/include)
 endif(NOT MSVC)
 
 if(MSVC)
-	include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include)
+	target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/include)
 endif(MSVC)
 
 if(MSVC)

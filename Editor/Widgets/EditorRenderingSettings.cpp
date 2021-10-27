@@ -2,7 +2,7 @@
 
 #include <filesystem>
 #include <glm/vec2.hpp>
-#include "Systems/GUI/ImGui/imgui.h"
+#include <ImGui/imgui.h>
 
 #include "Systems/Settings/SettingsManager.h"
 #include "Systems/Window/Window.h"

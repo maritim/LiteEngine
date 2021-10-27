@@ -2,8 +2,8 @@
 
 #include <ctime>
 #include <filesystem>
-#include "Systems/GUI/ImGui/imgui.h"
-#include "Systems/GUI/imguifilesystem/imguifilesystem.h"
+#include <ImGui/imgui.h>
+#include <ImGui/imguifilesystem/imguifilesystem.h>
 
 #include "Renderer/RenderManager.h"
 #include "Renderer/RenderSystem.h"

@@ -2,7 +2,7 @@
 # Thanks to Alexandru Naiman for optimization ideas
 ###################################################
 
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.6)
 
 project (LiteHeaderTool)
 

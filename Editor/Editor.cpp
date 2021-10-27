@@ -1,6 +1,6 @@
 #include "Editor.h"
 
-#include "Systems/GUI/ImGuizmo/ImGuizmo.h"
+#include <ImGui/ImGuizmo/ImGuizmo.h>
 
 #include "Managers/RenderSettingsManager.h"
 

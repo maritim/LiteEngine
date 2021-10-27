@@ -1,8 +1,7 @@
 #include "GUI.h"
 
 #include <vector>
-
-#include "Systems/GUI/ImGui/imgui.h"
+#include <ImGui/imgui.h>
 
 #include "Systems/Window/Window.h"
 #include "Systems/Input/Input.h"

@@ -4,9 +4,9 @@
 #include "Core/Interfaces/Object.h"
 
 #include <filesystem>
-#include "Systems/GUI/ImGui/imgui.h"
-#include "Systems/GUI/ImGui/imgui_stdlib.h"
-#include "Systems/GUI/imguifilesystem/imguifilesystem.h"
+#include <ImGui/imgui.h>
+#include <ImGui/imgui_stdlib.h>
+#include <ImGui/imguifilesystem/imguifilesystem.h>
 
 namespace fs = std::filesystem;
 

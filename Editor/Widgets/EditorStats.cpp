@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iomanip>
 #include <glm/vec2.hpp>
-#include "Systems/GUI/ImGui/imgui.h"
+#include <ImGui/imgui.h>
 
 #include "EditorScene.h"
 

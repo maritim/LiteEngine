@@ -1,7 +1,7 @@
 #include "EditorInspector.h"
 
-#include "Systems/GUI/ImGui/imgui.h"
-#include "Systems/GUI/ImGui/imgui_stdlib.h"
+#include <ImGui/imgui.h>
+#include <ImGui/imgui_stdlib.h>
 
 #include "EditorSelection.h"
 

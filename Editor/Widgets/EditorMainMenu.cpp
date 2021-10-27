@@ -1,7 +1,7 @@
 #include "EditorMainMenu.h"
 
-#include "Systems/GUI/ImGui/imgui.h"
-#include "Systems/GUI/imguifilesystem/imguifilesystem.h"
+#include <ImGui/imgui.h>
+#include <ImGui/imguifilesystem/imguifilesystem.h>
 
 #include "Managers/SceneManager.h"
 

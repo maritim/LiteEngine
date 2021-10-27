@@ -1,6 +1,6 @@
 #include "EditorProfiler.h"
 
-#include "Systems/GUI/ImGui/imgui.h"
+#include <ImGui/imgui.h>
 
 #include "Debug/Profiler/Profiler.h"
 

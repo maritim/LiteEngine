@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#include "Systems/GUI/ImGui/imgui.h"
+#include <ImGui/imgui.h>
 
 #include "Resources/Resources.h"
 #include "Renderer/RenderSystem.h"

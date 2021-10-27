@@ -62,7 +62,7 @@ x> Never tested on a real Windows OS and on MacOS.
                                 // Windows users can always define it at the project level, if needed.
 
 #ifndef IMGUI_API
-#include "Systems/GUI/ImGui/imgui.h"
+#include <ImGui/imgui.h>
 #endif //IMGUI_API
 
 // TODO: Remove this definition: it doesn't work on some systems (= Windows AFAIK)

@@ -20,11 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Systems/GUI/ImGui/imgui.h"
+#include <ImGui/imgui.h>
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif
-#include "Systems/GUI/ImGui/imgui_internal.h"
+#include <ImGui/imgui_internal.h>
 #include "ImGuizmo.h"
 
 // includes patches for multiview from

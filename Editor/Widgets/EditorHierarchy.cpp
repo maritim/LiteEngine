@@ -1,6 +1,6 @@
 #include "EditorHierarchy.h"
 
-#include "Systems/GUI/ImGui/imgui.h"
+#include <ImGui/imgui.h>
 
 #include "EditorSelection.h"
 

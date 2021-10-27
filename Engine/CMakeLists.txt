@@ -2,7 +2,7 @@
 # Thanks to Alexandru Naiman for optimization ideas
 ###################################################
 
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.6)
 
 if (NOT CMAKE_BUILD_TYPE)
 	set (CMAKE_BUILD_TYPE, DEBUG)
@@ -35,47 +35,60 @@ set (GeneratedSourceFiles ${CMAKE_CURRENT_BINARY_DIR}/GeneratedComponents.cpp)
 
 add_executable (LiteEngine ${LiteEngineSourceFiles} ${GeneratedSourceFiles})
 
+if (MSVC)
+    set_property(DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTY VS_STARTUP_PROJECT LiteEngine)
+    set_property(TARGET LiteEngine PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
+endif()
+
 set (OpenGL_GL_PREFERENCE GLVND)
 
-set (LIBS_DIR ${PROJECT_SOURCE_DIR}/3rdparty/lib)
 find_package (OpenGL REQUIRED)
-find_library (GLEW NAMES GLEW glew32 HINTS ${LIBS_DIR})
-find_library (SDL2 NAMES SDL2 HINTS ${LIBS_DIR})
-find_library (SDL2_image NAMES SDL2_image HINTS ${LIBS_DIR})
-find_library (SDL_sound NAMES SDL_sound HINTS ${LIBS_DIR})
-find_library (assimp NAMES assimp HINTS ${LIBS_DIR})
+find_library (GLEW NAMES GLEW glew32 HINTS ${PROJECT_SOURCE_DIR}/3rdparty/GLEW/lib)
+find_library (SDL2 NAMES SDL2 HINTS ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/lib)
+find_library (SDL2_image NAMES SDL2_image HINTS ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/lib)
+find_library (SDL_sound NAMES SDL_sound HINTS ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/lib)
+find_library (assimp NAMES assimp HINTS ${PROJECT_SOURCE_DIR}/3rdparty/assimp/lib)
 
-include_directories (${PROJECT_SOURCE_DIR}/Engine)
-include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include/glm)
-include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include/spdlog)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/Engine)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/ImGui)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/glm)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/spdlog)
+
+target_link_libraries (LiteEngine ImGui)
+
+# OpenAL
 
 if(NOT MSVC)
 	find_package (OpenAL REQUIRED)
 
-	include_directories (${OPENAL_INCLUDE_DIR})
+	target_include_directories (LiteEngine PUBLIC ${OPENAL_INCLUDE_DIR})
 else(NOT MSVC)
-	include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include/AL)
+	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/OpenAL/include)
 
-	find_library (OPENAL_LIBRARY NAMES OpenAL OpenAL32 HINTS ${LIBS_DIR})
+	find_library (OPENAL_LIBRARY NAMES OpenAL OpenAL32 HINTS ${PROJECT_SOURCE_DIR}/3rdparty/OpenAL/lib)
 endif(NOT MSVC)
 
 if(NOT MSVC)
 	find_package (Bullet REQUIRED)
 	
-	include_directories (${BULLET_INCLUDE_DIRS})
+	target_include_directories (LiteEngine PUBLIC ${BULLET_INCLUDE_DIRS})
 else(NOT MSVC)
-	include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include/bullet)
+	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/include)
+	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/include/bullet)
 
-	find_library (BULLET_LIBRARY_COLLISION NAMES BulletCollision HINTS ${LIBS_DIR})
-	find_library (BULLET_LIBRARY_DYNAMICS NAMES BulletDynamics HINTS ${LIBS_DIR})
-	find_library (BULLET_LIBRARY_SOFTBODY NAMES BulletSoftBody HINTS ${LIBS_DIR})
-	find_library (BULLET_LIBRARY_LINEARMATH NAMES LinearMath HINTS ${LIBS_DIR})
+	find_library (BULLET_LIBRARY_COLLISION NAMES BulletCollision HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
+	find_library (BULLET_LIBRARY_DYNAMICS NAMES BulletDynamics HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
+	find_library (BULLET_LIBRARY_SOFTBODY NAMES BulletSoftBody HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
+	find_library (BULLET_LIBRARY_LINEARMATH NAMES LinearMath HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
 
 	set (BULLET_LIBRARIES ${BULLET_LIBRARY_COLLISION} ${BULLET_LIBRARY_DYNAMICS} ${BULLET_LIBRARY_SOFTBODY} ${BULLET_LIBRARY_LINEARMATH})
 endif(NOT MSVC)
 
 if(MSVC)
-	include_directories (${PROJECT_SOURCE_DIR}/3rdparty/include)
+	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/assimp/include)
+	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/OpenAL/include)
+	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/GLEW/include)
+	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/include)
 endif(MSVC)
 
 if(MSVC)
@@ -102,7 +115,38 @@ if(MSVC)
 	group_src (${LiteEngineSourceFiles})
 endif(MSVC)
 
-target_link_libraries (LiteEngine ${OPENGL_LIBRARIES} ${GLEW} ${SDL2} ${SDL2_image} ${SDL_SOUND_LIBRARIES} ${OPENAL_LIBRARY} ${assimp} ${BULLET_LIBRARIES})
+# On Windows, we copy required binary files next to the target.
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+    add_custom_command(TARGET LiteEngine POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${PROJECT_SOURCE_DIR}/3rdparty/assimp/bin/assimp.dll
+            ${PROJECT_SOURCE_DIR}/3rdparty/GLEW/bin/glew32.dll
+            ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/libjpeg-9.dll
+            ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/libpng16-16.dll
+            ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/libtiff-5.dll
+            ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/libwebp-4.dll
+            ${PROJECT_SOURCE_DIR}/3rdparty/OpenAL/bin/OpenAL32.dll
+            ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/SDL2.dll
+            ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/SDL2_image.dll
+            ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/zlib1.dll
+			$<TARGET_FILE:ImGui>
+
+            # Destination directory
+            $<TARGET_FILE_DIR:LiteEngine>
+    )
+endif()
+
+target_link_libraries (LiteEngine 
+	${OPENGL_LIBRARIES}
+	${GLEW}
+	${SDL2}
+	${SDL2_image}
+	${SDL_SOUND_LIBRARIES}
+	${OPENAL_LIBRARY}
+	${assimp}
+	${BULLET_LIBRARIES}
+	${ImGui}
+)
 
 if(NOT MSVC)
 	target_link_libraries (LiteEngine dl)
