@@ -259,7 +259,7 @@ namespace detail
 	{
 		GLM_FUNC_QUALIFIER static vec<L, T, Q> call(vec<L, T, Q> const& edge0, vec<L, T, Q> const& edge1, vec<L, T, Q> const& x)
 		{
-			GLM_STATIC_ASSERT(std::numeric_limits<T>::is_iec559 || GLM_CONFIG_UNRESTRICTED_GENTYPE, "'step' only accept floating-point inputs");
+			GLM_STATIC_ASSERT(std::numeric_limits<T>::is_iec559 || GLM_CONFIG_UNRESTRICTED_GENTYPE, "'smoothstep' only accept floating-point inputs");
 			vec<L, T, Q> const tmp(clamp((x - edge0) / (edge1 - edge0), static_cast<T>(0), static_cast<T>(1)));
 			return tmp * tmp * (static_cast<T>(3) - static_cast<T>(2) * tmp);
 		}
@@ -287,7 +287,8 @@ namespace detail
 			std::numeric_limits<genFIType>::is_iec559 || (std::numeric_limits<genFIType>::is_signed && std::numeric_limits<genFIType>::is_integer),
 			"'sign' only accept signed inputs");
 
-		return detail::compute_sign<1, genFIType, defaultp, std::numeric_limits<genFIType>::is_iec559, highp>::call(vec<1, genFIType>(x)).x;
+		return detail::compute_sign<1, genFIType, defaultp,
+                                    std::numeric_limits<genFIType>::is_iec559, detail::is_aligned<highp>::value>::call(vec<1, genFIType>(x)).x;
 	}
 
 	template<length_t L, typename T, qualifier Q>
@@ -400,7 +401,7 @@ namespace detail
 	template<typename genType>
 	GLM_FUNC_QUALIFIER genType mod(genType x, genType y)
 	{
-#		if GLM_COMPILER & GLM_COMPILER_CUDA
+#		if (GLM_COMPILER & GLM_COMPILER_CUDA) || (GLM_COMPILER & GLM_COMPILER_HIP)
 			// Another Cuda compiler bug https://github.com/g-truc/glm/issues/530
 			vec<1, genType, defaultp> Result(mod(vec<1, genType, defaultp>(x), y));
 			return Result.x;
@@ -600,7 +601,7 @@ namespace detail
 #				endif
 #			elif (GLM_COMPILER & (GLM_COMPILER_GCC | GLM_COMPILER_CLANG)) && (GLM_PLATFORM & GLM_PLATFORM_ANDROID) && __cplusplus < 201103L
 				return _isnan(x) != 0;
-#			elif GLM_COMPILER & GLM_COMPILER_CUDA
+#			elif (GLM_COMPILER & GLM_COMPILER_CUDA) || (GLM_COMPILER & GLM_COMPILER_HIP)
 				return ::isnan(x) != 0;
 #			else
 				return std::isnan(x);
@@ -641,7 +642,7 @@ namespace detail
 #				else
 					return std::isinf(x);
 #				endif
-#			elif GLM_COMPILER & GLM_COMPILER_CUDA
+#			elif (GLM_COMPILER & GLM_COMPILER_CUDA) || (GLM_COMPILER & GLM_COMPILER_HIP)
 				// http://developer.download.nvidia.com/compute/cuda/4_2/rel/toolkit/docs/online/group__CUDA__MATH__DOUBLE_g13431dd2b40b51f9139cbb7f50c18fab.html#g13431dd2b40b51f9139cbb7f50c18fab
 				return ::isinf(double(x)) != 0;
 #			else
@@ -737,11 +738,15 @@ namespace detail
 		return reinterpret_cast<vec<L, float, Q>&>(const_cast<vec<L, uint, Q>&>(v));
 	}
 
-	template<typename genType>
-	GLM_FUNC_QUALIFIER genType fma(genType const& a, genType const& b, genType const& c)
-	{
-		return a * b + c;
-	}
+#	if GLM_HAS_CXX11_STL
+		using std::fma;
+#	else
+		template<typename genType>
+		GLM_FUNC_QUALIFIER genType fma(genType const& a, genType const& b, genType const& c)
+		{
+			return a * b + c;
+		}
+#	endif
 
 	template<typename genType>
 	GLM_FUNC_QUALIFIER genType frexp(genType x, int& exp)

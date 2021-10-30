@@ -17,9 +17,9 @@ endif(NOT MSVC)
 
 file (GLOB_RECURSE IMGUI_SOURCES *)
 
-include_directories (${PROJECT_SOURCE_DIR}/3rdparty)
-
 add_library (ImGui SHARED ${IMGUI_SOURCES})
+
+target_include_directories (ImGui PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/ImGui)
 
 if(MSVC)
     MACRO(GROUP_SRC SRCS)
