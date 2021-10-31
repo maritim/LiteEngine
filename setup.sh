@@ -31,6 +31,7 @@ function InstallDependenciesAptGet
 			echo "Package '$pkg' already installed. Do nothing."
 		else
 			echo "Package '$pkg' is not installed. Installing..."
+			sudo apt-get update
 			sudo apt-get install -y $pkg
 		fi
 	done	
