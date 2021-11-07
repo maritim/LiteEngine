@@ -10,6 +10,8 @@ public:
 	void UpdateFrame ();
 	void UpdateScene ();
 	void RenderScene ();
+protected:
+	void LoadEditorLayout ();
 };
 
 REGISTER_GAME_MODULE(Editor)

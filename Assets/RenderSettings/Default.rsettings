@@ -4,8 +4,8 @@
 	<!-- <RenderMode mode="VoxelConeTracingRenderModule" /> -->
 	<!-- <RenderMode mode="HybridGlobalIlluminationRenderModule" /> -->
 	<!-- <RenderMode mode="TemporalReflectiveShadowMappingRenderModule" /> -->
-	<!-- <RenderMode mode="DirectLightingRenderModule" /> -->
-	<RenderMode mode="LightPropagationVolumesRenderModule" />
+	<RenderMode mode="DirectLightingRenderModule" />
+	<!-- <RenderMode mode="LightPropagationVolumesRenderModule" /> -->
 
 	<General indirectDiffuseEnabled="true" indirectSpecularEnabled="false" subsurfaceScatteringEnabled="false" ambientOcclusionEnabled="true" />
 
@@ -21,7 +21,7 @@
 
 	<VolLighting enabled="false" iterations="32" scattering="0.3" intensity="1.0" />
 
-	<LightShafts enabled="true" iterations="100" density="1.0" weight="1.0" decay="0.9" intensity="1.0" />
+	<LightShafts enabled="false" iterations="100" density="1.0" weight="1.0" decay="0.9" intensity="1.0" />
 
 	<Bloom enabled="false" scale="0.5" threshold="0.5" intensity="0.4" />
 

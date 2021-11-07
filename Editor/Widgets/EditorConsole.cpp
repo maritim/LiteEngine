@@ -17,13 +17,13 @@ EditorConsole::EditorConsole () :
 
 void EditorConsole::Show ()
 {
-	bool isConsoleVisible = SettingsManager::Instance ()->GetValue<bool> ("menu_show_console", false);
+	bool isConsoleVisible = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_console", false);
 
 	if (isConsoleVisible == false) {
 		return;
 	}
 
-	_showLogsMask = SettingsManager::Instance ()->GetValue<int> ("menu_show_console_logs_mask", 30);
+	_showLogsMask = SettingsManager::Instance ()->GetValue<int> ("Menu", "console_logs_mask", 30);
 
 	if (_editorConsoleSink == nullptr) {
 		_editorConsoleSink = new EditorConsoleSink ();
@@ -101,7 +101,7 @@ void EditorConsole::ShowConsoleSettings ()
 			_showLogsMask ^= (1 << LogPriority::LOG_ERROR);
 		}
 
-		SettingsManager::Instance ()->SetValue ("menu_show_console_logs_mask", std::to_string (_showLogsMask));
+		SettingsManager::Instance ()->SetValue<int> ("Menu", "console_logs_mask", _showLogsMask);
 
 		ImGui::EndPopup();
 	}

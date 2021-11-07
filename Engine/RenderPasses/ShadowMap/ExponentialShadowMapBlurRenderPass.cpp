@@ -132,7 +132,7 @@ void ExponentialShadowMapBlurRenderPass::Notify (Object* sender, const SettingsO
 	*/
 
 	if (name == "sm_cascades") {
-		_cascades = SettingsManager::Instance ()->GetValue<int> ("sm_cascades", _cascades);
+		//_cascades = SettingsManager::Instance ()->GetValue<int> ("sm_cascades", _cascades);
 	}
 
 	/*
@@ -140,7 +140,7 @@ void ExponentialShadowMapBlurRenderPass::Notify (Object* sender, const SettingsO
 	*/
 
 	if (name == "sm_resolution") {
-		_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("sm_resolution", (glm::vec2) _resolution);
+		//_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("sm_resolution", (glm::vec2) _resolution);
 
 		/*
 		 * Clear ping pong framebuffers
@@ -209,20 +209,20 @@ void ExponentialShadowMapBlurRenderPass::InitSettings ()
 	 * Initialize directional light shadow map cascades
 	*/
 
-	_cascades = SettingsManager::Instance ()->GetValue<int> ("sm_cascades", _cascades);
+	//_cascades = SettingsManager::Instance ()->GetValue<int> ("sm_cascades", _cascades);
 
 	/*
 	 * Initialize directional light shadow map resolution
 	*/
 
-	_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("sm_resolution", (glm::vec2) _resolution);
+	//_resolution = SettingsManager::Instance ()->GetValue<glm::vec2> ("sm_resolution", (glm::vec2) _resolution);
 
 	/*
 	 * Attach to settings manager
 	*/
 
-	SettingsManager::Instance ()->Attach ("sm_cascades", this);
-	SettingsManager::Instance ()->Attach ("sm_resolution", this);
+	//SettingsManager::Instance ()->Attach ("sm_cascades", this);
+	//SettingsManager::Instance ()->Attach ("sm_resolution", this);
 }
 
 void ExponentialShadowMapBlurRenderPass::ClearSettings ()
@@ -231,8 +231,8 @@ void ExponentialShadowMapBlurRenderPass::ClearSettings ()
 	 * Detach
 	*/
 
-	SettingsManager::Instance ()->Detach ("sm_cascades", this);
-	SettingsManager::Instance ()->Detach ("sm_resolution", this);
+	//SettingsManager::Instance ()->Detach ("sm_cascades", this);
+	//SettingsManager::Instance ()->Detach ("sm_resolution", this);
 }
 
 void ExponentialShadowMapBlurRenderPass::InitShadowMapBlurVolumes ()

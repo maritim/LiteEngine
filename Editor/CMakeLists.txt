@@ -19,6 +19,9 @@ else(NOT MSVC)
 	add_compile_options(/MP)
 endif(NOT MSVC)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 file (GLOB_RECURSE LiteEditorSourceFiles *)
 
 add_library (LiteEditor SHARED ${LiteEditorSourceFiles})
@@ -28,6 +31,7 @@ target_include_directories (LiteEditor PUBLIC ${PROJECT_SOURCE_DIR}/Editor)
 target_include_directories (LiteEditor PRIVATE ${PROJECT_SOURCE_DIR}/Engine)
 target_include_directories (LiteEditor PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/ImGui)
 target_include_directories (LiteEditor PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/glm)
+target_include_directories (LiteEditor PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SimpleIni)
 
 target_link_libraries (LiteEditor ImGui)
 

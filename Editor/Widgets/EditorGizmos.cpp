@@ -8,6 +8,7 @@
 #include <ImGui/imgui.h>
 
 #include "Systems/Input/Input.h"
+#include "Systems/Settings/SettingsManager.h"
 #include "Systems/GUI/Gizmo/Gizmo.h"
 
 #include "EditorScene.h"
@@ -51,7 +52,11 @@ void EditorGizmos::Show ()
 		ShowComponents (_focusedObject);
 	}
 
-	ShowGrid ();
+	bool showGrid = SettingsManager::Instance ()->GetValue<bool> ("Scene", "show_grid", true);
+
+	if (showGrid == true) {
+		ShowGrid ();
+	}
 }
 
 void EditorGizmos::UpdateMode ()
@@ -107,17 +112,26 @@ void EditorGizmos::ShowGizmo (const Camera* camera, Transform* transform)
 
 	glm::mat4 result = glm::make_mat4 (objectMatrix);
 
-	glm::vec3 position;
-	glm::quat rotation;
-	glm::vec3 scale;
-	glm::vec3 skew;
-	glm::vec4 perspective;
+	if (ImGuizmo::IsUsing ()) {
 
-	glm::decompose (result, scale, rotation, position, skew, perspective);
+		glm::vec3 position;
+		glm::quat rotation;
+		glm::vec3 scale;
+		glm::vec3 skew;
+		glm::vec4 perspective;
 
-	transform->SetPosition (position);
-	transform->SetRotation (rotation);
-	transform->SetScale (scale);
+		glm::decompose(result, scale, rotation, position, skew, perspective);
+
+		if (_currentOperation == ImGuizmo::OPERATION::TRANSLATE) {
+			transform->SetPosition(position);
+		}
+		if (_currentOperation == ImGuizmo::OPERATION::ROTATE) {
+			transform->SetRotation(rotation);
+		}
+		if (_currentOperation == ImGuizmo::OPERATION::SCALE) {
+			transform->SetScale(scale);
+		}
+	}
 }
 
 void EditorGizmos::ShowComponents (const SceneObject* object)

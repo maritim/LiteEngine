@@ -41,13 +41,10 @@ Game::~Game ()
 
 void Game::Start ()
 {
-	LoadGameModule ();
-
-	_gameModule->Init ();
-
 	bool running = true;
 
 	Time::Init ();
+	InitGameModule ();
 
 	while(running)
 	{
@@ -83,18 +80,34 @@ void Game::Start ()
 	}
 }
 
-void Game::LoadGameModule ()
+void Game::InitGameModule ()
 {
-	Argument* arg = ArgumentsAnalyzer::Instance ()->GetArgument ("gamemodule");
+	/*
+	 * Get game module name
+	*/
 
-	if (arg == nullptr) {
+	std::string gameModuleName = GetGameModuleName ();
+
+	/*
+	 * When there is no game module given, stop execution
+	*/
+
+	if (gameModuleName == std::string ()) {
 		Console::LogError ("There is no game module to load!");
 		exit (0);
 	}
 
-	std::string gameModulePath = arg->GetArgs () [0];
+	/*
+	 * Load game module
+	*/
 
-	_gameModule = GameModuleLoader::LoadGameModule (gameModulePath);
+	_gameModule = GameModuleLoader::LoadGameModule (gameModuleName);
+
+	/*
+	 * Initialize game module
+	*/
+
+	_gameModule->Init ();
 }
 
 void Game::UpdateScene() 
@@ -109,7 +122,7 @@ void Game::UpdateScene()
 
 	ComponentManager::Instance ()->Update ();
 	PhysicsManager::Instance ()->Update ();
-	SettingsManager::Instance ()->Update ();
+	//SettingsManager::Instance ()->Update ();
 }
 
 void Game::DisplayScene() 
@@ -128,4 +141,31 @@ void Game::DisplayScene()
 	settings->viewport.height = Window::GetHeight ();
 
 	RenderManager::Instance ()->Render (camera, *settings);
+}
+
+std::string Game::GetGameModuleName ()
+{
+	std::string gameModuleName;
+
+	/*
+	 * Retrieve game module name
+	*/
+
+	Argument* arg = ArgumentsAnalyzer::Instance ()->GetArgument ("gamemodule");
+
+	if (arg != nullptr) {
+		gameModuleName = arg->GetArgs () [0];
+	}
+
+	/*
+	 * Retrieve game module name
+	*/
+
+	if (arg == nullptr) {
+		gameModuleName = SettingsManager::Instance ()->GetValue<std::string> (
+			"GameModule", "name", std::string ()
+		);
+	}
+
+	return gameModuleName;
 }

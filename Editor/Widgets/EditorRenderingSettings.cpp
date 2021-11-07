@@ -4,9 +4,9 @@
 #include <glm/vec2.hpp>
 #include <ImGui/imgui.h>
 
-#include "Systems/Settings/SettingsManager.h"
 #include "Systems/Window/Window.h"
 #include "Systems/Input/Input.h"
+#include "Systems/Settings/SettingsManager.h"
 
 #include "Managers/RenderSettingsManager.h"
 
@@ -49,10 +49,10 @@ EditorRenderingSettings::EditorRenderingSettings () :
 
 void EditorRenderingSettings::Show ()
 {
-	bool visible = SettingsManager::Instance ()->GetValue<bool> ("menu_show_rendering_settings", false);
+	bool visible = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_rendering_settings", false);
 
 	if (visible) {
-		std::string path = SettingsManager::Instance ()->GetValue<std::string> ("menu_show_rendering_settings_path", "");
+		std::string path = SettingsManager::Instance ()->GetValue<std::string> ("Menu", "rendering_settings_path", "");
 
 		if (path == std::string ()) {
 			return;

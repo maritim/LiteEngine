@@ -20,10 +20,12 @@ private:
 	Game (const Game&);
 	Game& operator=(const Game&);
 
+	void InitGameModule ();
+
 	void UpdateScene ();
 	void DisplayScene ();
 
-	void LoadGameModule ();
+	std::string GetGameModuleName ();
 };
 
 #endif

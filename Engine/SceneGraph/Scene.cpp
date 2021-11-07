@@ -132,6 +132,10 @@ Scene::~Scene ()
 {
 	Clear (_sceneRoot);
 
+	if (_skybox != nullptr) {
+		_skybox->OnDetachedFromScene ();
+	}
+
 	delete _skybox;
 }
 

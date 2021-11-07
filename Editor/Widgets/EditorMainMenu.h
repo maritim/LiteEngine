@@ -15,7 +15,9 @@ public:
 	void Show ();
 protected:
 	void ShowMainMenu ();
-	void CheckInput ();
+
+	void ShowMainMenuFile ();
+	void ShowMainMenuWindow ();
 };
 
 REGISTER_EDITOR_WIDGET(EditorMainMenu)

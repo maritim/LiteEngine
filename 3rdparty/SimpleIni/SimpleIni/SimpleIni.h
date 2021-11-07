@@ -112,9 +112,13 @@
 #include <sstream>
 #include <map>
 
+#ifndef SIMPLEINI_API
+#define SIMPLEINI_API
+#endif
+
 /// \brief    Very simple class to manage configuration files
 /// \details  Class allows you to easily manage configuration files with less than 10 methods.
-class SimpleIni
+class SIMPLEINI_API SimpleIni
 {
     private:
         struct IniLine
@@ -270,7 +274,7 @@ class SimpleIni
 
 /// \brief    Section iterator for SimpleIni class
 /// \details  Class to browse sections of a configuration file load by SimpleIni class.
-class SimpleIni::SectionIterator
+class SIMPLEINI_API SimpleIni::SectionIterator
 {
     public:
         /// \brief    Constructor of a section iterator
@@ -298,7 +302,7 @@ class SimpleIni::SectionIterator
 
 /// \brief    Key iterator for SimpleIni class
 /// \details  Class to browse keys of a configuration file load by SimpleIni class.
-class SimpleIni::KeyIterator
+class SIMPLEINI_API SimpleIni::KeyIterator
 {
     public:
         /// \brief    Constructor of a key iterator

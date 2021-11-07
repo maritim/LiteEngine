@@ -2,9 +2,9 @@
 
 #include <ImGui/imgui.h>
 
-#include "Debug/Profiler/Profiler.h"
-
 #include "Systems/Settings/SettingsManager.h"
+
+#include "Debug/Profiler/Profiler.h"
 
 EditorProfiler::EditorProfiler () :
     _timeSpan (2.0f),
@@ -17,7 +17,7 @@ EditorProfiler::EditorProfiler () :
 
 void EditorProfiler::Show ()
 {
-    bool isProfilerVisible = SettingsManager::Instance ()->GetValue<bool> ("menu_show_profiler", false);
+    bool isProfilerVisible = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_profiler", false);
 
     if (isProfilerVisible == true) {
         UpdateProfiler ();

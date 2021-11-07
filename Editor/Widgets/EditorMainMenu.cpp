@@ -1,59 +1,33 @@
 #include "EditorMainMenu.h"
 
+#include <filesystem>
 #include <ImGui/imgui.h>
 #include <ImGui/imguifilesystem/imguifilesystem.h>
 
 #include "Managers/SceneManager.h"
 
-#include "Systems/Settings/SettingsManager.h"
-
 #include "EditorScene.h"
 #include "EditorSelection.h"
 
 #include "Systems/Input/Input.h"
+#include "Systems/Settings/SettingsManager.h"
 
 #include "Resources/SceneSaver.h"
+
+#include "Utils/Files/FileSystem.h"
+
+namespace fs = std::filesystem;
 
 void EditorMainMenu::Show ()
 {
 	ShowMainMenu ();
-	CheckInput ();
 }
 
 void EditorMainMenu::ShowMainMenu ()
 {
 	if (ImGui::BeginMainMenuBar())
 	{
-		bool openScene = false;
-		bool saveScene = false;
-
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("New")) {}
-			
-			openScene = ImGui::MenuItem("Open", "Ctrl+O");
-
-			saveScene = ImGui::MenuItem("Save", "Ctrl+S");
-			if (ImGui::MenuItem("Save As..")) {}
-
-			ImGui::Separator();
-
-			ImGui::EndMenu();
-		}
-
-		static ImGuiFs::Dialog dialog;
-		const char* path = dialog.chooseFileDialog (openScene, nullptr, ".scene");
-
-		if (strlen (path) > 0) {
-			EditorSelection::Instance ()->SetActive (nullptr);
-			SceneManager::Instance ()->Load (std::string (path));
-		}
-
-		path = dialog.saveFileDialog (saveScene, nullptr, ".scene");
-
-		if (strlen (path) > 0) {
-			SceneSaver::Instance ().Save (SceneManager::Instance ()->Current (), path);
-		}
+		ShowMainMenuFile ();
 
 		if (ImGui::BeginMenu("Edit"))
 		{
@@ -68,66 +42,66 @@ void EditorMainMenu::ShowMainMenu ()
 
 		if (ImGui::BeginMenu("Window")) {
 
-			bool lastShowHierarchy = SettingsManager::Instance ()->GetValue<bool> ("menu_show_hierarchy", false);
+			bool lastShowHierarchy = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_hierarchy", false);
 			bool showHierarchy = lastShowHierarchy;
 			ImGui::MenuItem("Hierarchy Window", "CTRL+1", &showHierarchy);
 
-			bool lastShowInspector = SettingsManager::Instance ()->GetValue<bool> ("menu_show_inspector", false);
+			bool lastShowInspector = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_inspector", false);
 			bool showInspector = lastShowInspector;
 			ImGui::MenuItem ("Inspector Window", "CTRL+2", &showInspector);
 
-			bool lastShowProject = SettingsManager::Instance ()->GetValue<bool> ("menu_show_project", false);
+			bool lastShowProject = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_project", false);
 			bool showProject = lastShowProject;
 			ImGui::MenuItem ("Project Window", "CTRL+3", &showProject);
 
-			bool lastShowConsole = SettingsManager::Instance ()->GetValue<bool> ("menu_show_console", false);
+			bool lastShowConsole = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_console", false);
 			bool showConsole = lastShowConsole;
 			ImGui::MenuItem ("Console Window", "CTRL+4", &showConsole);
 
 			ImGui::Separator ();
 
-			bool lastShowAnimationSettings = SettingsManager::Instance ()->GetValue<bool> ("menu_show_animation_settings", false);
+			bool lastShowAnimationSettings = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_animation_settings", false);
 			bool showAnimationSettings = lastShowAnimationSettings;
 			ImGui::MenuItem("Animation Settings", "CTRL+5", &showAnimationSettings);
 
 			ImGui::Separator ();
 
-			bool lastShowRenderingSettings = SettingsManager::Instance ()->GetValue<bool> ("menu_show_rendering_settings", false);
+			bool lastShowRenderingSettings = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_rendering_settings", false);
 			bool showRenderingSettings = lastShowRenderingSettings;
 			ImGui::MenuItem("Rendering Settings", "CTRL+6", &showRenderingSettings);
 
 			ImGui::Separator ();
 
-			bool lastShowProfiler = SettingsManager::Instance ()->GetValue<bool> ("menu_show_profiler", false);
+			bool lastShowProfiler = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_profiler", false);
 			bool showProfiler = lastShowProfiler;
 			ImGui::MenuItem("Profiler", "CTRL+7", &showProfiler);
 
 			if (showHierarchy != lastShowHierarchy) {
-				SettingsManager::Instance ()->SetValue ("menu_show_hierarchy", std::to_string (showHierarchy));
+				SettingsManager::Instance ()->SetValue<bool> ("Menu", "show_hierarchy", showHierarchy);
 			}
 
 			if (showInspector != lastShowInspector) {
-				SettingsManager::Instance ()->SetValue ("menu_show_inspector", std::to_string (showInspector));
+				SettingsManager::Instance ()->SetValue<bool> ("Menu", "show_inspector", showInspector);
 			}
 
 			if (showProject != lastShowProject) {
-				SettingsManager::Instance ()->SetValue ("menu_show_project", std::to_string (showProject));
+				SettingsManager::Instance ()->SetValue<bool> ("Menu", "show_project", showProject);
 			}
 
 			if (showConsole != lastShowConsole) {
-				SettingsManager::Instance ()->SetValue ("menu_show_console", std::to_string (showConsole));
+				SettingsManager::Instance ()->SetValue<bool> ("Menu", "show_console", showConsole);
 			}
 
 			if (showAnimationSettings != lastShowAnimationSettings) {
-				SettingsManager::Instance ()->SetValue ("menu_show_animation_settings", std::to_string (showAnimationSettings));
+				SettingsManager::Instance ()->SetValue<bool> ("Menu", "show_animation_settings", showAnimationSettings);
 			}
 
 			if (showRenderingSettings != lastShowRenderingSettings) {
-				SettingsManager::Instance ()->SetValue ("menu_show_rendering_settings", std::to_string (showRenderingSettings));
+				SettingsManager::Instance ()->SetValue<bool> ("Menu", "show_rendering_settings", showRenderingSettings);
 			}
 
 			if (showProfiler != lastShowProfiler) {
-				SettingsManager::Instance ()->SetValue ("menu_show_profiler", std::to_string (showProfiler));
+				SettingsManager::Instance ()->SetValue<bool> ("Menu", "show_profiler", showProfiler);
 			}
 
 			ImGui::EndMenu();
@@ -148,11 +122,71 @@ void EditorMainMenu::ShowMainMenu ()
 	}
 }
 
-void EditorMainMenu::CheckInput ()
+void EditorMainMenu::ShowMainMenuFile ()
 {
-	auto& path = SceneManager::Instance ()->Current ()->GetPath ();
+	bool createScene = false;
+	bool openScene = false;
+	bool saveScene = false;
+	bool saveScene2 = false;
 
-	if (Input::GetKey (InputKey::LCTRL) && Input::GetKeyDown (InputKey::S)) {
-		SceneSaver::Instance ().Save (SceneManager::Instance ()->Current (), path);
+	if (ImGui::BeginMenu("File"))
+	{
+		createScene = ImGui::MenuItem("New Scene", "Ctrl+N");
+		
+		openScene = ImGui::MenuItem("Open Scene", "Ctrl+O");
+
+		saveScene = ImGui::MenuItem("Save Scene", "Ctrl+S");
+		saveScene2 = ImGui::MenuItem("Save Scene As..", "Ctrl+Shift+S");
+
+		ImGui::Separator();
+
+		ImGui::EndMenu();
+	}
+
+	// Create new scene
+	if (createScene == true || (Input::GetKey (InputKey::LCTRL) && Input::GetKeyDown (InputKey::N))) {
+		EditorSelection::Instance ()->SetActive (nullptr);
+		SceneManager::Instance ()->CreateScene ();
+	}
+
+	// Load scene
+	static ImGuiFs::Dialog dialog;
+
+	openScene = openScene || (Input::GetKey (InputKey::LCTRL) && Input::GetKeyDown (InputKey::O));
+
+	const char* path = dialog.chooseFileDialog (openScene, "Assets/Scenes/", ".scene");
+
+	if (strlen (path) > 0) {
+		EditorSelection::Instance ()->SetActive (nullptr);
+
+		std::string scenePath = FileSystem::Relative (path, fs::current_path ().string ());
+		SceneManager::Instance ()->Load (scenePath);
+		SettingsManager::Instance ()->SetValue<std::string> ("Scene", "scene_path", scenePath);
+	}
+
+	// Save scene
+	if (saveScene || (Input::GetKey (InputKey::LCTRL) && Input::GetKeyDown (InputKey::S))) {
+		auto& path = SceneManager::Instance ()->Current ()->GetPath ();
+
+		if (path == std::string ()) {
+			saveScene2 = true;
+		} else {
+			SceneSaver::Instance ().Save (SceneManager::Instance ()->Current (), path);		
+		}
+	}
+
+	// Save As
+	static ImGuiFs::Dialog dialog2;
+
+	saveScene2 = saveScene2 || (Input::GetKey (InputKey::LCTRL) &&
+		Input::GetKey (InputKey::LSHIFT) && Input::GetKeyDown (InputKey::S));
+		
+	const char* sceneSavePath = dialog2.saveFileDialog (saveScene2, "Assets/Scenes/", ".scene");
+
+	if (strlen (sceneSavePath) > 0) {
+
+		std::string scenePath = FileSystem::Relative (sceneSavePath, fs::current_path ().string ());
+		SceneSaver::Instance ().Save (SceneManager::Instance ()->Current (), scenePath);
+		SettingsManager::Instance ()->SetValue<std::string> ("Scene", "scene_path", scenePath);
 	}
 }

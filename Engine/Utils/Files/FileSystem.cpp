@@ -61,7 +61,7 @@ std::string FileSystem::Relative (const std::string& filename, const std::string
 {
 	std::string formated = filename;
 
-	Extensions::StringExtend::Replace (formated, relatedPath, "");
+	Extensions::StringExtend::Replace (formated, SwitchSlashesUNIX (relatedPath), "");
 
 	Extensions::StringExtend::Trim (formated, '/');
 

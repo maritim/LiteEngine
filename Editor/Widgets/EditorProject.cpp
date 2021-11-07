@@ -18,7 +18,7 @@ EditorProject::EditorProject () :
 
 void EditorProject::Show ()
 {
-	bool isProjectVisible = SettingsManager::Instance ()->GetValue<bool> ("menu_show_project", false);
+	bool isProjectVisible = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_project", false);
 
 	if (isProjectVisible == true) {
 		ShowProject ();
@@ -141,7 +141,7 @@ void EditorProject::Open (const std::string& path)
 	std::string settingsPath = FileSystem::FormatFilename (path);
 
 	if (fspath.extension ().string () == ".rsettings") {
-		SettingsManager::Instance ()->SetValue ("menu_show_rendering_settings", std::to_string (true));
-		SettingsManager::Instance ()->SetValue ("menu_show_rendering_settings_path", settingsPath);
+		SettingsManager::Instance ()->SetValue<bool> ("Menu", "show_rendering_settings", true);
+		SettingsManager::Instance ()->SetValue ("Menu", "rendering_settings_path", settingsPath);
 	}
 }

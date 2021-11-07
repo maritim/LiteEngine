@@ -5,15 +5,14 @@
 
 #include "EditorSelection.h"
 
-#include "Systems/Components/EditorComponent.h"
-
 #include "Systems/Settings/SettingsManager.h"
+#include "Systems/Components/EditorComponent.h"
 
 #include "Utils/Extensions/MathExtend.h"
 
 void EditorInspector::Show ()
 {
-	bool isInspectorVisible = SettingsManager::Instance ()->GetValue<bool> ("menu_show_inspector", false);
+	bool isInspectorVisible = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_inspector", false);
 
 	if (isInspectorVisible == false) {
 		return;

@@ -15,6 +15,7 @@
 
 #include "Systems/Input/Input.h"
 #include "Systems/Time/Time.h"
+#include "Systems/Settings/SettingsManager.h"
 
 #include "Resources/Resources.h"
 
@@ -171,8 +172,20 @@ void EditorScene::ShowSceneMenu ()
             if (ImGui::MenuItem("Set Resolution", "Ctrl+Shift+U")) { }
             ImGui::EndMenu();
         }
-        ImGui::EndMenuBar();
-    }
+		if (ImGui::BeginMenu("Gizmos"))
+		{
+			bool lastShowGrid = SettingsManager::Instance()->GetValue<bool> ("Scene", "show_grid", true);
+			bool showGrid = lastShowGrid;
+			ImGui::MenuItem("Show Grid", "", &showGrid);
+
+			if (showGrid != lastShowGrid) {
+				SettingsManager::Instance()->SetValue<bool> ("Scene", "show_grid", showGrid);
+			}
+
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenuBar();
+	}
 
 	static ImGuiFs::Dialog dialog = ImGuiFs::Dialog ();
 

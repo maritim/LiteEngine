@@ -26,7 +26,8 @@
 
 #include "Renderer/Pipeline.h"
 
-#define ENGINE_SETTINGS_PATH "Assets/LiteEngine.ini"
+// Change this
+#define ENGINE_SETTINGS_PATH "Assets/LiteEditor.ini"
 
 /*
  * TODO (Medium Priority): Refactor initialization responsabilities
@@ -135,11 +136,21 @@ void GameEngine::InitScene ()
 {
 	Argument* arg = ArgumentsAnalyzer::Instance ()->GetArgument ("startscene");
 
-	if (arg == nullptr)
-	{
-		Console::LogError ("There is no scene to load!");
-		exit (0);
+	if (arg != nullptr) {
+		SceneManager::Instance ()->Load (arg->GetArgs () [0]);
 	}
 
-	SceneManager::Instance ()->Load (arg->GetArgs () [0]);
+	if (arg == nullptr) {
+		std::string scenePath = SettingsManager::Instance ()->GetValue<std::string> (
+			"Scene", "scene_path", std::string ()
+		);
+
+		if (scenePath != std::string ()) {
+			SceneManager::Instance ()->Load (scenePath);
+		}
+
+		if (scenePath == std::string ()) {
+			SceneManager::Instance ()->CreateScene ();
+		}
+	}
 }

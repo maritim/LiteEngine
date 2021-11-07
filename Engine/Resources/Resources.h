@@ -59,6 +59,7 @@ public:
 	*/
 
 	static bool SaveTexture (const Resource<Texture>& texture, const std::string& filename);
+	static bool SaveSettings (SettingsContainer* settingsContainer, const std::string& filename);
 
 private:
 	/*

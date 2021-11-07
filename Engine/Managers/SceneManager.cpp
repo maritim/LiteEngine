@@ -8,8 +8,8 @@
 
 SceneManager::SceneManager () :
 	_current (nullptr),
-	_needToLoad (false),
-	_nextSceneName ()
+	_needCreateNewScene (false),
+	_needToLoad (false)
 {
 
 }
@@ -32,6 +32,12 @@ Scene* SceneManager::Current ()
 
 void SceneManager::Update ()
 {
+	if (_needCreateNewScene == true) {
+		CreateNewScene ();
+
+		_needCreateNewScene = false;
+	}
+
 	if (_needToLoad == true) {
 		LoadNextScene (_nextSceneName);
 
@@ -53,6 +59,23 @@ void SceneManager::Clear ()
 
 	delete _current;
 	_current = nullptr;
+}
+
+void SceneManager::CreateScene ()
+{
+	_needCreateNewScene = true;
+}
+
+void SceneManager::CreateNewScene ()
+{
+	if (_current != nullptr) {
+		delete _current;
+	}
+
+	_current = new Scene ();
+
+	// Change this
+	_current->SetName ("New Scene");
 }
 
 void SceneManager::LoadNextScene (const std::string& sceneName)

@@ -6,12 +6,14 @@
 	#include <dlfcn.h>
 #endif
 
-GameModule* GameModuleLoader::LoadGameModule (const std::string& gameModulePath)
+GameModule* GameModuleLoader::LoadGameModule (const std::string& gameModuleName)
 {
+	std::string gameModuleFilename = GetGameModuleFilename (gameModuleName);
+
 #ifdef _WIN32
-	HMODULE handle = LoadLibrary(gameModulePath.c_str ());
+	HMODULE handle = LoadLibrary(gameModuleFilename.c_str ());
 #else
-	void* handle = dlopen(gameModulePath.c_str (), RTLD_LAZY);
+	void* handle = dlopen(gameModuleFilename.c_str (), RTLD_LAZY);
 #endif
 
 	GameModule* (*createGameModule)();
@@ -27,4 +29,17 @@ GameModule* GameModuleLoader::LoadGameModule (const std::string& gameModulePath)
 #endif
 
 	return (GameModule*) createGameModule ();
+}
+
+std::string GameModuleLoader::GetGameModuleFilename (const std::string& gameModuleName)
+{
+	std::string gameModuleFilename;
+
+#ifdef _WIN32
+	gameModuleFilename = gameModuleName + ".dll";
+#else
+	gameModuleFilename = "lib" + gameModuleFilename + ".so";
+#endif
+
+	return gameModuleFilename;
 }

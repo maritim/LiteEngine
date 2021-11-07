@@ -4,13 +4,13 @@
 
 #include "EditorSelection.h"
 
-#include "Managers/SceneManager.h"
-
 #include "Systems/Settings/SettingsManager.h"
+
+#include "Managers/SceneManager.h"
 
 void EditorHierarchy::Show ()
 {
-	bool isHierarchyVisible = SettingsManager::Instance ()->GetValue<bool> ("menu_show_hierarchy", false);
+	bool isHierarchyVisible = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_hierarchy", false);
 
 	if (isHierarchyVisible == true) {
 		ShowHierarchy ();
@@ -23,13 +23,20 @@ void EditorHierarchy::ShowHierarchy ()
 
 		Scene* scene = SceneManager::Instance ()->Current ();
 
-		ShowHierarchy (scene->GetRoot (), scene);
+		bool isItemClicked = false;
+		ShowHierarchy (scene->GetRoot (), scene, &isItemClicked);
+
+		if (isItemClicked == false) {
+			if (ImGui::IsMouseClicked (ImGuiMouseButton_Left) && ImGui::IsWindowHovered ()) {
+				EditorSelection::Instance ()->SetActive (nullptr);
+			}
+		}
 	}
 
 	ImGui::End();
 }
 
-void EditorHierarchy::ShowHierarchy (SceneObject* sceneObject, Scene* scene)
+void EditorHierarchy::ShowHierarchy (SceneObject* sceneObject, Scene* scene, bool* isItemClicked)
 {
 	SceneObject* focusedObject = EditorSelection::Instance ()->GetActive ();
 
@@ -122,13 +129,14 @@ void EditorHierarchy::ShowHierarchy (SceneObject* sceneObject, Scene* scene)
 
 	if (ImGui::IsItemClicked()) {
 		if (focusedObject != sceneObject) {
+			*isItemClicked = true;
 			EditorSelection::Instance ()->SetActive (sceneObject);
 		}
 	}
 
 	if (open) {
 		for_each_type (Transform*, child, *sceneObject->GetTransform ()) {
-			ShowHierarchy (child->GetSceneObject (), scene);
+			ShowHierarchy (child->GetSceneObject (), scene, isItemClicked);
 		}
 
 		ImGui::TreePop ();

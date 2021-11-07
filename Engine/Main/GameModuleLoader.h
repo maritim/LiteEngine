@@ -8,7 +8,9 @@
 class GameModuleLoader
 {
 public:
-	static GameModule* LoadGameModule (const std::string& gameModulePath);
+	static GameModule* LoadGameModule (const std::string& gameModuleName);
+private:
+	static std::string GetGameModuleFilename (const std::string& gameModuleName);
 };
 
 #endif

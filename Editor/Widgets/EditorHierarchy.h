@@ -14,7 +14,7 @@ public:
 protected:
 	void ShowHierarchy ();
 
-	void ShowHierarchy (SceneObject* sceneObject, Scene* scene);
+	void ShowHierarchy (SceneObject* sceneObject, Scene* scene, bool* isItemClicked);
 
 	void ShowHierarchySettings (Scene* scene);
 };

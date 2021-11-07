@@ -6,6 +6,7 @@
 #include "Systems/Cursor/Cursor.h"
 #include "Systems/Input/Input.h"
 #include "Systems/Time/Time.h"
+#include "Systems/Settings/SettingsManager.h"
 
 #include "EditorScene.h"
 
@@ -13,7 +14,8 @@
 
 EditorCamera::EditorCamera () :
 	_pitch (0.0f),
-	_yaw (0.0f)
+	_yaw (0.0f),
+	_firstTime (true)
 {
 
 }
@@ -34,37 +36,55 @@ void EditorCamera::Show ()
 	}
 
 	Camera* camera = EditorScene::Instance ()->GetCamera ();
+	
+	if (_firstTime == true) {
 
-	float cameraVelocity = 10.0f;
-	glm::vec3 velocity = glm::vec3 (0.0f);
+		InitCameraState (camera);
 
-	glm::vec3 Forward = camera->GetForward ();
-	glm::vec3 Left = camera->GetLeft ();
-	Forward = glm::normalize (Forward); Left = glm::normalize (Left);
-
-	if (Input::GetKey (InputKey::W)) {
-		velocity += Forward * cameraVelocity * Time::GetDeltaTime();
+		_firstTime = false;
 	}
 
-	if (Input::GetKey (InputKey::S)) {
-		velocity -= Forward * cameraVelocity * Time::GetDeltaTime();
-	}
+	// Shorcuts
+	if (!Input::GetKey (InputKey::LCTRL)) {
 
-	if (Input::GetKey (InputKey::A)) {
-		velocity += Left * cameraVelocity * Time::GetDeltaTime();
-	}
+		float cameraVelocity = 10.0f;
 
-	if (Input::GetKey (InputKey::D)) {
-		velocity -= Left * cameraVelocity * Time::GetDeltaTime();
-	}
+		if (Input::GetKey (InputKey::LSHIFT)) {
+			cameraVelocity *= 1.5f;
+		}
 
-	glm::vec3 camPos = camera->GetPosition () + velocity;
-	camera->SetPosition (camPos);
+		glm::vec3 velocity = glm::vec3 (0.0f);
+
+		glm::vec3 Forward = camera->GetForward ();
+		glm::vec3 Left = camera->GetLeft ();
+		Forward = glm::normalize (Forward); Left = glm::normalize (Left);
+
+		if (Input::GetKey (InputKey::W)) {
+			velocity += Forward * cameraVelocity * Time::GetDeltaTime();
+		}
+
+		if (Input::GetKey (InputKey::S)) {
+			velocity -= Forward * cameraVelocity * Time::GetDeltaTime();
+		}
+
+		if (Input::GetKey (InputKey::A)) {
+			velocity += Left * cameraVelocity * Time::GetDeltaTime();
+		}
+
+		if (Input::GetKey (InputKey::D)) {
+			velocity -= Left * cameraVelocity * Time::GetDeltaTime();
+		}
+
+		glm::vec3 camPos = camera->GetPosition () + velocity;
+		camera->SetPosition (camPos);
+	}
 
 	glm::ivec2 mousePosition = Input::GetMousePosition ();
 
 	if (Input::GetMouseButtonUp (MOUSE_BUTTON_RIGHT)) {
 		rightButtonDown = false;
+
+		SaveCameraState (camera);
 
 		Cursor::Show ();
 	}
@@ -107,4 +127,39 @@ void EditorCamera::Show ()
 		camera->Rotate (_pitch, glm::vec3 (0.0f, 1.0f, 0.0f));
 		camera->Rotate (_yaw, glm::vec3(1.0f, 0.0f, 0.0f));
 	}
+}
+
+void EditorCamera::InitCameraState (Camera* camera)
+{
+	glm::vec3 cameraPosition = SettingsManager::Instance()->GetValue <glm::vec3>(
+		"Scene", "camera_position", glm::vec3(0.0f)
+	);
+
+	glm::vec3 cameraRotation = SettingsManager::Instance()->GetValue <glm::vec3>(
+		"Scene", "camera_rotation", glm::vec3(0.0f)
+	);
+
+	camera->SetPosition (cameraPosition);
+
+	_pitch = cameraRotation.x;
+	_yaw = cameraRotation.y;
+
+	camera->SetRotation (glm::quat ());
+	camera->Rotate (_pitch, glm::vec3 (0.0f, 1.0f, 0.0f));
+	camera->Rotate (_yaw, glm::vec3(1.0f, 0.0f, 0.0f));
+}
+
+void EditorCamera::SaveCameraState (const Camera* camera)
+{
+	const glm::vec3& cameraPosition = camera->GetPosition ();
+
+	SettingsManager::Instance ()->SetValue <glm::vec3> (
+		"Scene", "camera_position", cameraPosition
+	);
+
+	glm::vec3 cameraRotation = glm::vec3 (_pitch, _yaw, 0.0f);
+
+	SettingsManager::Instance ()->SetValue <glm::vec3> (
+		"Scene", "camera_rotation", cameraRotation
+	);
 }

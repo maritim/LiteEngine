@@ -33,6 +33,7 @@
 */
 
 #include "Savers/PNGSaver.h"
+#include "Savers/SettingsSaver.h"
 
 /*
  * Load
@@ -351,6 +352,17 @@ bool Resources::SavePNG (const Resource<Texture>& texture, const std::string& fi
 	bool saveResult = pngSaver->Save (&*texture, filename);
 
 	delete pngSaver;
+
+	return saveResult;
+}
+
+bool Resources::SaveSettings (SettingsContainer* settingsContainer, const std::string& filename)
+{
+	SettingsSaver* settingsSaver = new SettingsSaver ();
+
+	bool saveResult = settingsSaver->Save (settingsContainer, filename);
+
+	delete settingsSaver;
 
 	return saveResult;
 }

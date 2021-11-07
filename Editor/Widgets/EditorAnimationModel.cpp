@@ -10,10 +10,9 @@
 // #include "SceneNodes/AnimationGameObject.h"
 
 #include "Systems/Window/Window.h"
+#include "Systems/Settings/SettingsManager.h"
 
 #include "Managers/SceneManager.h"
-
-#include "Systems/Settings/SettingsManager.h"
 
 EditorAnimationModel::EditorAnimationModel () :
 	_currentAnimIndex (0),
@@ -25,7 +24,7 @@ EditorAnimationModel::EditorAnimationModel () :
 
 void EditorAnimationModel::Show ()
 {
-	bool visible = SettingsManager::Instance ()->GetValue<bool> ("menu_show_animation_settings", false);
+	bool visible = SettingsManager::Instance ()->GetValue<bool> ("Menu", "show_animation_settings", false);
 
 	if (visible == true) {
 		ShowAnimationsWindow ();

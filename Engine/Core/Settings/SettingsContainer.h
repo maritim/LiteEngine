@@ -6,32 +6,54 @@
 #include <map>
 #include <string>
 #include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <SimpleIni/SimpleIni.h>
 
 class ENGINE_API SettingsContainer : public Object
 {
 private:
-	std::map<std::string, std::string> _hash;
+	SimpleIni _settings;
 
 public:
-	void SetValue (const std::string& key, const std::string& value);
+	SettingsContainer (const SimpleIni& settings);
 
 	template <class T>
-	T GetValue (const std::string& key, T defaultValue);
+	void SetValue(const std::string& section, const std::string& key, const T& value);
+
+	template <class T>
+	T GetValue (const std::string& section, const std::string& key, const T& defaultValue);
+
+	SimpleIni& GetSettings ();
 };
 
-template <>
-std::string ENGINE_API SettingsContainer::GetValue (const std::string& key, std::string defaultValue);
+template <class T>
+void SettingsContainer::SetValue (const std::string& section, const std::string& key, const T& value)
+{
+	_settings.SetValue<T> (section, key, value);
+}
+
+template <class T>
+T SettingsContainer::GetValue(const std::string& section, const std::string& key, const T& defaultValue)
+{
+	return _settings.GetValue<T> (section, key, defaultValue);
+}
 
 template <>
-int ENGINE_API SettingsContainer::GetValue (const std::string& key, int defaultValue);
+void ENGINE_API SettingsContainer::SetValue (const std::string& section, const std::string& key, const bool& value);
 
 template <>
-float ENGINE_API SettingsContainer::GetValue (const std::string& key, float defaultValue);
+void ENGINE_API SettingsContainer::SetValue (const std::string& section, const std::string& key, const glm::vec2& value);
 
 template <>
-bool ENGINE_API SettingsContainer::GetValue (const std::string& key, bool defaultValue);
+void ENGINE_API SettingsContainer::SetValue (const std::string& section, const std::string& key, const glm::vec3& value);
 
 template <>
-glm::vec2 ENGINE_API SettingsContainer::GetValue (const std::string& key, glm::vec2 defaultValue);
+bool ENGINE_API SettingsContainer::GetValue (const std::string& section, const std::string& key, const bool& defaultValue);
+
+template <>
+glm::vec2 ENGINE_API SettingsContainer::GetValue (const std::string& section, const std::string& key, const glm::vec2& defaultValue);
+
+template <>
+glm::vec3 ENGINE_API SettingsContainer::GetValue (const std::string& section, const std::string& key, const glm::vec3& defaultValue);
 
 #endif

@@ -107,7 +107,7 @@ bool Window::InitSettings ()
 	 * Initialize window resolution
 	*/
 
-	glm::vec2 size = SettingsManager::Instance ()->GetValue<glm::vec2> ("resolution", glm::vec2 (0, 0));
+	glm::vec2 size = SettingsManager::Instance ()->GetValue<glm::vec2> ("Window", "resolution", glm::vec2 (0, 0));
 
 	if (size.x == 0 && size.y == 0) {
 		Console::LogError ("Window resolution not specified. Could not proceed further");
@@ -121,13 +121,13 @@ bool Window::InitSettings ()
 	 * Initialize window mode
 	*/
 
-	_fullscreen = SettingsManager::Instance ()->GetValue<bool> ("fullscreen", true);
+	_fullscreen = SettingsManager::Instance ()->GetValue<bool> ("Window", "fullscreen", true);
 
 	/*
 	 * Initialize window title
 	*/
 
-	_title = SettingsManager::Instance ()->GetValue<std::string> ("title", "");
+	_title = SettingsManager::Instance ()->GetValue<std::string> ("Window", "title", "");
 
 	return true;
 }

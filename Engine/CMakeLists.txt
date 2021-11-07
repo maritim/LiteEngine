@@ -19,6 +19,9 @@ else(NOT MSVC)
 	add_compile_options(/MP)
 endif(NOT MSVC)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 file (GLOB_RECURSE LiteEngineSourceFiles *)
 
 file (GLOB_RECURSE LiteEngineComponentHeaderFiles Components/*.h)
@@ -53,8 +56,7 @@ target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/Engine)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/ImGui)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/glm)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/spdlog)
-
-target_link_libraries (LiteEngine ImGui)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SimpleIni)
 
 # OpenAL
 
@@ -130,6 +132,7 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
             ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/SDL2_image.dll
             ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/zlib1.dll
 			$<TARGET_FILE:ImGui>
+			$<TARGET_FILE:SimpleIni>
 
             # Destination directory
             $<TARGET_FILE_DIR:LiteEngine>
@@ -145,7 +148,8 @@ target_link_libraries (LiteEngine
 	${OPENAL_LIBRARY}
 	${assimp}
 	${BULLET_LIBRARIES}
-	${ImGui}
+	ImGui
+	SimpleIni
 )
 
 if(NOT MSVC)

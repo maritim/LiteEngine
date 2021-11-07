@@ -19,6 +19,9 @@ else(NOT MSVC)
 	add_compile_options(/MP)
 endif(NOT MSVC)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 file (GLOB_RECURSE GameSourceFiles *)
 
 file (GLOB_RECURSE GameComponentHeaderFiles Components/*.h)
@@ -40,6 +43,7 @@ target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/Templates/Game
 target_include_directories (GameBase PRIVATE ${PROJECT_SOURCE_DIR}/Engine)
 target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/ImGui)
 target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/glm)
+target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SimpleIni)
 
 target_link_libraries (GameBase ImGui)
 
