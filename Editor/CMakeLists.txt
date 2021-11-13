@@ -74,13 +74,17 @@ endif(MSVC)
 target_link_libraries (LiteEditor LiteEngine)
 
 if(NOT MSVC)
-	if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 		target_link_libraries (LiteEditor stdc++fs)
-	endif(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+	endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	
 	target_compile_definitions (LiteEditor PRIVATE "ENGINE_API=")
 else(NOT MSVC)
 	target_compile_definitions (LiteEditor PRIVATE "ENGINE_API=__declspec(dllimport)")
 endif(NOT MSVC)
+
+if(APPLE)
+	target_link_options(LiteEditor PRIVATE -undefined dynamic_lookup)
+endif(APPLE)
 
 target_compile_definitions (LiteEditor PRIVATE GLM_ENABLE_EXPERIMENTAL)

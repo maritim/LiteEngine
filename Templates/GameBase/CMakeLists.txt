@@ -93,4 +93,8 @@ else(NOT MSVC)
 	target_compile_definitions (GameBase PRIVATE "GAME_API=__declspec(dllexport)")
 endif(NOT MSVC)
 
+if(APPLE)
+	target_link_options(GameBase PRIVATE -undefined dynamic_lookup)
+endif(APPLE)
+
 target_compile_definitions (GameBase PRIVATE GLM_ENABLE_EXPERIMENTAL)

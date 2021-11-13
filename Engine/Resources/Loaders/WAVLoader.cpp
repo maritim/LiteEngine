@@ -1,6 +1,6 @@
 #include "WAVLoader.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) or defined(__APPLE__)
 	#include <SDL2/SDL_audio.h>
 #else
 	#include <SDL/SDL_audio.h>
