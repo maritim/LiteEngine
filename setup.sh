@@ -79,6 +79,11 @@ function InstallDependenciesDarwin
 	done
 }
 
+function InstallDependenciesFreeBSD
+{
+	pkg install sdl2 sdl2_image sdl_sound openal-soft bullet glew assimp
+}
+
 # Main
 
 if [[ `uname` == "Linux" ]]; then
@@ -98,5 +103,9 @@ if [[ `uname` == "Linux" ]]; then
 elif [[ `uname` == "Darwin"* ]]; then
 	
 	InstallDependenciesDarwin
+
+elif [[ `uname` == "FreeBSD" ]]; then
+
+	InstallDependenciesFreeBSD
 
 fi
