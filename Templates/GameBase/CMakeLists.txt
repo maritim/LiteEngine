@@ -83,12 +83,12 @@ if(MSVC)
 	group_src (${GameSourceFiles})
 endif(MSVC)
 
+target_link_libraries (GameBase LiteEngine)
+
 if(NOT MSVC)
 	target_compile_definitions (GameBase PRIVATE ENGINE_API=)
 	target_compile_definitions (GameBase PRIVATE GAME_API=)
 else(NOT MSVC)
-	target_link_libraries (GameBase LiteEngine)
-
 	target_compile_definitions (GameBase PRIVATE "ENGINE_API=__declspec(dllimport)")
 	target_compile_definitions (GameBase PRIVATE "GAME_API=__declspec(dllexport)")
 endif(NOT MSVC)

@@ -2,7 +2,7 @@
 
 #ifdef _WIN32
 	#include <SDL2/SDL_audio.h>
-#elif defined(__linux__)
+#else
 	#include <SDL/SDL_audio.h>
 #endif
 

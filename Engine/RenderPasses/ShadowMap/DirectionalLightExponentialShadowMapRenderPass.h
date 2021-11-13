@@ -11,7 +11,11 @@ protected:
 public:
 	DirectionalLightExponentialShadowMapRenderPass ();
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
 	void Init ();
+#pragma clang diagnostic pop
+	
 protected:
 	std::vector<PipelineAttribute> GetCustomAttributes () const;
 

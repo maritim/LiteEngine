@@ -70,7 +70,7 @@ public:
 	int GetLines () const;
 	int GetColumns () const;
 
-	std::string ToString () const;
+	std::string ToString ();
 };
 
 #endif

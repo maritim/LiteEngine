@@ -11,7 +11,7 @@ endif (NOT CMAKE_BUILD_TYPE)
 set (CMAKE_CXX_STANDARD 17)
 
 if(NOT MSVC)
-	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g2 -O0 -Wall -Werror -rdynamic")
+	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g2 -O0 -Wall -Werror")
 	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g0 -Wall -Werror -march=native -mtune=native -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -foptimize-strlen -ftree-loop-distribution -ftree-loop-distribute-patterns -ffast-math -flto")
 else(NOT MSVC)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /nologo /DNOMINMAX /D_CRT_SECURE_NO_WARNINGS /D_DEBUG /GS /Zi /debug")
@@ -71,13 +71,15 @@ if(MSVC)
 	group_src (${LiteEditorSourceFiles})
 endif(MSVC)
 
-if(NOT MSVC)
-	target_link_libraries (LiteEditor stdc++fs)
+target_link_libraries (LiteEditor LiteEngine)
 
+if(NOT MSVC)
+	if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+		target_link_libraries (LiteEditor stdc++fs)
+	endif(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+	
 	target_compile_definitions (LiteEditor PRIVATE "ENGINE_API=")
 else(NOT MSVC)
-	target_link_libraries (LiteEditor LiteEngine)
-
 	target_compile_definitions (LiteEditor PRIVATE "ENGINE_API=__declspec(dllimport)")
 endif(NOT MSVC)
 

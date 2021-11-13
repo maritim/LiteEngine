@@ -25,8 +25,11 @@ public:
 	ExponentialShadowMapBlurRenderPass ();
 	~ExponentialShadowMapBlurRenderPass ();
 
-	void Init ();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Woverloaded-virtual"
+	void Init ();	
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera, RenderVolumeCollection* rvc);
+#pragma clang diagnostic pop
 
 	void Notify (Object* sender, const SettingsObserverArgs& args);
 

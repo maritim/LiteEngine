@@ -156,13 +156,15 @@ if(NOT MSVC)
 	target_link_libraries (LiteEngine dl)
 endif(NOT MSVC)
 
+SET_TARGET_PROPERTIES(LiteEngine PROPERTIES ENABLE_EXPORTS TRUE)
+
 if(NOT MSVC)
-	target_link_libraries (LiteEngine stdc++fs)
+	if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+		target_link_libraries (LiteEditor stdc++fs)
+	endif(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
 	target_compile_definitions (LiteEngine PRIVATE ENGINE_API=)
 else(NOT MSVC)
-	SET_TARGET_PROPERTIES(LiteEngine PROPERTIES ENABLE_EXPORTS TRUE)
-
 	target_compile_definitions (LiteEngine PRIVATE "ENGINE_API=__declspec(dllexport)")
 endif(NOT MSVC)
 
