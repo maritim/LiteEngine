@@ -30,9 +30,15 @@ bool Window::Init ()
 	 * Create Window with SDL so MUST include SDL_WINDOW_OPENGL to use OpenGL
 	*/
 
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+
+#ifndef __APPLE__
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-	
+#else
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+#endif
+
 	std::size_t windowFlags = SDL_WINDOW_OPENGL | (_fullscreen ? SDL_WINDOW_FULLSCREEN : 0) |
 		SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED;
 

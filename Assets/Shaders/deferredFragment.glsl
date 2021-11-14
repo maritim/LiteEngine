@@ -42,16 +42,16 @@ void main()
 	 * Apply gamma on diffuse map
 	*/
 
-	vec3 srgbDiffuseMap = pow (vec3 (texture2D (DiffuseMap, geom_texcoord.xy)), vec3 (gamma));
+	vec3 srgbDiffuseMap = pow (vec3 (texture (DiffuseMap, geom_texcoord.xy)), vec3 (gamma));
 
 	/*
 	 * Get color of all used texture maps
 	*/
 
 	vec3 diffuseMap = MaterialDiffuse * srgbDiffuseMap;
-	vec3 specularMap = MaterialSpecular * vec3 (texture2D (SpecularMap, geom_texcoord.xy));
-	vec3 emissiveMap = MaterialEmissive * vec3 (texture2D (EmissiveMap, geom_texcoord.xy));
-	vec3 alphaMap = vec3 (texture2D (AlphaMap, geom_texcoord.xy));
+	vec3 specularMap = MaterialSpecular * vec3 (texture (SpecularMap, geom_texcoord.xy));
+	vec3 emissiveMap = MaterialEmissive * vec3 (texture (EmissiveMap, geom_texcoord.xy));
+	vec3 alphaMap = vec3 (texture (AlphaMap, geom_texcoord.xy));
 
 	/*
 	 * Check alpha texture

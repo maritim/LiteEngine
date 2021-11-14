@@ -48,7 +48,7 @@ vec3 CalcHighDynamicRange (vec3 in_diffuse)
 void main ()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_diffuse = texture2D (postProcessMap, texCoord).xyz;
+	vec3 in_diffuse = texture (postProcessMap, texCoord).xyz;
 
 	out_color = CalcHighDynamicRange (in_diffuse);
 }

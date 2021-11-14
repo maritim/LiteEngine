@@ -31,8 +31,8 @@ void main()
 	 * Get color of diffuse and alpha map
 	*/
 
-	vec3 diffuseMap = MaterialDiffuse * vec3 (texture2D (DiffuseMap, vert_texcoord.xy));
-	vec3 alphaMap = vec3 (texture2D (AlphaMap, vert_texcoord.xy));
+	vec3 diffuseMap = MaterialDiffuse * vec3 (texture (DiffuseMap, vert_texcoord.xy));
+	vec3 alphaMap = vec3 (texture (AlphaMap, vert_texcoord.xy));
 
 	/*
 	 * Check alpha texture

@@ -73,7 +73,7 @@ vec3 CalcIndirectRefractiveLight (vec3 in_position, vec3 in_normal, float in_ref
 
 	vec2 reflectionPos = CalcRSMSubsurfaceScattering (worldPosition, worldNormal, in_refractiveIndex);
 
-	vec3 reflectionColor = texture2D (rsmFluxMap, reflectionPos).xyz;
+	vec3 reflectionColor = texture(rsmFluxMap, reflectionPos).xyz;
 
 	if (dot (reflectionPos, reflectionPos) == 0) {
 		return vec3 (0);

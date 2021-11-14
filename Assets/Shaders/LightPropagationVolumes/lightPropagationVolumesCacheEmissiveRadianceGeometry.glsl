@@ -86,7 +86,7 @@ void GenerateVPL (int iteration)
 			r1 * (1 - r2) * vert_texcoord [1] +
 			r1 * r2 * vert_texcoord [2];
 
-		emissiveMap = emissiveMap * vec3 (texture2D (EmissiveMap, texcoord.xy));
+		emissiveMap = emissiveMap * vec3 (texture (EmissiveMap, texcoord.xy));
 	}
 
 	vplSample.flux.rgb = emissiveMap;

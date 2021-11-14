@@ -37,7 +37,7 @@ float CalcBlur (vec2 texCoord)
 	for (int x = -2; x < 2; ++x) {
 		for (int y = -2; y < 2; ++y) {
 			vec2 offset = vec2 (float(x), float(y)) * texelSize;
-			color += texture2D (ambientOcclusionMap, texCoord + offset).r;
+			color += texture (ambientOcclusionMap, texCoord + offset).r;
 		}
 	}
 

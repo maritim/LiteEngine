@@ -50,15 +50,15 @@ in vec4 texcoord;
 
 void main()
 {
-	float alphaMap = MaterialTransparency * texture2D (AlphaMap, texcoord.xy).x;
+	float alphaMap = MaterialTransparency * texture (AlphaMap, texcoord.xy).x;
 
 	if (alphaMap == 0) {
 		discard;
 	}
 
-	vec3 ambientMap = vec3 (texture2D (AmbientMap, texcoord.xy));
-	vec3 diffuseMap = vec3 (texture2D (DiffuseMap, 	texcoord.xy));
-	vec3 specularMap = vec3 (texture2D (SpecularMap, texcoord.xy));
+	vec3 ambientMap = vec3 (texture (AmbientMap, texcoord.xy));
+	vec3 diffuseMap = vec3 (texture (DiffuseMap, 	texcoord.xy));
+	vec3 specularMap = vec3 (texture (SpecularMap, texcoord.xy));
 
 	// ambient lightDirection
 	vec3 totalLighting = vec3 (MaterialAmbient) * ambientMap * sceneAmbient;

@@ -32,8 +32,8 @@ vec2 CalcTexCoord()
 void main ()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_diffuse = texture2D (postProcessMap, texCoord).xyz;
-	vec3 in_blur = texture2D (blurMap, texCoord).xyz;
+	vec3 in_diffuse = texture (postProcessMap, texCoord).xyz;
+	vec3 in_blur = texture (blurMap, texCoord).xyz;
 
 	out_color = in_diffuse + in_blur * bloomIntensity;
 }

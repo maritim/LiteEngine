@@ -104,7 +104,7 @@ float CalcRSMAmbientOcclusion (vec3 in_position, vec3 in_normal, vec2 texCoord, 
 			continue;
 		}
 
-		vec3 samplePos = texture2D (rsmPositionMap, offset.xy).xyz;
+		vec3 samplePos = texture (rsmPositionMap, offset.xy).xyz;
 
 		float rangeCheck = smoothstep (0.0, 1.0, ssaoRadius / abs (lightViewSpacePos.z - samplePos.z));
 

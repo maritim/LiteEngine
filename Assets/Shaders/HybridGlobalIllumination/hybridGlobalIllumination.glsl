@@ -82,7 +82,7 @@ vec3 CalcViewHGIIndirectDiffuseLight (in vec3 viewPosition, in vec3 viewNormal)
 			continue;
 		}
 
-		vec3 rsmLightViewSpacePos = texture2D (rsmPositionMap, coords.xy).xyz;
+		vec3 rsmLightViewSpacePos = texture (rsmPositionMap, coords.xy).xyz;
 
 		float sampleDistance = distance (lightViewSpacePos, rsmLightViewSpacePos);
 
@@ -90,8 +90,8 @@ vec3 CalcViewHGIIndirectDiffuseLight (in vec3 viewPosition, in vec3 viewNormal)
 			continue;
 		}
 
-		vec3 rsmLightViewSpaceNormal = texture2D (rsmNormalMap, coords.xy).xyz;
-		vec3 rsmFlux = texture2D (rsmFluxMap, coords.xy).xyz;
+		vec3 rsmLightViewSpaceNormal = texture (rsmNormalMap, coords.xy).xyz;
+		vec3 rsmFlux = texture (rsmFluxMap, coords.xy).xyz;
 
 		vec3 result = rsmFlux *
 			((max (0.0, dot (rsmLightViewSpaceNormal, lightViewSpacePos - rsmLightViewSpacePos))

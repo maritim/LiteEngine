@@ -29,7 +29,7 @@ vec3 CalcClampNeighbourhood (const in sampler2D currentMap, const in vec2 screen
 
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
-			vec3 color = texture2D (currentMap, texCoord + vec2 (i, j) * texelSize).xyz;
+			vec3 color = texture (currentMap, texCoord + vec2 (i, j) * texelSize).xyz;
 
 			color_min = min (color_min, color);
 			color_max = max (color_max, color);
@@ -52,7 +52,7 @@ vec3 CalcClipNeighbourhood (const in sampler2D currentMap, const in vec2 resolut
 
 	for (int i = -1; i <= 1; i++) {
 		for (int j = -1; j <= 1; j++) {
-			vec3 color = texture2D (currentMap, texCoord + vec2 (i, j) * texelSize).xyz;
+			vec3 color = texture (currentMap, texCoord + vec2 (i, j) * texelSize).xyz;
 			color = RGBToYCoCg (color);
 
 			color_min = min (color_min, color);
@@ -99,7 +99,7 @@ float CalcBlendFactor (const in vec3 currentColor, const in vec3 historyColor)
 vec3 CalcTemporalFiltering (const in sampler2D temporalFilterMap, const in sampler2D postProcessMap,
 	const in vec2 resolution, const in vec3 in_position, const in vec2 texCoord, bool unjitter)
 {
-	vec3 currentFrameColor = texture2D (postProcessMap, unjitter ? CalcUnjitterTexCoord (texCoord) : texCoord).xyz;
+	vec3 currentFrameColor = texture (postProcessMap, unjitter ? CalcUnjitterTexCoord (texCoord) : texCoord).xyz;
 
 	vec2 lastFrameTexCoord = CalcReprojectedTexCoord (in_position, texCoord);
 
@@ -110,7 +110,7 @@ vec3 CalcTemporalFiltering (const in sampler2D temporalFilterMap, const in sampl
 		return currentFrameColor;
 	}
 
-	vec4 temporalFilterColor = texture2D (temporalFilterMap, lastFrameTexCoord);
+	vec4 temporalFilterColor = texture (temporalFilterMap, lastFrameTexCoord);
 
 	vec3 clampedTemporalFilterColor = CalcClipNeighbourhood (postProcessMap,
 		resolution, temporalFilterColor.xyz, texCoord);
