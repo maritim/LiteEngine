@@ -1,6 +1,6 @@
 #include "BoxColliderComponent.h"
 
-#include <bullet/BulletCollision/CollisionShapes/btBoxShape.h>
+#include <BulletCollision/CollisionShapes/btBoxShape.h>
 
 #include "SceneGraph/SceneObject.h"
 

@@ -44,16 +44,9 @@ target_include_directories (GameBase PRIVATE ${PROJECT_SOURCE_DIR}/Engine)
 target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/ImGui)
 target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/glm)
 target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SimpleIni)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/src)
 
 target_link_libraries (GameBase ImGui)
-
-if(NOT MSVC)
-	find_package (Bullet REQUIRED)
-	
-	target_include_directories (GameBase PUBLIC ${BULLET_INCLUDE_DIRS})
-else(NOT MSVC)
-	target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/include)
-endif(NOT MSVC)
 
 if(MSVC)
 	target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/include)

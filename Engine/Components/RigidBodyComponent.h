@@ -3,7 +3,7 @@
 
 #include "Systems/Components/Component.h"
 
-#include <bullet/BulletDynamics/Dynamics/btRigidBody.h>
+#include <BulletDynamics/Dynamics/btRigidBody.h>
 
 #include "Components/Collision/ColliderComponent.h"
 

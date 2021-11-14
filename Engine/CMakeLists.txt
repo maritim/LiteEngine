@@ -65,6 +65,7 @@ target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/ImG
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/glm)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/spdlog)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SimpleIni)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/src)
 
 # OpenAL
 
@@ -76,22 +77,6 @@ else(NOT MSVC)
 	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/OpenAL/include)
 
 	find_library (OPENAL_LIBRARY NAMES OpenAL OpenAL32 HINTS ${PROJECT_SOURCE_DIR}/3rdparty/OpenAL/lib)
-endif(NOT MSVC)
-
-if(NOT MSVC)
-	find_package (Bullet REQUIRED)
-	
-	target_include_directories (LiteEngine PUBLIC ${BULLET_INCLUDE_DIRS})
-else(NOT MSVC)
-	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/include)
-	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/include/bullet)
-
-	find_library (BULLET_LIBRARY_COLLISION NAMES BulletCollision HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
-	find_library (BULLET_LIBRARY_DYNAMICS NAMES BulletDynamics HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
-	find_library (BULLET_LIBRARY_SOFTBODY NAMES BulletSoftBody HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
-	find_library (BULLET_LIBRARY_LINEARMATH NAMES LinearMath HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
-
-	set (BULLET_LIBRARIES ${BULLET_LIBRARY_COLLISION} ${BULLET_LIBRARY_DYNAMICS} ${BULLET_LIBRARY_SOFTBODY} ${BULLET_LIBRARY_LINEARMATH})
 endif(NOT MSVC)
 
 if(MSVC)
@@ -155,7 +140,10 @@ target_link_libraries (LiteEngine
 	${SDL_SOUND_LIBRARIES}
 	${OPENAL_LIBRARY}
 	${assimp}
-	${BULLET_LIBRARIES}
+	BulletCollision
+	BulletDynamics
+	BulletSoftBody
+	LinearMath
 	ImGui
 	SimpleIni
 )

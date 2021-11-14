@@ -1,7 +1,7 @@
 #ifndef BULLETDEBUGDRAW_H
 #define BULLETDEBUGDRAW_H
 
-#include "bullet/LinearMath/btIDebugDraw.h"
+#include "LinearMath/btIDebugDraw.h"
 
 class BulletDebugDraw : public btIDebugDraw
 {

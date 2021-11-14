@@ -3,8 +3,8 @@
 
 #include "Systems/Components/Component.h"
 
-#include <bullet/BulletCollision/CollisionShapes/btCollisionShape.h>
-#include <bullet/BulletCollision/CollisionDispatch/btCollisionObject.h>
+#include <BulletCollision/CollisionShapes/btCollisionShape.h>
+#include <BulletCollision/CollisionDispatch/btCollisionObject.h>
 #include <glm/vec3.hpp>
 
 #include "Core/Resources/Resource.h"
