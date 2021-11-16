@@ -58,7 +58,6 @@ find_library (GLEW NAMES GLEW glew32 HINTS ${PROJECT_SOURCE_DIR}/3rdparty/GLEW/l
 find_library (SDL2 NAMES SDL2 HINTS ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/lib)
 find_library (SDL2_image NAMES SDL2_image HINTS ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/lib)
 find_library (SDL_sound NAMES SDL_sound HINTS ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/lib)
-find_library (assimp NAMES assimp HINTS ${PROJECT_SOURCE_DIR}/3rdparty/assimp/lib)
 
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/Engine)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/ImGui)
@@ -66,6 +65,7 @@ target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/glm
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/spdlog)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SimpleIni)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/src)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/assimp/include)
 
 # OpenAL
 
@@ -80,7 +80,6 @@ else(NOT MSVC)
 endif(NOT MSVC)
 
 if(MSVC)
-	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/assimp/include)
 	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/OpenAL/include)
 	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/GLEW/include)
 	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/include)
@@ -114,7 +113,6 @@ endif(MSVC)
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     add_custom_command(TARGET LiteEngine POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${PROJECT_SOURCE_DIR}/3rdparty/assimp/bin/assimp.dll
             ${PROJECT_SOURCE_DIR}/3rdparty/GLEW/bin/glew32.dll
             ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/libjpeg-9.dll
             ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/libpng16-16.dll
@@ -139,7 +137,7 @@ target_link_libraries (LiteEngine
 	${SDL2_image}
 	${SDL_SOUND_LIBRARIES}
 	${OPENAL_LIBRARY}
-	${assimp}
+	assimp
 	BulletCollision
 	BulletDynamics
 	BulletSoftBody

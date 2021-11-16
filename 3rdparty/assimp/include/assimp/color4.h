@@ -3,7 +3,9 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2016, assimp team
+Copyright (c) 2006-2019, assimp team
+
+
 
 All rights reserved.
 
@@ -45,7 +47,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef AI_COLOR4D_H_INC
 #define AI_COLOR4D_H_INC
 
-#include "./Compiler/pushpack1.h"
 #include "defs.h"
 
 #ifdef __cplusplus
@@ -58,12 +59,11 @@ template <typename TReal>
 class aiColor4t
 {
 public:
-    aiColor4t () : r(), g(), b(), a() {}
+    aiColor4t() AI_NO_EXCEPT : r(), g(), b(), a() {}
     aiColor4t (TReal _r, TReal _g, TReal _b, TReal _a)
         : r(_r), g(_g), b(_b), a(_a) {}
     explicit aiColor4t (TReal _r) : r(_r), g(_r), b(_r), a(_r) {}
-    aiColor4t (const aiColor4t& o)
-        : r(o.r), g(o.g), b(o.b), a(o.a) {}
+    aiColor4t (const aiColor4t& o) = default;
 
 public:
     // combined operators
@@ -89,7 +89,7 @@ public:
 
     // Red, green, blue and alpha color values
     TReal r, g, b, a;
-} PACK_STRUCT;  // !struct aiColor4D
+};  // !struct aiColor4D
 
 typedef aiColor4t<ai_real> aiColor4D;
 
@@ -97,10 +97,8 @@ typedef aiColor4t<ai_real> aiColor4D;
 
 struct aiColor4D {
     ai_real r, g, b, a;
-} PACK_STRUCT;
+};
 
 #endif // __cplusplus
-
-#include "./Compiler/poppack1.h"
 
 #endif // AI_COLOR4D_H_INC
