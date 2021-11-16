@@ -66,6 +66,7 @@ target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/spd
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SimpleIni)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/src)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/assimp/include)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/tinyxml2)
 
 # OpenAL
 
@@ -144,6 +145,7 @@ target_link_libraries (LiteEngine
 	LinearMath
 	ImGui
 	SimpleIni
+	tinyxml2
 )
 
 if(NOT MSVC)

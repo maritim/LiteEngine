@@ -4,15 +4,17 @@
 
 #include "Utils/Extensions/StringExtend.h"
 
+using namespace tinyxml2;
+
 Object* RenderSettingsLoader::Load (const std::string& filename)
 {
-	TiXmlDocument doc;
-	if(!doc.LoadFile(filename.c_str ())) {
-		Console::LogError (filename + " has error in its syntax. Could not preceed further.");
+	XMLDocument doc;
+	if(doc.LoadFile(filename.c_str ()) != XML_SUCCESS) {
+		Console::LogError (filename + " has error(s) in its syntax. Cannot proceed further.");
 		return nullptr;
 	}
 
-	TiXmlElement* root = doc.FirstChildElement ("RenderSettings");
+	XMLElement* root = doc.FirstChildElement ("RenderSettings");
 
 	if (root == nullptr) {
 		return nullptr;
@@ -20,7 +22,7 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 
 	RenderSettings* settings = new RenderSettings ();
 
-	TiXmlElement* content = root->FirstChildElement ();
+	XMLElement* content = root->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
@@ -87,14 +89,14 @@ Object* RenderSettingsLoader::Load (const std::string& filename)
 	return settings;
 }
 
-void RenderSettingsLoader::ProcessRenderMode (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessRenderMode (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string renderMode = xmlElem->Attribute ("mode");
 
 	settings->renderMode = renderMode;
 }
 
-void RenderSettingsLoader::ProcessGeneral (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessGeneral (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string indirectDiffuseEnabled = xmlElem->Attribute ("indirectDiffuseEnabled");
 	std::string indirectSpecularEnabled = xmlElem->Attribute ("indirectSpecularEnabled");
@@ -105,7 +107,7 @@ void RenderSettingsLoader::ProcessGeneral (TiXmlElement* xmlElem, RenderSettings
 	settings->subsurface_scattering_enabled = Extensions::StringExtend::ToBool (subsurfaceScatteringEnabled);
 }
 
-void RenderSettingsLoader::ProcessSSAO (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessSSAO (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
 	std::string scale = xmlElem->Attribute ("scale");
@@ -126,7 +128,7 @@ void RenderSettingsLoader::ProcessSSAO (TiXmlElement* xmlElem, RenderSettings* s
 	settings->ssao_temporal_filter_enabled = Extensions::StringExtend::ToBool (temporalFilterEnabled);
 }
 
-void RenderSettingsLoader::ProcessSSDO (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessSSDO (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
 	std::string temporalFilterEnabled = xmlElem->Attribute ("temporalFilterEnabled");
@@ -161,7 +163,7 @@ void RenderSettingsLoader::ProcessSSDO (TiXmlElement* xmlElem, RenderSettings* s
 	settings->ssdo_min_interpolation_angle = std::stof (minInterpolationAngle);
 }
 
-void RenderSettingsLoader::ProcessSSR (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessSSR (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
 	std::string scale = xmlElem->Attribute ("scale");
@@ -180,14 +182,14 @@ void RenderSettingsLoader::ProcessSSR (TiXmlElement* xmlElem, RenderSettings* se
 	settings->ssr_intensity = std::stof (intensity);
 }
 
-void RenderSettingsLoader::ProcessTAA (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessTAA (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
 
 	settings->taa_enabled = Extensions::StringExtend::ToBool (enabled);
 }
 
-void RenderSettingsLoader::ProcessVolLighting (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessVolLighting (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
 	std::string iterations = xmlElem->Attribute ("iterations");
@@ -200,7 +202,7 @@ void RenderSettingsLoader::ProcessVolLighting (TiXmlElement* xmlElem, RenderSett
 	settings->vol_lighting_intensity = std::stof (intensity);
 }
 
-void RenderSettingsLoader::ProcessLightShafts (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessLightShafts (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
 	std::string iterations = xmlElem->Attribute ("iterations");
@@ -217,7 +219,7 @@ void RenderSettingsLoader::ProcessLightShafts (TiXmlElement* xmlElem, RenderSett
 	settings->light_shafts_intensity = std::stof (intensity);
 }
 
-void RenderSettingsLoader::ProcessBloom (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessBloom (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
 	std::string scale = xmlElem->Attribute ("scale");
@@ -230,7 +232,7 @@ void RenderSettingsLoader::ProcessBloom (TiXmlElement* xmlElem, RenderSettings* 
 	settings->bloom_intensity = std::stof (intensity);
 }
 
-void RenderSettingsLoader::ProcessHDR (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessHDR (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
 	std::string exposure = xmlElem->Attribute ("exposure");
@@ -239,7 +241,7 @@ void RenderSettingsLoader::ProcessHDR (TiXmlElement* xmlElem, RenderSettings* se
 	settings->hdr_exposure = std::stof (exposure);
 }
 
-void RenderSettingsLoader::ProcessLUT (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessLUT (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
 	std::string path = xmlElem->Attribute ("path");
@@ -250,14 +252,14 @@ void RenderSettingsLoader::ProcessLUT (TiXmlElement* xmlElem, RenderSettings* se
 	settings->lut_intensity = std::stof (intensity);
 }
 
-void RenderSettingsLoader::ProcessGamma (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessGamma (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string enabled = xmlElem->Attribute ("enabled");
 
 	settings->gamma_enabled = Extensions::StringExtend::ToBool (enabled);
 }
 
-void RenderSettingsLoader::ProcessRSM (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessRSM (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string scale = xmlElem->Attribute ("scale");
 	std::string samples = xmlElem->Attribute ("samples");
@@ -286,7 +288,7 @@ void RenderSettingsLoader::ProcessRSM (TiXmlElement* xmlElem, RenderSettings* se
 	settings->rsm_min_interpolation_angle = std::stof (minInterpolationAngle);
 }
 
-void RenderSettingsLoader::ProcessTRSM (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessTRSM (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string samples = xmlElem->Attribute ("samples");
 	std::string indirectDiffuseIntensity = xmlElem->Attribute ("indirectDiffuseIntensity");
@@ -299,7 +301,7 @@ void RenderSettingsLoader::ProcessTRSM (TiXmlElement* xmlElem, RenderSettings* s
 	settings->trsm_blur_enabled = Extensions::StringExtend::ToBool (blurEnabled);
 }
 
-void RenderSettingsLoader::ProcessLPV (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessLPV (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string volumeSize = xmlElem->Attribute ("volumeSize");
 	std::string iterations = xmlElem->Attribute ("iterations");
@@ -328,7 +330,7 @@ void RenderSettingsLoader::ProcessLPV (TiXmlElement* xmlElem, RenderSettings* se
 	settings->lpv_emissive_vpls = std::stoi (emissiveVPLs);
 }
 
-void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessVCT (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string voxelsSize = xmlElem->Attribute ("voxelsSize");
 	std::string continuousVoxelization = xmlElem->Attribute ("continuousVoxelization");
@@ -377,7 +379,7 @@ void RenderSettingsLoader::ProcessVCT (TiXmlElement* xmlElem, RenderSettings* se
 	settings->vct_temporal_filter_enabled = Extensions::StringExtend::ToBool (temporalFilterEnabled);
 }
 
-void RenderSettingsLoader::ProcessHGI (TiXmlElement* xmlElem, RenderSettings* settings)
+void RenderSettingsLoader::ProcessHGI (XMLElement* xmlElem, RenderSettings* settings)
 {
 	std::string temporalFilterEnabled = xmlElem->Attribute ("temporalFilterEnabled");
 	std::string rsmSamples = xmlElem->Attribute ("rsmSamples");

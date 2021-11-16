@@ -17,6 +17,8 @@
 
 #include "Core/Console/Console.h"
 
+using namespace tinyxml2;
+
 SceneLoader::SceneLoader ()
 {
 
@@ -31,13 +33,13 @@ SceneLoader& SceneLoader::Instance ()
 
 Scene* SceneLoader::Load (const std::string& filename)
 {
-	TiXmlDocument doc;
-	if(!doc.LoadFile(filename.c_str ())) {
-		Console::LogError (filename + " has error in its syntax. Could not preceed further.");
-		return NULL;
+	XMLDocument doc;
+	if(doc.LoadFile(filename.c_str ()) != XML_SUCCESS) {
+		Console::LogError (filename + " has error(s) in its syntax. Cannot proceed further.");
+		return nullptr;
 	}
 
-	TiXmlElement* root = doc.FirstChildElement ("Scene");
+	XMLElement* root = doc.FirstChildElement ("Scene");
 
 	if (root == NULL) {
 		return NULL;
@@ -50,7 +52,7 @@ Scene* SceneLoader::Load (const std::string& filename)
 	std::string name = root->Attribute ("name");
 	scene->SetName (name);
 
-	TiXmlElement* content = root->FirstChildElement ();
+	XMLElement* content = root->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
@@ -73,7 +75,7 @@ Scene* SceneLoader::Load (const std::string& filename)
 	return scene;
 }
 
-void SceneLoader::ProcessSkybox (TiXmlElement* xmlElem, Scene* scene)
+void SceneLoader::ProcessSkybox (XMLElement* xmlElem, Scene* scene)
 {
 	std::string skyboxPath = xmlElem->Attribute ("path");
 
@@ -82,7 +84,7 @@ void SceneLoader::ProcessSkybox (TiXmlElement* xmlElem, Scene* scene)
 	scene->SetSkybox (skybox);
 }
 
-void SceneLoader::ProcessSceneObject (TiXmlElement* xmlElem, Scene* scene)
+void SceneLoader::ProcessSceneObject (XMLElement* xmlElem, Scene* scene)
 {
 	std::string name = xmlElem->Attribute ("name");
 	std::string instanceID = xmlElem->Attribute ("instanceID");
@@ -94,7 +96,7 @@ void SceneLoader::ProcessSceneObject (TiXmlElement* xmlElem, Scene* scene)
 	sceneObject->SetInstanceID (std::stoi (instanceID));
 	sceneObject->SetActive (Extensions::StringExtend::ToBool (isActive));
 
-	TiXmlElement* content = xmlElem->FirstChildElement ();
+	XMLElement* content = xmlElem->FirstChildElement ();
 
 	while (content) 
 	{
@@ -113,7 +115,7 @@ void SceneLoader::ProcessSceneObject (TiXmlElement* xmlElem, Scene* scene)
 	scene->AttachObject (sceneObject);
 }
 
-void SceneLoader::ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene)
+void SceneLoader::ProcessParticleSystem (XMLElement* xmlElem, Scene* scene)
 {
 	std::string name = xmlElem->Attribute ("name");
 	std::string instanceID = xmlElem->Attribute ("InstanceID");
@@ -126,7 +128,7 @@ void SceneLoader::ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene)
 	partSystem->SetInstanceID (std::stoi (instanceID));
 	partSystem->SetActive (Extensions::StringExtend::ToBool (isActive));
 
-	TiXmlElement* content = xmlElem->FirstChildElement ();
+	XMLElement* content = xmlElem->FirstChildElement ();
 
 	while (content)
 	{
@@ -142,11 +144,11 @@ void SceneLoader::ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene)
 	scene->AttachObject (partSystem);
 }
 
-void SceneLoader::ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneObject* sceneObject)
+void SceneLoader::ProcessTransform (XMLElement* xmlElem, Scene* scene, SceneObject* sceneObject)
 {
 	Transform* transform = sceneObject->GetTransform ();
 
-	TiXmlElement* content = xmlElem->FirstChildElement ();
+	XMLElement* content = xmlElem->FirstChildElement ();
 
 	const char* parentID = xmlElem->Attribute ("parentID");
 	if (parentID != NULL) {
@@ -173,7 +175,7 @@ void SceneLoader::ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneOb
 	}
 }
 
-glm::vec3 SceneLoader::GetPosition (TiXmlElement* xmlElem)
+glm::vec3 SceneLoader::GetPosition (XMLElement* xmlElem)
 {
 	glm::vec3 vector3 (0.0f);
 
@@ -196,7 +198,7 @@ glm::vec3 SceneLoader::GetPosition (TiXmlElement* xmlElem)
 	return vector3;
 }
 
-glm::quat SceneLoader::GetRotation (TiXmlElement* xmlElem)
+glm::quat SceneLoader::GetRotation (XMLElement* xmlElem)
 {
 	/*
 	 * The rotation data extracted from scene exists as axis angles in degrees.
@@ -215,7 +217,7 @@ glm::quat SceneLoader::GetRotation (TiXmlElement* xmlElem)
 	return glm::quat (eulerAngles);
 }
 
-glm::vec3 SceneLoader::GetScale (TiXmlElement* xmlElem)
+glm::vec3 SceneLoader::GetScale (XMLElement* xmlElem)
 {
 	glm::vec3 vector3 (1.0f);
 
@@ -238,9 +240,9 @@ glm::vec3 SceneLoader::GetScale (TiXmlElement* xmlElem)
 	return vector3;
 }
 
-void SceneLoader::ProcessComponents (TiXmlElement* xmlElem, SceneObject* sceneObject)
+void SceneLoader::ProcessComponents (XMLElement* xmlElem, SceneObject* sceneObject)
 {
-	TiXmlElement* content = xmlElem->FirstChildElement ();
+	XMLElement* content = xmlElem->FirstChildElement ();
 
 	while (content)
 	{
@@ -254,7 +256,7 @@ void SceneLoader::ProcessComponents (TiXmlElement* xmlElem, SceneObject* sceneOb
 	}
 }
 
-void SceneLoader::ProcessComponent (TiXmlElement* xmlElem, SceneObject* sceneObject)
+void SceneLoader::ProcessComponent (XMLElement* xmlElem, SceneObject* sceneObject)
 {
 	std::string name = xmlElem->Attribute ("name");
 

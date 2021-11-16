@@ -1,15 +1,15 @@
 #ifndef PERSISTENTCOMPONENT_H
 #define PERSISTENTCOMPONENT_H
 
-#include "Core/Interfaces/Object.h"
+#include <tinyxml2.h>
 
-#include "Core/Parsers/XML/TinyXml/tinyxml.h"
+#include "Core/Interfaces/Object.h"
 
 class ENGINE_API PersistentComponent : public Object
 {
 public:
-	virtual void Load (TiXmlElement* xmlElem) = 0;
-	virtual void Save (TiXmlElement* xmlElem) const = 0;
+	virtual void Load (tinyxml2::XMLElement* xmlElem) = 0;
+	virtual void Save (tinyxml2::XMLElement* xmlElem) const = 0;
 };
 
 #endif

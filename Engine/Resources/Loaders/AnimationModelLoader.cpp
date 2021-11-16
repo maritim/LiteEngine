@@ -8,15 +8,17 @@
 
 #include "Utils/Files/FileSystem.h"
 
+using namespace tinyxml2;
+
 Object* AnimationModelLoader::Load (const std::string& filename)
 {
-	TiXmlDocument doc;
-	if(!doc.LoadFile(filename.c_str ())) {
-		Console::LogError (filename + " has error in its syntax. Could not preceed further.");
+	XMLDocument doc;
+	if(doc.LoadFile(filename.c_str ()) != XML_SUCCESS) {
+		Console::LogError (filename + " has error(s) in its syntax. Cannot proceed further.");
 		return nullptr;
 	}
 
-	TiXmlElement* root = doc.FirstChildElement ("AnimatedModel");
+	XMLElement* root = doc.FirstChildElement ("AnimatedModel");
 
 	if (root == nullptr) {
 		return nullptr;
@@ -24,7 +26,7 @@ Object* AnimationModelLoader::Load (const std::string& filename)
 
 	AnimationModel* animModel = GetAnimationModel (root, filename);
 
-	TiXmlElement* content = root->FirstChildElement ();
+	XMLElement* content = root->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
@@ -41,7 +43,7 @@ Object* AnimationModelLoader::Load (const std::string& filename)
 	return animModel;
 }
 
-AnimationModel* AnimationModelLoader::GetAnimationModel (TiXmlElement* xmlElem, const std::string& filename)
+AnimationModel* AnimationModelLoader::GetAnimationModel (XMLElement* xmlElem, const std::string& filename)
 {
 	std::string skinPath = xmlElem->Attribute ("skinPath");
 
@@ -56,7 +58,7 @@ AnimationModel* AnimationModelLoader::GetAnimationModel (TiXmlElement* xmlElem, 
 	return animModel;
 }
 
-void AnimationModelLoader::ProcessAnimation (TiXmlElement* xmlElem, AnimationsController* animController, const std::string& filename)
+void AnimationModelLoader::ProcessAnimation (XMLElement* xmlElem, AnimationsController* animController, const std::string& filename)
 {
 	std::string animationName = xmlElem->Attribute ("name");
 	std::string animationPath = xmlElem->Attribute ("path");

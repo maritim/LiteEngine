@@ -75,7 +75,7 @@ std::string ComponentGenerator::GenerateLoader (const ClassType* classType)
 {
 	std::string text;
 
-	text = "public:\n\tvoid Load (TiXmlElement* xmlElem)\n\t{\n";
+	text = "public:\n\tvoid Load (tinyxml2::XMLElement* xmlElem)\n\t{\n";
 
 	text += GenerateAttributesLoader (classType);
 
@@ -88,7 +88,7 @@ std::string ComponentGenerator::GenerateSaver (const ClassType* classType)
 {
 	std::string text;
 
-	text = "public:\n\tvoid Save (TiXmlElement* xmlElem) const\n\t{\n";
+	text = "public:\n\tvoid Save (tinyxml2::XMLElement* xmlElem) const\n\t{\n";
 
 	text += GenerateAttributesSaver (classType);
 
@@ -131,7 +131,7 @@ std::string ComponentGenerator::GenerateAttributesLoader (const ClassType* class
 		text += GenerateAttributesLoader (parentType);
 	}
 
-	text += "\t\tfor (TiXmlAttribute* attribute = xmlElem->FirstAttribute (); attribute != nullptr; attribute = attribute->Next ()) {\n";
+	text += "\t\tfor (const tinyxml2::XMLAttribute* attribute = xmlElem->FirstAttribute (); attribute != nullptr; attribute = attribute->Next ()) {\n";
 	for (auto attribute : classType->Attributes) {
 		text += "\t\t\tif (std::string (attribute->Name ()) == \"" + trim (attribute.Name) + "\") {\n"
 				"\t\t\t\t" + attribute.Name + " = ComponentAttributeLoader::GetValue<" + attribute.TypeName + "> (attribute->Value ());\n"
@@ -139,7 +139,7 @@ std::string ComponentGenerator::GenerateAttributesLoader (const ClassType* class
 	}
 	text += "\t\t}\n";
 
-	text += "\t\tfor (TiXmlElement* content = xmlElem->FirstChildElement (); content != nullptr; content = content->NextSiblingElement ()) {\n";
+	text += "\t\tfor (tinyxml2::XMLElement* content = xmlElem->FirstChildElement (); content != nullptr; content = content->NextSiblingElement ()) {\n";
 	for (auto attribute : classType->Attributes) {
 
 		text += "\t\t\tif (std::string (content->Value ()) == \"" + trim(attribute.Name) + "\") {\n"

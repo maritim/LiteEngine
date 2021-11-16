@@ -7,16 +7,21 @@
 #include "Utils/Color/Color.h"
 #include "Utils/Files/FileSystem.h"
 
+#include "Core/Console/Console.h"
+
 #include "Resources/Resources.h"
+
+using namespace tinyxml2;
 
 Object* SkyboxLoader::Load (const std::string& filename)
 {
-	TiXmlDocument doc;
-	if(!doc.LoadFile(filename.c_str ())) {
-		return NULL;
+	XMLDocument doc;
+	if(doc.LoadFile(filename.c_str ()) != XML_SUCCESS) {
+		Console::LogError (filename + " has error(s) in its syntax. Cannot proceed further.");
+		return nullptr;
 	}
 
-	TiXmlElement* root = doc.FirstChildElement ("Skybox");
+	XMLElement* root = doc.FirstChildElement ("Skybox");
 
 	if (root == NULL) {
 		return NULL;
@@ -26,7 +31,7 @@ Object* SkyboxLoader::Load (const std::string& filename)
 
 	skybox->SetName (filename);
 
-	TiXmlElement* content = root->FirstChildElement ();
+	XMLElement* content = root->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
@@ -52,12 +57,12 @@ Object* SkyboxLoader::Load (const std::string& filename)
 	return skybox;
 }
 
-void SkyboxLoader::ProcessFaces (TiXmlElement* xmlElem, Skybox* skybox, const std::string& filename)
+void SkyboxLoader::ProcessFaces (XMLElement* xmlElem, Skybox* skybox, const std::string& filename)
 {
 	std::vector<std::string> facePaths; 
 	facePaths.resize (6, "");
 
-	TiXmlElement* content = xmlElem->FirstChildElement ();
+	XMLElement* content = xmlElem->FirstChildElement ();
 
 	while (content)
 	{
@@ -95,7 +100,7 @@ void SkyboxLoader::ProcessFaces (TiXmlElement* xmlElem, Skybox* skybox, const st
 	skybox->SetCubeMap (cubeMap);
 }
 
-void SkyboxLoader::ProcessTintColor (TiXmlElement* xmlElem, Skybox* skybox)
+void SkyboxLoader::ProcessTintColor (XMLElement* xmlElem, Skybox* skybox)
 {
 	const char* r = xmlElem->Attribute ("red");
 	const char* g = xmlElem->Attribute ("green");
@@ -123,7 +128,7 @@ void SkyboxLoader::ProcessTintColor (TiXmlElement* xmlElem, Skybox* skybox)
 	skybox->SetTintColor (tintColor);
 }
 
-void SkyboxLoader::ProcessExposure (TiXmlElement* xmlElem, Skybox* skybox)
+void SkyboxLoader::ProcessExposure (XMLElement* xmlElem, Skybox* skybox)
 {
 	const char* brightness = xmlElem->Attribute ("brightness");
 
@@ -132,7 +137,7 @@ void SkyboxLoader::ProcessExposure (TiXmlElement* xmlElem, Skybox* skybox)
 	}
 }
 
-void SkyboxLoader::ProcessRotation (TiXmlElement* xmlElem, Skybox* skybox)
+void SkyboxLoader::ProcessRotation (XMLElement* xmlElem, Skybox* skybox)
 {
 	const char* angle = xmlElem->Attribute ("angularVelocity");
 
