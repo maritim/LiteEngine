@@ -57,7 +57,7 @@ public:
 	friend std::istream &operator>>(std::istream &in, Vector3 &v);
 
 	// From Object
-	std::string ToString () const;
+	std::string ToString ();
 };
 
 #endif

@@ -44,7 +44,7 @@ float normpdf3(in vec3 v, in float sigma)
 
 vec3 CalcBlur (vec2 texCoord)
 {
-	vec3 c = texture2D ( indirectMap, texCoord ).rgb;
+	vec3 c = texture ( indirectMap, texCoord ).rgb;
 		
 	//declare stuff
 	const int kSize = (MSIZE-1)/2;
@@ -67,7 +67,7 @@ vec3 CalcBlur (vec2 texCoord)
 	{
 		for (int j=-kSize; j <= kSize; ++j)
 		{
-			cc = texture2D(indirectMap, vec2(0.0, 0.0) + ( gl_FragCoord.xy + vec2(float(i),float(j)) ) / rsmResolution ).rgb;
+			cc = texture(indirectMap, vec2(0.0, 0.0) + ( gl_FragCoord.xy + vec2(float(i),float(j)) ) / rsmResolution ).rgb;
 			factor = normpdf3(cc-c, BSIGMA)*bZ*kernel[kSize+j]*kernel[kSize+i];
 			Z += factor;
 			final_colour += factor*cc;

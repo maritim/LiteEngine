@@ -32,8 +32,8 @@ vec3 CalcDirectionalLight (vec3 in_diffuse, vec3 in_lightmap)
 void main()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_diffuse = texture2D (gDiffuseMap, texCoord).xyz;
-	vec3 in_lightmap = texture2D (gLightMap, texCoord).xyz;
+	vec3 in_diffuse = texture (gDiffuseMap, texCoord).xyz;
+	vec3 in_lightmap = texture (gLightMap, texCoord).xyz;
 
 	out_color = CalcDirectionalLight (in_diffuse, in_lightmap);
 }

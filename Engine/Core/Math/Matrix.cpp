@@ -609,7 +609,7 @@ Array& Matrix::operator[](const int index)
 	return * _matrix [index];
 }
 
-std::string Matrix::ToString () const
+std::string Matrix::ToString ()
 {
 	std::string str = "{";
 

@@ -1,7 +1,7 @@
 #include "CylinderColliderComponent.h"
 
 #include <glm/geometric.hpp>
-#include <bullet/BulletCollision/CollisionShapes/btCylinderShape.h>
+#include <BulletCollision/CollisionShapes/btCylinderShape.h>
 
 #include "SceneGraph/SceneObject.h"
 

@@ -2,7 +2,7 @@
 
 #ifdef _WIN32
 	#include <windows.h>
-#elif defined(__linux__)
+#else
 	#include <dlfcn.h>
 #endif
 
@@ -35,10 +35,12 @@ std::string GameModuleLoader::GetGameModuleFilename (const std::string& gameModu
 {
 	std::string gameModuleFilename;
 
-#ifdef _WIN32
+#if defined(_WIN32)
 	gameModuleFilename = gameModuleName + ".dll";
+#elif defined(__APPLE__)
+	gameModuleFilename = "lib" + gameModuleName + ".dylib";
 #else
-	gameModuleFilename = "lib" + gameModuleFilename + ".so";
+	gameModuleFilename = "lib" + gameModuleName + ".so";
 #endif
 
 	return gameModuleFilename;

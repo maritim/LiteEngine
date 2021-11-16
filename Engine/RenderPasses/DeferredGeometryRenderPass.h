@@ -1,5 +1,5 @@
 #ifndef DEFERREGEOMETRYRENDERPASS_H
-#define DEFERREGEOMTRYRENDERPASS_H
+#define DEFERREGEOMETRYRENDERPASS_H
 
 #include "RenderPasses/Container/ContainerRenderSubPassI.h"
 

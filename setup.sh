@@ -6,7 +6,7 @@ function InstallDependenciesPacman
 {
 	echo "Attempting to install dependencies using pacman"
 
-	dep="gcc g++ make cmake sdl2 sdl2_image sdl_sound glew openal assimp bullet"
+	dep="gcc g++ make cmake sdl2 sdl2_image sdl_sound glew openal"
 
 	for pkg in $dep; do
 		if dpkg -l "$pkg" &> /dev/null; then
@@ -24,7 +24,7 @@ function InstallDependenciesAptGet
 {
 	echo "Attempting to install dependencies using apt-get"
 
-	dep="build-essential cmake libsdl2-image-dev libsdl-sound1.2-dev libsdl2-dev libglew-dev libopenal-dev libassimp-dev libbullet-dev"
+	dep="build-essential cmake libsdl2-image-dev libsdl-sound1.2-dev libsdl2-dev libglew-dev libopenal-dev"
 
 	for pkg in $dep; do
 		if dpkg -l "$pkg" &> /dev/null; then
@@ -43,7 +43,7 @@ function InstallDependenciesDnf
 {
 	echo "Attempting to install dependencies using dnf"
 
-	dep="gcc gcc-c++ make cmake SDL2_image-devel SDL2-devel SDL_sound-devel glew-devel openal-devel assimp-devel bullet-devel"
+	dep="gcc gcc-c++ make cmake SDL2_image-devel SDL2-devel SDL_sound-devel glew-devel openal-devel"
 
 	for pkg in $dep; do
 		if dpkg -l "$pkg" &> /dev/null; then
@@ -67,7 +67,7 @@ function InstallDependenciesDarwin
 	echo "Package brew is updating..."
 	brew update
 
-	dep_apple="cmake sdl2 sdl2_image sdl_sound glew openal assimp bullet"
+	dep_apple="cmake sdl2 sdl2_image sdl_sound glew openal"
 
 	for pkg in $dep_apple; do
 	    if brew list -1 | grep -q "^${pkg}\$"; then
@@ -77,6 +77,11 @@ function InstallDependenciesDarwin
 			brew install --yes ${pkg}
 		fi
 	done
+}
+
+function InstallDependenciesFreeBSD
+{
+	pkg install sdl2 sdl2_image sdl_sound openal-soft glew
 }
 
 # Main
@@ -98,5 +103,9 @@ if [[ `uname` == "Linux" ]]; then
 elif [[ `uname` == "Darwin"* ]]; then
 	
 	InstallDependenciesDarwin
+
+elif [[ `uname` == "FreeBSD" ]]; then
+
+	InstallDependenciesFreeBSD
 
 fi

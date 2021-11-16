@@ -58,9 +58,9 @@ vec3 CalcIndirectDiffuseLight (vec3 in_position, vec3 in_normal)
 
 		vec2 coords = rsmProjCoords.xy + rnd * rsmRadius;
 
-		vec3 rsmLightViewSpacePos = texture2D (rsmPositionMap, coords).xyz;
-		vec3 rsmLightViewSpaceNormal = texture2D (rsmNormalMap, coords).xyz;
-		vec3 rsmFlux = texture2D (rsmFluxMap, coords).xyz;
+		vec3 rsmLightViewSpacePos = texture (rsmPositionMap, coords).xyz;
+		vec3 rsmLightViewSpaceNormal = texture (rsmNormalMap, coords).xyz;
+		vec3 rsmFlux = texture (rsmFluxMap, coords).xyz;
 
 		vec3 result = rsmFlux *
 			((max (0.0, dot (rsmLightViewSpaceNormal, lightViewSpacePos - rsmLightViewSpacePos))

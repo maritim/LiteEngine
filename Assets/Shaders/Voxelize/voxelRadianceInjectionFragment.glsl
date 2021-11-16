@@ -40,9 +40,9 @@ RSMSample GetRSMSample (vec2 texCoord)
 {
 	RSMSample rsmSample;
 
-	rsmSample.worldSpacePosition = texture2D (rsmPositionMap, texCoord).xyz;
-	rsmSample.worldSpaceNormal = texture2D (rsmNormalMap, texCoord).xyz;
-	rsmSample.flux = texture2D (rsmFluxMap, texCoord).xyz;
+	rsmSample.worldSpacePosition = texture (rsmPositionMap, texCoord).xyz;
+	rsmSample.worldSpaceNormal = texture (rsmNormalMap, texCoord).xyz;
+	rsmSample.flux = texture (rsmFluxMap, texCoord).xyz;
 	rsmSample.volumePos = GetPositionInVolume (rsmSample.worldSpacePosition) * volumeSize;
 
 	return rsmSample;

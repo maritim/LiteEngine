@@ -49,7 +49,7 @@ vec3 CalcDirectionalLight (vec3 in_position, vec3 in_normal, vec3 in_diffuse, ve
 	if (ssdoRayShadow == 0) {
 		shadow = CalcDirectionalShadowContribution (in_position);
 	} else {
-		shadow = texture2D (ssdoShadowMap, texCoord).x;
+		shadow = texture (ssdoShadowMap, texCoord).x;
 	}
 
 	directDiffuseColor = shadow * directDiffuseColor;

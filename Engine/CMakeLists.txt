@@ -11,8 +11,21 @@ endif (NOT CMAKE_BUILD_TYPE)
 set (CMAKE_CXX_STANDARD 17)
 
 if(NOT MSVC)
-	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g2 -O0 -Wall -Werror")
-	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g0 -Wall -Werror -march=native -mtune=native -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -foptimize-strlen -ftree-loop-distribution -ftree-loop-distribute-patterns -ffast-math -flto")
+	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g2 -O0 -Wall -Werror -fPIC")
+	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g0 -Wall -Werror -fPIC -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -ffast-math -flto")
+
+	if (NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm")
+		set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native -mtune=native")
+	endif ()
+
+	if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR APPLE)
+		set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wno-overloaded-virtual")
+		set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wno-overloaded-virtual")
+		if(APPLE)
+			set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wno-deprecated-declarations")
+			set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wno-deprecated-declarations")
+		endif(APPLE)
+	endif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR APPLE)
 else(NOT MSVC)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /nologo /DNOMINMAX /D_CRT_SECURE_NO_WARNINGS /D_DEBUG /GS /Zi /debug")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /nologo /DNOMINMAX /D_CRT_SECURE_NO_WARNINGS /GS /GL /Gm /O2 /Od /Ox")
@@ -50,13 +63,15 @@ find_library (GLEW NAMES GLEW glew32 HINTS ${PROJECT_SOURCE_DIR}/3rdparty/GLEW/l
 find_library (SDL2 NAMES SDL2 HINTS ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/lib)
 find_library (SDL2_image NAMES SDL2_image HINTS ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/lib)
 find_library (SDL_sound NAMES SDL_sound HINTS ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/lib)
-find_library (assimp NAMES assimp HINTS ${PROJECT_SOURCE_DIR}/3rdparty/assimp/lib)
 
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/Engine)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/ImGui)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/glm)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/spdlog)
 target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SimpleIni)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/src)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/assimp/include)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/tinyxml2)
 
 # OpenAL
 
@@ -70,24 +85,7 @@ else(NOT MSVC)
 	find_library (OPENAL_LIBRARY NAMES OpenAL OpenAL32 HINTS ${PROJECT_SOURCE_DIR}/3rdparty/OpenAL/lib)
 endif(NOT MSVC)
 
-if(NOT MSVC)
-	find_package (Bullet REQUIRED)
-	
-	target_include_directories (LiteEngine PUBLIC ${BULLET_INCLUDE_DIRS})
-else(NOT MSVC)
-	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/include)
-	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/include/bullet)
-
-	find_library (BULLET_LIBRARY_COLLISION NAMES BulletCollision HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
-	find_library (BULLET_LIBRARY_DYNAMICS NAMES BulletDynamics HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
-	find_library (BULLET_LIBRARY_SOFTBODY NAMES BulletSoftBody HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
-	find_library (BULLET_LIBRARY_LINEARMATH NAMES LinearMath HINTS ${PROJECT_SOURCE_DIR}/3rdparty/bullet/lib)
-
-	set (BULLET_LIBRARIES ${BULLET_LIBRARY_COLLISION} ${BULLET_LIBRARY_DYNAMICS} ${BULLET_LIBRARY_SOFTBODY} ${BULLET_LIBRARY_LINEARMATH})
-endif(NOT MSVC)
-
 if(MSVC)
-	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/assimp/include)
 	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/OpenAL/include)
 	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/GLEW/include)
 	target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/include)
@@ -121,7 +119,6 @@ endif(MSVC)
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     add_custom_command(TARGET LiteEngine POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            ${PROJECT_SOURCE_DIR}/3rdparty/assimp/bin/assimp.dll
             ${PROJECT_SOURCE_DIR}/3rdparty/GLEW/bin/glew32.dll
             ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/libjpeg-9.dll
             ${PROJECT_SOURCE_DIR}/3rdparty/SDL2/bin/libpng16-16.dll
@@ -146,23 +143,29 @@ target_link_libraries (LiteEngine
 	${SDL2_image}
 	${SDL_SOUND_LIBRARIES}
 	${OPENAL_LIBRARY}
-	${assimp}
-	${BULLET_LIBRARIES}
+	assimp
+	BulletDynamics
+	BulletCollision
+	BulletSoftBody
+	LinearMath
 	ImGui
 	SimpleIni
+	tinyxml2
 )
 
 if(NOT MSVC)
 	target_link_libraries (LiteEngine dl)
 endif(NOT MSVC)
 
+SET_TARGET_PROPERTIES(LiteEngine PROPERTIES ENABLE_EXPORTS TRUE)
+
 if(NOT MSVC)
-	target_link_libraries (LiteEngine stdc++fs)
+	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+		target_link_libraries (LiteEngine stdc++fs)
+	endif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
 	target_compile_definitions (LiteEngine PRIVATE ENGINE_API=)
 else(NOT MSVC)
-	SET_TARGET_PROPERTIES(LiteEngine PROPERTIES ENABLE_EXPORTS TRUE)
-
 	target_compile_definitions (LiteEngine PRIVATE "ENGINE_API=__declspec(dllexport)")
 endif(NOT MSVC)
 

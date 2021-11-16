@@ -38,10 +38,10 @@ void main()
 	 * Get color of all used texture maps
 	*/
 
-	vec3 diffuseMap = MaterialDiffuse * vec3 (texture2D (DiffuseMap, 	geom_texcoord.xy));
-	vec3 specularMap = MaterialSpecular * vec3 (texture2D (SpecularMap, geom_texcoord.xy));
-	vec3 lightMap = vec3 (texture2D (LightMap, geom_lmTexcoord.xy));
-	vec3 alphaMap = vec3 (texture2D (AlphaMap, geom_texcoord.xy));
+	vec3 diffuseMap = MaterialDiffuse * vec3 (texture (DiffuseMap, 	geom_texcoord.xy));
+	vec3 specularMap = MaterialSpecular * vec3 (texture (SpecularMap, geom_texcoord.xy));
+	vec3 lightMap = vec3 (texture (LightMap, geom_lmTexcoord.xy));
+	vec3 alphaMap = vec3 (texture (AlphaMap, geom_texcoord.xy));
 
 	/*
 	 * Check alpha texture

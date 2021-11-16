@@ -39,7 +39,7 @@ vec3 CalcMedian (vec2 texCoord)
 
 	for (int x = -1; x <= 1; x += 1) {
 		for (int y = -1; y <= 1; y += 1) {
-			v[(x + 1) * 3 + y + 1] = texture2D(indirectMap, texCoord + vec2(float (x), float (y)) / rsmResolution).xyz;
+			v[(x + 1) * 3 + y + 1] = texture(indirectMap, texCoord + vec2(float (x), float (y)) / rsmResolution).xyz;
 		}
 	}
 

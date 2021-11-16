@@ -25,7 +25,8 @@ public:
 	ExponentialShadowMapBlurRenderPass ();
 	~ExponentialShadowMapBlurRenderPass ();
 
-	void Init ();
+	void Init ();	
+
 	RenderVolumeCollection* Execute (const RenderScene* renderScene, const Camera* camera, RenderVolumeCollection* rvc);
 
 	void Notify (Object* sender, const SettingsObserverArgs& args);

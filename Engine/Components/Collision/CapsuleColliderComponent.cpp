@@ -1,7 +1,7 @@
 #include "CapsuleColliderComponent.h"
 
 #include <glm/geometric.hpp>
-#include <bullet/BulletCollision/CollisionShapes/btCapsuleShape.h>
+#include <BulletCollision/CollisionShapes/btCapsuleShape.h>
 
 void CapsuleColliderComponent::Awake ()
 {

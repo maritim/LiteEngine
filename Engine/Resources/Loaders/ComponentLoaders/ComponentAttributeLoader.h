@@ -1,9 +1,9 @@
 #ifndef COMPONENTATTRIBUTELOADER_H
 #define COMPONENTATTRIBUTELOADER_H
 
-#include "Core/Interfaces/Object.h"
+#include <tinyxml2.h>
 
-#include "Core/Parsers/XML/TinyXml/tinyxml.h"
+#include "Core/Interfaces/Object.h"
 
 #include "Core/Resources/Resource.h"
 
@@ -19,7 +19,7 @@ class ENGINE_API ComponentAttributeLoader : public Object
 {
 public:
 	template<class T>
-	static T Load (TiXmlElement* xmlElem) { return T (); }
+	static T Load (tinyxml2::XMLElement* xmlElem) { return T (); }
 	template<class T>
 	static T GetValue (const std::string& value) { return T (); }
 };
@@ -49,7 +49,7 @@ bool ENGINE_API ComponentAttributeLoader::GetValue<bool> (const std::string& val
 }
 
 template <>
-glm::vec3 ENGINE_API ComponentAttributeLoader::Load<glm::vec3> (TiXmlElement* xmlElem)
+glm::vec3 ENGINE_API ComponentAttributeLoader::Load<glm::vec3> (tinyxml2::XMLElement* xmlElem)
 {
 	glm::vec3 result (0.0f);
 
@@ -73,7 +73,7 @@ glm::vec3 ENGINE_API ComponentAttributeLoader::Load<glm::vec3> (TiXmlElement* xm
 }
 
 template <>
-Resource<Model> ENGINE_API ComponentAttributeLoader::Load<Resource<Model>> (TiXmlElement* xmlElem)
+Resource<Model> ENGINE_API ComponentAttributeLoader::Load<Resource<Model>> (tinyxml2::XMLElement* xmlElem)
 {
 	Resource<Model> model;
 
@@ -91,7 +91,7 @@ Resource<Model> ENGINE_API ComponentAttributeLoader::Load<Resource<Model>> (TiXm
 }
 
 template <>
-Resource<AudioClip> ENGINE_API ComponentAttributeLoader::Load<Resource<AudioClip>> (TiXmlElement* xmlElem)
+Resource<AudioClip> ENGINE_API ComponentAttributeLoader::Load<Resource<AudioClip>> (tinyxml2::XMLElement* xmlElem)
 {
 	std::string path = xmlElem->Attribute ("path");
 
@@ -101,7 +101,7 @@ Resource<AudioClip> ENGINE_API ComponentAttributeLoader::Load<Resource<AudioClip
 }
 
 template <>
-Color ENGINE_API ComponentAttributeLoader::Load<Color> (TiXmlElement* xmlElem)
+Color ENGINE_API ComponentAttributeLoader::Load<Color> (tinyxml2::XMLElement* xmlElem)
 {
 	Color color = Color::Black;
 
@@ -132,7 +132,7 @@ Color ENGINE_API ComponentAttributeLoader::Load<Color> (TiXmlElement* xmlElem)
 #include "Components/Lighting/LightComponent.h"
 
 template <>
-LightComponent::ShadowInformation ENGINE_API ComponentAttributeLoader::Load<LightComponent::ShadowInformation> (TiXmlElement* xmlElem)
+LightComponent::ShadowInformation ENGINE_API ComponentAttributeLoader::Load<LightComponent::ShadowInformation> (tinyxml2::XMLElement* xmlElem)
 {
 	LightComponent::ShadowInformation shadowInformation;
 
@@ -147,7 +147,7 @@ LightComponent::ShadowInformation ENGINE_API ComponentAttributeLoader::Load<Ligh
 		shadowInformation.bias = std::stof (bias);
 	}
 
-	TiXmlElement* content = xmlElem->FirstChildElement ();
+	tinyxml2::XMLElement* content = xmlElem->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
@@ -172,7 +172,7 @@ LightComponent::ShadowInformation ENGINE_API ComponentAttributeLoader::Load<Ligh
 }
 
 template <>
-Resource<Font> ENGINE_API ComponentAttributeLoader::Load<Resource<Font>> (TiXmlElement* xmlElem)
+Resource<Font> ENGINE_API ComponentAttributeLoader::Load<Resource<Font>> (tinyxml2::XMLElement* xmlElem)
 {
 	std::string path = xmlElem->Attribute ("path");
 

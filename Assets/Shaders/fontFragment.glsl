@@ -8,7 +8,7 @@ in vec2 texcoord;
 
 void main()
 {
-	vec4 color = texture2D (FontTexture, texcoord);
+	vec4 color = texture (FontTexture, texcoord);
 
 	out_color = color;
 }

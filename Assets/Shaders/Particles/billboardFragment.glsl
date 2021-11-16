@@ -32,8 +32,8 @@ in float blending;
 
 void main()
 {
-	vec4 mapColorCurr = texture2D (textureAtlas, texcoordCurr.xy);
-	vec4 mapColorNext = texture2D (textureAtlas, texcoordNext.xy);
+	vec4 mapColorCurr = texture (textureAtlas, texcoordCurr.xy);
+	vec4 mapColorNext = texture (textureAtlas, texcoordNext.xy);
 
 	// ambient lightDirection
 	vec4 totalLighting = mix (mapColorCurr, mapColorNext, blending);

@@ -10,7 +10,7 @@ vec3 CalcAmbientLight ()
 
 	if (ambientOcclusionEnabled == 1) {
 		vec2 texCoord = CalcTexCoord();
-		float in_ao = texture2D (ambientOcclusionMap, texCoord).x;
+		float in_ao = texture (ambientOcclusionMap, texCoord).x;
 
 		ambientOcclusion = in_ao;
 	}

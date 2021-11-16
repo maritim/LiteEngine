@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <glm/geometric.hpp>
-#include <bullet/BulletCollision/CollisionShapes/btSphereShape.h>
+#include <BulletCollision/CollisionShapes/btSphereShape.h>
 
 #include "SceneGraph/SceneObject.h"
 

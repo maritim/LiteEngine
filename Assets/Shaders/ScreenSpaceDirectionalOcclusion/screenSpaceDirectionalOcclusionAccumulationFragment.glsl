@@ -22,13 +22,13 @@ void main ()
 {
 	vec2 texCoord = CalcTexCoord();
 	vec3 in_diffuse = textureLod (gDiffuseMap, texCoord, 0).xyz;
-	vec3 in_postProcess = texture2D (postProcessMap, texCoord).xyz;
-	vec3 in_ssdo = texture2D (ssdoMap, texCoord).xyz;
+	vec3 in_postProcess = texture (postProcessMap, texCoord).xyz;
+	vec3 in_ssdo = texture (ssdoMap, texCoord).xyz;
 
 	float ambientOcclusion = 1.0;
 
 	if (ambientOcclusionEnabled == 1) {
-		float in_ao = texture2D (ambientOcclusionMap, texCoord).x;
+		float in_ao = texture (ambientOcclusionMap, texCoord).x;
 
 		ambientOcclusion = in_ao;
 	}

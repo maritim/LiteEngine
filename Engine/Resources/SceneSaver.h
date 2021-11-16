@@ -1,7 +1,7 @@
 #ifndef SCENESAVER_H
 #define SCENESAVER_H
 
-#include "Core/Parsers/XML/TinyXml/tinyxml.h"
+#include <tinyxml2.h>
 
 #include "SceneGraph/Scene.h"
 
@@ -14,13 +14,13 @@ public:
 protected:
 	SceneSaver ();
 
-	void SaveSkybox (TiXmlElement* xmlElem, const Skybox* skybox);
-	void SaveSceneObject (TiXmlElement* xmlElem, const SceneObject* sceneObject);
+	void SaveSkybox (tinyxml2::XMLElement* xmlElem, const Skybox* skybox);
+	void SaveSceneObject (tinyxml2::XMLElement* xmlElem, const SceneObject* sceneObject);
 
-	void SaveTransform (TiXmlElement* xmlElem, const Transform* transform);
-	void SaveComponents (TiXmlElement* xmlElem, const SceneObject* sceneObject);
+	void SaveTransform (tinyxml2::XMLElement* xmlElem, const Transform* transform);
+	void SaveComponents (tinyxml2::XMLElement* xmlElem, const SceneObject* sceneObject);
 
-	void SaveComponent (TiXmlElement* xmlElem, const Component* component);
+	void SaveComponent (tinyxml2::XMLElement* xmlElem, const Component* component);
 };
 
 #endif

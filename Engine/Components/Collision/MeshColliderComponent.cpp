@@ -1,6 +1,6 @@
 #include "MeshColliderComponent.h"
 
-#include <bullet/BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
+#include <BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 MeshColliderComponent::MeshColliderComponent () :

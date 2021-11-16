@@ -24,16 +24,21 @@
 #include "Utils/Files/FileSystem.h"
 #include "Utils/Extensions/StringExtend.h"
 
+#include "Core/Console/Console.h"
+
 #include "Resources/Resources.h"
+
+using namespace tinyxml2;
 
 Object* ParticleSystemLoader::Load (const std::string& filename)
 {
-	TiXmlDocument doc;
-	if(!doc.LoadFile(filename.c_str ())) {
-		return NULL;
+	XMLDocument doc;
+	if(doc.LoadFile(filename.c_str ()) != XML_SUCCESS) {
+		Console::LogError (filename + " has error(s) in its syntax. Cannot proceed further.");
+		return nullptr;
 	}
 
-	TiXmlElement* root = doc.FirstChildElement ("ParticleSystem");
+	XMLElement* root = doc.FirstChildElement ("ParticleSystem");
 
 	if (root == NULL) {
 		return NULL;
@@ -41,7 +46,7 @@ Object* ParticleSystemLoader::Load (const std::string& filename)
 
 	ParticleSystem* partSys = new ParticleSystem ();
 
-	TiXmlElement* content = root->FirstChildElement ();
+	XMLElement* content = root->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
@@ -67,7 +72,7 @@ Object* ParticleSystemLoader::Load (const std::string& filename)
 	return partSys;
 }
 
-void ParticleSystemLoader::ProcessPartCount (TiXmlElement* xmlElem, ParticleSystem* partSys)
+void ParticleSystemLoader::ProcessPartCount (XMLElement* xmlElem, ParticleSystem* partSys)
 {
 	std::size_t minPart = std::stoi (xmlElem->Attribute ("min"));
 	std::size_t maxPart = std::stoi (xmlElem->Attribute ("max"));
@@ -76,19 +81,19 @@ void ParticleSystemLoader::ProcessPartCount (TiXmlElement* xmlElem, ParticleSyst
 	partSys->SetMaximPartCount (maxPart);
 }
 
-void ParticleSystemLoader::ProcessEmissionRate (TiXmlElement* xmlElem, ParticleSystem* partSys)
+void ParticleSystemLoader::ProcessEmissionRate (XMLElement* xmlElem, ParticleSystem* partSys)
 {
 	std::size_t rate = std::stoi (xmlElem->Attribute ("rate"));
 
 	partSys->SetEmissionRate (rate);
 }
 
-void ParticleSystemLoader::ProcessEmiter (TiXmlElement* xmlElem, ParticleSystem* partSys, 
+void ParticleSystemLoader::ProcessEmiter (XMLElement* xmlElem, ParticleSystem* partSys, 
 	const std::string& filename)
 {
 	Emiter* emiter = CreateEmiter (xmlElem, filename);
 
-	TiXmlElement* content = xmlElem->FirstChildElement ();
+	XMLElement* content = xmlElem->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
@@ -124,9 +129,9 @@ void ParticleSystemLoader::ProcessEmiter (TiXmlElement* xmlElem, ParticleSystem*
 	partSys->SetEmiter (emiter);
 }
 
-void ParticleSystemLoader::ProcessRenderer (TiXmlElement* xmlElem, ParticleSystem* partSys)
+void ParticleSystemLoader::ProcessRenderer (XMLElement* xmlElem, ParticleSystem* partSys)
 {
-	TiXmlElement* content = xmlElem->FirstChildElement ();
+	XMLElement* content = xmlElem->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
@@ -139,7 +144,7 @@ void ParticleSystemLoader::ProcessRenderer (TiXmlElement* xmlElem, ParticleSyste
 	}
 }
 
-Emiter* ParticleSystemLoader::CreateEmiter (TiXmlElement* xmlElem, const std::string& filename)
+Emiter* ParticleSystemLoader::CreateEmiter (XMLElement* xmlElem, const std::string& filename)
 {
 	Emiter* emiter = NULL;
 
@@ -183,7 +188,7 @@ Emiter* ParticleSystemLoader::CreateEmiter (TiXmlElement* xmlElem, const std::st
 	return emiter;
 }
 
-void ParticleSystemLoader::ProcessParticle (TiXmlElement* xmlElem, Emiter* emiter, 
+void ParticleSystemLoader::ProcessParticle (XMLElement* xmlElem, Emiter* emiter, 
 	const std::string& filename)
 {
 	std::string type = xmlElem->Attribute ("type");
@@ -197,7 +202,7 @@ void ParticleSystemLoader::ProcessParticle (TiXmlElement* xmlElem, Emiter* emite
 		particlePrototype = new MeshParticle ();
 	}
 
-	TiXmlElement* content = xmlElem->FirstChildElement ();
+	XMLElement* content = xmlElem->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
@@ -215,7 +220,7 @@ void ParticleSystemLoader::ProcessParticle (TiXmlElement* xmlElem, Emiter* emite
 	emiter->SetParticlePrototype (particlePrototype);
 }
 
-void ParticleSystemLoader::ProcessParticleMesh (TiXmlElement* xmlElem, Particle* prototype, 
+void ParticleSystemLoader::ProcessParticleMesh (XMLElement* xmlElem, Particle* prototype, 
 	const std::string& filename)
 {
 	Resource<Model> mesh = nullptr;
@@ -235,7 +240,7 @@ void ParticleSystemLoader::ProcessParticleMesh (TiXmlElement* xmlElem, Particle*
 		mesh = Resources::LoadModel (path);
 	}
 
-	TiXmlElement* content = xmlElem->FirstChildElement ();
+	XMLElement* content = xmlElem->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
@@ -250,7 +255,7 @@ void ParticleSystemLoader::ProcessParticleMesh (TiXmlElement* xmlElem, Particle*
 	prototype->SetMesh (mesh);
 }
 
-void ParticleSystemLoader::ProcessMeshMaterial (TiXmlElement* xmlElem, Resource<Model>& mesh,
+void ParticleSystemLoader::ProcessMeshMaterial (XMLElement* xmlElem, Resource<Model>& mesh,
 	const std::string& filename)
 {
 	std::string matLbName = xmlElem->FirstChildElement ("MaterialLibrary")->GetText ();
@@ -269,7 +274,7 @@ void ParticleSystemLoader::ProcessMeshMaterial (TiXmlElement* xmlElem, Resource<
 	}
 }
 
-void ParticleSystemLoader::ProcessTextureAtlas (TiXmlElement* xmlElem, Particle* particle, const std::string& filename)
+void ParticleSystemLoader::ProcessTextureAtlas (XMLElement* xmlElem, Particle* particle, const std::string& filename)
 {
 	auto billboardParticle = dynamic_cast<BillboardParticle*> (particle);
 
@@ -285,9 +290,9 @@ void ParticleSystemLoader::ProcessTextureAtlas (TiXmlElement* xmlElem, Particle*
 	billboardParticle->SetTextureAtlas (textureAtlas);
 }
 
-void ParticleSystemLoader::ProcessTransform (TiXmlElement* xmlElem, Emiter* emiter)
+void ParticleSystemLoader::ProcessTransform (XMLElement* xmlElem, Emiter* emiter)
 {
-	TiXmlElement* content = xmlElem->FirstChildElement ();
+	XMLElement* content = xmlElem->FirstChildElement ();
 
 	while (content) {
 		std::string name = content->Value ();
@@ -306,7 +311,7 @@ void ParticleSystemLoader::ProcessTransform (TiXmlElement* xmlElem, Emiter* emit
 	}
 }
 
-glm::vec3 ParticleSystemLoader::GetVector (TiXmlElement* xmlElem)
+glm::vec3 ParticleSystemLoader::GetVector (XMLElement* xmlElem)
 {
 	glm::vec3 vec (0.0f);
 
@@ -329,14 +334,14 @@ glm::vec3 ParticleSystemLoader::GetVector (TiXmlElement* xmlElem)
 	return vec;
 }
 
-glm::quat ParticleSystemLoader::GetQuaternion (TiXmlElement* xmlElem)
+glm::quat ParticleSystemLoader::GetQuaternion (XMLElement* xmlElem)
 {
 	glm::vec3 vec = GetVector (xmlElem);
 
 	return glm::quat (vec);
 }
 
-void ParticleSystemLoader::ProcessEmisShape (TiXmlElement* xmlElem, Emiter* emiter)
+void ParticleSystemLoader::ProcessEmisShape (XMLElement* xmlElem, Emiter* emiter)
 {
 	std::string type = xmlElem->Attribute ("type");
 
@@ -348,7 +353,7 @@ void ParticleSystemLoader::ProcessEmisShape (TiXmlElement* xmlElem, Emiter* emit
 	}
 }
 
-void ParticleSystemLoader::ProcessScaleCurve (TiXmlElement* xmlElem, Emiter* emiter)
+void ParticleSystemLoader::ProcessScaleCurve (XMLElement* xmlElem, Emiter* emiter)
 {
 	std::string type = xmlElem->Attribute ("type");
 
@@ -360,7 +365,7 @@ void ParticleSystemLoader::ProcessScaleCurve (TiXmlElement* xmlElem, Emiter* emi
 	}
 }
 
-void ParticleSystemLoader::ProcessTweenCurve (TiXmlElement* xmlElem, Emiter* emiter)
+void ParticleSystemLoader::ProcessTweenCurve (XMLElement* xmlElem, Emiter* emiter)
 {
 	std::string type = xmlElem->Attribute ("type");
 
@@ -372,7 +377,7 @@ void ParticleSystemLoader::ProcessTweenCurve (TiXmlElement* xmlElem, Emiter* emi
 	}
 }
 
-void ParticleSystemLoader::ProcessLifetimeRange (TiXmlElement* xmlElem, Emiter* emiter)
+void ParticleSystemLoader::ProcessLifetimeRange (XMLElement* xmlElem, Emiter* emiter)
 {
 	unsigned int minim = std::stoi (xmlElem->Attribute ("min"));
 	unsigned int maxim = std::stoi (xmlElem->Attribute ("max"));
@@ -380,7 +385,7 @@ void ParticleSystemLoader::ProcessLifetimeRange (TiXmlElement* xmlElem, Emiter* 
 	emiter->SetPartLifetimeRange (minim, maxim);
 }
 
-void ParticleSystemLoader::ProcessScaleRange (TiXmlElement* xmlElem, Emiter* emiter)
+void ParticleSystemLoader::ProcessScaleRange (XMLElement* xmlElem, Emiter* emiter)
 {
 	float minim = std::stof (xmlElem->Attribute ("min"));
 	float maxim = std::stof (xmlElem->Attribute ("max"));
@@ -388,7 +393,7 @@ void ParticleSystemLoader::ProcessScaleRange (TiXmlElement* xmlElem, Emiter* emi
 	emiter->SetPartScaleRange (minim, maxim);
 }
 
-void ParticleSystemLoader::ProcessSpeedRange (TiXmlElement* xmlElem, Emiter* emiter)
+void ParticleSystemLoader::ProcessSpeedRange (XMLElement* xmlElem, Emiter* emiter)
 {
 	float minim = std::stof (xmlElem->Attribute ("min"));
 	float maxim = std::stof (xmlElem->Attribute ("max"));
@@ -396,7 +401,7 @@ void ParticleSystemLoader::ProcessSpeedRange (TiXmlElement* xmlElem, Emiter* emi
 	emiter->SetPartSpeedRange (minim, maxim);
 }
 
-void ParticleSystemLoader::ProcessDepthMask (TiXmlElement* xmlElem, ParticleSystem* partSys)
+void ParticleSystemLoader::ProcessDepthMask (XMLElement* xmlElem, ParticleSystem* partSys)
 {
 	bool check = Extensions::StringExtend::ToBool (xmlElem->Attribute ("check"));
 

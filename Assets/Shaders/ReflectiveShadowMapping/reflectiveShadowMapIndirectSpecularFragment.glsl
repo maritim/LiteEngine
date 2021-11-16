@@ -82,8 +82,8 @@ vec3 CalcRSMIndirectSpecular (vec3 in_position, vec3 in_normal)
 
 	vec2 reflectionPos = CalcRSMReflection (worldPosition, worldNormal);
 
-	vec3 reflectionColor = texture2D (rsmFluxMap, reflectionPos).xyz;
-	vec3 reflectionNormal = normalize (texture2D (rsmNormalMap, reflectionPos).xyz);
+	vec3 reflectionColor = texture (rsmFluxMap, reflectionPos).xyz;
+	vec3 reflectionNormal = normalize (texture (rsmNormalMap, reflectionPos).xyz);
 
 	vec3 lightSpaceNormal = normalize (vec3 (lightViewMatrix * vec4 (worldNormal, 0.0)));
 

@@ -1,9 +1,9 @@
 #ifndef ANIMATIONMODELLOADER_H
 #define ANIMATIONMODELLOADER_H
 
-#include "Resources/ResourceLoader.h"
+#include <tinyxml2.h>
 
-#include "Core/Parsers/XML/TinyXml/tinyxml.h"
+#include "Resources/ResourceLoader.h"
 
 #include "Renderer/Render/Mesh/AnimationModel.h"
 #include "Renderer/Render/Mesh/AnimationsController.h"
@@ -15,9 +15,9 @@ public:
 	Object* Load (const std::string& fileName);
 
 protected:
-	AnimationModel* GetAnimationModel (TiXmlElement* xmlElem, const std::string& filename);
+	AnimationModel* GetAnimationModel (tinyxml2::XMLElement* xmlElem, const std::string& filename);
 
-	void ProcessAnimation (TiXmlElement* xmlElem, AnimationsController* animController, const std::string& filename);
+	void ProcessAnimation (tinyxml2::XMLElement* xmlElem, AnimationsController* animController, const std::string& filename);
 };
 
 #endif

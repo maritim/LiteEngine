@@ -87,9 +87,9 @@ RSMSample GetRSMSample (vec2 texCoord)
 
 			int sampleIndex = int (i * 4 + j);
 
-			rsmSamples [sampleIndex].worldSpacePosition = texture2D (rsmPositionMap, coords).xyz;
-			rsmSamples [sampleIndex].worldSpaceNormal = texture2D (rsmNormalMap, coords).xyz;
-			rsmSamples [sampleIndex].flux = texture2D (rsmFluxMap, coords).xyz;
+			rsmSamples [sampleIndex].worldSpacePosition = texture (rsmPositionMap, coords).xyz;
+			rsmSamples [sampleIndex].worldSpaceNormal = texture (rsmNormalMap, coords).xyz;
+			rsmSamples [sampleIndex].flux = texture (rsmFluxMap, coords).xyz;
 			rsmSamples [sampleIndex].volumePos = GetPositionInVolume (rsmSamples [sampleIndex].worldSpacePosition);
 
 			float luminance = CalcLuminance (

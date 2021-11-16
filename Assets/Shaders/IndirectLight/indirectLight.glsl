@@ -12,12 +12,12 @@ vec3 CalcIndirectDiffuseLight ()
 	float ambientOcclusion = 1.0f;
 
 	if (ambientOcclusionEnabled == 1) {
-		float in_ao = texture2D (ambientOcclusionMap, texCoord).x;
+		float in_ao = texture (ambientOcclusionMap, texCoord).x;
 
 		ambientOcclusion = in_ao;
 	}
 
-	vec3 in_indirect = texture2D (indirectDiffuseMap, texCoord).xyz;
+	vec3 in_indirect = texture (indirectDiffuseMap, texCoord).xyz;
 
 	return in_indirect * ambientOcclusion;
 }
@@ -38,12 +38,12 @@ vec3 CalcIndirectSpecularLight (const vec3 in_position, const vec3 in_normal)
 	float ambientOcclusion = 1.0f;
 
 	if (ambientOcclusionEnabled == 1) {
-		float in_ao = texture2D (ambientOcclusionMap, texCoord).x;
+		float in_ao = texture (ambientOcclusionMap, texCoord).x;
 
 		ambientOcclusion = in_ao;
 	}
 
-	vec3 in_indirect = texture2D (indirectSpecularMap, texCoord).xyz;
+	vec3 in_indirect = texture (indirectSpecularMap, texCoord).xyz;
 
 	vec3 fresnel = fresnelSchlick(max(dot(in_normal, normalize(-in_position)), 0.0), vec3 (0.0f));
 

@@ -20,8 +20,8 @@ uniform sampler2D postProcessMap;
 void main ()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_diffuse = texture2D (postProcessMap, texCoord).xyz;
-	vec3 in_lightShafts = texture2D (lightShaftsMap, texCoord).xyz;
+	vec3 in_diffuse = texture (postProcessMap, texCoord).xyz;
+	vec3 in_lightShafts = texture (lightShaftsMap, texCoord).xyz;
 
 	out_color = in_diffuse + in_lightShafts;
 }

@@ -3,7 +3,7 @@
 
 #include "ColliderComponent.h"
 
-#include <bullet/BulletCollision/CollisionShapes/btTriangleMesh.h>
+#include <BulletCollision/CollisionShapes/btTriangleMesh.h>
 
 class ENGINE_API MeshColliderComponent : public ColliderComponent
 {

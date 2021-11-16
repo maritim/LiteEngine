@@ -1,5 +1,5 @@
 #ifndef TRSMMEDIANFILTERRENDERPASS_H
-#define TRSMMEDIALFILTERRENDERPASS_H
+#define TRSMMEDIANFILTERRENDERPASS_H
 
 #include "RenderPasses/PostProcess/PostProcessRenderPass.h"
 

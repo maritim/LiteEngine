@@ -79,8 +79,8 @@ void main()
 	 * Get color of all used texture maps
 	*/
 
-	vec3 diffuseMap = MaterialDiffuse * vec3 (texture2D (DiffuseMap, geom_texcoord.xy));
-	vec3 emissiveMap = MaterialEmissive * vec3 (texture2D (EmissiveMap, geom_texcoord.xy));
+	vec3 diffuseMap = MaterialDiffuse * vec3 (texture (DiffuseMap, geom_texcoord.xy));
+	vec3 emissiveMap = MaterialEmissive * vec3 (texture (EmissiveMap, geom_texcoord.xy));
 
 	vec3 fragmentColor = emissiveMap;// + diffuseMap;
 

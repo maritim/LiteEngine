@@ -53,7 +53,7 @@ float CalcShadow (vec3 in_position)
 void main()
 {
 	vec2 texCoord = CalcTexCoord();
-	vec3 in_position = texture2D (gPositionMap, texCoord).xyz;
+	vec3 in_position = texture (gPositionMap, texCoord).xyz;
 
 	out_color = CalcShadow (in_position);
 }

@@ -3,8 +3,7 @@
 
 #include <glm/vec3.hpp>
 #include <string>
-
-#include "Core/Parsers/XML/TinyXml/tinyxml.h"
+#include <tinyxml2.h>
 
 #include "SceneGraph/Scene.h"
 #include "SceneGraph/SceneObject.h"
@@ -18,17 +17,17 @@ public:
 private:
 	SceneLoader ();
 
-	void ProcessSkybox (TiXmlElement* xmlElem, Scene* scene);
-	void ProcessSceneObject (TiXmlElement* xmlElem, Scene* scene);
-	void ProcessParticleSystem (TiXmlElement* xmlElem, Scene* scene);
+	void ProcessSkybox (tinyxml2::XMLElement* xmlElem, Scene* scene);
+	void ProcessSceneObject (tinyxml2::XMLElement* xmlElem, Scene* scene);
+	void ProcessParticleSystem (tinyxml2::XMLElement* xmlElem, Scene* scene);
 
-	void ProcessTransform (TiXmlElement* xmlElem, Scene* scene, SceneObject* obj);
-	glm::vec3 GetPosition (TiXmlElement* xmlElem);
-	glm::quat GetRotation (TiXmlElement* xmlElem);
-	glm::vec3 GetScale (TiXmlElement* xmlElem);
+	void ProcessTransform (tinyxml2::XMLElement* xmlElem, Scene* scene, SceneObject* obj);
+	glm::vec3 GetPosition (tinyxml2::XMLElement* xmlElem);
+	glm::quat GetRotation (tinyxml2::XMLElement* xmlElem);
+	glm::vec3 GetScale (tinyxml2::XMLElement* xmlElem);
 
-	void ProcessComponents (TiXmlElement* xmlElem, SceneObject* sceneObject);
-	void ProcessComponent (TiXmlElement* xmlElem, SceneObject* sceneObject);
+	void ProcessComponents (tinyxml2::XMLElement* xmlElem, SceneObject* sceneObject);
+	void ProcessComponent (tinyxml2::XMLElement* xmlElem, SceneObject* sceneObject);
 };
 
 #endif

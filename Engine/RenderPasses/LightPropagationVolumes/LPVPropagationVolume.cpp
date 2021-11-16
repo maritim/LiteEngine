@@ -46,7 +46,7 @@ bool LPVPropagationVolume::Init(std::size_t volumeSize)
 	GLenum status = GL::CheckFramebufferStatus (GL_FRAMEBUFFER);
 
 	if (status != GL_FRAMEBUFFER_COMPLETE) {
-		Console::LogError ("Framebuffer status error: " + status);
+		Console::LogError ("Framebuffer status error: " + std::to_string(status));
 		return false;
 	}
 

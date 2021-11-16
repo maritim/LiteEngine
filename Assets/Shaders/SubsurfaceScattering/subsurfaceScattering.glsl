@@ -9,7 +9,7 @@ vec3 CalcSubsurfaceScatteringLight ()
 	if (subsurfaceScatteringEnabled == 1) {
 		vec2 texCoord = CalcTexCoord();
 
-		vec3 in_subsurfaceScattering = texture2D (subsurfaceScatteringMap, texCoord).xyz;
+		vec3 in_subsurfaceScattering = texture (subsurfaceScatteringMap, texCoord).xyz;
 	}
 
 	return in_subsurfaceScattering;

@@ -11,8 +11,12 @@ endif (NOT CMAKE_BUILD_TYPE)
 set (CMAKE_CXX_STANDARD 17)
 
 if(NOT MSVC)
-	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g2 -O0 -Wall -Werror")
-	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g0 -Wall -Werror -march=native -mtune=native -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -foptimize-strlen -ftree-loop-distribution -ftree-loop-distribute-patterns -ffast-math -flto")
+	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g2 -O0 -Wall -Werror -fPIC")
+	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g0 -Wall -Werror -fPIC -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -ffast-math -flto")
+
+	if (NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm")
+		set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native -mtune=native")
+	endif ()
 else(NOT MSVC)
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /nologo /DNOMINMAX /D_CRT_SECURE_NO_WARNINGS /D_DEBUG /GS /Zi /debug")
 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /nologo /DNOMINMAX /D_CRT_SECURE_NO_WARNINGS /GS /GL /Gm /O2 /Od /Ox")
@@ -44,16 +48,9 @@ target_include_directories (GameBase PRIVATE ${PROJECT_SOURCE_DIR}/Engine)
 target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/ImGui)
 target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/glm)
 target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/SimpleIni)
+target_include_directories (LiteEngine PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/src)
 
 target_link_libraries (GameBase ImGui)
-
-if(NOT MSVC)
-	find_package (Bullet REQUIRED)
-	
-	target_include_directories (GameBase PUBLIC ${BULLET_INCLUDE_DIRS})
-else(NOT MSVC)
-	target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/bullet/include)
-endif(NOT MSVC)
 
 if(MSVC)
 	target_include_directories (GameBase PUBLIC ${PROJECT_SOURCE_DIR}/3rdparty/include)
@@ -83,14 +80,18 @@ if(MSVC)
 	group_src (${GameSourceFiles})
 endif(MSVC)
 
+target_link_libraries (GameBase LiteEngine)
+
 if(NOT MSVC)
 	target_compile_definitions (GameBase PRIVATE ENGINE_API=)
 	target_compile_definitions (GameBase PRIVATE GAME_API=)
 else(NOT MSVC)
-	target_link_libraries (GameBase LiteEngine)
-
 	target_compile_definitions (GameBase PRIVATE "ENGINE_API=__declspec(dllimport)")
 	target_compile_definitions (GameBase PRIVATE "GAME_API=__declspec(dllexport)")
 endif(NOT MSVC)
+
+if(APPLE)
+	target_link_options(GameBase PRIVATE -undefined dynamic_lookup)
+endif(APPLE)
 
 target_compile_definitions (GameBase PRIVATE GLM_ENABLE_EXPERIMENTAL)
