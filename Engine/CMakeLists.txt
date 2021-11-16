@@ -11,8 +11,8 @@ endif (NOT CMAKE_BUILD_TYPE)
 set (CMAKE_CXX_STANDARD 17)
 
 if(NOT MSVC)
-	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g2 -O0 -Wall -Werror")
-	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g0 -Wall -Werror -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -ffast-math -flto")
+	set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g2 -O0 -Wall -Werror -fPIC")
+	set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g0 -Wall -Werror -fPIC -funroll-loops -Ofast -fno-math-errno -fomit-frame-pointer -ffast-math -flto")
 
 	if (NOT CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm")
 		set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native -mtune=native")
@@ -144,8 +144,8 @@ target_link_libraries (LiteEngine
 	${SDL_SOUND_LIBRARIES}
 	${OPENAL_LIBRARY}
 	assimp
-	BulletCollision
 	BulletDynamics
+	BulletCollision
 	BulletSoftBody
 	LinearMath
 	ImGui
