@@ -9,12 +9,9 @@
   <img src="https://img.shields.io/badge/version-0.6-blue.svg?cacheSeconds=2592000" alt="version"/>
 </p>
 
-> previously called LiteEngine
-
 Insider engine is a 3d realtime game engine with interface and gizmos support, completly open source and changeable for any thing you would like to do. It is only buildeable on windows 7 and newer versions (checked on window 7, 10, 11).
 Please, Look at all this stuff before continue with the engine:
 
-#### Project heald
 | Program | Description |
 | --- | --- |
 | :white_check_mark: Engine interface | In dev & Usable |
