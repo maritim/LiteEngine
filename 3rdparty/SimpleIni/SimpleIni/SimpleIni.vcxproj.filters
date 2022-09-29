@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\alons\Documents\Insider\insiderengine.5\3rdparty\SimpleIni\SimpleIni\SimpleIni.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\alons\Documents\Insider\insiderengine.5\3rdparty\SimpleIni\SimpleIni\SimpleIni.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\alons\Documents\Insider\insiderengine.5\3rdparty\SimpleIni\SimpleIni\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\alons\Documents\Insider\insiderengine.5\3rdparty\SimpleIni\SimpleIni\CMakeFiles\generate.stamp">
+      <Filter>CMakeFiles</Filter>
+    </None>
+    <None Include="C:\Users\alons\Documents\Insider\insiderengine.5\3rdparty\SimpleIni\SimpleIni\CMakeFiles\generate.stamp.depend">
+      <Filter>CMakeFiles</Filter>
+    </None>
+    <None Include="C:\Users\alons\Documents\Insider\insiderengine.5\3rdparty\SimpleIni\SimpleIni\SimpleIni.vcxproj" />
+    <None Include="C:\Users\alons\Documents\Insider\insiderengine.5\3rdparty\SimpleIni\SimpleIni\SimpleIni.vcxproj.filters" />
+    <None Include="C:\Users\alons\Documents\Insider\insiderengine.5\3rdparty\SimpleIni\SimpleIni\cmake_install.cmake" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMakeFiles">
+      <UniqueIdentifier>{D36F5A24-0A69-312C-A6CE-D84DDA8676C5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{7F30FED9-1701-30F8-AF20-B583D767B0FC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{5963BA3F-E331-34AB-9CCE-4F108DE30A0E}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

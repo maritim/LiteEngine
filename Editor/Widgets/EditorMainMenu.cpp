@@ -138,6 +138,15 @@ void EditorMainMenu::ShowMainMenuFile ()
 		saveScene = ImGui::MenuItem("Save Scene", "Ctrl+S");
 		saveScene2 = ImGui::MenuItem("Save Scene As..", "Ctrl+Shift+S");
 
+		bool lastShowImporter = SettingsManager::Instance()->GetValue<bool>("Menu", "show_packageimp", false);
+		bool showImporter = lastShowImporter;
+		ImGui::MenuItem("Import package", NULL, &showImporter);
+
+		if (showImporter != lastShowImporter) {
+			ImGui::SetNextWindowSize(ImVec2(550, 130));
+			SettingsManager::Instance()->SetValue<bool>("Menu", "show_packageimp", showImporter);
+		}
+
 		ImGui::Separator();
 
 		ImGui::EndMenu();

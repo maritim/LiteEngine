@@ -9,6 +9,8 @@
 #include "Systems/Time/Time.h"
 #include "Systems/GUI/Gizmo/Gizmo.h"
 
+#include "Core/Console/Console.h"
+
 #include "Wrappers/OpenGL/GL.h"
 
 #define SCANCODE_REMOVER 0xFF
@@ -22,6 +24,7 @@ void GUI::Init ()
 	ImGui::StyleColorsDark ();
 
 	ImGuiIO& io = ImGui::GetIO ();
+	ImFont* font = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\arial.ttf", 14.0f);
 
 	io.KeyMap[ImGuiKey_Tab] = REMOVE_SCANCODE(InputKey::TAB);
 	io.KeyMap[ImGuiKey_LeftArrow] = REMOVE_SCANCODE(InputKey::LEFT);
@@ -76,11 +79,14 @@ void GUI::Init ()
 	*/
 
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+	Console::Log("engine sandbox editor has been opened properly");
 }
 
 void GUI::Update ()
 {
 	ImGuiIO& io = ImGui::GetIO();
+
 
 	/*
 	 * Set mouse state
