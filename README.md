@@ -20,7 +20,7 @@ Lite engine is a 3d realtime game engine with interface and gizmos support, comp
 - Download and build guide -> [Click here!](https://github.com/AlmartDev/InsiderEngine/wiki/Downloading-and-building)
 
 ## Documentation
-- Liteengine documentation -> [Click here!]([https://github.com/AlmartDev/InsiderEngine/wiki/Documentation](https://github.com/maritim/LiteEngine/wiki/))
+- Liteengine documentation -> [Click here!](https://github.com/AlmartDev/InsiderEngine/wiki/Documentation](https://github.com/maritim/LiteEngine/wiki/)
 
 ## 3rd party libraries
 Liteengine already has all the libraries it needs to build on windows:
@@ -43,7 +43,7 @@ Liteengine already has all the libraries it needs to build on windows:
 </details>
 
 ## Gallery
-- Gallery -> [Click here!]([https://github.com/AlmartDev/InsiderEngine/wiki/Gallery](https://github.com/maritim/LiteEngine/wiki))
+- Gallery -> [Click here!](https://github.com/AlmartDev/InsiderEngine/wiki/Gallery](https://github.com/maritim/LiteEngine/wiki)
 
 ## Project data
 - Engine version -> version
