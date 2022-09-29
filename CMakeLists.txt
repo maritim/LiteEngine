@@ -1,6 +1,6 @@
-cmake_minimum_required (VERSION 3.6)
+cmake_minimum_required (VERSION 3.7)
 
-project (LiteEngine)
+project (InsiderEngine)
 
 add_subdirectory (Tools)
 
