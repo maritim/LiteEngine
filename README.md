@@ -53,6 +53,9 @@ Insider engine already has all the libraries it needs to build so no worries
 </p>
 </details>
 
+## Minimum requierements
+To make insider engine work you'll need to have installed at least [cmake](https://cmake.org/download/) and [git-scm](https://git-scm.com/downloads)
+
 ## Gallery
 - Insider engine gallery -> [Click here!](https://github.com/AlmartDev/InsiderEngine/wiki/Gallery)
 
