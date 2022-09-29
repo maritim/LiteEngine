@@ -18,8 +18,7 @@ Please, Look at all this stuff before continue with the engine:
 | Program | Description |
 | --- | --- |
 | :white_check_mark: Engine interface | In dev & Usable |
-| :large_orange_diamond: Engine | In dev & Usable & Problems on building |
-| :large_orange_diamond: Python launcher | In dev & Some features aren't avaliable |
+| :white_check_mark: Engine | In dev & Usable |
 | :x: Official launcher | In dev & not relased |
 
 ## Downloading & building
