@@ -1,41 +1,29 @@
-# InsiderEngine 0.6
+# Liteengine
 <p align="center">
   <a href="https://en.wikipedia.org/wiki/C%2B%2B11">
     <img src="https://img.shields.io/badge/C%2B%2B-11-blue.svg" alt="standard"/>
   </a>
-  <a href="https://github.com/AlmartDev/InsiderEngine/blob/main/LICENSE.md">
-    <img src="https://img.shields.io/badge/License-GNU-yellow.svg" alt="license"/>
   </a>
   <img src="https://img.shields.io/badge/version-0.6-blue.svg?cacheSeconds=2592000" alt="version"/>
 </p>
 
-> previously called LiteEngine
 
-Insider engine is a 3d realtime game engine with interface and gizmos support, completly open source and changeable for any thing you would like to do. It is only buildeable on windows 7 and newer versions (checked on window 7, 10, 11).
-Please, Look at all this stuff before continue with the engine:
+Lite engine is a 3d realtime game engine with interface and gizmos support, completly open source. Please, Look at all this stuff before continue with the engine:
 
-#### Project heald
+#### Project
 | Program | Description |
 | --- | --- |
 | :white_check_mark: Engine interface | In dev & Usable |
-| :large_orange_diamond: Engine | In dev & Usable & Problems on building |
-| :large_orange_diamond: Python launcher | In dev & Some features aren't avaliable |
-| :x: Official launcher | In dev & not relased |
+| :white_check_mark: Engine | In dev & Usable |
 
 ## Downloading & building
 - Download and build guide -> [Click here!](https://github.com/AlmartDev/InsiderEngine/wiki/Downloading-and-building)
 
 ## Documentation
-- Insider engine documentation -> [Click here!](https://github.com/AlmartDev/InsiderEngine/wiki/Documentation)
-
-## Insider launcher 
-Insider engine has a launcher to manage all your projects, documentations and custom versions,
-[Insider launcher github](https://github.com/AlmartDev/InsiderLauncher),
-but it is not avaliable now, so you can use ```Launcher.py``` to do all that stuff
-althought the python launcher does not work so far (it is not done yet)
+- Liteengine documentation -> [Click here!]([https://github.com/AlmartDev/InsiderEngine/wiki/Documentation](https://github.com/maritim/LiteEngine/wiki/))
 
 ## 3rd party libraries
-Insider engine already has all the libraries it needs to build so no worries
+Liteengine already has all the libraries it needs to build on windows:
 
 <details><summary>3rd party libraries</summary>
 <p>
@@ -55,9 +43,7 @@ Insider engine already has all the libraries it needs to build so no worries
 </details>
 
 ## Gallery
-- Insider engine gallery -> [Click here!](https://github.com/AlmartDev/InsiderEngine/wiki/Gallery)
+- Gallery -> [Click here!]([https://github.com/AlmartDev/InsiderEngine/wiki/Gallery](https://github.com/maritim/LiteEngine/wiki))
 
 ## Project data
-- Engine version [0.6] 0.6.3_build_1
-- Launcher version lte-1.0.2
-- GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007
+- Engine version -> version
