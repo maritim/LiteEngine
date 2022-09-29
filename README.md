@@ -1,22 +1,49 @@
-LiteEngine
-==========
+# Liteengine
+<p align="center">
+  <a href="https://en.wikipedia.org/wiki/C%2B%2B11">
+    <img src="https://img.shields.io/badge/C%2B%2B-11-blue.svg" alt="standard"/>
+  </a>
+  </a>
+  <img src="https://img.shields.io/badge/version-0.6-blue.svg?cacheSeconds=2592000" alt="version"/>
+</p>
 
-Lite 3D Game Engine
 
-Project Health
-=================
+Lite engine is a 3d realtime game engine with interface and gizmos support, completly open source. Please, Look at all this stuff before continue with the engine:
 
-| System | Compiler | Status |
-| ------ | -------- | ------ |
-| Linux 64 bits  | GCC 9.3.0 | [![Linux Build](https://github.com/maritim/LiteEngine/actions/workflows/linux-build.yml/badge.svg)](https://github.com/maritim/LiteEngine/actions/workflows/linux-build.yml)
-| Windows 64 | Visual Studio 2019 | [![Windows Build](https://github.com/maritim/LiteEngine/actions/workflows/windows-build.yml/badge.svg)](https://github.com/maritim/LiteEngine/actions/workflows/windows-build.yml)
+#### Project
+| Program | Description |
+| --- | --- |
+| :white_check_mark: Engine interface | In dev & Usable |
+| :white_check_mark: Engine | In dev & Usable |
 
-Install Guide
-=================
-  * [Windows](https://github.com/maritim/LiteEngine/wiki/Install-Guide#windows-install-guide)
-  * [Linux](https://github.com/maritim/LiteEngine/wiki/Install-Guide#linux-install-guide)
+## Downloading & building
+- Download and build guide -> [Click here!](https://github.com/AlmartDev/InsiderEngine/wiki/Downloading-and-building)
 
-Gallery
-=================
+## Documentation
+- Liteengine documentation -> [Click here!](https://github.com/maritim/LiteEngine/wiki)
 
-![Lite Engine](https://github.com/maritim/LiteEngine/blob/gh-pages/LiteEngine%20Screenshot%2011.png)
+## 3rd party libraries
+Liteengine already has all the libraries it needs to build on windows:
+
+<details><summary>3rd party libraries</summary>
+<p>
+
+- assimp
+- SDL2
+- OpenAL
+- ImGui (gizmos)
+- ImGui 
+- SimpleIni
+- bullet (physics)
+- glm
+- GLEW
+- spdlog
+
+</p>
+</details>
+
+## Gallery
+- Gallery -> [Click here!](https://github.com/maritim/LiteEngine/wiki)
+
+## Project data
+- Engine version -> version

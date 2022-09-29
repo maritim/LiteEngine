@@ -36,7 +36,7 @@ bool Window::Init ()
 	std::size_t windowFlags = SDL_WINDOW_OPENGL | (_fullscreen ? SDL_WINDOW_FULLSCREEN : 0) |
 		SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED;
 
-	_window = SDL_CreateWindow (_title.c_str (), 0, 0, _width, _height, windowFlags);
+	_window = SDL_CreateWindow ("Sandbox editor", 0, 0, _width, _height, windowFlags);
 
 	if (_window == nullptr) {
 		Console::LogError ("Window \"" + _title + "\" could not be initialized");
