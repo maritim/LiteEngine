@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/version-0.6-blue.svg?cacheSeconds=2592000" alt="version"/>
 </p>
 
-Insider engine is a 3d realtime game engine with interface and gizmos support, completly open source and changeable for any thing you would like to do. It is only buildeable on windows 7 and newer versions (checked on window 7, 10, 11).
+Insider engine is a 3d realtime game engine with interface and gizmos support, completly open source and changeable for any thing you would like to do. It is buildeable for windows 7 and newer versions (tested on window 7, 10, 11) and linux (tested on kali).
 Please, Look at all this stuff before continue with the engine:
 
 | Program | Description |
