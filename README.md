@@ -1,4 +1,4 @@
-# InsiderEngine 0.6
+# InsiderEngine 0.6 (ALPHA)
 <p align="center">
   <a href="https://en.wikipedia.org/wiki/C%2B%2B11">
     <img src="https://img.shields.io/badge/C%2B%2B-11-blue.svg" alt="standard"/>
@@ -17,6 +17,12 @@ Please, Look at all this stuff before continue with the engine:
 | :white_check_mark: Engine interface | In dev & Usable |
 | :white_check_mark: Engine | In dev & Usable |
 | :x: Official launcher | In dev & not relased |
+
+# Whats new?
+- Create a ```Game``` window where shows the camera viewport of your scene, just like most game engines (Doesn't work yet)
+- Open insider engine github repo with a click, going to ```help``` > ```Open github repo```
+- Create an ```About``` windows where shows the engine version and other stuff
+- Mute audio option on ```Game``` window
 
 ## Downloading & building
 - Download and build guide -> [Click here!](https://github.com/AlmartDev/InsiderEngine/wiki/Downloading-and-building)

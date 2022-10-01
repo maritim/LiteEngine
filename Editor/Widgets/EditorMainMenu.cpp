@@ -7,7 +7,10 @@
 #include "Managers/SceneManager.h"
 
 #include "EditorScene.h"
+#include "EditorGame.h"
 #include "EditorSelection.h"
+
+#include <cstdlib>
 
 #include "Systems/Input/Input.h"
 #include "Systems/Settings/SettingsManager.h"
@@ -90,6 +93,8 @@ void EditorMainMenu::ShowMainMenu ()
 			bool showProfiler = lastShowProfiler;
 			ImGui::MenuItem("Profiler", "CTRL+7", &showProfiler);
 
+			ImGui::Separator();
+
 			if (showHierarchy != lastShowHierarchy) {
 				SettingsManager::Instance ()->SetValue<bool> ("Menu", "show_hierarchy", showHierarchy);
 			}
@@ -121,17 +126,43 @@ void EditorMainMenu::ShowMainMenu ()
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::BeginMenu("Help")) {
+			bool lastShowAbout = SettingsManager::Instance()->GetValue<bool>("Menu", "show_about", false);
+			bool showAbout = lastShowAbout;
+			ImGui::MenuItem("About", "", &showAbout);
+
+			if (showAbout != lastShowAbout) {
+				SettingsManager::Instance()->SetValue<bool>("Menu", "show_about", showAbout);
+			}
+
+			if (ImGui::MenuItem("Open github repo"))
+			{
+				system("start https://github.com/almartdev/insiderengine");
+			}
+			ImGui::EndMenu();
+		}
+
 		ImGui::Separator ();
 		
 		if (EditorScene::Instance ()->IsActive () == false) {
-			if (ButtonCenteredOnLine("Play")) {
+			if (ButtonCenteredOnLine("Play scene")) {
 				EditorScene::Instance ()->SetActive (true);
 			}
 		} else {
-			if (ButtonCenteredOnLine("Stop")) {
+			if (ButtonCenteredOnLine("Stop scene")) {
 				EditorScene::Instance ()->SetActive (false);
 			}
 		}
+		/*if (EditorGame::Instance()->IsActive() == false) {
+			if (ButtonCenteredOnLine("Play game")) {
+				EditorGame::Instance()->SetActive(true);
+			}
+		}
+		else {
+			if (ButtonCenteredOnLine("Stop game")) {
+				EditorGame::Instance()->SetActive(false);
+			}
+		}*/
 
 		ImGui::EndMainMenuBar();
 	}

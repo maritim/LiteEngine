@@ -9,50 +9,50 @@
 
 #include "EditorManager.h"
 #include "EditorScene.h"
+#include "EditorGame.h"
 
-void Editor::Init ()
+void Editor::Init()
 {
-	LoadEditorLayout ();
+	LoadEditorLayout();
 
-	EditorScene::Instance ()->Init ();
+	EditorScene::Instance()->Init();
+	EditorGame::Instance()->Init();
 
-	RenderSettings* settings = new RenderSettings ();
+	RenderSettings* settings = new RenderSettings();
 	settings->renderMode = "EditorRenderModule";
 
-	RenderSettingsManager::Instance ()->SetActive (settings);
+	RenderSettingsManager::Instance()->SetActive(settings);
 }
 
-void Editor::UpdateFrame ()
+void Editor::UpdateFrame()
 {
-	/*
-	 * Start ImGuizmo frame
-	*/
-
 	ImGuizmo::BeginFrame();
 }
 
-void Editor::UpdateScene ()
+void Editor::UpdateScene()
 {
-	EditorManager::Instance ()->Update ();
-	EditorScene::Instance ()->Update ();
+	EditorManager::Instance()->Update();
+	EditorScene::Instance()->Update();
+	EditorGame::Instance()->Update();
 }
 
-void Editor::RenderScene ()
+void Editor::RenderScene()
 {
-	EditorScene::Instance ()->Render ();
+	EditorScene::Instance()->Render();
+	EditorGame::Instance()->Render();
 }
 
-void Editor::LoadEditorLayout ()
+void Editor::LoadEditorLayout()
 {
-	std::string layoutPath = SettingsManager::Instance ()->GetValue<std::string> (
-		"Layout", "layout_file_path", std::string ()
-	);
+	std::string layoutPath = SettingsManager::Instance()->GetValue<std::string>(
+		"Layout", "layout_file_path", std::string()
+		);
 
-	if (layoutPath == std::string ()) {
+	if (layoutPath == std::string()) {
 		return;
 	}
 
-	char* path = new char [layoutPath.size ()];
-	strcpy (path, layoutPath.c_str ());
-	ImGui::GetIO ().IniFilename = path;
+	char* path = new char[layoutPath.size()];
+	strcpy(path, layoutPath.c_str());
+	ImGui::GetIO().IniFilename = path;
 }

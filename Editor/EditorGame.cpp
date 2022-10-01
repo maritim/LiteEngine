@@ -1,4 +1,4 @@
-#include "EditorScene.h"
+#include "EditorGame.h"
 
 #include <ctime>
 #include <filesystem>
@@ -19,7 +19,13 @@
 
 #include "Resources/Resources.h"
 
+#include "Audio/AudioSource.h"
+
 #include "Cameras/PerspectiveCamera.h"
+
+#include "Components/Cameras/PerspectiveCameraComponent.h"
+
+#include "Widgets/EditorHierarchy.h"
 
 #include "Utils/Files/FileSystem.h"
 
@@ -27,8 +33,8 @@
 
 namespace fs = std::filesystem;
 
-EditorScene::EditorScene() :
-	_sceneCamera(new PerspectiveCamera()),
+EditorGame::EditorGame():
+	_sceneCamera(new PerspectiveCamera),
 	_renderSettings(nullptr),
 	_isActive(true),
 	_position(0),
@@ -41,12 +47,12 @@ EditorScene::EditorScene() :
 
 }
 
-EditorScene::~EditorScene()
+EditorGame::~EditorGame()
 {
 	delete _sceneCamera;
 }
 
-void EditorScene::Init()
+void EditorGame::Init()
 {
 	_sceneCamera->SetZNear(0.3f);
 	_sceneCamera->SetZFar(100.0f);
@@ -54,7 +60,7 @@ void EditorScene::Init()
 
 	PerspectiveCamera* camera = (PerspectiveCamera*)_sceneCamera;
 
-	camera->SetFieldOfViewAngle(45);
+	camera->SetFieldOfViewAngle(75);
 
 	std::string renderSettingsPath = "Assets/RenderSettings/Default.rsettings";
 
@@ -62,101 +68,112 @@ void EditorScene::Init()
 	RenderSettingsManager::Instance()->AddRenderSettings(_renderSettings);
 }
 
-void EditorScene::Update()
+void EditorGame::Update()
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	if (ImGui::Begin("Scene", NULL, ImGuiWindowFlags_MenuBar)) {
+	if (ImGui::Begin("Game", NULL, ImGuiWindowFlags_MenuBar)) {
 
-		ImGui::PopStyleVar();
+		if (_sceneCamera != NULL)
+		{
 
-		ShowSceneMenu();
+			ImGui::PopStyleVar();
 
-		ImGui::Image((void*)(intptr_t)_textureID, ImVec2(_size.x, _size.y), ImVec2(0, 1), ImVec2(1, 0));
+			ShowSceneMenu();
 
-		ImVec2 position = ImGui::GetWindowPos();
+			ImGui::Image((void*)(intptr_t)_textureID, ImVec2(_size.x, _size.y), ImVec2(0, 1), ImVec2(1, 0));
 
-		ImVec2 limit1 = ImGui::GetWindowContentRegionMin();
-		ImVec2 limit2 = ImGui::GetWindowContentRegionMax();
+			ImVec2 position = ImGui::GetWindowPos();
 
-		_position = glm::ivec2(position.x, position.y);
-		_size = glm::ivec2(limit2.x - limit1.x, limit2.y - limit1.y);
+			ImVec2 limit1 = ImGui::GetWindowContentRegionMin();
+			ImVec2 limit2 = ImGui::GetWindowContentRegionMax();
 
-		_isHovered = ImGui::IsItemHovered();
+			_position = glm::ivec2(position.x, position.y);
+			_size = glm::ivec2(limit2.x - limit1.x, limit2.y - limit1.y);
 
-		_mousePosition = Input::GetMousePosition() - _position;
+			_isHovered = ImGui::IsItemHovered();
+
+			_mousePosition = Input::GetMousePosition() - _position;
+		}
+		else
+		{
+			ImGui::Text("No camera rendering on this scene");
+			ImGui::Text("Create a perspective or orthographic camera");
+		}
 	}
 
 	ImGui::End();
 
-	_sceneCamera->SetAspect((float)_size.x / _size.y);
 }
 
-void EditorScene::Render()
+void EditorGame::Render()
 {
-	if (_isActive == false) {
-		return;
-	}
 
-	if (_targetFrameRate != -1) {
-		_elapsedFrameTime -= Time::GetDeltaTime();
+	//if (_sceneCamera != NULL)
+	//{
+	//	if (_isActive == false) {
+	//		return;
+	//	}
 
-		if (_elapsedFrameTime > 0) {
-			return;
-		}
-	}
+	//	if (_targetFrameRate != -1) {
+	//		_elapsedFrameTime -= Time::GetDeltaTime();
 
-	_elapsedFrameTime = _targetFrameRate == 0.0f ? 100 : 1.0f / _targetFrameRate;
+	//		if (_elapsedFrameTime > 0) {
+	//			return;
+	//		}
+	//	}
+	//	_elapsedFrameTime = _targetFrameRate == 0.0f ? 100 : 1.0f / _targetFrameRate;
 
-	// _renderSettings->renderMode = "SceneRenderModule";
-	_renderSettings->resolution.width = _size.x;
-	_renderSettings->resolution.height = _size.y;
-	_renderSettings->viewport.x = 0;
-	_renderSettings->viewport.y = 0;
-	_renderSettings->viewport.width = _size.x;
-	_renderSettings->viewport.height = _size.y;
+	//	// _renderSettings->renderMode = "SceneRenderModule";
+	//	_renderSettings->resolution.width = _size.x;
+	//	_renderSettings->resolution.height = _size.y;
+	//	_renderSettings->viewport.x = 0;
+	//	_renderSettings->viewport.y = 0;
+	//	_renderSettings->viewport.width = _size.x;
+	//	_renderSettings->viewport.height = _size.y;
 
-	RenderProduct result = RenderManager::Instance()->Render(_sceneCamera, *_renderSettings);
+	//	RenderProduct result = RenderManager::Instance()->Render(_sceneCamera, *_renderSettings);
 
-	FramebufferRenderVolume* renderVolume = dynamic_cast<FramebufferRenderVolume*> (result.resultVolume);
-	_textureID = renderVolume->GetFramebufferView()->GetTextureView(0)->GetGPUIndex();
+	//	FramebufferRenderVolume* renderVolume = dynamic_cast<FramebufferRenderVolume*> (result.resultVolume);
+	//	_textureID = renderVolume->GetFramebufferView()->GetTextureView(0)->GetGPUIndex();
+	//}
 }
 
-Camera* EditorScene::GetCamera()
+Camera* EditorGame::GetCamera()
 {
 	return _sceneCamera;
 }
 
-void EditorScene::SetActive(bool isActive)
+void EditorGame::SetActive(bool isActive)
 {
 	_isActive = isActive;
 }
 
-bool EditorScene::IsActive() const
+bool EditorGame::IsActive() const
 {
 	return _isActive;
 }
 
-glm::ivec2 EditorScene::GetWindowPosition() const
+glm::ivec2 EditorGame::GetWindowPosition() const
 {
 	return _position;
 }
 
-glm::ivec2 EditorScene::GetWindowSize() const
+glm::ivec2 EditorGame::GetWindowSize() const
 {
 	return _size;
 }
 
-glm::ivec2 EditorScene::GetWindowMousePosition() const
+glm::ivec2 EditorGame::GetWindowMousePosition() const
 {
 	return _mousePosition;
 }
 
-bool EditorScene::IsWindowHovered() const
+bool EditorGame::IsWindowHovered() const
 {
 	return _isHovered;
 }
 
-void EditorScene::ShowSceneMenu()
+void EditorGame::ShowSceneMenu()
 {
 	bool saveVolume = false;
 	bool setFrameRate = false;
@@ -172,16 +189,9 @@ void EditorScene::ShowSceneMenu()
 			if (ImGui::MenuItem("Set Resolution", "Ctrl+Shift+U")) {}
 			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu("Gizmos"))
+		if (ImGui::BeginMenu("Audio"))
 		{
-			bool lastShowGrid = SettingsManager::Instance()->GetValue<bool>("Scene", "show_grid", true);
-			bool showGrid = lastShowGrid;
-			ImGui::MenuItem("Show Grid", "", &showGrid);
-
-			if (showGrid != lastShowGrid) {
-				SettingsManager::Instance()->SetValue<bool>("Scene", "show_grid", showGrid);
-			}
-
+			ImGui::MenuItem("Mute audio");
 			ImGui::EndMenu();
 		}
 		ImGui::EndMenuBar();
@@ -220,5 +230,13 @@ void EditorScene::ShowSceneMenu()
 		ImGui::InputFloat("Frame Rate", &_targetFrameRate, 0, 0, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue);
 
 		ImGui::EndPopup();
+	}
+}
+
+void EditorGame::ShowNoCameraMenu()
+{
+	if (ImGui::BeginMenuBar())
+	{
+		ImGui::Text("No camera rendering, create a perspective or orthographic camera");
 	}
 }
