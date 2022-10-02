@@ -16,6 +16,7 @@ void Editor::Init()
 	LoadEditorLayout();
 
 	EditorScene::Instance()->Init();
+
 	EditorGame::Instance()->Init();
 
 	RenderSettings* settings = new RenderSettings();
@@ -33,13 +34,14 @@ void Editor::UpdateScene()
 {
 	EditorManager::Instance()->Update();
 	EditorScene::Instance()->Update();
+
 	EditorGame::Instance()->Update();
 }
 
 void Editor::RenderScene()
 {
 	EditorScene::Instance()->Render();
-	EditorGame::Instance()->Render();
+	EditorGame::Instance()->Render(); //Here is the duplicated hierarchy bug
 }
 
 void Editor::LoadEditorLayout()

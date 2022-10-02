@@ -1,4 +1,5 @@
 #include "EditorGame.h"
+#include "EditorScene.h"
 
 #include <ctime>
 #include <filesystem>
@@ -25,7 +26,6 @@
 
 #include "Components/Cameras/PerspectiveCameraComponent.h"
 
-#include "Widgets/EditorHierarchy.h"
 
 #include "Utils/Files/FileSystem.h"
 
@@ -108,34 +108,34 @@ void EditorGame::Update()
 void EditorGame::Render()
 {
 
-	//if (_sceneCamera != NULL)
-	//{
-	//	if (_isActive == false) {
-	//		return;
-	//	}
+	if (_sceneCamera != NULL)
+	{
+		if (_isActive == false) {
+			return;
+		}
 
-	//	if (_targetFrameRate != -1) {
-	//		_elapsedFrameTime -= Time::GetDeltaTime();
+		if (_targetFrameRate != -1) {
+			_elapsedFrameTime -= Time::GetDeltaTime();
 
-	//		if (_elapsedFrameTime > 0) {
-	//			return;
-	//		}
-	//	}
-	//	_elapsedFrameTime = _targetFrameRate == 0.0f ? 100 : 1.0f / _targetFrameRate;
+			if (_elapsedFrameTime > 0) {
+				return;
+			}
+		}
+		_elapsedFrameTime = _targetFrameRate == 0.0f ? 100 : 1.0f / _targetFrameRate;
 
-	//	// _renderSettings->renderMode = "SceneRenderModule";
-	//	_renderSettings->resolution.width = _size.x;
-	//	_renderSettings->resolution.height = _size.y;
-	//	_renderSettings->viewport.x = 0;
-	//	_renderSettings->viewport.y = 0;
-	//	_renderSettings->viewport.width = _size.x;
-	//	_renderSettings->viewport.height = _size.y;
+		// _renderSettings->renderMode = "SceneRenderModule";
+		_renderSettings->resolution.width = _size.x;
+		_renderSettings->resolution.height = _size.y;
+		_renderSettings->viewport.x = 0;
+		_renderSettings->viewport.y = 0;
+		_renderSettings->viewport.width = _size.x;
+		_renderSettings->viewport.height = _size.y;
 
-	//	RenderProduct result = RenderManager::Instance()->Render(_sceneCamera, *_renderSettings);
+		RenderProduct result = RenderManager::Instance()->Render(EditorScene::Instance()->GetCamera(), *_renderSettings);
 
-	//	FramebufferRenderVolume* renderVolume = dynamic_cast<FramebufferRenderVolume*> (result.resultVolume);
-	//	_textureID = renderVolume->GetFramebufferView()->GetTextureView(0)->GetGPUIndex();
-	//}
+		FramebufferRenderVolume* renderVolume = dynamic_cast<FramebufferRenderVolume*> (result.resultVolume);
+		_textureID = renderVolume->GetFramebufferView()->GetTextureView(0)->GetGPUIndex();
+	}
 }
 
 Camera* EditorGame::GetCamera()

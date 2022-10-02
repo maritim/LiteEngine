@@ -7,7 +7,6 @@
 #include "Managers/SceneManager.h"
 
 #include "EditorScene.h"
-#include "EditorGame.h"
 #include "EditorSelection.h"
 
 #include <cstdlib>
@@ -145,24 +144,14 @@ void EditorMainMenu::ShowMainMenu ()
 		ImGui::Separator ();
 		
 		if (EditorScene::Instance ()->IsActive () == false) {
-			if (ButtonCenteredOnLine("Play scene")) {
+			if (ButtonCenteredOnLine("Play")) {
 				EditorScene::Instance ()->SetActive (true);
 			}
 		} else {
-			if (ButtonCenteredOnLine("Stop scene")) {
+			if (ButtonCenteredOnLine("Stop")) {
 				EditorScene::Instance ()->SetActive (false);
 			}
 		}
-		/*if (EditorGame::Instance()->IsActive() == false) {
-			if (ButtonCenteredOnLine("Play game")) {
-				EditorGame::Instance()->SetActive(true);
-			}
-		}
-		else {
-			if (ButtonCenteredOnLine("Stop game")) {
-				EditorGame::Instance()->SetActive(false);
-			}
-		}*/
 
 		ImGui::EndMainMenuBar();
 	}
